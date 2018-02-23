@@ -1,22 +1,22 @@
 ## Replicado
 
-API (ou PHP library) que abstrai o acesso aos dados do replicado USP, 
+Biblioteca PHP que abstrai o acesso aos dados do replicado USP, 
 isto é, ao invés de inserir uma consulta SQL diretamente em seu código, 
 como por exemplo: 
 
-    SELECT nompes FROM pessoa WHERE codpes='123'
+    SELECT codpes,nompes,... FROM pessoa WHERE codpes='123'
 
 Usa-se uma classe PHP que faz a abstração do acesso e portanto deixa 
-seu código muito mais limpo e torna as consultas reutilizáveis: 
+seu código muito mais limpo e torna as consultas reutilizáveis:
 
-    $db->pessoa('123')
+    $pessoa->dump('123')
 
 O projeto tem dois repositório, um *open source* com as classes PHP 
 [replicado](https://github.com/uspdev/replicado) e outro de acesso interno 
 no gitlab da USP, este somente com as *queries* [replicado_queries](https://git.uspdigital.usp.br/uspdev/replicado_queries).
 Os arquivos SQL estão separados por dois motivos:
 
- 1. Não expor a estrutura dos dados das tabelas do replicado
+ 1. Não expor publicamente a estrutura interna dos dados das tabelas do replicado
  2. Permitir que as consultas sejam reutilizadas em projetos com outras linguagens que não PHP
 
 ## Adicione essa lib em seu projeto PHP:
@@ -43,14 +43,18 @@ Os arquivos SQL estão separados por dois motivos:
     use Uspdev\Replicado\Pessoa;
 
     $conn = new Connection($ip,$port,$db,$user,$pass);
-    $p = new Pessoa($conn->db);
-    print_r($p->pessoa('123456'));
+    $pessoa = new Pessoa($conn->db);
+    print_r($pessoa->dump('123456'));
 
 ## Informações sobre tabelas:
 
-    https://uspdigital.usp.br/replunidade
+   [https://uspdigital.usp.br/replunidade](https://uspdigital.usp.br/replunidade)
 
 ## Métodos existentes:
 
- - Pessoa::pessoa($codpes): recebe codpes e retorna todos campos da tabela Pessoa
+### Classe Pessoa 
+
+ - *dump($codpes)*: recebe codpes e retorna todos campos da tabela Pessoa para o usuário em questão
+ - 
+ 
 

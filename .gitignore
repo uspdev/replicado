@@ -1,4 +1,4 @@
 /vendor/
 *~
 *.swp
-replicado_queries
+src/replicado_queries

@@ -11,7 +11,7 @@ class Pessoa
     {
         $this->db = $db;
     }
-    public function pessoa($codpes)
+    public function dump($codpes)
     {
         $uteis = new Uteis();
         $query = file_get_contents('../replicado_queries/pessoa_where_codpes.sql', true);
