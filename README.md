@@ -27,7 +27,7 @@ Os arquivos SQL estão separados por dois motivos:
 ## Baixe as consultas (TODO: incluir essa task no composer):
 
     cd vendor/uspdev/replicado
-    git clone git@git.uspdigital.usp.br:fflch/replicado_queries
+    git clone git@git.uspdigital.usp.br:uspdev/replicado_queries
 
 ## Biblioteca PHP usada para conexão (testado com PHP7.2):
 
