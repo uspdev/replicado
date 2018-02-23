@@ -12,8 +12,8 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
     $pessoa->dump('123')
 
 O projeto tem dois repositório, um *open source* com as classes PHP 
-[replicado](https://github.com/uspdev/replicado) e outro de acesso interno 
-no gitlab da USP, este somente com as *queries* [replicado_queries](https://git.uspdigital.usp.br/uspdev/replicado_queries).
+([replicado](https://github.com/uspdev/replicado)) e outro de acesso interno 
+no gitlab da USP, este somente com as *queries* ([replicado_queries](https://git.uspdigital.usp.br/uspdev/replicado_queries)).
 Os arquivos SQL estão separados por dois motivos:
 
  1. Não expor publicamente a estrutura interna dos dados das tabelas do replicado
