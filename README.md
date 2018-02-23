@@ -43,8 +43,8 @@ Os arquivos SQL estão separados por dois motivos:
     use Uspdev\Replicado\Pessoa;
 
     $conn = new Connection($ip,$port,$db,$user,$pass);
-    $pessoa = new Pessoa($conn->db);
-    print_r($pessoa->pessoaByCodpes('5385361'));
+    $p = new Pessoa($conn->db);
+    print_r($p->pessoa('123456'));
 
 ## Informações sobre tabelas:
 
