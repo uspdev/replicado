@@ -12,8 +12,8 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
     $pessoa->dump('123')
 
 O projeto tem dois repositório, um *open source* com as classes PHP 
-[replicado](https://github.com/uspdev/replicado) e outro de acesso interno 
-no gitlab da USP, este somente com as *queries* [replicado_queries](https://git.uspdigital.usp.br/uspdev/replicado_queries).
+([replicado](https://github.com/uspdev/replicado)) e outro de acesso interno 
+no gitlab da USP, este somente com as *queries* ([replicado_queries](https://git.uspdigital.usp.br/uspdev/replicado_queries)).
 Os arquivos SQL estão separados por dois motivos:
 
  1. Não expor publicamente a estrutura interna dos dados das tabelas do replicado
@@ -26,8 +26,8 @@ Os arquivos SQL estão separados por dois motivos:
 
 ## Baixe as consultas (TODO: incluir essa task no composer):
 
-    cd vendor/uspdev/replicado
-    git clone git@git.uspdigital.usp.br:fflch/replicado_queries
+    cd vendor/uspdev/replicado/src
+    git clone git@git.uspdigital.usp.br:uspdev/replicado_queries
 
 ## Biblioteca PHP usada para conexão (testado com PHP7.2):
 
@@ -54,7 +54,12 @@ Os arquivos SQL estão separados por dois motivos:
 
 ### Classe Pessoa 
 
- - *dump($codpes)*: recebe codpes e retorna todos campos da tabela Pessoa para o usuário em questão
- - 
+ - *dump($codpes)*: recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão
+ - *cracha($codpes)*: recebe codpes e retorna todos campos da tabela catr_cracha para o codpes em questão 
+ - *email($codpes)*: recebe codpes e retorna email de correspondência da pessoa
+ - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
+ - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
  
+### Classe Posgraduacao
 
+ - *verificaSeAtivo($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
