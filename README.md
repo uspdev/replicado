@@ -54,7 +54,12 @@ Os arquivos SQL estão separados por dois motivos:
 
 ### Classe Pessoa 
 
- - *dump($codpes)*: recebe codpes e retorna todos campos da tabela Pessoa para o usuário em questão
- - 
+ - *dump($codpes)*: recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão
+ - *cracha($codpes)*: recebe codpes e retorna todos campos da tabela catr_cracha para o codpes em questão 
+ - *email($codpes)*: recebe codpes e retorna email de correspondência da pessoa
+ - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
+ - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
  
+### Classe Posgraduacao
 
+ - *verificaSeAtivo($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
