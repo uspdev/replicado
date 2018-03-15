@@ -23,8 +23,15 @@ class Connection
     
     public function setSybase()
     {
-        $this->conn = new PDO("dblib:tdsver=5.0;host=$this->dbHost:$this->dbPort", $this->dbUser,$this->dbPassword);
-        $this->conn->query("use $this->dbName");
+        try
+        {
+            $this->conn = new PDO("dblib:tdsver=5.0;host=$this->dbHost:$this->dbPort", $this->dbUser,$this->dbPassword);
+            $this->conn->query("use $this->dbName");
+        }
+        catch(PDOException $pe)
+        {
+            die("database connect error：". $pe->getMessage());
+        }
     }
     
     public function setMssql()
@@ -32,8 +39,15 @@ class Connection
         $dsn= "dblib:host=$this->dbHost:$this->dbPort;dbname=$this->dbName;";
         $dbusername=$this->dbUser;
         $dbpassword=$this->dbPassword;
-        $this->conn = new PDO($dsn,$dbusername,$dbpassword);
-        $this->conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+        try
+        {
+            $this->conn = new PDO($dsn,$dbusername,$dbpassword);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+        }
+        catch(PDOException $pe)
+        {
+            die("database connect error：". $pe->getMessage());
+        }
     }
     
 }
