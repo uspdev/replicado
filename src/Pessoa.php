@@ -6,12 +6,12 @@ use Uspdev\Replicado\Uteis;
 
 class Pessoa 
 {
-    private $db;
+    private $conn;
     private $uteis;
 
-    public function __construct($db)
+    public function __construct($conn)
     {
-        $this->db = $db;
+        $this->conn = $conn;
         $this->uteis = new Uteis;
     }
 
@@ -19,7 +19,7 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
         $query = " SELECT {$cols} FROM DBMAINT.PESSOA WHERE codpes = '{$codpes}'"; 
-        $q = $this->db->query($query);
+        $q = $this->conn->query($query);
         $result = $q->fetchAll()[0];
         $result = $this->uteis->utf8_converter($result);
         return $result;
