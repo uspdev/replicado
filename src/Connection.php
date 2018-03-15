@@ -1,10 +1,11 @@
 <?php
 
 namespace Uspdev\Replicado;
+use PDO;
 
 class Connection
 {
-    public $db;
+    public $conn;
     private $dbHost;
     private $dbPort;
     private $dbName;
@@ -22,9 +23,8 @@ class Connection
     
     public function sybase()
     {
-        $this->db = new \PDO("dblib:tdsver=5.0;host=$this->dbHost:$this->dbPort", $this->dbUser,$this->dbPassword);
-        $this->db->query("use $this->dbName");
-        return $this->db;
+        $this->conn = new PDO("dblib:tdsver=5.0;host=$this->dbHost:$this->dbPort", $this->dbUser,$this->dbPassword);
+        $this->conn->query("use $this->dbName");
     }
     
     public function mssql()
@@ -32,9 +32,8 @@ class Connection
         $dsn= "dblib:host=$this->dbHost:$this->dbPort;dbname=$this->dbName;";
         $dbusername=$this->dbUser;
         $dbpassword=$this->dbPassword;
-        $this->db = new \PDO($dsn,$dbusername,$dbpassword);
-        $this->db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-        return $this->db;
+        $this->conn = new PDO($dsn,$dbusername,$dbpassword);
+        $this->conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
     }
     
 }
