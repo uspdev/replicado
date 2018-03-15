@@ -21,13 +21,13 @@ class Connection
         $this->dbPassword = $dbPassword;
     }
     
-    public function sybase()
+    public function setSybase()
     {
         $this->conn = new PDO("dblib:tdsver=5.0;host=$this->dbHost:$this->dbPort", $this->dbUser,$this->dbPassword);
         $this->conn->query("use $this->dbName");
     }
     
-    public function mssql()
+    public function setMssql()
     {
         $dsn= "dblib:host=$this->dbHost:$this->dbPort;dbname=$this->dbName;";
         $dbusername=$this->dbUser;
