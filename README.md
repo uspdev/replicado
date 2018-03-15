@@ -43,8 +43,8 @@ Os arquivos SQL estão separados por dois motivos:
     use Uspdev\Replicado\Pessoa;
 
     $replicado = new Connection($ip,$port,$db,$user,$pass);
-    $conn = $replicado->setSybase();
-    $pessoa = new Pessoa($conn->db);
+    $replicado->setSybase();
+    $pessoa = new Pessoa($replicado->$conn);
     print_r($pessoa->dump('123456'));
 
 ## Informações sobre tabelas:
