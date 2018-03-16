@@ -57,11 +57,27 @@ Os arquivos SQL estão separados por dois motivos:
 ### Classe Pessoa 
 
  - *dump($codpes)*: recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão
+ - *nome($nome)*: recebe uma string nome e retorna os resultados para a tabela Pessoa
  - *cracha($codpes)*: recebe codpes e retorna todos campos da tabela catr_cracha para o codpes em questão 
  - *email($codpes)*: recebe codpes e retorna email de correspondência da pessoa
  - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
  - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
+ - *localiza($codpes)*: retorna vínculos ativos da pessoa
+ 
+### Classe Graduacao
+
+ - *verifica($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+ - *ativos($unidade)*: retorna *array* de todos alunos de graduação ativos na unicade
+ - *ativosCsv($unidade)*: retorna *csv* de todos alunos de graduação ativos na unidade
  
 ### Classe Posgraduacao
 
- - *verificaSeAtivo($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+ - *verifica($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+ - *ativos($unidade)*: retorna *array* de todos alunos de pós-graduação ativos na unicade
+ - *ativosCsv($unidade)*: retorna *csv* de todos alunos de pós-graduação ativos na unidade
+ 
+ ### Classe Bempatrimoniado
+
+ - *dump($numpat)*: recebe numpat e retorna todos campos da tabela bempatrimoniado
+ 
+ 
