@@ -11,7 +11,7 @@ class Graduacao
 
     public function __construct($conn)
     {
-        $this->conn = $db;
+        $this->conn = $conn;
         $this->uteis = new Uteis;
     }
 
@@ -25,7 +25,7 @@ class Graduacao
         $return = false;
         foreach($result as $row)
         {
-            if(trim($row['tipvin']) == 'ALUNOPOS' && trim($row['sitatl']) == 'A'  && trim($row['codundclg']) == $codundclg) 
+            if(trim($row['tipvin']) == 'ALUNOGR' && trim($row['sitatl']) == 'A'  && trim($row['codundclg']) == $codundclg) 
                 $return = true;    
         }
         return $return;

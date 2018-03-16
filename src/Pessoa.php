@@ -75,4 +75,25 @@ class Pessoa
                 return $row['codema'];
         }
     }
+
+    public function telefones($codpes)
+    {
+        $cols1 = file_get_contents('replicado_queries/tables/telefpessoa.sql', true);
+        $cols2 = file_get_contents('replicado_queries/tables/localidade.sql', true);
+        $query = " SELECT {$cols1},{$cols2} FROM DBMAINT.TELEFPESSOA ";
+        $query = " FULL OUTER JOIN LOCALIDADE ON TELEFPESSOA.codlocddd = LOCALIDADE.codloc ";
+        $query .= " WHERE TELEFPESSOA.codpes = '{$codpes}'";
+        $r = $this->db->query($query);
+        $result = $r->fetchAll();
+        /*
+        $telefones= array();
+        foreach($result as $row)
+        {
+            $email = trim($row['codema']);
+            in_array($email,$emails) ?: array_push($emails,$email);
+        }
+         */
+        return $result;
+    }
+
 }
