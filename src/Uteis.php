@@ -56,8 +56,6 @@ class Uteis
         return $array;
     }
 
-
-
     function makeCsv($array,$cols=null)
     {
         $csv = '';
