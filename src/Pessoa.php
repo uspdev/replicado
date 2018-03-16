@@ -18,7 +18,7 @@ class Pessoa
     public function dump($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.PESSOA WHERE codpes = '{$codpes}'"; 
+        $query = " SELECT {$cols} FROM PESSOA WHERE codpes = '{$codpes}'"; 
         $q = $this->conn->query($query);
         $result = $q->fetchAll()[0];
         $q = null;
@@ -30,7 +30,7 @@ class Pessoa
     public function cracha($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/catr_cracha.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.CATR_CRACHA WHERE codpescra = '{$codpes}'"; 
+        $query = " SELECT {$cols} FROM CATR_CRACHA WHERE codpescra = '{$codpes}'"; 
         $q = $this->conn->query($query);
         $result = $q->fetchAll()[0];
         $result = $this->uteis->utf8_converter($result);
@@ -40,7 +40,7 @@ class Pessoa
     public function emails($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.EMAILPESSOA WHERE codpes = '{$codpes}'";
+        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
         $r = $this->conn->query($query);
         $result = $r->fetchAll();
         $emails= array();
@@ -55,7 +55,7 @@ class Pessoa
     public function email($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.EMAILPESSOA WHERE codpes = '{$codpes}'";
+        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
         $r = $this->conn->query($query);
         $result = $r->fetchAll();
         foreach($result as $row)
@@ -68,7 +68,7 @@ class Pessoa
     public function emailusp($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.EMAILPESSOA WHERE codpes = '{$codpes}'";
+        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
         $r = $this->conn->query($query);
         $result = $r->fetchAll();
         foreach($result as $row)
@@ -83,7 +83,7 @@ class Pessoa
         $cols1 = file_get_contents('replicado_queries/tables/telefpessoa.sql', true);
         $cols2 = file_get_contents('replicado_queries/tables/localidade.sql', true);
 
-        $query = " SELECT {$cols1}, {$cols2} FROM DBMAINT.TELEFPESSOA ";
+        $query = " SELECT {$cols1}, {$cols2} FROM TELEFPESSOA ";
         $query .= " FULL OUTER JOIN LOCALIDADE ON TELEFPESSOA.codlocddd = LOCALIDADE.codloc ";
         $query .= " WHERE TELEFPESSOA.codpes = '{$codpes}'";
         $r = $this->conn->query($query);
@@ -107,7 +107,7 @@ class Pessoa
         
         $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
         $query = " SELECT {$cols}, UPPER(PESSOA.nompes) as nompes_upper "; 
-        $query .= " FROM DBMAINT.PESSOA WHERE nompes_upper LIKE '%{$nome}%' "; 
+        $query .= " FROM PESSOA WHERE nompes_upper LIKE '%{$nome}%' "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
         $q = $this->conn->query($query);
         $result = $q->fetchAll();
@@ -120,7 +120,7 @@ class Pessoa
     public function localiza($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
+        $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
         $q = $this->conn->query($query);
         $result = $q->fetchAll();
         $result = $this->uteis->utf8_converter($result);
