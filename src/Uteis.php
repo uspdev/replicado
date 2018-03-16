@@ -47,5 +47,30 @@ class Uteis
         });
         return $array;
     }
+
+    function makeCsv($array)
+    {
+        $csv = '';
+        $csvKeys = '';
+
+        foreach(array_keys($array[0]) as $key) {
+            $csvKeys .= "$key,";
+        }
+
+        $csv .= rtrim($csvKeys, ',') . "\r\n";
+
+        foreach($array as $row) {
+            $line = '';
+
+            foreach($row as $key => $value) {
+                $line .= "$value,";
+            }
+
+            $line = rtrim($line, ',') . "\r\n";
+            $csv .= $line;
+        }
+
+        return $csv;
+    }
 }
 
