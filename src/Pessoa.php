@@ -116,4 +116,35 @@ class Pessoa
 
         return $result;
     }
+
+    public function localiza($codpes)
+    {
+        $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
+        $query = " SELECT {$cols} FROM DBMAINT.LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
+        $q = $this->conn->query($query);
+        $result = $q->fetchAll();
+        $result = $this->uteis->utf8_converter($result);
+        $result = $this->uteis->trim_recursivo($result);
+       
+        $localizas = array();
+        foreach($result as $row)
+        {
+            $localiza = "";
+            if(!empty($row['tipvinext']))
+                $localiza = $localiza  .  $row['tipvinext']; 
+
+            if(!empty($row['nomfnc']))
+                $localiza = $localiza . " - " . $row['nomfnc']; 
+
+            if(!empty($row['nomset']))
+                $localiza = $localiza . " - " . $row['nomset']; 
+
+            if(!empty($row['sglclgund']))
+                $localiza = $localiza . " - " . $row['sglclgund']; 
+
+            in_array($localiza,$localizas) ?:  array_push($localizas,$localiza);
+
+        }
+        return $localizas;
+    }
 }
