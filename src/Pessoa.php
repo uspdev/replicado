@@ -22,6 +22,7 @@ class Pessoa
         $q = $this->conn->query($query);
         $result = $q->fetchAll()[0];
         $result = $this->uteis->utf8_converter($result);
+        $result = $this->uteis->trim_recursivo($result);
         return $result;
     }
 
@@ -29,7 +30,7 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/catr_cracha.sql', true);
         $query = " SELECT {$cols} FROM DBMAINT.CATR_CRACHA WHERE codpescra = '{$codpes}'"; 
-        $q = $this->db->query($query);
+        $q = $this->conn->query($query);
         $result = $q->fetchAll()[0];
         $result = $this->uteis->utf8_converter($result);
         return $result;
@@ -39,7 +40,7 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
         $query = " SELECT {$cols} FROM DBMAINT.EMAILPESSOA WHERE codpes = '{$codpes}'";
-        $r = $this->db->query($query);
+        $r = $this->conn->query($query);
         $result = $r->fetchAll();
         $emails= array();
         foreach($result as $row)
@@ -54,7 +55,7 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
         $query = " SELECT {$cols} FROM DBMAINT.EMAILPESSOA WHERE codpes = '{$codpes}'";
-        $r = $this->db->query($query);
+        $r = $this->conn->query($query);
         $result = $r->fetchAll();
         foreach($result as $row)
         {
@@ -67,7 +68,7 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
         $query = " SELECT {$cols} FROM DBMAINT.EMAILPESSOA WHERE codpes = '{$codpes}'";
-        $r = $this->db->query($query);
+        $r = $this->conn->query($query);
         $result = $r->fetchAll();
         foreach($result as $row)
         {
@@ -80,20 +81,38 @@ class Pessoa
     {
         $cols1 = file_get_contents('replicado_queries/tables/telefpessoa.sql', true);
         $cols2 = file_get_contents('replicado_queries/tables/localidade.sql', true);
-        $query = " SELECT {$cols1},{$cols2} FROM DBMAINT.TELEFPESSOA ";
-        $query = " FULL OUTER JOIN LOCALIDADE ON TELEFPESSOA.codlocddd = LOCALIDADE.codloc ";
+
+        $query = " SELECT {$cols1}, {$cols2} FROM DBMAINT.TELEFPESSOA ";
+        $query .= " FULL OUTER JOIN LOCALIDADE ON TELEFPESSOA.codlocddd = LOCALIDADE.codloc ";
         $query .= " WHERE TELEFPESSOA.codpes = '{$codpes}'";
-        $r = $this->db->query($query);
+        $r = $this->conn->query($query);
+        //var_dump($r); die();
         $result = $r->fetchAll();
-        /*
+        
         $telefones= array();
         foreach($result as $row)
         {
-            $email = trim($row['codema']);
-            in_array($email,$emails) ?: array_push($emails,$email);
+            $telefone = '(' . trim($row['codddd']) . ') ' . trim($row['numtel']);
+            in_array($telefone,$telefones) ?: array_push($telefones,$telefone);
         }
-         */
-        return $result;
+        return $telefones;
     }
 
+    public function nome($nome)
+    {
+        $nome = utf8_decode($this->uteis->removeAcentos($nome));
+        $nome = trim($nome);
+        $nome= strtoupper(str_replace(' ','%',$nome));
+        
+        $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
+        $query = " SELECT {$cols}, UPPER(PESSOA.nompes) as nompes_upper "; 
+        $query .= " FROM DBMAINT.PESSOA WHERE nompes_upper LIKE '%{$nome}%' "; 
+        $query .= " ORDER BY PESSOA.nompes ASC "; 
+        $q = $this->conn->query($query);
+        $result = $q->fetchAll();
+        $result = $this->uteis->utf8_converter($result);
+        $result = $this->uteis->trim_recursivo($result);
+
+        return $result;
+    }
 }

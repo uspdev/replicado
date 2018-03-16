@@ -48,6 +48,16 @@ class Uteis
         return $array;
     }
 
+    function trim_recursivo($array)
+    {
+        array_walk_recursive($array, function(&$item, $key){
+            $item = trim($item);
+        });
+        return $array;
+    }
+
+
+
     function makeCsv($array)
     {
         $csv = '';

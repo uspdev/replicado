@@ -15,11 +15,11 @@ class Graduacao
         $this->uteis = new Uteis;
     }
 
-    public function verificaSeAtivo($codpes, $codundclgi)
+    public function verifica($codpes, $codundclgi)
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $query = " SELECT {$cols} FROM DBMAINT.LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
-        $q = $this->db->query($query);
+        $q = $this->conn->query($query);
         $result = $q->fetchAll();
 
         $return = false;
@@ -29,6 +29,21 @@ class Graduacao
                 $return = true;    
         }
         return $return;
+    }
+
+    public function ativos($codundclgi)
+    {
+        $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
+        $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
+        $query = " SELECT {$cols1},{$cols2} FROM DBMAINT.LOCALIZAPESSOA "; 
+        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) "; 
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}'"; 
+        $q = $this->conn->query($query);
+        $result = $q->fetchAll();
+        $result = $this->uteis->utf8_converter($result);
+        $result = $this->uteis->trim_recursivo($result);
+
+        return $result;
     }
 
 }
