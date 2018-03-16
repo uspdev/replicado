@@ -18,7 +18,7 @@ class Graduacao
     public function verifica($codpes, $codundclgi)
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
+        $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
         $q = $this->conn->query($query);
         $result = $q->fetchAll();
 
@@ -35,7 +35,7 @@ class Graduacao
     {
         $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query = " SELECT {$cols1},{$cols2} FROM DBMAINT.LOCALIZAPESSOA "; 
+        $query = " SELECT {$cols1},{$cols2} FROM LOCALIZAPESSOA "; 
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) "; 
         $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}' "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 

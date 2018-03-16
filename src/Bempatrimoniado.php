@@ -19,7 +19,7 @@ class Bempatrimoniado
     {
 
        $cols = file_get_contents('replicado_queries/tables/bempatrimoniado.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.BEMPATRIMONIADO WHERE numpat = '{$numpar}'"; 
+        $query = " SELECT {$cols} FROM BEMPATRIMONIADO WHERE numpat = '{$numpar}'"; 
         $q = $this->db->query($query);
         $result = $q->fetchAll()[0];
         $result = $this->uteis->utf8_converter($result);
@@ -28,14 +28,14 @@ class Bempatrimoniado
 
     public function cracha($codpes)
      /*
-     *FROM DBMAINT.BEMPATRIMONIADO
+     *FROM BEMPATRIMONIADO
 
      WHERE (BEMPATRIMONIADO.coditmmat = '12513' OR BEMPATRIMONIADO.coditmmat = '51110' OR BEMPATRIMONIADO.coditmmat = '354384' OR BEMPATRIMONIADO.coditmmat = '354341' OR BEMPATRIMONIADO.coditmmat = '9300' OR BEMPATRIMONIADO.coditmmat = '162213' OR BEMPATRIMONIADO.coditmmat = '57100' OR BEMPATRIMONIADO.coditmmat = '45624')
      AND BEMPATRIMONIADO.stabem = 'Ativo'
      */
     {
         $cols = file_get_contents('replicado_queries/tables/catr_cracha.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.CATR_CRACHA WHERE codpescra = '{$codpes}'"; 
+        $query = " SELECT {$cols} FROM CATR_CRACHA WHERE codpescra = '{$codpes}'"; 
         $q = $this->db->query($query);
         $result = $q->fetchAll()[0];
         $result = $this->uteis->utf8_converter($result);
@@ -45,7 +45,7 @@ class Bempatrimoniado
     public function emails($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.EMAILPESSOA WHERE codpes = '{$codpes}'";
+        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
         $r = $this->db->query($query);
         $result = $r->fetchAll();
         $emails= array();
@@ -60,7 +60,7 @@ class Bempatrimoniado
     public function email($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.EMAILPESSOA WHERE codpes = '{$codpes}'";
+        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
         $r = $this->db->query($query);
         $result = $r->fetchAll();
         foreach($result as $row)
@@ -73,7 +73,7 @@ class Bempatrimoniado
     public function emailusp($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM DBMAINT.EMAILPESSOA WHERE codpes = '{$codpes}'";
+        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
         $r = $this->db->query($query);
         $result = $r->fetchAll();
         foreach($result as $row)
