@@ -21,6 +21,7 @@ class Pessoa
         $query = " SELECT {$cols} FROM DBMAINT.PESSOA WHERE codpes = '{$codpes}'"; 
         $q = $this->conn->query($query);
         $result = $q->fetchAll()[0];
+        $q = null;
         $result = $this->uteis->utf8_converter($result);
         $result = $this->uteis->trim_recursivo($result);
         return $result;

@@ -6,12 +6,12 @@ use Uspdev\Replicado\Uteis;
 
 class Posgraduacao 
 {
-    private $db;
+    private $conn;
     private $uteis;
 
-    public function __construct($db)
+    public function __construct($conn)
     {
-        $this->db = $db;
+        $this->conn = $conn;
         $this->uteis = new Uteis;
     }
 
@@ -19,7 +19,7 @@ class Posgraduacao
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $query = " SELECT {$cols} FROM DBMAINT.LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
-        $q = $this->db->query($query);
+        $q = $this->coon->query($query);
         $result = $q->fetchAll();
 
         $return = false;
@@ -37,7 +37,8 @@ class Posgraduacao
         $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
         $query = " SELECT {$cols1},{$cols2} FROM DBMAINT.LOCALIZAPESSOA "; 
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) "; 
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOPOS' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}'"; 
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOPOS' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}' "; 
+        $query .= " ORDER BY PESSOA.nompes ASC "; 
         $q = $this->conn->query($query);
         $result = $q->fetchAll();
         $result = $this->uteis->utf8_converter($result);
@@ -46,4 +47,9 @@ class Posgraduacao
         return $result;
     }
 
+    public function ativosCsv($codundclgi)
+    {
+        $cols = ['codpes','nompes','codema','numcpf'];
+        return $this->uteis->makeCsv($this->ativos($codundclgi),$cols);
+    }
 }
