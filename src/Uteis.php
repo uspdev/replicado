@@ -58,13 +58,18 @@ class Uteis
 
 
 
-    function makeCsv($array)
+    function makeCsv($array,$cols=null)
     {
         $csv = '';
         $csvKeys = '';
 
         foreach(array_keys($array[0]) as $key) {
-            $csvKeys .= "$key,";
+            if(is_null($cols)){
+                $csvKeys .= "$key,";
+            }
+            else {
+                if (in_array($key,$cols,true)) $csvKeys .= "$key,"; 
+            }
         }
 
         $csv .= rtrim($csvKeys, ',') . "\r\n";
@@ -73,7 +78,12 @@ class Uteis
             $line = '';
 
             foreach($row as $key => $value) {
-                $line .= "$value,";
+                if(is_null($cols)){
+                    $line .= "$value,";
+                }
+                else {
+                    if (in_array($key,$cols,true)) $line .= "$value,";
+                }
             }
 
             $line = rtrim($line, ',') . "\r\n";
