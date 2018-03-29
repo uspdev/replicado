@@ -21,7 +21,6 @@ Os arquivos SQL estão separados por dois motivos:
 
 ## Adicione essa lib em seu projeto PHP:
 
-    composer config repositories.replicado git https://github.com/uspdev/replicado.git
     composer require uspdev/replicado:dev-master
 
 ## Baixe as consultas (TODO: incluir essa task no composer):
