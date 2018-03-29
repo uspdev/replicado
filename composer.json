@@ -1,21 +1,19 @@
 {
     "name": "uspdev/replicado",
-    "version": "dev-master",
     "minimum-stability": "dev",
-    "homepage": "https://git.uspdigital.usp.br/fflch/replicado",
+    "homepage": "https://github.com/uspdev/replicado",
     "description": "Classes PHP que consome dados do Sybase Replicado",
     "type": "library",
-    "license": "no usage restriction",
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Thiago Gomes Verissimo",
             "email": "thiago.verissimo@usp.br",
-            "homepage": "https://git.uspdigital.usp.br/u/5385361"
+            "homepage": "https://github.com/thiagogomesverissimo"
         }
     ],
     "autoload": {
         "psr-4" : {
-            "": "src/",
             "Uspdev\\Replicado\\" : "src"
         }
     }
