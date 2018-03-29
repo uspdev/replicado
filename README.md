@@ -21,7 +21,7 @@ Os arquivos SQL estão separados por dois motivos:
 
 ## Adicione essa lib em seu projeto PHP:
 
-    composer require uspdev/replicado:dev-master
+    composer require uspdev/replicado
 
 ## Baixe as consultas (TODO: incluir essa task no composer):
 
