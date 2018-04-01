@@ -8,17 +8,18 @@ class Bempatrimoniado
 {
     private $db;
     private $uteis;
+    private $bems_informatica;
 
     public function __construct($db)
     {
         $this->db = $db;
         $this->uteis = new Uteis;
+        $this->bems_informatica = [12513,51110,354384,354341,162213,9300,45624,57100];
     }
 
     public function dump($numpat)
     {
-
-       $cols = file_get_contents('replicado_queries/tables/bempatrimoniado.sql', true);
+        $cols = file_get_contents('replicado_queries/tables/bempatrimoniado.sql', true);
         $query = " SELECT {$cols} FROM BEMPATRIMONIADO WHERE numpat = '{$numpar}'"; 
         $q = $this->db->query($query);
         $result = $q->fetchAll()[0];
@@ -27,11 +28,50 @@ class Bempatrimoniado
         return $result;
     }
 
-/* FROM BEMPATRIMONIADO
+    public function verifica($numpat)
+    {
+        $result = $this->dump($numpat);
+        if (isset($result) && $result['stabem'] == 'Ativo') {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
-     WHERE (BEMPATRIMONIADO.coditmmat = '12513' OR BEMPATRIMONIADO.coditmmat = '51110' OR BEMPATRIMONIADO.coditmmat = '354384' OR BEMPATRIMONIADO.coditmmat = '354341' OR BEMPATRIMONIADO.coditmmat = '9300' OR BEMPATRIMONIADO.coditmmat = '162213' OR BEMPATRIMONIADO.coditmmat = '57100' OR BEMPATRIMONIADO.coditmmat = '45624')
-     AND BEMPATRIMONIADO.stabem = 'Ativo'
-*/
+    public function ativos()
+    {
+        $cols = file_get_contents('replicado_queries/tables/bempatrimoniado.sql', true);
+        $query = " SELECT {$cols} FROM BEMPATRIMONIADO WHERE stabem = 'Ativo'"; 
+        $q = $this->db->query($query);
+        $result = $q->fetchAll()[0];
+        $result = $this->uteis->utf8_converter($result);
+        $result = $this->uteis->trim_recursivo($result);
+        return $result;
+    }
+
+    public function isInformatica($numpat)
+    {
+        $result = $this->dump($numpat);
+        if (isset($result) && in_array($result['coditmmat'],$this->bems_informatica)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    public function ativosInformatica(){
+    /*
+     WHERE (BEMPATRIMONIADO.coditmmat = '12513'  OR 
+            BEMPATRIMONIADO.coditmmat = '51110'  OR 
+            BEMPATRIMONIADO.coditmmat = '354384' OR 
+            BEMPATRIMONIADO.coditmmat = '354341' OR 
+            BEMPATRIMONIADO.coditmmat = '9300' OR 
+            BEMPATRIMONIADO.coditmmat = '162213' OR 
+            BEMPATRIMONIADO.coditmmat = '57100' OR 
+            BEMPATRIMONIADO.coditmmat = '45624')
+     */    
+    }
 }
 
 
