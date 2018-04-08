@@ -43,7 +43,7 @@ Os arquivos SQL estão separados por dois motivos:
     $replicado = new Connection($ip,$port,$db,$user,$pass);
     $replicado->setSybase();
     $pessoa = new Pessoa($replicado->conn);
-    $emails = $pessoa->emails('123456')
+    $emails = $pessoa->emails('123456');
     print_r($emails);
 
 ## Informações sobre tabelas:
