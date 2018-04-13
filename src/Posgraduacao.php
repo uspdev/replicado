@@ -25,7 +25,7 @@ class Posgraduacao
         $return = false;
         foreach($result as $row)
         {
-            if(trim($row['tipvin']) == 'ALUNOPOS' && trim($row['sitatl']) == 'A'  && trim($row['codundclg']) == $codundclg) 
+            if(trim($row['tipvin']) == 'ALUNOPOS' && trim($row['sitatl']) == 'A'  && trim($row['codundclg']) == $codundclgi) 
                 $return = true;    
         }
         return $return;
