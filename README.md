@@ -67,6 +67,7 @@ Os arquivos SQL estão separados por dois motivos:
  - *verifica($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na graduação da unidade
  - *ativos($unidade)*: retorna *array* de todos alunos de graduação ativos na unicade
  - *ativosCsv($unidade)*: retorna *csv* de todos alunos de graduação ativos na unidade
+ - *curso($codpes,$unidade)*: retorna os dados acadêmicos do aluno de graduação ativo na unidade
  
 ### Classe Posgraduacao
 
