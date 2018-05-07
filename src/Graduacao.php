@@ -31,13 +31,16 @@ class Graduacao
         return $return;
     }
 
-    public function ativos($codundclgi)
+    # Exemplo:
+    # $strFiltro = "AND PESSOA.nompes LIKE '%Alessandro%'"
+    public function ativos($codundclgi, $strFiltro = '')
     {
         $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
         $query = " SELECT {$cols1},{$cols2} FROM LOCALIZAPESSOA "; 
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) "; 
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}' "; 
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}' ";
+        $query .= " {$strFiltro} "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
         $q = $this->conn->query($query);
         $result = $q->fetchAll();
