@@ -2,25 +2,13 @@
 
 namespace Uspdev\Replicado;
 
-use Uspdev\Replicado\Uteis;
-
 class Posgraduacao 
 {
-    private $conn;
-    private $uteis;
-
-    public function __construct($conn)
-    {
-        $this->conn = $conn;
-        $this->uteis = new Uteis;
-    }
-
-    public function verifica($codpes, $codundclgi)
+    public static function verifica($codpes, $codundclgi)
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
-        $q = $this->coon->query($query);
-        $result = $q->fetchAll();
+        $result = DB::fetchAll($query);
 
         $return = false;
         foreach($result as $row)
@@ -31,7 +19,7 @@ class Posgraduacao
         return $return;
     }
 
-    public function ativos($codundclgi)
+    public static function ativos($codundclgi)
     {
         $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
@@ -39,17 +27,16 @@ class Posgraduacao
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) "; 
         $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOPOS' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}' "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
-        $q = $this->conn->query($query);
-        $result = $q->fetchAll();
-        $result = $this->uteis->utf8_converter($result);
-        $result = $this->uteis->trim_recursivo($result);
+        $result = DB::fetchAll($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
 
         return $result;
     }
 
-    public function ativosCsv($codundclgi)
+    public static function ativosCsv($codundclgi)
     {
         $cols = ['codpes','nompes','codema','numcpf'];
-        return $this->uteis->makeCsv($this->ativos($codundclgi),$cols);
+        return Uteis::makeCsv($this->ativos($codundclgi),$cols);
     }
 }

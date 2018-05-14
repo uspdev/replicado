@@ -12,15 +12,17 @@ class Graduacao
 
         foreach($result as $row)
         {
-            if(trim($row['tipvin']) == 'ALUNOGR' && trim($row['sitatl']) == 'A'  && trim($row['codundclg']) == $codundclgi) 
-                $return = true;
+            if(trim($row['tipvin']) == 'ALUNOGR' && 
+               trim($row['sitatl']) == 'A'  && 
+               trim($row['codundclg']) == $codundclgi) 
+               $return = true;
         }
         return false;
     }
 
     # Exemplo:
     # $strFiltro = "AND PESSOA.nompes LIKE '%Alessandro%'"
-    public function ativos($codundclgi, $strFiltro = '')
+    public static function ativos($codundclgi, $strFiltro = '')
     {
         $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
@@ -30,22 +32,20 @@ class Graduacao
         $query .= " {$strFiltro} "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
 
-        $q = $this->conn->query($query);
-        $result = $q->fetchAll();
-
-        $result = $this->uteis->utf8_converter($result);
-        $result = $this->uteis->trim_recursivo($result);
+        $result = DB::fetchAll($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
 
         return $result;
     }
 
-    public function ativosCsv($codundclgi)
+    public static function ativosCsv($codundclgi)
     {
         $cols = ['codpes','nompes','codema','numcpf'];
-        return $this->uteis->makeCsv($this->ativos($codundclgi),$cols);
+        return Uteis::makeCsv($this->ativos($codundclgi),$cols);
     }
 
-    public function curso($codpes, $codundclgi)
+    public static function curso($codpes, $codundclgi)
     {
         $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $cols2 = file_get_contents('replicado_queries/tables/vinculopessoausp.sql', true);
@@ -58,10 +58,9 @@ class Graduacao
         $query .= " WHERE (LOCALIZAPESSOA.codpes = $codpes) ";
         $query .= " AND (LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}') ";
         $query .= " AND (VINCULOPESSOAUSP.codcurgrd = HABILITACAOGR.codcur AND VINCULOPESSOAUSP.codhab = HABILITACAOGR.codhab) ";
-        $q = $this->conn->query($query);
-        $result = $q->fetch();
-        $result = $this->uteis->utf8_converter($result);
-        $result = $this->uteis->trim_recursivo($result);
+        $result = DB::fetchAll($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
 
         return $result;
     }

@@ -18,11 +18,10 @@ class Pessoa
 
     public static function cracha($codpes)
     {
-        $uteis = new Uteis;
         $cols = file_get_contents('replicado_queries/tables/catr_cracha.sql', true);
         $query = " SELECT {$cols} FROM CATR_CRACHA WHERE codpescra = '{$codpes}'"; 
         $result = DB::fetch($query);
-        $result = $uteis->utf8_converter($result);
+        $result = Uteis::utf8_converter($result);
         return $result;
     }
 
@@ -30,8 +29,7 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
         $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
-        $r = $this->conn->query($query);
-        $result = $r->fetchAll(PDO::FETCH_ASSOC);
+        $result = DB::fetchAll($query);
         $emails= array();
         foreach($result as $row)
         {
@@ -45,8 +43,7 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
         $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
-        $r = $this->conn->query($query);
-        $result = $r->fetchAll(PDO::FETCH_ASSOC);
+        $result = DB::fetchAll($query);
         foreach($result as $row)
         {
             if (trim($row['stamtr'])=='S')
@@ -58,8 +55,7 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
         $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
-        $r = $this->conn->query($query);
-        $result = $r->fetchAll(PDO::FETCH_ASSOC);
+        $result = DB::fetch($query);
         foreach($result as $row)
         {
             if (trim($row['stausp'])=='S')
@@ -75,10 +71,8 @@ class Pessoa
         $query = " SELECT {$cols1}, {$cols2} FROM TELEFPESSOA ";
         $query .= " FULL OUTER JOIN LOCALIDADE ON TELEFPESSOA.codlocddd = LOCALIDADE.codloc ";
         $query .= " WHERE TELEFPESSOA.codpes = '{$codpes}'";
-        $r = $this->conn->query($query);
-        //var_dump($r); die();
-        $result = $r->fetchAll(PDO::FETCH_ASSOC);
-        
+        $result = DB::fetch($query);
+
         $telefones= array();
         foreach($result as $row)
         {
@@ -93,15 +87,14 @@ class Pessoa
         $nome = utf8_decode($this->uteis->removeAcentos($nome));
         $nome = trim($nome);
         $nome= strtoupper(str_replace(' ','%',$nome));
-        
+
         $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
         $query = " SELECT {$cols}, UPPER(PESSOA.nompes) as nompes_upper "; 
         $query .= " FROM PESSOA WHERE nompes_upper LIKE '%{$nome}%' "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
-        $stmt = $this->conn->query($query);
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $result = $this->uteis->utf8_converter($result);
-        $result = $this->uteis->trim_recursivo($result);
+        $result = DB::fetch($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
 
         return $result;
     }
@@ -110,10 +103,9 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
-        $stmt = $this->conn->query($query);
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $result = $this->uteis->utf8_converter($result);
-        $result = $this->uteis->trim_recursivo($result);
+        $result = DB::fetch($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
        
         $localizas = array();
         foreach($result as $row)

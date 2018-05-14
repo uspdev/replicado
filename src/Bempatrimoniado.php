@@ -2,33 +2,22 @@
 
 namespace Uspdev\Replicado;
 
-use Uspdev\Replicado\Uteis;
-
 class Bempatrimoniado 
 {
-    private $db;
-    private $uteis;
-    private $bems_informatica;
 
-    public function __construct($db)
-    {
-        $this->db = $db;
-        $this->uteis = new Uteis;
-        $this->bems_informatica = [12513,51110,354384,354341,162213,9300,45624,57100];
-    }
+    private static informatica = [12513,51110,354384,354341,162213,9300,45624,57100];
 
-    public function dump($numpat)
+    public static function dump($numpat)
     {
         $cols = file_get_contents('replicado_queries/tables/bempatrimoniado.sql', true);
         $query = " SELECT {$cols} FROM BEMPATRIMONIADO WHERE numpat = '{$numpar}'"; 
-        $q = $this->db->query($query);
-        $result = $q->fetchAll()[0];
-        $result = $this->uteis->utf8_converter($result);
-        $result = $this->uteis->trim_recursivo($result);
+        $result = DB::fetch($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
         return $result;
     }
 
-    public function verifica($numpat)
+    public static function verifica($numpat)
     {
         $result = $this->dump($numpat);
         if (isset($result) && $result['stabem'] == 'Ativo') {
@@ -39,18 +28,17 @@ class Bempatrimoniado
         }
     }
 
-    public function ativos()
+    public static function ativos()
     {
         $cols = file_get_contents('replicado_queries/tables/bempatrimoniado.sql', true);
         $query = " SELECT {$cols} FROM BEMPATRIMONIADO WHERE stabem = 'Ativo'"; 
-        $q = $this->db->query($query);
-        $result = $q->fetchAll()[0];
-        $result = $this->uteis->utf8_converter($result);
-        $result = $this->uteis->trim_recursivo($result);
+        $result = DB::fetchAll($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
         return $result;
     }
 
-    public function isInformatica($numpat)
+    public static function isInformatica($numpat)
     {
         $result = $this->dump($numpat);
         if (isset($result) && in_array($result['coditmmat'],$this->bems_informatica)) {
@@ -60,7 +48,7 @@ class Bempatrimoniado
             return false;
         }
     }
-    public function ativosInformatica(){
+    public static function ativosInformatica(){
     /*
      WHERE (BEMPATRIMONIADO.coditmmat = '12513'  OR 
             BEMPATRIMONIADO.coditmmat = '51110'  OR 
@@ -73,8 +61,3 @@ class Bempatrimoniado
      */    
     }
 }
-
-
-
-
-
