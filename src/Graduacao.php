@@ -59,7 +59,7 @@ class Graduacao
         $query .= " WHERE (LOCALIZAPESSOA.codpes = $codpes) ";
         $query .= " AND (LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}') ";
         $query .= " AND (VINCULOPESSOAUSP.codcurgrd = HABILITACAOGR.codcur AND VINCULOPESSOAUSP.codhab = HABILITACAOGR.codhab) ";
-        $result = DB::fetchAll($query);
+        $result = DB::fetch($query);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
 
