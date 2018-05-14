@@ -2,47 +2,36 @@
 
 namespace Uspdev\Replicado;
 
-use Uspdev\Replicado\Uteis;
-
 class Pessoa 
 {
-    private $conn;
     private $uteis;
 
-    public function __construct($conn)
-    {
-        $this->conn = $conn;
-        $this->uteis = new Uteis;
-    }
-
-    public function dump($codpes)
+    public static function dump($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
         $query = " SELECT {$cols} FROM PESSOA WHERE codpes = '{$codpes}'"; 
-        $q = $this->conn->query($query);
-        $result = $q->fetchAll()[0];
-        $q = null;
-        $result = $this->uteis->utf8_converter($result);
-        $result = $this->uteis->trim_recursivo($result);
+        $result = DB::fetch($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
         return $result;
     }
 
-    public function cracha($codpes)
+    public static function cracha($codpes)
     {
+        $uteis = new Uteis;
         $cols = file_get_contents('replicado_queries/tables/catr_cracha.sql', true);
         $query = " SELECT {$cols} FROM CATR_CRACHA WHERE codpescra = '{$codpes}'"; 
-        $q = $this->conn->query($query);
-        $result = $q->fetchAll()[0];
-        $result = $this->uteis->utf8_converter($result);
+        $result = DB::fetch($query);
+        $result = $uteis->utf8_converter($result);
         return $result;
     }
 
-    public function emails($codpes)
+    public static function emails($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
         $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
         $r = $this->conn->query($query);
-        $result = $r->fetchAll();
+        $result = $r->fetchAll(PDO::FETCH_ASSOC);
         $emails= array();
         foreach($result as $row)
         {
@@ -52,12 +41,12 @@ class Pessoa
         return $emails;
     }
 
-    public function email($codpes)
+    public static function email($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
         $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
         $r = $this->conn->query($query);
-        $result = $r->fetchAll();
+        $result = $r->fetchAll(PDO::FETCH_ASSOC);
         foreach($result as $row)
         {
             if (trim($row['stamtr'])=='S')
@@ -65,12 +54,12 @@ class Pessoa
         }
     }
 
-    public function emailusp($codpes)
+    public static function emailusp($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
         $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
         $r = $this->conn->query($query);
-        $result = $r->fetchAll();
+        $result = $r->fetchAll(PDO::FETCH_ASSOC);
         foreach($result as $row)
         {
             if (trim($row['stausp'])=='S')
@@ -78,7 +67,7 @@ class Pessoa
         }
     }
 
-    public function telefones($codpes)
+    public static function telefones($codpes)
     {
         $cols1 = file_get_contents('replicado_queries/tables/telefpessoa.sql', true);
         $cols2 = file_get_contents('replicado_queries/tables/localidade.sql', true);
@@ -88,7 +77,7 @@ class Pessoa
         $query .= " WHERE TELEFPESSOA.codpes = '{$codpes}'";
         $r = $this->conn->query($query);
         //var_dump($r); die();
-        $result = $r->fetchAll();
+        $result = $r->fetchAll(PDO::FETCH_ASSOC);
         
         $telefones= array();
         foreach($result as $row)
@@ -99,7 +88,7 @@ class Pessoa
         return $telefones;
     }
 
-    public function nome($nome)
+    public static function nome($nome)
     {
         $nome = utf8_decode($this->uteis->removeAcentos($nome));
         $nome = trim($nome);
@@ -109,20 +98,20 @@ class Pessoa
         $query = " SELECT {$cols}, UPPER(PESSOA.nompes) as nompes_upper "; 
         $query .= " FROM PESSOA WHERE nompes_upper LIKE '%{$nome}%' "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
-        $q = $this->conn->query($query);
-        $result = $q->fetchAll();
+        $stmt = $this->conn->query($query);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $result = $this->uteis->utf8_converter($result);
         $result = $this->uteis->trim_recursivo($result);
 
         return $result;
     }
 
-    public function localiza($codpes)
+    public static function localiza($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
-        $q = $this->conn->query($query);
-        $result = $q->fetchAll();
+        $stmt = $this->conn->query($query);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $result = $this->uteis->utf8_converter($result);
         $result = $this->uteis->trim_recursivo($result);
        

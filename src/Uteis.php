@@ -4,7 +4,7 @@ namespace Uspdev\Replicado;
 
 class Uteis
 {
-    public function removeAcentos($str) 
+    public static function removeAcentos($str) 
     {
         $map = [
             'á' => 'a',
@@ -37,7 +37,7 @@ class Uteis
         return strtr($str, $map);
     }
 
-    function utf8_converter($array)
+    public static function utf8_converter($array)
     {
         array_walk_recursive($array, function(&$item, $key){
             // fix ISO-8859-1 ?
@@ -48,7 +48,7 @@ class Uteis
         return $array;
     }
 
-    function trim_recursivo($array)
+    public static function trim_recursivo($array)
     {
         array_walk_recursive($array, function(&$item, $key){
             $item = trim($item);
@@ -56,7 +56,7 @@ class Uteis
         return $array;
     }
 
-    function makeCsv($array,$cols=null)
+    public static function makeCsv($array,$cols=null)
     {
         $csv = '';
         $csvKeys = '';
