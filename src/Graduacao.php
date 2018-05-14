@@ -9,7 +9,8 @@ class Graduacao
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
         $result = DB::fetchAll($query);
-
+        
+        $return = false;
         foreach($result as $row)
         {
             if(trim($row['tipvin']) == 'ALUNOGR' && 
@@ -17,7 +18,7 @@ class Graduacao
                trim($row['codundclg']) == $codundclgi) 
                $return = true;
         }
-        return false;
+        return $return;
     }
 
     # Exemplo:
