@@ -10,12 +10,12 @@ class DB
     private function __clone(){}
 
     public static function getInstance(){
-        $type = getenv('REPLICADO_TYPE');
+        $type = getenv('REPLICADO_SGBD');
         $host = getenv('REPLICADO_HOST');
         $port = getenv('REPLICADO_PORT');
-        $db   = getenv('REPLICADO_DB');
-        $user = getenv('REPLICADO_USER');
-        $pass = getenv('REPLICADO_PASS');
+        $db   = getenv('REPLICADO_DATABASE');
+        $user = getenv('REPLICADO_USERNAME');
+        $pass = getenv('REPLICADO_PASSWORD');
 
         if(!self::$instance){
             try {
