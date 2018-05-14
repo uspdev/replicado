@@ -2,27 +2,14 @@
 
 namespace Uspdev\Replicado;
 
-use Uspdev\Replicado\Uteis;
-
 class Graduacao 
 {
-    private $conn;
-    private $uteis;
-
-    public function __construct($conn)
-    {
-        $this->conn = $conn;
-        $this->uteis = new Uteis;
-    }
-
-    public function verifica($codpes, $codundclgi)
+    public static function verifica($codpes, $codundclgi)
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
-        $q = $this->conn->query($query);
-        $result = $q->fetchAll();
+        $result = DB::fetchAll($query);
 
-        $return = false;
         foreach($result as $row)
         {
             if(trim($row['tipvin']) == 'ALUNOGR' && trim($row['sitatl']) == 'A'  && trim($row['codundclg']) == $codundclgi) 
