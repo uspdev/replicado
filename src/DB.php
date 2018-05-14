@@ -41,13 +41,13 @@ class DB
     }
 
     // overhide fetch and fetchAll functions
-    public function fetch(string $query)
+    public static function fetch(string $query)
     {
         $stmt = self::getInstance()->query($query);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function fetchAll(string $query)
+    public static function fetchAll(string $query)
     {
         $stmt = self::getInstance()->query($query);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
