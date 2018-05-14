@@ -13,9 +13,9 @@ class Graduacao
         foreach($result as $row)
         {
             if(trim($row['tipvin']) == 'ALUNOGR' && trim($row['sitatl']) == 'A'  && trim($row['codundclg']) == $codundclgi) 
-                $return = true;    
+                $return = true;
         }
-        return $return;
+        return false;
     }
 
     # Exemplo:
@@ -29,8 +29,10 @@ class Graduacao
         $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}' ";
         $query .= " {$strFiltro} "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
+
         $q = $this->conn->query($query);
         $result = $q->fetchAll();
+
         $result = $this->uteis->utf8_converter($result);
         $result = $this->uteis->trim_recursivo($result);
 
