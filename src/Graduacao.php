@@ -9,8 +9,7 @@ class Graduacao
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
         $result = DB::fetchAll($query);
-        //var_dump($result); die();
-
+        
         $return = false;
         foreach($result as $row)
         {
