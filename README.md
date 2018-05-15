@@ -9,7 +9,7 @@ como por exemplo:
 Usa-se uma classe PHP que faz a abstração do acesso e portanto deixa 
 seu código muito mais limpo e torna as consultas reutilizáveis:
 
-    $pessoa->dump('123')
+    Pessoa::dump('123')
 
 O projeto tem dois repositório, um *open source* com as classes PHP 
 ([replicado](https://github.com/uspdev/replicado)) e outro de acesso interno 
@@ -36,14 +36,16 @@ Os arquivos SQL estão separados por dois motivos:
     <?php
     namespace Meu\Lindo\App;
     require_once __DIR__ . '/vendor/autoload.php';
-
-    use Uspdev\Replicado\Connection;
     use Uspdev\Replicado\Pessoa;
+    
+    putenv('REPLICADO_TYPE=default');
+    putenv('REPLICADO_HOST=192.168.100.89');
+    putenv('REPLICADO_PORT=1498');
+    putenv('REPLICADO_DB=rep_dbc');
+    putenv('REPLICADO_USER=dbmaint_read');
+    putenv('REPLICADO_PASS=secret');
 
-    $replicado = new Connection($ip,$port,$db,$user,$pass);
-    $replicado->setSybase();
-    $pessoa = new Pessoa($replicado->conn);
-    $emails = $pessoa->emails('123456');
+    $emails = Pessoa::emails('123456');
     print_r($emails);
 
 ## Informações sobre tabelas:
