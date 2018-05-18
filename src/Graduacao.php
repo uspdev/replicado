@@ -7,7 +7,7 @@ class Graduacao
     public static function verifica($codpes, $codundclgi)
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
-        $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
+        $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = {$codpes}"; 
         $result = DB::fetchAll($query);
         
         $return = false;

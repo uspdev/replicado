@@ -9,7 +9,7 @@ class Pessoa
     public static function dump($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query = " SELECT {$cols} FROM PESSOA WHERE codpes = '{$codpes}'"; 
+        $query = " SELECT {$cols} FROM PESSOA WHERE codpes = {$codpes}"; 
         $result = DB::fetch($query);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
@@ -28,7 +28,7 @@ class Pessoa
     public static function emails($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
+        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = {$codpes}";
         $result = DB::fetchAll($query);
         $emails= array();
         foreach($result as $row)
@@ -42,7 +42,7 @@ class Pessoa
     public static function email($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
+        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = {$codpes}";
         $result = DB::fetchAll($query);
         foreach($result as $row)
         {
@@ -54,7 +54,7 @@ class Pessoa
     public static function emailusp($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = '{$codpes}'";
+        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = {$codpes}";
         $result = DB::fetch($query);
         foreach($result as $row)
         {
@@ -70,7 +70,7 @@ class Pessoa
 
         $query = " SELECT {$cols1}, {$cols2} FROM TELEFPESSOA ";
         $query .= " FULL OUTER JOIN LOCALIDADE ON TELEFPESSOA.codlocddd = LOCALIDADE.codloc ";
-        $query .= " WHERE TELEFPESSOA.codpes = '{$codpes}'";
+        $query .= " WHERE TELEFPESSOA.codpes = {$codpes}";
         $result = DB::fetch($query);
 
         $telefones= array();
@@ -102,7 +102,7 @@ class Pessoa
     public static function localiza($codpes)
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
-        $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = '{$codpes}'"; 
+        $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = {$codpes}"; 
         $result = DB::fetch($query);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
