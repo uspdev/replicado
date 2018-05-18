@@ -10,7 +10,7 @@ class Bempatrimoniado
     public static function dump($numpat)
     {
         $cols = file_get_contents('replicado_queries/tables/bempatrimoniado.sql', true);
-        $query = " SELECT {$cols} FROM BEMPATRIMONIADO WHERE numpat = '{$numpar}'"; 
+        $query = " SELECT {$cols} FROM BEMPATRIMONIADO WHERE numpat = {$numpar}"; 
         $result = DB::fetch($query);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
