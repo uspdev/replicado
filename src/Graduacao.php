@@ -69,4 +69,19 @@ class Graduacao
 
         return $result;
     }
+
+    public static function programa($codpes)
+    {
+        $cols1 = file_get_contents('replicado_queries/tables/histproggr.sql', true);
+        $query = " SELECT TOP 1 {$cols1} FROM HISTPROGGR "; 
+        $query .= " WHERE (HISTPROGGR.codpes = $codpes) ";
+        $query .= " AND (HISTPROGGR.stapgm = 'H' OR HISTPROGGR.stapgm = 'R') ";
+        $query .= " ORDER BY HISTPROGGR.dtaoco DESC ";
+        $result = DB::fetch($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+
+        return $result;
+    }
+
 }
