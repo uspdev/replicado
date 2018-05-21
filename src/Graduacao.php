@@ -25,7 +25,7 @@ class Graduacao
     {
         $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query = " SELECT {$cols1},{$cols2},UPPER(PESSOA.nompes) as nompes_upper FROM LOCALIZAPESSOA ";
+        $query = " SELECT {$cols1},{$cols2} FROM LOCALIZAPESSOA ";
 
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
         $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = {$codundclgi} ";
@@ -33,7 +33,7 @@ class Graduacao
         if (!is_null($parteNome)) {
             $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
             $parteNome = strtoupper(str_replace(' ','%',$parteNome));
-            $query .= " AND nompes_upper LIKE '%{$parteNome}%' ";
+            $query .= " AND UPPER(PESSOA.nompes) LIKE '%{$parteNome}%' ";
         }
         $query .= " ORDER BY PESSOA.nompes ASC "; 
 
