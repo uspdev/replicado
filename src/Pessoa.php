@@ -89,8 +89,8 @@ class Pessoa
         $nome= strtoupper(str_replace(' ','%',$nome));
 
         $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query = " SELECT {$cols}, UPPER(PESSOA.nompes) as nompes_upper "; 
-        $query .= " FROM PESSOA WHERE nompes_upper LIKE '%{$nome}%' "; 
+        $query = " SELECT {$cols} "; 
+        $query .= " FROM PESSOA WHERE UPPER(PESSOA.nompes) LIKE '%{$nome}%' "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
         $result = DB::fetch($query);
         $result = Uteis::utf8_converter($result);
