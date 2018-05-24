@@ -23,13 +23,9 @@ class DB
                     $dsn = "dblib:tdsver=5.0;host={$host}:{$port}";
                     self::$instance = new PDO($dsn,$user,$pass);
                     self::$instance->query("use {$db}");
-                } else 
-                if($type == 'default') {
+                } else {
                     $dsn = "dblib:host={$host}:{$port};dbname={$db}";
                     self::$instance = new PDO($dsn,$user,$pass);
-                }
-                else {
-                    die("database type not set: use default");
                 }
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
