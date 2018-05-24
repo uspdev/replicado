@@ -5,3 +5,6 @@ src/replicado_queries
 
 # index.php used for test
 index.php
+
+# test
+src/test.php
