@@ -38,12 +38,11 @@ Os arquivos SQL estão separados por dois motivos:
     require_once __DIR__ . '/vendor/autoload.php';
     use Uspdev\Replicado\Pessoa;
     
-    putenv('REPLICADO_TYPE=default');
     putenv('REPLICADO_HOST=192.168.100.89');
     putenv('REPLICADO_PORT=1498');
-    putenv('REPLICADO_DB=rep_dbc');
-    putenv('REPLICADO_USER=dbmaint_read');
-    putenv('REPLICADO_PASS=secret');
+    putenv('REPLICADO_DATABASE=rep_dbc');
+    putenv('REPLICADO_USERNAME=dbmaint_read');
+    putenv('REPLICADO_PASSWORD=secret');
 
     $emails = Pessoa::emails('123456');
     print_r($emails);
