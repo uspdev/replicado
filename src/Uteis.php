@@ -134,8 +134,9 @@ class Uteis
 
     protected static function remove_especiais ($str)
     {
-        $a = array('\'');
-        $b = array('');
+        // aqui pode ser que tenha de remover todos os especiais de forma global
+        $a = array('\'', '-');
+        $b = array('',   '');
         return str_replace($a, $b, $str);
     }
 
