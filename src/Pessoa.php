@@ -101,18 +101,10 @@ class Pessoa
 
     public static function nomeFonetico($nome)
     {
-        // avaliar se precisamos dessas 3 linhas na busca fonética
-        $nome = utf8_decode(Uteis::removeAcentos($nome));
-        $nome = trim($nome);
-        $nome= strtoupper(str_replace(' ','%',$nome));
-
         $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query = "DECLARE @nome VARCHAR(255) ";
-        $query .= "EXEC SPfonetica '{$nome}', @nome OUT ";
-        $query .= " SELECT {$cols} "; 
-        $query .= " FROM PESSOA WHERE PESSOA.nompesfon LIKE '%' + @nome + '%' "; 
-        $query .= " ORDER BY PESSOA.nompes ASC "; 
-        print_r($query); die();
+        $query  = "SELECT {$cols} "; 
+        $query .= "FROM PESSOA WHERE PESSOA.nompesfon LIKE '%" . Uteis::fonetico($nome) .  "%' "; 
+        $query .= "ORDER BY PESSOA.nompes ASC "; 
         $result = DB::fetchAll($query);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);

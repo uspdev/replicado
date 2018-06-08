@@ -33,7 +33,7 @@ class Graduacao
         if (!is_null($parteNome)) {
             $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
             $parteNome = strtoupper(str_replace(' ','%',$parteNome));
-            $query .= " AND UPPER(PESSOA.nompes) LIKE '%{$parteNome}%' ";
+            $query .= " AND PESSOA.nompesfon LIKE '%" . Uteis::fonetico($parteNome) . "%' ";
         }
         $query .= " ORDER BY PESSOA.nompes ASC "; 
 
