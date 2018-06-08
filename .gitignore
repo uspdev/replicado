@@ -3,6 +3,8 @@
 *.swp
 src/replicado_queries
 
+.idea
+
 # index.php used for test
 index.php
 
