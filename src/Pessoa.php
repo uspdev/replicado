@@ -24,8 +24,12 @@ class Pessoa
         $cols = file_get_contents('replicado_queries/tables/catr_cracha.sql', true);
         $query = " SELECT {$cols} FROM CATR_CRACHA WHERE codpescra = '{$codpes}'"; 
         $result = DB::fetch($query);
-        $result = Uteis::utf8_converter($result);
-        return $result;
+        if(!empty($result)) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result;
+        }
+        return false;
     }
 
     public static function emails($codpes)
