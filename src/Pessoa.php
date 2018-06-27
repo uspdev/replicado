@@ -11,9 +11,12 @@ class Pessoa
         $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
         $query = " SELECT {$cols} FROM PESSOA WHERE codpes = {$codpes}"; 
         $result = DB::fetch($query);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        if(!empty($result)) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result;
+        }
+        return false;
     }
 
     public static function cracha($codpes)
