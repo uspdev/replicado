@@ -84,4 +84,28 @@ class Graduacao
         return $result;
     }
 
+    public static function nomeCurso($codcur)
+    {
+        $cols1 = file_get_contents('replicado_queries/tables/cursogr.sql', true);
+        $query = " SELECT TOP 1 {$cols1} FROM CURSOGR "; 
+        $query .= " WHERE (CURSOGR.codcur = $codcur) ";
+        $result = DB::fetch($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+
+        return $result['nomcur'];
+    }
+
+    public static function nomeHabilitacao($codhab, $codcur)
+    {
+        $cols1 = file_get_contents('replicado_queries/tables/habilitacaogr.sql', true);
+        $query = " SELECT TOP 1 {$cols1} FROM HABILITACAOGR "; 
+        $query .= " WHERE (HABILITACAOGR.codhab = $codhab AND HABILITACAOGR.codcur = $codcur) ";
+        $result = DB::fetch($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+
+        return $result['nomhab'];
+    }
+
 }

@@ -69,6 +69,8 @@ Os arquivos SQL estão separados por dois motivos:
  - *ativos($unidade, $strFiltro = '')*: retorna *array* de todos alunos de graduação ativos na unidade ou somente os alunos de graduação ativos que obedeçam o filtro
  - *ativosCsv($unidade)*: retorna *csv* de todos alunos de graduação ativos na unidade
  - *curso($codpes,$unidade)*: retorna os dados acadêmicos do aluno de graduação ativo na unidade
+ - *nomeCurso($codcur)*: retorna o nome do curso 
+ - *nomeHabilitacao($codhab, $codcur)*: retorna o nome da habilitação
  
 ### Classe Posgraduacao
 
