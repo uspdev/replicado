@@ -76,7 +76,7 @@ class Pessoa
         $cols2 = file_get_contents('replicado_queries/tables/localidade.sql', true);
 
         $query = " SELECT {$cols1}, {$cols2} FROM TELEFPESSOA ";
-        $query .= " FULL OUTER JOIN LOCALIDADE ON TELEFPESSOA.codlocddd = LOCALIDADE.codloc ";
+        $query .= " INNER JOIN LOCALIDADE ON TELEFPESSOA.codlocddd = LOCALIDADE.codloc ";
         $query .= " WHERE TELEFPESSOA.codpes = {$codpes}";
         $result = DB::fetch($query);
 
