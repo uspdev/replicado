@@ -78,7 +78,7 @@ class Pessoa
         $query = " SELECT {$cols1}, {$cols2} FROM TELEFPESSOA ";
         $query .= " INNER JOIN LOCALIDADE ON TELEFPESSOA.codlocddd = LOCALIDADE.codloc ";
         $query .= " WHERE TELEFPESSOA.codpes = {$codpes}";
-        $result = DB::fetch($query);
+        $result = DB::fetchAll($query);
 
         $telefones= array();
         foreach($result as $row)
