@@ -62,7 +62,7 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
         $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = {$codpes}";
-        $result = DB::fetch($query);
+        $result = DB::fetchAll($query);
         foreach($result as $row)
         {
             if (trim($row['stausp'])=='S')
@@ -99,7 +99,7 @@ class Pessoa
         $query = " SELECT {$cols} "; 
         $query .= " FROM PESSOA WHERE UPPER(PESSOA.nompes) LIKE '%{$nome}%' "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
-        $result = DB::fetch($query);
+        $result = DB::fetchAll($query);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
 
@@ -123,7 +123,7 @@ class Pessoa
     {
         $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
         $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = {$codpes}"; 
-        $result = DB::fetch($query);
+        $result = DB::fetchAll($query);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
        
