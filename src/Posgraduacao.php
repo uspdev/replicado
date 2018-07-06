@@ -19,11 +19,17 @@ class Posgraduacao
         return $return;
     }
 
-    public static function ativos($codundclgi)
+    public static function ativos($codundclgi, $custom_cols = null)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
-        $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query = " SELECT {$cols1},{$cols2} FROM LOCALIZAPESSOA "; 
+        if (is_null($custom_cols)) {
+            $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
+            $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
+            $query = " SELECT {$cols1},{$cols2} FROM LOCALIZAPESSOA ";
+        }
+        else {
+            $query = " SELECT {$custom_cols} FROM LOCALIZAPESSOA ";
+        }
+         
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) "; 
         $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOPOS' AND LOCALIZAPESSOA.codundclg = '{$codundclgi}' "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
