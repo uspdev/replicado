@@ -108,4 +108,21 @@ class Graduacao
         return $result['nomhab'];
     }
 
+    public static function obterCursosHabilitacoes($codundclgi)
+    {
+        $cols1 = file_get_contents('replicado_queries/tables/cursogr.sql', true);
+        $cols2 = file_get_contents('replicado_queries/tables/habilitacaogr.sql', true);
+        $query = " SELECT {$cols1},{$cols2} FROM CURSOGR, HABILITACAOGR ";
+        $query .= " WHERE (CURSOGR.codclg = {$codundclgi}) AND (CURSOGR.codcur = HABILITACAO.codcur) ";
+        $query .= " AND ( (CURSOGR.dtaatvcur IS NOT NULL) AND (CURSOGR.dtadtvcur IS NULL) ) ";
+        $query .= " AND ( (HABILITACAOGR.dtaatvhab IS NOT NULL) AND (HABILITACAOGR.dtadtvhab IS NULL) ) ";
+        $query .= " ORDER BY CURSOGR.nomcur, HABILITACAOGR.nomhab ASC "; 
+
+        $result = DB::fetchAll($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+
+        return $result;
+    }
+
 }
