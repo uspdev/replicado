@@ -71,6 +71,7 @@ Os arquivos SQL estão separados por dois motivos:
  - *curso($codpes,$unidade)*: retorna os dados acadêmicos do aluno de graduação ativo na unidade
  - *nomeCurso($codcur)*: retorna o nome do curso 
  - *nomeHabilitacao($codhab, $codcur)*: retorna o nome da habilitação
+ - *obterCursosHabilitacoes($unidade)*: retorna os cursos e habilitações na unidade
  
 ### Classe Posgraduacao
 
