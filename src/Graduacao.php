@@ -124,5 +124,24 @@ class Graduacao
 
         return $result;
     }
+    
+    public static function obterDisciplinas($arrCoddis)
+    {
+        $cols1 = file_get_contents('replicado_queries/tables/disciplinagr.sql', true);
+        $query = " SELECT {$cols1} FROM DISCIPLINAGR ";
+        $query .= " WHERE (DISCIPLINAGR.verdis = 1) AND ( ";
+        foreach ($arrCoddis as $sgldis) {
+            $query .= " (DISCIPLINAGR.coddis LIKE '$sgldis%') OR ";
+        }
+        $query = substr($query, 0, -3);
+        $query .= " ) ";
+        $query .= " ORDER BY DISCIPLINAGR.coddis ASC "; 
+
+        $result = DB::fetchAll($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+
+        return $result;
+    }
 
 }
