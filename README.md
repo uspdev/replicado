@@ -73,6 +73,7 @@ Os arquivos SQL estão separados por dois motivos:
  - *nomeHabilitacao($codhab, $codcur)*: retorna o nome da habilitação
  - *obterCursosHabilitacoes($unidade)*: retorna os cursos e habilitações na unidade
  - *obterDisciplinas($arrCoddis)*: recebe um *array* com o prefixo dos codigos das disciplinas e retorna *array* com todas as disciplinas na unidade
+ - *nomeDisciplina($coddis)*: recebe o código da disciplina *string* e retorna *string* com o nome da disciplina
  
 ### Classe Posgraduacao
 
