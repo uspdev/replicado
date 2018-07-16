@@ -125,6 +125,12 @@ class Graduacao
         return $result;
     }
     
+    /**
+     * Método para obter as disciplinas de graduação oferecidas na unidade
+     *
+     * @param Array $arrCoddis
+     * @return void
+     */
     public static function obterDisciplinas($arrCoddis)
     {
         $cols1 = file_get_contents('replicado_queries/tables/disciplinagr.sql', true);
@@ -142,6 +148,25 @@ class Graduacao
         $result = Uteis::trim_recursivo($result);
 
         return $result;
+    }
+    
+    /**
+     * Método para trazer o nome da disciplina de graduação
+     *
+     * @param String $coddis
+     * @return void
+     */
+    public static function nomeDisciplina($coddis)
+    {
+        $cols1 = file_get_contents('replicado_queries/tables/disciplinagr.sql', true);
+        $query = " SELECT {$cols1} FROM DISCIPLINAGR ";
+        $query .= " WHERE (DISCIPLINAGR.verdis = 1 AND DISCIPLINAGR.coddis = '$coddis') ";
+
+        $result = DB::fetch($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+
+        return $result['nomdis'];
     }
 
 }
