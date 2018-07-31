@@ -62,6 +62,7 @@ Os arquivos SQL estão separados por dois motivos:
  - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
  - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
  - *localiza($codpes)*: retorna vínculos ativos da pessoa
+ - *docentesAtivos($unidade)*: retorna *array* de todos os docentes ativos na unidade
  
 ### Classe Graduacao
 
