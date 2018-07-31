@@ -148,4 +148,27 @@ class Pessoa
         }
         return $localizas;
     }
+    
+    /**
+     * Método para retornar docentes ativos na unidade
+     *
+     * @param Integer $codundclgi
+     * @return void
+     */
+    public static function docentesAtivos($codundclgi)
+    {
+        $cols1 = file_get_contents('replicado_queries/tables/localizpessoa.sql', true);
+        $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
+        $query  = " SELECT {$cols1},{$cols2} FROM LOCALIZAPESSOA "; 
+        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) "; 
+        $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Docente%' "; 
+        $query .= " AND LOCALIZAPESSOA.codundclg = {$codundclgi} AND LOCALIZAPESSOA.sitatl = 'A') "; 
+        $result = DB::fetchAll($query);
+        if(!empty($result)) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result;
+        }
+        return false;
+    }    
 }
