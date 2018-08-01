@@ -163,6 +163,7 @@ class Pessoa
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) "; 
         $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Docente%' "; 
         $query .= " AND LOCALIZAPESSOA.codundclg = {$codundclgi} AND LOCALIZAPESSOA.sitatl = 'A') "; 
+        $query .= " ORDER BY LOCALIZAPESSOA.nompes "; 
         $result = DB::fetchAll($query);
         if(!empty($result)) {
             $result = Uteis::utf8_converter($result);
