@@ -11,21 +11,9 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
 
     Pessoa::dump('123')
 
-O projeto tem dois repositório, um *open source* com as classes PHP 
-([replicado](https://github.com/uspdev/replicado)) e outro de acesso interno 
-no gitlab da USP, este somente com as *queries* ([replicado_queries](https://git.uspdigital.usp.br/uspdev/replicado_queries)).
-Os arquivos SQL estão separados por dois motivos:
-
- 1. Não expor publicamente a estrutura interna dos dados das tabelas do replicado
- 2. Permitir que as consultas sejam reutilizadas em projetos com outras linguagens que não PHP
-
 ## Adicione essa lib em seu projeto PHP:
 
     composer require uspdev/replicado
-
-## Baixe as consultas (TODO: incluir essa task no composer):
-
-    git clone git@git.uspdigital.usp.br:uspdev/replicado_queries vendor/uspdev/replicado/src/replicado_queries
 
 ## Biblioteca PHP usada para conexão (testado com PHP7.2):
 

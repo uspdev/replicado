@@ -2,14 +2,13 @@
 
 namespace Uspdev\Replicado;
 
-class Graduacao 
+class Graduacao
 {
     public static function verifica($codpes, $codundclgi)
     {
-        $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
-        $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = {$codpes}"; 
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = {$codpes}"; 
         $result = DB::fetchAll($query);
-        
+
         $return = false;
         foreach($result as $row)
         {
@@ -23,9 +22,7 @@ class Graduacao
 
     public static function ativos($codundclgi, $parteNome = null)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
-        $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query = " SELECT {$cols1},{$cols2} FROM LOCALIZAPESSOA ";
+        $query = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
 
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
         $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = {$codundclgi} ";
@@ -52,14 +49,10 @@ class Graduacao
 
     public static function curso($codpes, $codundclgi)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
-        $cols2 = file_get_contents('replicado_queries/tables/vinculopessoausp.sql', true);
-        $cols3 = file_get_contents('replicado_queries/tables/cursogr.sql', true);
-        $cols4 = file_get_contents('replicado_queries/tables/habilitacaogr.sql', true);
-        $query = " SELECT {$cols1},{$cols2},{$cols3},{$cols4} FROM LOCALIZAPESSOA "; 
-        $query .= " INNER JOIN VINCULOPESSOAUSP ON (LOCALIZAPESSOA.codpes = VINCULOPESSOAUSP.codpes) "; 
-        $query .= " INNER JOIN CURSOGR ON (VINCULOPESSOAUSP.codcurgrd = CURSOGR.codcur) "; 
-        $query .= " INNER JOIN HABILITACAOGR ON (HABILITACAOGR.codhab = VINCULOPESSOAUSP.codhab) "; 
+        $query = " SELECT LOCALIZAPESSOA.*, VINCULOPESSOAUSP.*, CURSOGR.*, HABILITACAOGR.* FROM LOCALIZAPESSOA ";
+        $query .= " INNER JOIN VINCULOPESSOAUSP ON (LOCALIZAPESSOA.codpes = VINCULOPESSOAUSP.codpes) ";
+        $query .= " INNER JOIN CURSOGR ON (VINCULOPESSOAUSP.codcurgrd = CURSOGR.codcur) ";
+        $query .= " INNER JOIN HABILITACAOGR ON (HABILITACAOGR.codhab = VINCULOPESSOAUSP.codhab) ";
         $query .= " WHERE (LOCALIZAPESSOA.codpes = $codpes) ";
         $query .= " AND (LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = {$codundclgi}) ";
         $query .= " AND (VINCULOPESSOAUSP.codcurgrd = HABILITACAOGR.codcur AND VINCULOPESSOAUSP.codhab = HABILITACAOGR.codhab) ";
@@ -72,8 +65,7 @@ class Graduacao
 
     public static function programa($codpes)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/histproggr.sql', true);
-        $query = " SELECT TOP 1 {$cols1} FROM HISTPROGGR "; 
+        $query = " SELECT TOP 1 * FROM HISTPROGGR ";
         $query .= " WHERE (HISTPROGGR.codpes = $codpes) ";
         $query .= " AND (HISTPROGGR.stapgm = 'H' OR HISTPROGGR.stapgm = 'R') ";
         $query .= " ORDER BY HISTPROGGR.dtaoco DESC ";
@@ -86,8 +78,7 @@ class Graduacao
 
     public static function nomeCurso($codcur)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/cursogr.sql', true);
-        $query = " SELECT TOP 1 {$cols1} FROM CURSOGR "; 
+        $query = " SELECT TOP 1 * FROM CURSOGR ";
         $query .= " WHERE (CURSOGR.codcur = $codcur) ";
         $result = DB::fetch($query);
         $result = Uteis::utf8_converter($result);
@@ -98,8 +89,7 @@ class Graduacao
 
     public static function nomeHabilitacao($codhab, $codcur)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/habilitacaogr.sql', true);
-        $query = " SELECT TOP 1 {$cols1} FROM HABILITACAOGR "; 
+        $query = " SELECT TOP 1 * FROM HABILITACAOGR "; 
         $query .= " WHERE (HABILITACAOGR.codhab = $codhab AND HABILITACAOGR.codcur = $codcur) ";
         $result = DB::fetch($query);
         $result = Uteis::utf8_converter($result);
@@ -110,13 +100,11 @@ class Graduacao
 
     public static function obterCursosHabilitacoes($codundclgi)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/cursogr.sql', true);
-        $cols2 = file_get_contents('replicado_queries/tables/habilitacaogr.sql', true);
-        $query = " SELECT {$cols1},{$cols2} FROM CURSOGR, HABILITACAOGR ";
-        $query .= " WHERE (CURSOGR.codclg = {$codundclgi}) AND (CURSOGR.codcur = HABILITACAOGR.codcur) ";
-        $query .= " AND ( (CURSOGR.dtaatvcur IS NOT NULL) AND (CURSOGR.dtadtvcur IS NULL) ) ";
-        $query .= " AND ( (HABILITACAOGR.dtaatvhab IS NOT NULL) AND (HABILITACAOGR.dtadtvhab IS NULL) ) ";
-        $query .= " ORDER BY CURSOGR.nomcur, HABILITACAOGR.nomhab ASC "; 
+        $query = " SELECT CURSOGR.*, HABILITACAOGR.* FROM CURSOGR, HABILITACAOGR";
+        $query .= " WHERE (CURSOGR.codclg = {$codundclgi}) AND (CURSOGR.codcur = HABILITACAOGR.codcur)";
+        $query .= " AND ( (CURSOGR.dtaatvcur IS NOT NULL) AND (CURSOGR.dtadtvcur IS NULL) )";
+        $query .= " AND ( (HABILITACAOGR.dtaatvhab IS NOT NULL) AND (HABILITACAOGR.dtadtvhab IS NULL) )";
+        $query .= " ORDER BY CURSOGR.nomcur, HABILITACAOGR.nomhab ASC";
 
         $result = DB::fetchAll($query);
         $result = Uteis::utf8_converter($result);
@@ -124,7 +112,7 @@ class Graduacao
 
         return $result;
     }
-    
+
     /**
      * Método para obter as disciplinas de graduação oferecidas na unidade
      *
@@ -133,8 +121,7 @@ class Graduacao
      */
     public static function obterDisciplinas($arrCoddis)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/disciplinagr.sql', true);
-        $query = " SELECT {$cols1} FROM DISCIPLINAGR ";
+        $query = " SELECT * FROM DISCIPLINAGR ";
         $query .= " WHERE (DISCIPLINAGR.verdis = 1) AND ( ";
         foreach ($arrCoddis as $sgldis) {
             $query .= " (DISCIPLINAGR.coddis LIKE '$sgldis%') OR ";
@@ -149,7 +136,7 @@ class Graduacao
 
         return $result;
     }
-    
+
     /**
      * Método para trazer o nome da disciplina de graduação
      *
@@ -158,8 +145,7 @@ class Graduacao
      */
     public static function nomeDisciplina($coddis)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/disciplinagr.sql', true);
-        $query = " SELECT {$cols1} FROM DISCIPLINAGR ";
+        $query = " SELECT * FROM DISCIPLINAGR ";
         $query .= " WHERE (DISCIPLINAGR.verdis = 1 AND DISCIPLINAGR.coddis = '$coddis') ";
 
         $result = DB::fetch($query);

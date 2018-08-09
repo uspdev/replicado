@@ -2,24 +2,23 @@
 
 namespace Uspdev\Replicado;
 
-class Bempatrimoniado 
+class Bempatrimoniado
 {
 
-    private static informatica = [12513,51110,354384,354341,162213,9300,45624,57100];
+    #private static informatica = [12513,51110,354384,354341,162213,9300,45624,57100];
 
     public static function dump($numpat)
     {
-        $cols = file_get_contents('replicado_queries/tables/bempatrimoniado.sql', true);
-        $query = " SELECT {$cols} FROM BEMPATRIMONIADO WHERE numpat = {$numpar}"; 
+        $query = " SELECT * FROM BEMPATRIMONIADO WHERE numpat = {$numpat}";
         $result = DB::fetch($query);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
+        #$result = Uteis::utf8_converter($result);
+        #$result = Uteis::trim_recursivo($result);
         return $result;
     }
 
     public static function verifica($numpat)
     {
-        $result = $this->dump($numpat);
+        $result = Bempatrimoniado::dump($numpat);
         if (isset($result) && $result['stabem'] == 'Ativo') {
             return true;
         }
@@ -30,8 +29,7 @@ class Bempatrimoniado
 
     public static function ativos()
     {
-        $cols = file_get_contents('replicado_queries/tables/bempatrimoniado.sql', true);
-        $query = " SELECT {$cols} FROM BEMPATRIMONIADO WHERE stabem = 'Ativo'"; 
+        $query = " SELECT * FROM BEMPATRIMONIADO WHERE stabem = 'Ativo'";
         $result = DB::fetchAll($query);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
