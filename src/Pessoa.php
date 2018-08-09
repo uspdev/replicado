@@ -2,14 +2,13 @@
 
 namespace Uspdev\Replicado;
 
-class Pessoa 
+class Pessoa
 {
     private $uteis;
 
     public static function dump($codpes)
     {
-        $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query = " SELECT {$cols} FROM PESSOA WHERE codpes = {$codpes}"; 
+        $query = " SELECT * FROM PESSOA WHERE codpes = {$codpes}";
         $result = DB::fetch($query);
         if(!empty($result)) {
             $result = Uteis::utf8_converter($result);
@@ -21,8 +20,7 @@ class Pessoa
 
     public static function cracha($codpes)
     {
-        $cols = file_get_contents('replicado_queries/tables/catr_cracha.sql', true);
-        $query = " SELECT {$cols} FROM CATR_CRACHA WHERE codpescra = '{$codpes}'"; 
+        $query = " SELECT * FROM CATR_CRACHA WHERE codpescra = '{$codpes}'";
         $result = DB::fetch($query);
         if(!empty($result)) {
             $result = Uteis::utf8_converter($result);
@@ -34,8 +32,7 @@ class Pessoa
 
     public static function emails($codpes)
     {
-        $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = {$codpes}";
+        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = {$codpes}";
         $result = DB::fetchAll($query);
         $emails= array();
         foreach($result as $row)
@@ -48,8 +45,7 @@ class Pessoa
 
     public static function email($codpes)
     {
-        $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = {$codpes}";
+        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = {$codpes}";
         $result = DB::fetchAll($query);
         foreach($result as $row)
         {
@@ -60,8 +56,7 @@ class Pessoa
 
     public static function emailusp($codpes)
     {
-        $cols = file_get_contents('replicado_queries/tables/emailpessoa.sql', true);
-        $query = " SELECT {$cols} FROM EMAILPESSOA WHERE codpes = {$codpes}";
+        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = {$codpes}";
         $result = DB::fetchAll($query);
         foreach($result as $row)
         {
@@ -72,11 +67,8 @@ class Pessoa
 
     public static function telefones($codpes)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/telefpessoa.sql', true);
-        $cols2 = file_get_contents('replicado_queries/tables/localidade.sql', true);
-
-        $query = " SELECT {$cols1}, {$cols2} FROM TELEFPESSOA ";
-        $query .= " INNER JOIN LOCALIDADE ON TELEFPESSOA.codlocddd = LOCALIDADE.codloc ";
+        $query = " SELECT TELEFPESSOA.*, LOCALIDADE.* FROM TELEFPESSOA ";
+        $query .= " INNER JOIN LOCALIDADE ON TELEFPESSOA.codddd = LOCALIDADE.codddd ";
         $query .= " WHERE TELEFPESSOA.codpes = {$codpes}";
         $result = DB::fetchAll($query);
 
@@ -95,8 +87,7 @@ class Pessoa
         $nome = trim($nome);
         $nome= strtoupper(str_replace(' ','%',$nome));
 
-        $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query = " SELECT {$cols} "; 
+        $query = " SELECT *"; 
         $query .= " FROM PESSOA WHERE UPPER(PESSOA.nompes) LIKE '%{$nome}%' "; 
         $query .= " ORDER BY PESSOA.nompes ASC "; 
         $result = DB::fetchAll($query);
@@ -108,9 +99,8 @@ class Pessoa
 
     public static function nomeFonetico($nome)
     {
-        $cols = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query  = "SELECT {$cols} "; 
-        $query .= "FROM PESSOA WHERE PESSOA.nompesfon LIKE '%" . Uteis::fonetico($nome) .  "%' "; 
+        $query  = "SELECT *"; 
+        $query .= " FROM PESSOA WHERE PESSOA.nompesfon LIKE '%" . Uteis::fonetico($nome) .  "%' "; 
         $query .= "ORDER BY PESSOA.nompes ASC "; 
         $result = DB::fetchAll($query);
         $result = Uteis::utf8_converter($result);
@@ -121,34 +111,33 @@ class Pessoa
 
     public static function localiza($codpes)
     {
-        $cols = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
-        $query = " SELECT {$cols} FROM LOCALIZAPESSOA WHERE codpes = {$codpes}"; 
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = {$codpes}";
         $result = DB::fetchAll($query);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
-       
+
         $localizas = array();
         foreach($result as $row)
         {
             $localiza = "";
             if(!empty($row['tipvinext']))
-                $localiza = $localiza  .  $row['tipvinext']; 
+                $localiza = $localiza  .  $row['tipvinext'];
 
             if(!empty($row['nomfnc']))
-                $localiza = $localiza . " - " . $row['nomfnc']; 
+                $localiza = $localiza . " - " . $row['nomfnc'];
 
             if(!empty($row['nomset']))
-                $localiza = $localiza . " - " . $row['nomset']; 
+                $localiza = $localiza . " - " . $row['nomset'];
 
             if(!empty($row['sglclgund']))
-                $localiza = $localiza . " - " . $row['sglclgund']; 
+                $localiza = $localiza . " - " . $row['sglclgund'];
 
             in_array($localiza,$localizas) ?:  array_push($localizas,$localiza);
 
         }
         return $localizas;
     }
-    
+
     /**
      * Método para retornar docentes ativos na unidade
      *
@@ -157,13 +146,11 @@ class Pessoa
      */
     public static function docentesAtivos($codundclgi)
     {
-        $cols1 = file_get_contents('replicado_queries/tables/localizapessoa.sql', true);
-        $cols2 = file_get_contents('replicado_queries/tables/pessoa.sql', true);
-        $query  = " SELECT {$cols1},{$cols2} FROM LOCALIZAPESSOA "; 
-        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) "; 
-        $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Docente%' "; 
-        $query .= " AND LOCALIZAPESSOA.codundclg = {$codundclgi} AND LOCALIZAPESSOA.sitatl = 'A') "; 
-        $query .= " ORDER BY LOCALIZAPESSOA.nompes "; 
+        $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
+        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
+        $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Docente%' ";
+        $query .= " AND LOCALIZAPESSOA.codundclg = {$codundclgi} AND LOCALIZAPESSOA.sitatl = 'A') ";
+        $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
         $result = DB::fetchAll($query);
         if(!empty($result)) {
             $result = Uteis::utf8_converter($result);
@@ -171,5 +158,5 @@ class Pessoa
             return $result;
         }
         return false;
-    }    
+    }
 }
