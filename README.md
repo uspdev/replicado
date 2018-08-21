@@ -21,6 +21,7 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
 
 ## Para testar:
 
+```php
     <?php
     namespace Meu\Lindo\App;
     require_once __DIR__ . '/vendor/autoload.php';
@@ -34,6 +35,7 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
 
     $emails = Pessoa::emails('123456');
     print_r($emails);
+```
 
 ## Informações sobre tabelas:
 
