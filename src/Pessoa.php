@@ -67,8 +67,7 @@ class Pessoa
 
     public static function telefones($codpes)
     {
-        $query = " SELECT TELEFPESSOA.*, LOCALIDADE.* FROM TELEFPESSOA ";
-        $query .= " INNER JOIN LOCALIDADE ON TELEFPESSOA.codddd = LOCALIDADE.codddd ";
+        $query = " SELECT * FROM TELEFPESSOA ";
         $query .= " WHERE TELEFPESSOA.codpes = {$codpes}";
         $result = DB::fetchAll($query);
 
