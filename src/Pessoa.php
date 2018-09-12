@@ -60,9 +60,18 @@ class Pessoa
         $result = DB::fetchAll($query);
         foreach($result as $row)
         {
-            if (trim($row['stausp'])=='S')
+            if (trim($row['stausp'])=='S') {
                 return $row['codema'];
+            }
+            # adicionado o codigo abaixo, porque têm
+            # e-mail usp que o campo 'stausp' não está marcado
+            if (!is_null(trim($row['codema']))) {
+                $emailusp = strpos($row['codema'],'usp.br');
+                if ($emailusp != false)
+                    return $row['codema'];
+            }
         }
+        return "e-mail usp não encontrado";
     }
 
     public static function telefones($codpes)
