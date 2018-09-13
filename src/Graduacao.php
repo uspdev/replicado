@@ -121,14 +121,16 @@ class Graduacao
      */
     public static function obterDisciplinas($arrCoddis)
     {
-        $query = " SELECT * FROM DISCIPLINAGR ";
-        $query .= " WHERE (DISCIPLINAGR.verdis = 1) AND ( ";
+        $query = " SELECT D1.* FROM DISCIPLINAGR AS D1";
+        $query .= " WHERE (D1.verdis = (
+            SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis) 
+        )) AND ( ";
         foreach ($arrCoddis as $sgldis) {
-            $query .= " (DISCIPLINAGR.coddis LIKE '$sgldis%') OR ";
+            $query .= " (D1.coddis LIKE '$sgldis%') OR ";
         }
         $query = substr($query, 0, -3);
         $query .= " ) ";
-        $query .= " ORDER BY DISCIPLINAGR.coddis ASC "; 
+        $query .= " ORDER BY D1.coddis ASC "; 
 
         $result = DB::fetchAll($query);
         $result = Uteis::utf8_converter($result);
@@ -145,8 +147,10 @@ class Graduacao
      */
     public static function nomeDisciplina($coddis)
     {
-        $query = " SELECT * FROM DISCIPLINAGR ";
-        $query .= " WHERE (DISCIPLINAGR.verdis = 1 AND DISCIPLINAGR.coddis = '$coddis') ";
+        $query = " SELECT D1.* FROM DISCIPLINAGR AS D1";
+        $query .= " WHERE (D1.verdis = (
+            SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis) 
+        )) AND (D1.coddis = '$coddis') ";
 
         $result = DB::fetch($query);
         $result = Uteis::utf8_converter($result);
