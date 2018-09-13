@@ -16,5 +16,8 @@
         "psr-4" : {
             "Uspdev\\Replicado\\" : "src"
         }
+    },
+    "require": {
+        "monolog/monolog": "^2.0@dev"
     }
 }

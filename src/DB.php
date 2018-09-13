@@ -1,13 +1,19 @@
 <?php
 
 namespace Uspdev\Replicado;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
 use PDO;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class DB
 {
     private static $instance;
     private function __construct(){}
     private function __clone(){}
+    private static $logger;
 
     public static function getInstance(){
         $type = getenv('REPLICADO_SGBD');
@@ -17,7 +23,7 @@ class DB
         $user = getenv('REPLICADO_USERNAME');
         $pass = getenv('REPLICADO_PASSWORD');
 
-        if(!self::$instance){
+        if (!self::$instance) {
             try {
                 if($type == 'fflch') {
                     $dsn = "dblib:tdsver=5.0;host={$host}:{$port}";
@@ -28,8 +34,10 @@ class DB
                     self::$instance = new PDO($dsn,$user,$pass);
                 }
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-            } catch (PDOException $e) {
-                print_r($e->getMessage());
+            } catch (\Throwable $t) {
+                echo "Erro na conexão com o database! Contate o suporte";
+                $log = self::getLogger('Conexão');
+                $log->error($t->getMessage());
                 die();
             }
         }
@@ -39,13 +47,36 @@ class DB
     // overhide fetch and fetchAll functions
     public static function fetch(string $query)
     {
-        $stmt = self::getInstance()->query($query);
+        try {
+            $stmt = self::getInstance()->query($query);
+        } catch (\Throwable $t) {
+            echo "Erro Interno: contate o suporte!";
+            $log = self::getLogger('Consulta');
+            $log->error($t->getMessage());
+            return false;
+        }
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public static function fetchAll(string $query)
     {
-        $stmt = self::getInstance()->query($query);
+        try {
+            $stmt = self::getInstance()->query($query);
+        } catch (\Throwable $t) {
+            echo "Something happened: ". $t->getMessage();
+            $log = self::getLogger('Consulta');
+            $log->error($t->getMessage());
+            return false;
+        }
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    private static function getLogger($channel_name)
+    {
+        if (!isset(self::$logger)) {
+            self::$logger = new Logger($channel_name);
+            self::$logger->pushHandler(new StreamHandler(__DIR__ . '/log/replicado.log', Logger::DEBUG));
+        }
+        return self::$logger;
     }
 }
