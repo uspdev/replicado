@@ -159,4 +159,30 @@ class Graduacao
         return $result['nomdis'];
     }
 
+    /**
+     * Método para trazer as disciplinas, status e créditos concluídos
+     *
+     * @param Int $codpes
+     * @return void
+     */
+    public static function disciplinasConcluidas($codpes, $codundclgi)
+    {
+        $programa = self::programa($codpes);
+        $programa = $programa['codpgm'];
+        $ingresso = self::curso($codpes, $codundclgi);
+        $ingresso = substr($ingresso['dtainivin'], 0, 10);
+
+        $query  = "SELECT DISTINCT H.coddis, H.rstfim, D.creaul FROM HISTESCOLARGR AS H, DISCIPLINAGR AS D ";
+        $query .= "WHERE H.coddis = D.coddis AND H.verdis = D.verdis AND H.codpes = $codpes AND H.codpgm = $programa ";
+        $query .= "AND	(H.codtur = '0' OR CONVERT(INT, CONVERT(CHAR(4), H.codtur)) >= YEAR($ingresso)) ";
+        $query .= "AND (H.rstfim = 'A' OR H.rstfim = 'D' OR (H.rstfim = NULL AND H.stamtr = 'M' AND H.codtur LIKE 'YEAR($ingresso)1%')) ";
+        $query .= "ORDER BY H.coddis";
+
+        $result = DB::fetchAll($query);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+
+        return $result;
+    }
+
 }
