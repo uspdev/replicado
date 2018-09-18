@@ -65,6 +65,7 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
  - *obterCursosHabilitacoes($unidade)*: retorna os cursos e habilitações na unidade
  - *obterDisciplinas($arrCoddis)*: recebe um *array* com o prefixo dos codigos das disciplinas e retorna *array* com todas as disciplinas na unidade
  - *nomeDisciplina($coddis)*: recebe o código da disciplina *string* e retorna *string* com o nome da disciplina
+ - *programa($codpes)*: recebe o nº USP do aluno *int* e retorna *int* com o código do programa
  
 ### Classe Posgraduacao
 
