@@ -22,7 +22,7 @@ class Pessoa
     {
         $query = " SELECT * FROM CATR_CRACHA WHERE codpescra = '{$codpes}'";
         $result = DB::fetch($query);
-        if(!empty($result)) {
+        if (!empty($result)) {
             $result = Uteis::utf8_converter($result);
             $result = Uteis::trim_recursivo($result);
             return $result;
