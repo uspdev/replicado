@@ -9,8 +9,11 @@ class Bempatrimoniado
 
     public static function dump($numpat)
     {
-        $query = " SELECT * FROM BEMPATRIMONIADO WHERE numpat = {$numpat}";
-        $result = DB::fetch($query);
+        $query = " SELECT * FROM BEMPATRIMONIADO WHERE numpat = :numpat";
+        $param = [
+            'numpat' => $numpat,
+        ];
+        $result = DB::fetch($query, $param);
         #$result = Uteis::utf8_converter($result);
         #$result = Uteis::trim_recursivo($result);
         return $result;
