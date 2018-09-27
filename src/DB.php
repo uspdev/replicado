@@ -51,7 +51,7 @@ class DB
             $stmt = self::getInstance()->prepare($query);
             if (!is_null($param)) {
                 foreach ($param as $campo => $valor) {
-                    $stmt->bindParam(":$campo", $valor);
+                    $stmt->bindValue(":$campo", $valor);
                 }
             }
             $stmt->execute();
@@ -70,12 +70,12 @@ class DB
             $stmt = self::getInstance()->prepare($query);
             if (!is_null($param)) {
                 foreach ($param as $campo => $valor) {
-                    $stmt->bindParam(":$campo", $valor);
+                    $stmt->bindValue(":$campo", $valor);
                 }
             }
             $stmt->execute();
         } catch (\Throwable $t) {
-            echo "Something happened: ". $t->getMessage();
+            echo "Erro Interno: contate o suporte!";
             $log = self::getLogger('Consulta');
             $log->error($t->getMessage());
             return false;
