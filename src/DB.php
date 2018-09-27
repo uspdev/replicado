@@ -45,10 +45,16 @@ class DB
     }
 
     // overhide fetch and fetchAll functions
-    public static function fetch(string $query)
+    public static function fetch(string $query, array $param = null)
     {
         try {
-            $stmt = self::getInstance()->query($query);
+            $stmt = self::getInstance()->prepare($query);
+            if (!is_null($param)) {
+                foreach ($param as $campo => $valor) {
+                    $stmt->bindValue(":$campo", $valor);
+                }
+            }
+            $stmt->execute();
         } catch (\Throwable $t) {
             echo "Erro Interno: contate o suporte!";
             $log = self::getLogger('Consulta');
@@ -58,12 +64,18 @@ class DB
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public static function fetchAll(string $query)
+    public static function fetchAll(string $query, array $param = null)
     {
         try {
-            $stmt = self::getInstance()->query($query);
+            $stmt = self::getInstance()->prepare($query);
+            if (!is_null($param)) {
+                foreach ($param as $campo => $valor) {
+                    $stmt->bindValue(":$campo", $valor);
+                }
+            }
+            $stmt->execute();
         } catch (\Throwable $t) {
-            echo "Something happened: ". $t->getMessage();
+            echo "Erro Interno: contate o suporte!";
             $log = self::getLogger('Consulta');
             $log->error($t->getMessage());
             return false;
