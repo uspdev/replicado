@@ -187,7 +187,7 @@ class Graduacao
         $query  = "SELECT DISTINCT H.coddis, H.rstfim, D.creaul FROM HISTESCOLARGR AS H, DISCIPLINAGR AS D ";
         $query .= "WHERE H.coddis = D.coddis AND H.verdis = D.verdis AND H.codpes = :codpes AND H.codpgm = :programa ";
         $query .= "AND	(H.codtur = '0' OR CONVERT(INT, CONVERT(CHAR(4), H.codtur)) >= YEAR(:ingresso)) ";
-        $query .= "AND (H.rstfim = 'A' OR H.rstfim = 'D' OR (H.rstfim = NULL AND H.stamtr = 'M' AND H.codtur LIKE 'YEAR(:ingresso)1%')) ";
+        $query .= "AND (H.rstfim = 'A' OR H.rstfim = 'D' OR (H.rstfim = NULL AND H.stamtr = 'M' AND H.codtur LIKE 'YEAR('':ingresso'')1%')) ";
         $query .= "ORDER BY H.coddis";
         $param = [
             'codpes' => $codpes,
