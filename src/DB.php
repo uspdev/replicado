@@ -2,8 +2,6 @@
 
 namespace Uspdev\Replicado;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 use PDO;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
