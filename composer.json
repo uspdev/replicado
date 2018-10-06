@@ -2,7 +2,7 @@
     "name": "uspdev/replicado",
     "minimum-stability": "dev",
     "homepage": "https://github.com/uspdev/replicado",
-    "description": "Classes PHP que consome dados do Sybase Replicado",
+    "description": "Classes PHP que consome dados do Replicado USP",
     "type": "library",
     "license": "GPL-2.0-or-later",
     "authors": [
