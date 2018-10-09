@@ -30,7 +30,7 @@ class Graduacao
         ];
         $query = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)";
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = :codundclgi";
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A'";
         if (!is_null($parteNome)) {
             $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
             $parteNome = strtoupper(str_replace(' ','%',$parteNome));
@@ -42,12 +42,6 @@ class Graduacao
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
         return $result;
-    }
-
-    public static function ativosCsv($codundclgi)
-    {
-        $cols = ['codpes','nompes','codema','numcpf'];
-        return Uteis::makeCsv($this->ativos($codundclgi),$cols);
     }
 
     public static function curso($codpes, $codundclgi)
