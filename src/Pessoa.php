@@ -197,4 +197,29 @@ class Pessoa
         }
         return false;
     }
+    
+        /**
+     * Método para retornar servidores ativos na unidade
+     *
+     * @param Integer $codundclgi
+     * @return void
+     */
+    public static function servidoresAtivos($codundclgi)
+    {
+        $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
+        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
+        $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE '%Servidor%' ";
+        $query .= " AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A') ";
+        $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
+        $param = [
+            'codundclgi' => $codundclgi,
+        ];
+        $result = DB::fetchAll($query, $param);
+        if(!empty($result)) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result;
+        }
+        return false;
+    }
 }
