@@ -23,7 +23,7 @@ class Posgraduacao
     {
         $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)";
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOPOS' AND LOCALIZAPESSOA.codundclg = :codundclgi";
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOPOS' AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A'";
         $query .= " ORDER BY PESSOA.nompes ASC ";
         $param = [
             'codundclgi' => $codundclgi,
@@ -34,9 +34,4 @@ class Posgraduacao
         return $result;
     }
 
-    public static function ativosCsv($codundclgi)
-    {
-        $cols = ['codpes','nompes','codema','numcpf'];
-        return Uteis::makeCsv($this->ativos($codundclgi),$cols);
-    }
 }

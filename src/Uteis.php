@@ -56,43 +56,6 @@ class Uteis
         return $array;
     }
 
-    public static function makeCsv($array,$cols=null)
-    {
-        $csv = '';
-        $csvKeys = '';
-
-        foreach(array_keys($array[0]) as $key) {
-            if(is_null($cols)){
-                $csvKeys .= "$key,";
-            }
-            else {
-                if (in_array($key,$cols,true)) $csvKeys .= "$key,"; 
-            }
-        }
-
-        $csv .= rtrim($csvKeys, ',') . "\r\n";
-
-        foreach($array as $row) {
-            $line = '';
-
-            foreach($row as $key => $value) {
-                if(is_null($cols)){
-                    $line .= "$value,";
-                }
-                else {
-                    if (in_array($key,$cols,true)) $line .= "$value,";
-                }
-            }
-
-            $line = rtrim($line, ',') . "\r\n";
-            $csv .= $line;
-        }
-
-        return $csv;
-    }
-
-
-
 
     /*
      * As funções abaixo são utilizadas para o fonetico
