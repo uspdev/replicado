@@ -180,7 +180,7 @@ class Pessoa
      * @return void
      */
 
-    public static function vinculosAtivos($codpes)
+    public static function vinculos($codpes)
     {
         $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = :codpes AND LOCALIZAPESSOA.sitatl = 'A'";
         $param = [
@@ -193,7 +193,7 @@ class Pessoa
         $vinculos = array();
         foreach ($result as $row)
         {
-            if (!empty($row['tipvinext']))
+            if (!empty($row['tipvinext'])
                 in_array($row['tipvinext'],$vinculos) ?:  array_push($vinculos,$row['tipvinext'];
 
         }
@@ -206,7 +206,7 @@ class Pessoa
      * @param Integer $codundclgi
      * @return void
      */
-    public static function docentesAtivos($codundclgi)
+    public static function docentes($codundclgi)
     {
         $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
@@ -231,7 +231,7 @@ class Pessoa
      * @param Integer $codundclgi
      * @return void
      */
-    public static function servidoresAtivos($codundclgi)
+    public static function servidores($codundclgi)
     {
         $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
