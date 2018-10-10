@@ -51,8 +51,11 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
  - *email($codpes)*: recebe codpes e retorna email de correspondência da pessoa
  - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
  - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
- - *localiza($codpes)*: retorna vínculos ativos da pessoa
- - *docentesAtivos($unidade)*: retorna *array* de todos os docentes ativos na unidade
+ - *localiza($codpes)*: retorna vínculos ativos da pessoa -- deprecado? issue 72
+ - *vinculos($codpes)*: retorna vínculos ativos da pessoa
+ - *docentes($unidade)*: retorna *array* de todos os docentes ativos na unidade
+ - *servidores($unidade)*: retorna *array* de todos os funcionários ativos na unidade
+ - *estagiarios($unidade)*: retorna *array* de todos os estagiários ativos na unidade
  
 ### Classe Graduacao
 
