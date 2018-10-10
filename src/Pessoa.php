@@ -285,7 +285,7 @@ class Pessoa
     {
         $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
-        $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Estagiário' ";
+        $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Estagiario' ";
         $query .= " AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A') ";
         $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
         $param = [
