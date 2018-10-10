@@ -193,8 +193,8 @@ class Pessoa
         $vinculos = array();
         foreach ($result as $row)
         {
-            if (!empty($row['tipvinext'])
-                in_array($row['tipvinext'],$vinculos) ?:  array_push($vinculos,$row['tipvinext'];
+            if (!empty($row['tipvinext']))
+                in_array($row['tipvinext'],$vinculos) ?:  array_push($vinculos,$row['tipvinext']);
 
         }
         return $vinculos;
@@ -261,6 +261,31 @@ class Pessoa
         $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
         $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor Designado' ";
+        $query .= " AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A') ";
+        $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
+        $param = [
+            'codundclgi' => $codundclgi,
+        ];
+        $result = DB::fetchAll($query, $param);
+        if(!empty($result)) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result;
+        }
+        return false;
+    }
+    
+       /**
+     * Método para retornar estagiários ativos na unidade
+     *
+     * @param Integer $codundclgi
+     * @return void
+     */
+    public static function estagiarios($codundclgi)
+    {
+        $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
+        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
+        $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Estagiário' ";
         $query .= " AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A') ";
         $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
         $param = [
