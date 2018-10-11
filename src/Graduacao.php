@@ -12,15 +12,14 @@ class Graduacao
         ];
         $result = DB::fetchAll($query, $param);
 
-        $return = false;
         foreach ($result as $row)
         {
             if (trim($row['tipvin']) == 'ALUNOGR' && 
                trim($row['sitatl']) == 'A'  && 
                trim($row['codundclg']) == $codundclgi) 
-               $return = true;
+               return true;
         }
-        return $return;
+        return false;
     }
 
     public static function ativos($codundclgi, $parteNome = null)
