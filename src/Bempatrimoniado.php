@@ -25,9 +25,8 @@ class Bempatrimoniado
         if (isset($result) && $result['stabem'] == 'Ativo') {
             return true;
         }
-        else {
-            return false;
-        }
+        
+        return false;
     }
 
     public static function ativos()
@@ -45,9 +44,8 @@ class Bempatrimoniado
         if (isset($result) && in_array($result['coditmmat'],$this->bems_informatica)) {
             return true;
         }
-        else {
-            return false;
-        }
+     
+        return false;
     }
     public static function ativosInformatica(){
     /*
