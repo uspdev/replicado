@@ -141,38 +141,6 @@ class Pessoa
         return $result;
     }
 
-    public static function localiza($codpes)
-    {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
-        $param = [
-            'codpes' => $codpes,
-        ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-
-        $localizas = array();
-        foreach ($result as $row)
-        {
-            $localiza = "";
-            if (!empty($row['tipvinext']))
-                $localiza = $localiza  .  $row['tipvinext'];
-
-            if (!empty($row['nomfnc']))
-                $localiza = $localiza . " - " . $row['nomfnc'];
-
-            if (!empty($row['nomset']))
-                $localiza = $localiza . " - " . $row['nomset'];
-
-            if (!empty($row['sglclgund']))
-                $localiza = $localiza . " - " . $row['sglclgund'];
-
-            in_array($localiza,$localizas) ?:  array_push($localizas,$localiza);
-
-        }
-        return $localizas;
-    }
-
     /**
      * Método para retornar vículos ativos de uma pessoa
      *
