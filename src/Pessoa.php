@@ -142,15 +142,15 @@ class Pessoa
     }
 
     /**
-     * Método para retornar vículos ativos de uma pessoa
+     * Método para retornar vínculos de uma pessoa
      *
-     * @param Integer $codundclgi
+     * @param Integer $codpes
      * @return void
      */
 
     public static function vinculos($codpes)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes) AND LOCALIZAPESSOA.sitatl = 'A'";
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -161,8 +161,20 @@ class Pessoa
         $vinculos = array();
         foreach ($result as $row)
         {
+
+            $vinculo = "";
             if (!empty($row['tipvinext']))
-                in_array($row['tipvinext'],$vinculos) ?:  array_push($vinculos,$row['tipvinext']);
+                $vinculo = $vinculo  .  $row['tipvinext'];
+            if (!empty($row['nomfnc']))
+                $vinculo = $vinculo . " - " . $row['nomfnc'];
+            if (!empty($row['nomset']))
+                $vinculo = $vinculo . " - " . $row['nomset'];
+            if (!empty($row['sglclgund']))
+                $vinculo = $vinculo . " - " . $row['sglclgund'];
+            if (!empty($row['sitatl']))
+                $vinculo = $vinculo . " - " . $row['sitatl'];
+
+            in_array($vinculo,$vinculos) ?:  array_push($vinculos,$vinculo);
 
         }
         return $vinculos;
