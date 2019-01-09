@@ -143,7 +143,7 @@ class Pessoa
 
     public static function localiza($codpes)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = :codpes";
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -182,7 +182,7 @@ class Pessoa
 
     public static function vinculos($codpes)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = :codpes AND LOCALIZAPESSOA.sitatl = 'A'";
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes) AND LOCALIZAPESSOA.sitatl = 'A'";
         $param = [
             'codpes' => $codpes,
         ];
