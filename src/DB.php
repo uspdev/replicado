@@ -14,7 +14,6 @@ class DB
     private static $logger;
 
     public static function getInstance(){
-        $type = getenv('REPLICADO_SGBD');
         $host = getenv('REPLICADO_HOST');
         $port = getenv('REPLICADO_PORT');
         $db   = getenv('REPLICADO_DATABASE');
@@ -23,14 +22,8 @@ class DB
 
         if (!self::$instance) {
             try {
-                if($type == 'fflch') {
-                    $dsn = "dblib:tdsver=5.0;host={$host}:{$port}";
-                    self::$instance = new PDO($dsn,$user,$pass);
-                    self::$instance->query("use {$db}");
-                } else {
-                    $dsn = "dblib:host={$host}:{$port};dbname={$db}";
-                    self::$instance = new PDO($dsn,$user,$pass);
-                }
+                $dsn = "dblib:host={$host}:{$port};dbname={$db}";
+                self::$instance = new PDO($dsn,$user,$pass);
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
             } catch (\Throwable $t) {
                 echo "Erro na conexão com o database! Contate o suporte";
