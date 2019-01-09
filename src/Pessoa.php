@@ -211,7 +211,7 @@ class Pessoa
         $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
         $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Docente' ";
-        $query .= " AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A') ";
+        $query .= " AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A') ";
         $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
         $param = [
             'codundclgi' => $codundclgi,
@@ -236,8 +236,9 @@ class Pessoa
         $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
         $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor' ";
-        $query .= " AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A') ";
+        $query .= " AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A') ";
         $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
+dump($query);
         $param = [
             'codundclgi' => $codundclgi,
         ];
@@ -251,7 +252,7 @@ class Pessoa
     }
 
    /**
-     * Método para retornar servidores ativos na unidade
+     * Método para retornar servidores designados ativos na unidade
      *
      * @param Integer $codundclgi
      * @return void
@@ -261,7 +262,7 @@ class Pessoa
         $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
         $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor Designado' ";
-        $query .= " AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A') ";
+        $query .= " AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A') ";
         $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
         $param = [
             'codundclgi' => $codundclgi,
@@ -275,7 +276,7 @@ class Pessoa
         return false;
     }
     
-       /**
+    /**
      * Método para retornar estagiários ativos na unidade
      *
      * @param Integer $codundclgi
@@ -286,7 +287,7 @@ class Pessoa
         $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
         $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Estagiario' ";
-        $query .= " AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A') ";
+        $query .= " AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A') ";
         $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
         $param = [
             'codundclgi' => $codundclgi,
