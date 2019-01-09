@@ -171,8 +171,6 @@ class Pessoa
                 $vinculo = $vinculo . " - " . $row['nomset'];
             if (!empty($row['sglclgund']))
                 $vinculo = $vinculo . " - " . $row['sglclgund'];
-            if (!empty($row['sitatl']))
-                $vinculo = $vinculo . " - " . $row['sitatl'];
 
             in_array($vinculo,$vinculos) ?:  array_push($vinculos,$vinculo);
 
