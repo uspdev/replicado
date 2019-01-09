@@ -8,7 +8,7 @@ class Pessoa
 
     public static function dump($codpes)
     {
-        $query = " SELECT * FROM PESSOA WHERE codpes = :codpes";
+        $query = " SELECT * FROM PESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -38,7 +38,7 @@ class Pessoa
 
     public static function emails($codpes)
     {
-        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = :codpes";
+        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -54,7 +54,7 @@ class Pessoa
 
     public static function email($codpes)
     {
-        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = :codpes";
+        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -68,7 +68,7 @@ class Pessoa
 
     public static function emailusp($codpes)
     {
-        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = :codpes";
+        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -92,7 +92,7 @@ class Pessoa
     public static function telefones($codpes)
     {
         $query = " SELECT * FROM TELEFPESSOA ";
-        $query .= " WHERE TELEFPESSOA.codpes = :codpes";
+        $query .= " WHERE TELEFPESSOA.codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
