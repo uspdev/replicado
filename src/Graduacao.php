@@ -12,12 +12,14 @@ class Graduacao
         ];
         $result = DB::fetchAll($query, $param);
 
-        foreach ($result as $row)
-        {
-            if (trim($row['tipvin']) == 'ALUNOGR' && 
-               trim($row['sitatl']) == 'A'  && 
-               trim($row['codundclg']) == $codundclgi) 
-               return true;
+        if(!empty($result)) {
+            foreach ($result as $row)
+            {
+                if (trim($row['tipvin']) == 'ALUNOGR' && 
+                   trim($row['sitatl']) == 'A'  && 
+                   trim($row['codundclg']) == $codundclgi) 
+                   return true;
+            }
         }
         return false;
     }
