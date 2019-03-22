@@ -6,7 +6,7 @@ class Graduacao
 {
     public static function verifica($codpes, $codundclgi)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = :codpes"; 
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)"; 
         $param = [
             'codpes' => $codpes,
         ];
@@ -31,7 +31,7 @@ class Graduacao
         ];
         $query = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)";
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A'";
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A'";
         if (!is_null($parteNome)) {
             $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
             $parteNome = strtoupper(str_replace(' ','%',$parteNome));
@@ -51,8 +51,8 @@ class Graduacao
         $query .= " INNER JOIN VINCULOPESSOAUSP ON (LOCALIZAPESSOA.codpes = VINCULOPESSOAUSP.codpes)";
         $query .= " INNER JOIN CURSOGR ON (VINCULOPESSOAUSP.codcurgrd = CURSOGR.codcur)";
         $query .= " INNER JOIN HABILITACAOGR ON (HABILITACAOGR.codhab = VINCULOPESSOAUSP.codhab)";
-        $query .= " WHERE (LOCALIZAPESSOA.codpes = :codpes)";
-        $query .= " AND (LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = :codundclgi)";
+        $query .= " WHERE (LOCALIZAPESSOA.codpes = convert(int,:codpes))";
+        $query .= " AND (LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi))";
         $query .= " AND (VINCULOPESSOAUSP.codcurgrd = HABILITACAOGR.codcur AND VINCULOPESSOAUSP.codhab = HABILITACAOGR.codhab)";
         $param = [
             'codpes' => $codpes,
@@ -67,7 +67,7 @@ class Graduacao
     public static function programa($codpes)
     {
         $query = " SELECT TOP 1 * FROM HISTPROGGR ";
-        $query .= " WHERE (HISTPROGGR.codpes = :codpes) ";
+        $query .= " WHERE (HISTPROGGR.codpes = convert(int,:codpes)) ";
         $query .= " AND (HISTPROGGR.stapgm = 'H' OR HISTPROGGR.stapgm = 'R') ";
         $query .= " ORDER BY HISTPROGGR.dtaoco DESC ";
         $param = [
