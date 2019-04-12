@@ -32,6 +32,7 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
     putenv('REPLICADO_DATABASE=rep_dbc');
     putenv('REPLICADO_USERNAME=dbmaint_read');
     putenv('REPLICADO_PASSWORD=secret');
+    putenv('REPLICADO_PATHLOG=path/to/your.log');
 
     $emails = Pessoa::emails('123456');
     print_r($emails);
