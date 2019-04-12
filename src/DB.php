@@ -77,8 +77,9 @@ class DB
     private static function getLogger($channel_name)
     {
         if (!isset(self::$logger)) {
+            $pathlog = getenv('REPLICADO_PATHLOG') ?: __DIR__ . '/../../../../replicado.log';
             self::$logger = new Logger($channel_name);
-            self::$logger->pushHandler(new StreamHandler(__DIR__ . '/log/replicado.log', Logger::DEBUG));
+            self::$logger->pushHandler(new StreamHandler($pathlog, Logger::DEBUG));
         }
         return self::$logger;
     }
