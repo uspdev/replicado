@@ -279,4 +279,28 @@ dump($query);
         return false;
     }
 
+    /**
+     * Método para retornar o total dos vinculos
+     *
+     * @param Integer $codundclg
+     * @param String $vinculo
+     * @param Char $situacao
+     * @return void
+     */
+    public static function totalVinculo($vinculo, $codundclg)
+    {
+        $query = "SELECT COUNT(codpes) as totalvinculo FROM LOCALIZAPESSOA ";
+        $query .= "WHERE tipvinext = :vinculo AND sitatl = 'A' AND ";
+        $query .= "codundclg = convert(int,:codundclg)";
+        $param = [
+            'vinculo' => utf8_decode($vinculo),
+            'codundclg' => $codundclg,
+        ];
+        $result = DB::fetchAll($query, $param);
+        if(!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
+
 }
