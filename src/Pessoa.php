@@ -303,4 +303,30 @@ dump($query);
         return false;
     }
 
+    /**
+     * Método para retornar o total do programa de Pós
+     *
+     * @param Integer $codundclg
+     * @param String $nivpgm
+     * @return void
+     */
+    public static function totalPosNivelPrograma($nivpgm, $codundclg)
+    {
+        $query = "SELECT COUNT(lp.codpes) AS totalnivpgm FROM LOCALIZAPESSOA AS lp ";
+        $query .= "INNER JOIN VINCULOPESSOAUSP AS vpu ";
+        $query .= "ON(lp.codpes = vpu.codpes AND lp.tipvin = vpu.tipvin) ";
+        $query .= "WHERE lp.tipvin='ALUNOPOS' AND lp.codundclg= convert(int,:codundclg) ";
+        $query .= "AND lp.sitatl='A' AND vpu.nivpgm=:nivpgm";
+
+        $param = [
+            'nivpgm' => $nivpgm,
+            'codundclg' => $codundclg,
+        ];
+        $result = DB::fetchAll($query, $param);
+        if(!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
+
 }

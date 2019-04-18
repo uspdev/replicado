@@ -57,6 +57,7 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
  - *servidores($unidade)*: retorna *array* de todos os funcionários ativos na unidade
  - *estagiarios($unidade)*: retorna *array* de todos os estagiários ativos na unidade
  - *totalVicunlo($vinculo,$unidade)*: retorna *total* de vínculo ativos na unidade
+ - *totalPosNivelPrograma($nivpgm,$unidade)*: retorna *total de aluno de Pós matriculados* de acordo com o nível do programa, na unidade
  
 ### Classe Graduacao
 
