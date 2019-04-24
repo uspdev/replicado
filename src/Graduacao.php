@@ -196,4 +196,25 @@ class Graduacao
         return $result;
     }
 
+    /**
+     * Método para trazer os créditos de uma disciplina
+     *
+     * @param string $coddis
+     * @return int $creaul
+     */
+    public static function creditosDisciplina($coddis)
+    {
+        $query = " SELECT D1.creaul FROM DISCIPLINAGR AS D1";
+        $query .= " WHERE (D1.verdis = (
+            SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis)
+        )) AND (D1.coddis = :coddis)";
+        $param = [
+            'coddis' => $coddis,
+        ];
+        $result = DB::fetch($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result['creaul'];
+    }  
+
 }
