@@ -72,6 +72,7 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
  - *nomeDisciplina($coddis)*: recebe o código da disciplina *string* e retorna *string* com o nome da disciplina
  - *programa($codpes)*: recebe o nº USP do aluno *int* e retorna *int* com o código do programa
  - *disciplinasConcluidas($codpes, $unidade)*: recebe o nº USP do aluno *int* e o código da unidade *int* e retorna *array* com os cógigos, status e créditos de todas as disciplinas concluidas pelo aluno
+- *creditosDisciplina($coddis)*: recebe o código da disciplina *string* e retorna *int* com a quantidade de créditos da disciplina
 
 ### Classe Posgraduacao
 
