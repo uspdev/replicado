@@ -329,4 +329,19 @@ dump($query);
         return false;
     }
 
+    /**
+     * Método para retornar todos os vínculos por extenso
+     *
+     * @return void
+     */
+    public static function todosVinculosExtenso()
+    {
+        $query = "SELECT DISTINCT(tipvinext) FROM LOCALIZAPESSOA ";
+        $result = DB::fetchAll($query, $param);
+        if(!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
+
 }
