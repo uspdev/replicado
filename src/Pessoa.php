@@ -336,10 +336,10 @@ dump($query);
      */
     public static function todosVinculosExtenso()
     {
-        $query = "SELECT DISTINCT(tipvinext) FROM LOCALIZAPESSOA ";
-        $result = DB::fetchAll($query, $param);
+        $query = "SELECT DISTINCT(tipvinext) FROM LOCALIZAPESSOA";
+        $result = DB::fetchAll($query);
         if(!empty($result)) {
-            return $result;
+            return Uteis::utf8_converter($result);
         }
         return false;
     }
