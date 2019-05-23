@@ -243,7 +243,6 @@ class Pessoa
         $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor' ";
         $query .= " AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A') ";
         $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
-dump($query);
         $param = [
             'codundclgi' => $codundclgi,
         ];
