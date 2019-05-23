@@ -53,6 +53,7 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
  - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
  - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
  - *vinculos($codpes)*: retorna vínculos ativos da pessoa
+ - *vinculosSiglas($codpes,$unidade)*: retorna siglas de vínculos ativos da pessoa em uma dada unidade
  - *docentes($unidade)*: retorna *array* de todos os docentes ativos na unidade
  - *servidores($unidade)*: retorna *array* de todos os funcionários ativos na unidade
  - *estagiarios($unidade)*: retorna *array* de todos os estagiários ativos na unidade
@@ -78,7 +79,6 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
 
  - *verifica($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
  - *ativos($unidade)*: retorna *array* de todos alunos de pós-graduação ativos na unicade
- - *ativosCsv($unidade)*: retorna *csv* de todos alunos de pós-graduação ativos na unidade
  
  ### Classe Bempatrimoniado
 

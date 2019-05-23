@@ -179,6 +179,33 @@ class Pessoa
     }
 
     /**
+     * Método que retornar sigals dos vínculos de uma pessoa em uma dada unidade
+     *
+     * @param Integer $codpes
+     * @return array
+     */
+
+    public static function vinculosSiglas(int $codpes, int $codundclgi)
+    {
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes) AND codundclg = convert(int,:codundclgi) AND sitatl = 'A'";
+        $param = [
+            'codpes' => $codpes,
+            'codundclgi' => $codundclgi,
+        ];
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+
+        $vinculos = array();
+        foreach ($result as $row)
+        {
+            if (!empty($row['tipvin']))
+                in_array($row['tipvin'],$vinculos) ?:  array_push($vinculos,$row['tipvin']);
+        }
+        return $vinculos;
+    }
+
+    /**
      * Método para retornar docentes ativos na unidade
      *
      * @param Integer $codundclgi
