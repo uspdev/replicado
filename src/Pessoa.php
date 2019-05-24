@@ -182,7 +182,7 @@ class Pessoa
     }
 
     /**
-     * Método que retornar sigals dos vínculos de uma pessoa em uma dada unidade
+     * Método que retornar siglas dos vínculos de uma pessoa em uma dada unidade
      *
      * @param Integer $codpes
      * @return array
@@ -210,6 +210,31 @@ class Pessoa
                 in_array($vinculo,$vinculos) ?:  array_push($vinculos,$vinculo);
         }
         return $vinculos;
+    }
+
+    public static function setoresSiglas(int $codpes, int $codundclgi = 0)
+    {
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
+        if($codundclgi != 0 ) {
+            $query .= " AND codundclg = convert(int,:codundclgi)";
+        }
+        $param = [
+            'codpes' => $codpes,
+            'codundclgi' => $codundclgi,
+        ];
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+
+        $setores = array();
+        foreach ($result as $row)
+        {
+            if (!empty(trim($row['nomabvset']))) {
+                $setor = trim($row['nomabvset']);
+                in_array($setor,$setores) ?: array_push($setores,$setor);
+            }
+        }
+        return $setores;
     }
 
     /**
