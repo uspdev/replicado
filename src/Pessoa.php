@@ -148,9 +148,12 @@ class Pessoa
      * @return void
      */
 
-    public static function vinculos($codpes)
+    public static function vinculos(int $codpes, int $codundclgi = 0)
     {
         $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
+        if($codundclgi != 0 ) {
+            $query .= " AND codundclg = convert(int,:codundclgi)";
+        }
         $param = [
             'codpes' => $codpes,
         ];
@@ -185,9 +188,12 @@ class Pessoa
      * @return array
      */
 
-    public static function vinculosSiglas(int $codpes, int $codundclgi)
+    public static function vinculosSiglas(int $codpes, int $codundclgi = 0)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes) AND codundclg = convert(int,:codundclgi) AND sitatl = 'A'";
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
+        if($codundclgi != 0 ) {
+            $query .= " AND codundclg = convert(int,:codundclgi)";
+        }
         $param = [
             'codpes' => $codpes,
             'codundclgi' => $codundclgi,
@@ -200,7 +206,8 @@ class Pessoa
         foreach ($result as $row)
         {
             if (!empty($row['tipvin']))
-                in_array($row['tipvin'],$vinculos) ?:  array_push($vinculos,$row['tipvin']);
+                $vinculo = trim($row['tipvin']);
+                in_array($vinculo,$vinculos) ?:  array_push($vinculos,$vinculo);
         }
         return $vinculos;
     }
