@@ -82,7 +82,7 @@ class Graduacao
     public static function nomeCurso($codcur)
     {
         $query = " SELECT TOP 1 * FROM CURSOGR ";
-        $query .= " WHERE (CURSOGR.codcur = :codcur) ";
+        $query .= " WHERE (CURSOGR.codcur = convert(int, :codcur)) ";
         $param = [
             'codcur' => $codcur,
         ];
@@ -95,7 +95,7 @@ class Graduacao
     public static function nomeHabilitacao($codhab, $codcur)
     {
         $query = " SELECT TOP 1 * FROM HABILITACAOGR ";
-        $query .= " WHERE (HABILITACAOGR.codhab = :codhab AND HABILITACAOGR.codcur = :codcur) ";
+        $query .= " WHERE (HABILITACAOGR.codhab = convert(int, :codhab) AND HABILITACAOGR.codcur = convert(int, :codcur)) ";
         $param = [
             'codhab' => $codhab,
             'codcur' => $codcur,
@@ -109,7 +109,7 @@ class Graduacao
     public static function obterCursosHabilitacoes($codundclgi)
     {
         $query = " SELECT CURSOGR.*, HABILITACAOGR.* FROM CURSOGR, HABILITACAOGR";
-        $query .= " WHERE (CURSOGR.codclg = :codundclgi) AND (CURSOGR.codcur = HABILITACAOGR.codcur)";
+        $query .= " WHERE (CURSOGR.codclg = convert(int, :codundclgi)) AND (CURSOGR.codcur = HABILITACAOGR.codcur)";
         $query .= " AND ( (CURSOGR.dtaatvcur IS NOT NULL) AND (CURSOGR.dtadtvcur IS NULL) )";
         $query .= " AND ( (HABILITACAOGR.dtaatvhab IS NOT NULL) AND (HABILITACAOGR.dtadtvhab IS NULL) )";
         $query .= " ORDER BY CURSOGR.nomcur, HABILITACAOGR.nomhab ASC";
@@ -180,7 +180,7 @@ class Graduacao
         $ingresso = self::curso($codpes, $codundclgi);
         $ingresso = substr($ingresso['dtainivin'], 0, 4);
         $query  = "SELECT DISTINCT H.coddis, H.rstfim, D.creaul FROM HISTESCOLARGR AS H, DISCIPLINAGR AS D ";
-        $query .= "WHERE H.coddis = D.coddis AND H.verdis = D.verdis AND H.codpes = :codpes AND H.codpgm = :programa ";
+        $query .= "WHERE H.coddis = D.coddis AND H.verdis = D.verdis AND H.codpes = convert(int, :codpes) AND H.codpgm = :programa ";
         $query .= "AND	(H.codtur = '0' OR CONVERT(INT, CONVERT(CHAR(4), H.codtur)) >= YEAR(:ingresso)) ";
         $query .= "AND (H.rstfim = 'A' OR H.rstfim = 'D' OR (H.rstfim = NULL AND H.stamtr = 'M' AND H.codtur LIKE ':ingresso' + '1%')) ";
         $query .= "ORDER BY H.coddis";
