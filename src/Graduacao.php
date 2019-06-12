@@ -217,4 +217,35 @@ class Graduacao
         return $result['creaul'];
     }  
 
+    /**
+     * Créditos atribuídos por Aproveitamento de Estudos no exterior
+     * Documentação da replicação: * credito-aula-atribuido 
+     *                             * creaulatb
+     *                             * Número de Créditos aula, atribuído pelo órgão responsável, 
+     *                               a uma disciplina livre cursada no exterior por aluno da USP.
+     * @param Int $codpes
+     * @param Int $codundclgi
+     * @return Array(coddis, creaulatb)
+     */
+    public static function creditosDisciplinasConcluidasAproveitamentoEstudosExterior($codpes, $codundclgi)
+    {
+        $programa = self::programa($codpes);
+        $programa = $programa['codpgm'];
+        $ingresso = self::curso($codpes, $codundclgi);
+        $ingresso = substr($ingresso['dtainivin'], 0, 4);
+        $query  = "SELECT DISTINCT H.coddis, R.creaulatb ";
+        $query .= "FROM HISTESCOLARGR AS H, DISCIPLINAGR AS D, REQUERHISTESC AS R ";
+        $query .= "WHERE H.coddis = D.coddis AND H.verdis = D.verdis AND H.codpes = convert(int, :codpes) AND H.codpgm = convert(int, :programa) ";
+        $query .= "AND H.coddis = R.coddis AND H.verdis = R.verdis AND H.codtur = R.codtur AND H.codpes = R.codpes ";
+        $query .= "AND (H.rstfim = 'D') AND ((R.creaulatb IS NOT NULL) OR (R.creaulatb > 0)) ";
+        $query .= "ORDER BY H.coddis";
+        $param = [
+            'codpes' => $codpes,
+            'programa' => $programa,
+        ];
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
+    }
 }
