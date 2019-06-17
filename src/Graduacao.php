@@ -24,36 +24,49 @@ class Graduacao
         return false;
     }
 
-    public static function ativos($codundclgi, $parteNome = null)
+    /**
+     * Método para retornar alunos ativos na unidade
+     *
+     * @param Int $condundclgi
+     * @param String $partNome (optional)
+     * @return array(campos tabela LOCALIZAPESSOA)
+     */    public static function ativos($codundclgi, $parteNome = null)
     {
         $param = [
             'codundclgi' => $codundclgi,
         ];
-        $query = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA";
-        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)";
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A'";
+        $query = " SELECT LOCALIZAPESSOA.* FROM LOCALIZAPESSOA";
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)";
         if (!is_null($parteNome)) {
             $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
             $parteNome = strtoupper(str_replace(' ','%',$parteNome));
-            $query .= " AND PESSOA.nompesfon LIKE :parteNome";
+            $query .= " AND nompesfon LIKE :parteNome";
             $param['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
         }
-        $query .= " ORDER BY PESSOA.nompes ASC";
+        $query .= " ORDER BY nompes ASC";
         $result = DB::fetchAll($query, $param);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
         return $result;
     }
 
+    /**
+     * Método para retornar dados do curso de um aluno na unidade
+     *
+     * @param Int $codpes
+     * @param Int $codundclgi
+     * @return array(codpes, nompes, codcur, codhab, nomhab, dtainivin, codcurgrd)
+     */
     public static function curso($codpes, $codundclgi)
     {
-        $query = " SELECT LOCALIZAPESSOA.*, VINCULOPESSOAUSP.*, CURSOGR.*, HABILITACAOGR.* FROM LOCALIZAPESSOA";
-        $query .= " INNER JOIN VINCULOPESSOAUSP ON (LOCALIZAPESSOA.codpes = VINCULOPESSOAUSP.codpes)";
-        $query .= " INNER JOIN CURSOGR ON (VINCULOPESSOAUSP.codcurgrd = CURSOGR.codcur)";
-        $query .= " INNER JOIN HABILITACAOGR ON (HABILITACAOGR.codhab = VINCULOPESSOAUSP.codhab)";
-        $query .= " WHERE (LOCALIZAPESSOA.codpes = convert(int,:codpes))";
-        $query .= " AND (LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi))";
-        $query .= " AND (VINCULOPESSOAUSP.codcurgrd = HABILITACAOGR.codcur AND VINCULOPESSOAUSP.codhab = HABILITACAOGR.codhab)";
+        $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
+        $query .= " FROM LOCALIZAPESSOA L";
+        $query .= " INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes)";
+        $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
+        $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
+        $query .= " WHERE (L.codpes = convert(int,:codpes))";
+        $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg = convert(int,:codundclgi))";
+        $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
         $param = [
             'codpes' => $codpes,
             'codundclgi' => $codundclgi,
