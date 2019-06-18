@@ -276,7 +276,7 @@ class Graduacao
         $query .= " FROM GRADECURRICULAR G INNER JOIN DISCIPLINAGR D ON (G.coddis = D.coddis AND G.verdis = D.verdis)";
         $query .= " WHERE G.codcrl IN (SELECT TOP 1 codcrl";
         $query .= " FROM CURRICULOGR";
-        $query .= " WHERE codcur = ':codcur' AND codhab = convert(int, :codhab)";
+        $query .= " WHERE codcur = :codcur AND codhab = convert(int, :codhab)";
         $query .= " ORDER BY dtainicrl DESC)";
         $param = [
             'codcur' => $codcur,
