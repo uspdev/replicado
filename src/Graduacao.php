@@ -287,4 +287,32 @@ class Graduacao
         $result = Uteis::trim_recursivo($result);
         return $result;
     }
+
+    /**
+     * Disciplinas equivalentes de um currículo atual no JúpiterWeb
+     * a partir do código do curso e da habilitação
+     * 
+     * @param String $codcur
+     * @param Int $codhab
+     * @return Array(coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente)
+     */
+    public static function disciplinasEquivalentesCurriculo($codcur, $codhab)
+    {
+        $query = "SELECT  G.coddis, G.verdis, GC.tipobg, E.coddis, E.verdis ";
+        $query .= " FROM GRUPOEQUIVGR G INNER JOIN EQUIVALENCIAGR E ON (G.codeqv = E.codeqv) ";
+        $query .= " INNER JOIN GRADECURRICULAR GC ON (GC.coddis = G.coddis AND GC.verdis = G.verdis AND G.codcrl = GC.codcrl)";
+        $query .= " WHERE G.codcrl IN (SELECT TOP 1 codcrl";
+        $query .= " FROM CURRICULOGR";
+        $query .= " WHERE codcur = :codcur AND codhab = convert(int, :codhab)";
+        $query .= " ORDER BY dtainicrl DESC)";
+        $param = [
+            'codcur' => $codcur,
+            'codhab' => $codhab,
+        ];
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
+    }
+
 }
