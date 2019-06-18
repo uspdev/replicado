@@ -261,4 +261,30 @@ class Graduacao
         $result = Uteis::trim_recursivo($result);
         return $result;
     }
+
+    /**
+     * Disciplinas (grade curricular) para um currículo atual no JúpiterWeb
+     * a partir do código do curso e da habilitação
+     * 
+     * @param String $codcur
+     * @param Int $codhab
+     * @return Array(coddis, nomdis, verdis, numsemidl, tipobg)
+     */
+    public static function disciplinasCurriculo($codcur, $codhab)
+    {
+        $query = "SELECT G.coddis, D.nomdis, G.verdis, G.numsemidl, G.tipobg ";
+        $query .= " FROM GRADECURRICULAR G INNER JOIN DISCIPLINAGR D ON (G.coddis = D.coddis AND G.verdis = D.verdis)";
+        $query .= " WHERE G.codcrl IN (SELECT TOP 1 codcrl";
+        $query .= " FROM CURRICULOGR";
+        $query .= " WHERE codcur = :codcur AND codhab = convert(int, :codhab)";
+        $query .= " ORDER BY dtainicrl DESC)";
+        $param = [
+            'codcur' => $codcur,
+            'codhab' => $codhab,
+        ];
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
+    }
 }
