@@ -298,7 +298,7 @@ class Graduacao
      */
     public static function disciplinasEquivalentesCurriculo($codcur, $codhab)
     {
-        $query = "SELECT  G.coddis, G.verdis, GC.tipobg, E.coddis as coddis_eq, E.verdis as verdis_eq ";
+        $query = "SELECT G.codeqv, G.coddis, G.verdis, GC.tipobg, E.coddis as coddis_eq, E.verdis as verdis_eq ";
         $query .= " FROM GRUPOEQUIVGR G INNER JOIN EQUIVALENCIAGR E ON (G.codeqv = E.codeqv) ";
         $query .= " INNER JOIN GRADECURRICULAR GC ON (GC.coddis = G.coddis AND GC.verdis = G.verdis AND G.codcrl = GC.codcrl)";
         $query .= " WHERE G.codcrl IN (SELECT TOP 1 codcrl";
