@@ -34,4 +34,19 @@ class Posgraduacao
         return $result;
     }
 
+    public static function programas($codundclgi)
+    {
+        $query = "SELECT C.codcur, NC.nomcur";
+        $query = " FROM ECA.dbo.CURSO AS C"; 
+        $query = " INNER JOIN NOMECURSO AS NC ON C.codcur = NC.codcur";
+        $query = " WHERE (C.codclg = :codundclgi) AND (C.tipcur = 'POS') AND (C.dtainiccp IS NOT NULL)";
+        $query = " ORDER BY NC.nomcur ASC ";
+        $param = [
+            'codundclgi' => $codundclgi,
+        ];
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
+    }
 }
