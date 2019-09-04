@@ -4,6 +4,7 @@ namespace Uspdev\Replicado;
 
 class Posgraduacao
 {
+    // verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
     public static function verifica($codpes, $codundclgi)
     {
         $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = :codpes";
@@ -50,5 +51,22 @@ class Posgraduacao
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
         return $result;
+    }
+
+    public static function orientadores($codare) {
+        $query = "SELECT distinct r.codpes, v.nompes, v.nomabvfnc, r.nivare, r.dtavalini, r.dtavalfim";
+        $query .= " FROM R25CRECREDOC as r";
+        $query .= " LEFT OUTER JOIN VINCULOPESSOAUSP as v on v.codpes = r.codpes";
+        $query .= " WHERE r.codare = :codare";
+        $query .= " AND v.nomcaa = 'Docente'";
+        $query .= " AND r.dtavalfim > current_timestamp";
+
+        $param  = ['codare' => $codare];
+
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
+
     }
 }

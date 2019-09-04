@@ -84,7 +84,8 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
  - *verifica($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
  - *ativos($unidade)*: retorna *array* de todos alunos de pós-graduação ativos na unicade
  - *programas($unidade, $codcur = null)*: retorna *array* dos programas de pós-graduação da unidade ou quando informado o código do curso/programa retorna somente os dados do programa solicitado
- 
+  - *orientadores($codare)*: retorna *array* dos orientadores credenciados na área de concentração (codare) do programa de pós graduação correspondente.
+
  ### Classe Bempatrimoniado
 
  - *dump($numpat)*: recebe numpat e retorna todos campos da tabela bempatrimoniado
