@@ -2,6 +2,7 @@
 *~
 *.swp
 src/replicado_queries
+composer.lock
 
 .idea
 
