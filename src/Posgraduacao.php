@@ -54,9 +54,10 @@ class Posgraduacao
     }
 
     public static function orientadores($codare) {
-        $query = "SELECT distinct r.codpes, v.nompes, v.nomabvfnc, r.nivare, r.dtavalini, r.dtavalfim";
+        $query = "SELECT distinct r.codpes, r.nivare, r.dtavalini, r.dtavalfim, v.nomabvfnc, p.nompes, p.sexpes";
         $query .= " FROM R25CRECREDOC as r";
         $query .= " LEFT OUTER JOIN VINCULOPESSOAUSP as v on v.codpes = r.codpes";
+        $query .= " LEFT OUTER JOIN PESSOA as p on p.codpes = r.codpes";
         $query .= " WHERE r.codare = :codare";
         $query .= " AND v.nomcaa = 'Docente'";
         $query .= " AND r.dtavalfim > current_timestamp";
