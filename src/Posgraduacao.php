@@ -75,10 +75,9 @@ class Posgraduacao
         $query = "SELECT * FROM disciplina";
         $query .= " WHERE codare = :codare";
         $query .= " AND dtadtvdis IS NULL"; // não está desativado
-        $query .= " AND dtaprpdis IS NOT NULL";
-        $query .= " AND dtaaprccp IS NOT NULL";
         $query .= " AND dtaultalt>= dtaaprccp"; // depois de aprovado na CCP tem de ser alterado por alguém 
         $query .= " AND datediff(month, dtaprpdis, current_timestamp) < 60"; // disciplina mais nova que 60 meses
+        $query .= " ORDER BY nomdis";
 
         $param  = ['codare' => $codare];
 
