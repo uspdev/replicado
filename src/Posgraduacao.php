@@ -74,7 +74,9 @@ class Posgraduacao
     public static function catalogoDisciplinas($codare) {
         $query = "SELECT * FROM disciplina";
         $query .= " WHERE codare = :codare";
+        $query .= " AND dtaatvdis IS NOT NULL"; // está ativado
         $query .= " AND dtadtvdis IS NULL"; // não está desativado
+        $query .= " AND dtaaprccp IS NOT NULL"; // foi aprovado na CCP
         $query .= " AND dtaultalt>= dtaaprccp"; // depois de aprovado na CCP tem de ser alterado por alguém 
         $query .= " AND datediff(month, dtaprpdis, current_timestamp) < 60"; // disciplina mais nova que 60 meses
         $query .= " ORDER BY nomdis";
