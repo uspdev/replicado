@@ -89,4 +89,22 @@ class Posgraduacao
         $result = Uteis::trim_recursivo($result);
         return $result;
     }
+
+    public static function disciplina($sgldis) {
+        $query = "SELECT TOP 1 * FROM DISCIPLINA";
+        $query .= " WHERE sgldis = :sgldis";
+        $query .= " ORDER BY numseqdis DESC";
+
+        $param  = ['sgldis' => $sgldis];
+
+        $result = DB::fetchAll($query, $param);
+        if ($result) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result[0];
+        } else {
+            return [];
+        }
+
+    }
 }
