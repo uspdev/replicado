@@ -26,7 +26,7 @@ class DB
                 self::$instance = new PDO($dsn,$user,$pass);
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
             } catch (\Throwable $t) {
-                echo "Erro na conexão com o database! Contate o suporte";
+                echo "Erro na conexão com o database do replicado! Contate o suporte";
                 $log = self::getLogger('Conexão');
                 $log->error($t->getMessage());
                 die();
@@ -47,7 +47,7 @@ class DB
             }
             $stmt->execute();
         } catch (\Throwable $t) {
-            echo "Erro Interno: contate o suporte!";
+            echo "Erro Interno no replicado: contate o suporte!";
             $log = self::getLogger('Consulta');
             $log->error($t->getMessage());
             return false;
@@ -66,7 +66,7 @@ class DB
             }
             $stmt->execute();
         } catch (\Throwable $t) {
-            echo "Erro Interno: contate o suporte!";
+            echo "Erro Interno no replicado: contate o suporte!";
             $log = self::getLogger('Consulta');
             $log->error($t->getMessage());
             return false;
@@ -77,7 +77,7 @@ class DB
     private static function getLogger($channel_name)
     {
         if (!isset(self::$logger)) {
-            $pathlog = getenv('REPLICADO_PATHLOG') ?: __DIR__ . '/../../../../replicado.log';
+            $pathlog = getenv('REPLICADO_PATHLOG') ?: '/tmp/replicado.log';
             self::$logger = new Logger($channel_name);
             self::$logger->pushHandler(new StreamHandler($pathlog, Logger::DEBUG));
         }
