@@ -61,6 +61,7 @@ class Posgraduacao
         $query .= " WHERE r.codare = :codare";
         $query .= " AND v.nomcaa = 'Docente'";
         $query .= " AND r.dtavalfim > current_timestamp";
+        $query .= " ORDER BY p.nompes ASC";
 
         $param  = ['codare' => $codare];
 
