@@ -88,6 +88,7 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
   - *catalogoDisciplinas($codare)*: retorna *array* do catálogo das disciplinas pertencentes à área de concentração.
   - *disciplina($sgldis)*: retorna *array* contendo todos os dados da disciplina indentificada por sua sigla - sgldis.
   - *disciplinasOferecimento($codare{, $data opcional})*: Retorna a lista de disciplinas em oferecimento no semestre de uma determinada área de concentração.
+  - *areasProgramas(int $codundclgi, int $codcur = null)*: Retorna as áreas de concentração ativas dos programas de pós-graduação da unidade. Se informado o código do curso (programa), retorna apenas as áreas deste curso.
 
  ### Classe Bempatrimoniado
 
