@@ -87,6 +87,7 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
   - *orientadores($codare)*: retorna *array* dos orientadores credenciados na área de concentração (codare) do programa de pós graduação correspondente.
   - *catalogoDisciplinas($codare)*: retorna *array* do catálogo das disciplinas pertencentes à área de concentração.
   - *disciplina($sgldis)*: retorna *array* contendo todos os dados da disciplina indentificada por sua sigla - sgldis.
+  - *disciplinasOferecimento($codare{, $data opcional})*: Retorna a lista de disciplinas em oferecimento no semestre de uma determinada área de concentração.
 
  ### Classe Bempatrimoniado
 
