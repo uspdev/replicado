@@ -4,7 +4,7 @@ namespace Uspdev\Replicado;
 
 class Uteis
 {
-    public static function removeAcentos($str) 
+    public static function removeAcentos($str)
     {
         $map = [
             'á' => 'a',
@@ -32,16 +32,16 @@ class Uteis
             'Õ' => 'O',
             'Ú' => 'U',
             'Ü' => 'U',
-            'Ç' => 'C'
+            'Ç' => 'C',
         ];
         return strtr($str, $map);
     }
 
     public static function utf8_converter($array)
     {
-        array_walk_recursive($array, function(&$item, $key){
+        array_walk_recursive($array, function (&$item, $key) {
             // fix ISO-8859-1 ?
-            if(!mb_detect_encoding($item, 'utf-8', true)){
+            if (!mb_detect_encoding($item, 'utf-8', true)) {
                 $item = utf8_encode($item);
             }
         });
@@ -50,12 +50,39 @@ class Uteis
 
     public static function trim_recursivo($array)
     {
-        array_walk_recursive($array, function(&$item, $key){
+        array_walk_recursive($array, function (&$item, $key) {
             $item = trim($item);
         });
         return $array;
     }
 
+    /**
+     * Determina a data de início e a data de fim do semestre quer contém $data_string.
+     *
+     * Se $date não for informado, utilizará a data corrente do sistema.
+     * $data_string pode ser em qualquer formato aceito por DateTime para criar uma data
+     * 
+     * @example $inifim = Uteis::semestre();
+     * @example $inifim = Uteis::semestre('2019-10-20');
+     *
+     * @param  string $data_string (opcional) Data na qual vai buscar os limites do semestre.
+     *
+     * @return Array formato ['yyymmdd', 'yyyymmdd']
+     */
+    public static function semestre(string $data_string = null)
+    {
+        $data = $data_string ? new \DateTime($data_string) : new \DateTime('now');
+
+        $offset = ($data->format('m') % 6) - 1; // modulo ftw
+        $start = $data->modify("first day of -$offset month midnight");
+        $start = $start->format('Ymd');
+
+        $offset = 6 - ($data->format('m') % 6); // modulo ftw again
+        $end = $data->modify("last day of +$offset month midnight");
+        $end = $end->format('Ymd');
+
+        return [$start, $end];
+    }
 
     /*
      * As funções abaixo são utilizadas para o fonetico
@@ -67,7 +94,7 @@ class Uteis
     public static function fonetico($str)
     {
         $log = false;
-        $fon = ' '.trim(mb_strtoupper($str)).' '; // vamos colocar espaços para poder identificar o início e o fim (diferente do sql)
+        $fon = ' ' . trim(mb_strtoupper($str)) . ' '; // vamos colocar espaços para poder identificar o início e o fim (diferente do sql)
 
         $fon = Uteis::remove_accent($fon);
         $fon = Uteis::remove_especiais($fon); // remove o apostrofe dos nomes
@@ -75,19 +102,40 @@ class Uteis
         $fon = Uteis::remove_prep($fon);
         //echo $fon.PHP_EOL;
         $fon = Uteis::elimina_repetidas($fon); // foi colocado aqui, talvez possa tirar do final
-        if ($log) echo 'rep '.$fon.PHP_EOL;
+        if ($log) {
+            echo 'rep ' . $fon . PHP_EOL;
+        }
+
         $fon = Uteis::trata_inicio_palavras($fon);
-        if ($log) echo 'ini '.$fon.PHP_EOL;
+        if ($log) {
+            echo 'ini ' . $fon . PHP_EOL;
+        }
+
         $fon = Uteis::trata_fim_palavras($fon);
-        if ($log) echo 'fim '.$fon.PHP_EOL;
+        if ($log) {
+            echo 'fim ' . $fon . PHP_EOL;
+        }
+
         $fon = Uteis::trata_meio_palavras($fon); // o tratamento do meio talvez tenha de ser em duas passagens pois pelo menos um caso precisou
-        if ($log) echo 'me1 '.$fon.PHP_EOL;
+        if ($log) {
+            echo 'me1 ' . $fon . PHP_EOL;
+        }
+
         $fon = Uteis::trata_meio_palavras($fon);
-        if ($log) echo 'me2 '.$fon.PHP_EOL;
+        if ($log) {
+            echo 'me2 ' . $fon . PHP_EOL;
+        }
+
         $fon = Uteis::trata_ln_consoante($fon);
-        if ($log) echo 'ln  '.$fon.PHP_EOL;
+        if ($log) {
+            echo 'ln  ' . $fon . PHP_EOL;
+        }
+
         $fon = Uteis::troca_fonemas($fon);
-        if ($log) echo 'fon '.$fon.PHP_EOL;
+        if ($log) {
+            echo 'fon ' . $fon . PHP_EOL;
+        }
+
         $fon = Uteis::elimina_repetidas($fon);
 
         $fon = trim($fon);
@@ -95,11 +143,11 @@ class Uteis
         return $fon;
     }
 
-    protected static function remove_especiais ($str)
+    protected static function remove_especiais($str)
     {
         // aqui pode ser que tenha de remover todos os especiais de forma global
         $a = array('\'', '-');
-        $b = array('',   '');
+        $b = array('', '');
         return str_replace($a, $b, $str);
     }
 
@@ -132,16 +180,16 @@ class Uteis
         //AO->N:AN
         //AM->N:AN
         //L->O (novo)
-        $a = array('OES ', 'ONS ', 'OIM ', 'UIM ', 'EIA ', 'AM ', 'AO ', '   OM ', 'TH ', 'N ', 'X ',  'D ', 'B ', 'T ', 'L ');
-        $b = array('N ',   'N ',   ' N ',  'N ',   'IA ',  'AN ', 'AN ', '   N ',  'TE ', 'M ', 'IS ', ' ',  ' ',  ' ',  'O ');
+        $a = array('OES ', 'ONS ', 'OIM ', 'UIM ', 'EIA ', 'AM ', 'AO ', '   OM ', 'TH ', 'N ', 'X ', 'D ', 'B ', 'T ', 'L ');
+        $b = array('N ', 'N ', ' N ', 'N ', 'IA ', 'AN ', 'AN ', '   N ', 'TE ', 'M ', 'IS ', ' ', ' ', ' ', 'O ');
         return str_replace($a, $b, $str);
     }
 
     protected static function trata_meio_palavras($str)
     {
         // TS->X:S
-        $a = array('GN', 'MN', 'TSCH', 'TCH', 'SCH', 'TSH', 'SH', 'CH', 'LH', 'NH', 'PH',  'H', 'SCE', 'SCI', 'SCY', 'CS', 'KS', 'PS', 'TS', 'TZ', 'XS', 'CE', 'CI', 'CY', 'GE', 'GI', 'GY', 'GD', 'CK', 'PC', 'QU', 'SC', 'SK', 'XC', 'CT', 'GT', 'PT');
-        $b = array('N',  'N',  'X',    'X',   'X',   'X',   'X',  'X',  'LI', 'N',  'F',   '',  'SE',  'SI' ,  'SY', 'X',  'X',  'X',  'S',  'X',  'X',  'SE', 'SI', 'SY', 'JE', 'JI', 'JY', 'D',  'Q',  'Q',  'Q',  'SQ', 'SQ', 'SQ', 'T',  'T',  'T');
+        $a = array('GN', 'MN', 'TSCH', 'TCH', 'SCH', 'TSH', 'SH', 'CH', 'LH', 'NH', 'PH', 'H', 'SCE', 'SCI', 'SCY', 'CS', 'KS', 'PS', 'TS', 'TZ', 'XS', 'CE', 'CI', 'CY', 'GE', 'GI', 'GY', 'GD', 'CK', 'PC', 'QU', 'SC', 'SK', 'XC', 'CT', 'GT', 'PT');
+        $b = array('N', 'N', 'X', 'X', 'X', 'X', 'X', 'X', 'LI', 'N', 'F', '', 'SE', 'SI', 'SY', 'X', 'X', 'X', 'S', 'X', 'X', 'SE', 'SI', 'SY', 'JE', 'JI', 'JY', 'D', 'Q', 'Q', 'Q', 'SQ', 'SQ', 'SQ', 'T', 'T', 'T');
         return str_replace($a, $b, $str);
     }
 
@@ -167,4 +215,3 @@ class Uteis
         return preg_replace($pattern, $replace, $str);
     }
 }
-
