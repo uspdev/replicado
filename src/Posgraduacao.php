@@ -71,8 +71,8 @@ class Posgraduacao
         $query .= " MAX(r.dtavalfim) AS dtavalfim, MIN(r.nivare) AS nivare, MIN(p.nompes) AS nompes";
         $query .= " FROM R25CRECREDOC as r, PESSOA as p";
         $query .= " WHERE r.codpes = p.codpes";
-        $query .= " AND r.codare = :codare";
-        $query .= " AND r.dtavalfim > CURRENT_TIMESTAMP";
+        $query .= " AND r.codare = CONVERT(int, :codare)";
+        $query .= " AND r.dtavalfim > GETDATE()";
         $query .= " GROUP BY r.codpes";
         $query .= " ORDER BY nompes ASC";
 
