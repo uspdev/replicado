@@ -161,4 +161,59 @@ class Posgraduacao
         $result = Uteis::trim_recursivo($result);
         return $result;
     }
+
+/**
+ * Retorna as áreas de concentração ativas dos programas de pós-graduação da unidade.
+ * Se informado o código do curso (programa), retorna apenas as áreas deste curso.
+ *
+ * @param int $codundclgi - código da Unidade
+ * @param int $codcur - código do curso de pós-graduação
+ * @return type
+ * 
+ * por Erickson Zanon - czanon@usp.br
+ */
+    public static function areasProgramas(int $codundclgi, int $codcur = null){
+        //obtém programas
+        $programas = Posgraduacao::programas($codundclgi,$codcur);     
+        // loop sobre programas obtendos suas áreas
+        $programasAreas = array();
+        foreach ($programas as $p){
+            $codcur = $p['codcur'];
+            $query = "SELECT codare FROM AREA WHERE codcur = :codcur";
+            $param = [
+                'codcur' => $codcur
+            ];
+            $codAreas = DB::fetchAll($query, $param);
+            $i = 0;
+            foreach ($codAreas as $a){
+                $codare = $a['codare'];
+
+                $query = "SELECT TOP(1) N.codcur,N.codare,N.nomare "
+                        . " FROM NOMEAREA as N"
+                        . " INNER JOIN CREDAREA as C "
+                        . " ON N.codare = C.codare"
+                        . " WHERE N.codare = :codare "
+                        . " AND C.dtadtvare IS NULL";
+
+                $param = [
+                    'codare' => $codare
+                ];   
+                $areas = DB::fetchAll($query, $param);
+
+                if (empty($areas)) continue;           
+
+                $areas = Uteis::utf8_converter($areas);
+                $areas = Uteis::trim_recursivo($areas);
+
+                $nomare = $areas[0]['nomare'];
+
+                $programasAreas[$codcur][$i]['codare'] = $codare;
+                $programasAreas[$codcur][$i]['nomare'] = $nomare;
+                $i++;
+            }
+
+        }        
+        return $programasAreas;
+    }
+    
 }
