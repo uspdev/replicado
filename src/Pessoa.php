@@ -401,5 +401,25 @@ class Pessoa
         }
         return false;
     }
+    
+    /*
+     * Retorna o nome completo da pessoa a partir de seu número usp
+     * 
+     * por Erickson Zanon - czanon@usp.br
+     */
+    public static function nomeCompleto($codpes){
+        $query = "SELECT nompes FROM PESSOA WHERE codpes = convert(int,:codpes)";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        $result = DB::fetchAll($query, $param);
+        if (!empty($result)){
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            $nome = $result[0]['nompes'];
+            return $nome;
+        }
+        else return false;
+    }
 
 }
