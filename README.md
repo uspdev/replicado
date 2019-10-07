@@ -102,3 +102,6 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
  - *dump($numpat)*: recebe numpat e retorna todos campos da tabela bempatrimoniado
  
  
+## Contribuindo com esse projeto
+
+Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
