@@ -12,3 +12,21 @@ O replicado pode consultar tanto o MSSQL quanto o sybase-ase e em diversas vers�
 
 * Deve-se usar ```getdate()``` ao invés de ```current_timestamp```
 * Se um parâmetro passado for int deve-se fazer a conversão com ```convert(int, :param)```
+
+Até então algumas queries estão assim
+
+```
+$query = "SELECT *";
+$query .= " FROM PESSOA as p";
+$query .= " WHERE p.codpes = :codpes";
+```
+
+Vamos procurar fazer assim
+```
+$query = "SELECT *
+    FROM PESSOA as p
+    WHERE p.codpes = convert(int, :codpes)
+";
+```
+
+Fica mais conciso e facilita copiar e colar de um frontend de SGBD.
