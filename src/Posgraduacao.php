@@ -125,7 +125,7 @@ class Posgraduacao
 
     /**
      * Retorna a lista de disciplinas em oferecimento de uma determinada área de concentração.
-     * 
+     *
      * Se $data não for informado pega a data corrente. Se for informado pegará as disciplinas oferecidas
      * no semestre que contém a data.
      *
@@ -153,9 +153,105 @@ class Posgraduacao
         $param = [
             'codare' => $codare,
             'dtainiofe' => $inifim[0],
-            'dtafimofe' => $inifim[1]
+            'dtafimofe' => $inifim[1],
         ];
 
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
+    }
+
+    /**
+     * Retorna dados de um oferecimento de disciplina incluindo local e ministrante.
+     *
+     * Local e minsitrante podem ser mais de um então são retornados na forma de array.
+     * Link exemplo do Janus: https://uspdigital.usp.br/janus/componente/disciplinasOferecidasInicial.jsf?action=4&sgldis=SHS5952&ofe=1
+     *
+     * @param  string $sgldis Sigla da disciplina (AAA0000)
+     * @param  int $numofe Número do oferecimento
+     *
+     * @return array
+     */
+    public static function oferecimento(string $sgldis, int $numofe)
+    {
+        $query = "SELECT o.*, d.nomdis, d.numcretotdis
+           FROM OFERECIMENTO as o, DISCIPLINA as d
+           WHERE o.sgldis = d.sgldis
+           AND o.numseqdis = d.numseqdis
+           AND o.sgldis = :sgldis
+           AND o.numofe = convert(int, :numofe)
+           AND o.numseqdis = (SELECT MAX(numseqdis) FROM OFERECIMENTO WHERE sgldis = :sgldis)
+        ";
+        $param = [
+            'sgldis' => $sgldis,
+            'numofe' => $numofe,
+        ];
+
+        $result = DB::fetch($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+
+        $result['espacoturma'] = self::espacoturma($result['sgldis'], $result['numseqdis'], $result['numofe']);
+        $result['ministrante'] = self::ministrante($result['sgldis'], $result['numseqdis'], $result['numofe']);
+
+        return $result;
+    }
+
+    /**
+     * Retorna local e horário dos oferecimentos da disciplina.
+     *
+     * É usado no contexto do oferecimento.
+     * O nome desse método reflete o nome da tabela no BD.
+     *
+     * @param  string $sgldis Sigla da disciplina
+     * @param  int $numseqdis Número de sequência
+     * @param  int $numofe Número do oferecimento   
+     *
+     * @return array
+     */
+    public static function espacoturma(string $sgldis, int $numseqdis, int $numofe)
+    {
+        $query = "SELECT *
+            FROM espacoturma
+            WHERE sgldis = :sgldis
+            AND numseqdis = convert(int, :numseqdis)
+            AND numofe = convert(int, :numofe)
+        ";
+        $param = [
+            'sgldis' => $sgldis,
+            'numseqdis' => $numseqdis,
+            'numofe' => $numofe,
+        ];
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
+    }
+
+    /**
+     * Retorna lista de ministrantes da disciplina.
+     *
+     * É usado no contexto do oferecimento.
+     *
+     * @param  string $sgldis
+     * @param  int $numseqdis
+     * @param  int $numofe
+     *
+     * @return array
+     */
+    public static function ministrante(string $sgldis, int $numseqdis, int $numofe)
+    {
+        $query = "SELECT r.codpes, p.nompes FROM r32turmindoc AS r, pessoa AS p
+        WHERE r.codpes = p.codpes
+        AND sgldis = :sgldis
+        AND numseqdis = convert(int, :numseqdis)
+        AND numofe = convert(int, :numofe)";
+        $param = [
+            'sgldis' => $sgldis,
+            'numseqdis' => $numseqdis,
+            'numofe' => $numofe,
+        ];
         $result = DB::fetchAll($query, $param);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
@@ -169,38 +265,41 @@ class Posgraduacao
  * @param int $codundclgi - código da Unidade
  * @param int $codcur - código do curso de pós-graduação
  * @return type
- * 
+ *
  * por Erickson Zanon - czanon@usp.br
  */
-    public static function areasProgramas(int $codundclgi, int $codcur = null){
+    public static function areasProgramas(int $codundclgi, int $codcur = null)
+    {
         //obtém programas
-        $programas = Posgraduacao::programas($codundclgi,$codcur);     
+        $programas = Posgraduacao::programas($codundclgi, $codcur);
         // loop sobre programas obtendos suas áreas
         $programasAreas = array();
-        foreach ($programas as $p){
+        foreach ($programas as $p) {
             $codcur = $p['codcur'];
             $query = "SELECT codare FROM AREA WHERE codcur = :codcur";
             $param = [
-                'codcur' => $codcur
+                'codcur' => $codcur,
             ];
             $codAreas = DB::fetchAll($query, $param);
             $i = 0;
-            foreach ($codAreas as $a){
+            foreach ($codAreas as $a) {
                 $codare = $a['codare'];
 
                 $query = "SELECT TOP(1) N.codcur,N.codare,N.nomare "
-                        . " FROM NOMEAREA as N"
-                        . " INNER JOIN CREDAREA as C "
-                        . " ON N.codare = C.codare"
-                        . " WHERE N.codare = :codare "
-                        . " AND C.dtadtvare IS NULL";
+                    . " FROM NOMEAREA as N"
+                    . " INNER JOIN CREDAREA as C "
+                    . " ON N.codare = C.codare"
+                    . " WHERE N.codare = :codare "
+                    . " AND C.dtadtvare IS NULL";
 
                 $param = [
-                    'codare' => $codare
-                ];   
+                    'codare' => $codare,
+                ];
                 $areas = DB::fetchAll($query, $param);
 
-                if (empty($areas)) continue;           
+                if (empty($areas)) {
+                    continue;
+                }
 
                 $areas = Uteis::utf8_converter($areas);
                 $areas = Uteis::trim_recursivo($areas);
@@ -212,8 +311,8 @@ class Posgraduacao
                 $i++;
             }
 
-        }        
+        }
         return $programasAreas;
     }
-    
+
 }
