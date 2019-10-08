@@ -18,6 +18,8 @@
         }
     },
     "require": {
-        "monolog/monolog": "^2"
+        "php": "^7.0",
+        "ext-sybase": "*",
+        "monolog/monolog": "^1.25"
     }
 }
