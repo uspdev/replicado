@@ -1,6 +1,7 @@
 {
     "name": "uspdev/replicado",
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "homepage": "https://github.com/uspdev/replicado",
     "description": "Classes PHP que consome dados do Replicado USP",
     "type": "library",
@@ -18,8 +19,8 @@
         }
     },
     "require": {
-        "php": "^7.0",
-        "ext-sybase": "*",
-        "monolog/monolog": "^1.25"
+        "php": ">=7.0",
+        "ext-pdo_dblib": "*",
+        "monolog/monolog": "^1.25 || ^2"
     }
 }
