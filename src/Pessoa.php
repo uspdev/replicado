@@ -401,5 +401,19 @@ class Pessoa
         }
         return false;
     }
+    
+    /*
+     * Retorna o nome completo (nome social) da pessoa a partir de seu número usp
+     * 
+     * @param Integer $codpes
+     * @return void
+     */
+    public static function nomeCompleto($codpes){
+        $pessoa = Pessoa::dump($codpes);
+        if(!empty($pessoa)) {
+            return $pessoa['nompesttd'];
+        }
+        return false;
+    }
 
 }
