@@ -315,4 +315,49 @@ class Posgraduacao
         return $programasAreas;
     }
 
+/**
+ * Retorna os alunos de um programa (codcur) de pós 
+ *  da unidade (codundclgi), 
+ *  indexados pela área (codare).
+ * Se codare não foi determinado, busca todas as áreas do programa.
+ * 
+ * @param int $codundclgi - código da unidade
+ * @param int $codcur - código do curso/programa
+ * @param type $codare - código da área (opcional)
+ * @return array
+ */    
+    public static function alunosPrograma(int $codundclgi, int $codcur, int $codare = null){
+        // se $codare é null, seleciona todas
+        if (!$codare){
+            // obtém áreas do programa
+            $areasPrograma = Posgraduacao::areasProgramas($codundclgi, $codcur);
+            foreach ($areasPrograma[$codcur] as $area){
+                $codares[] = $area['codare'];
+            }
+        }
+        else $codares[] = $codare;
+        $alunosPrograma = array();
+        // loop sobre as áreas
+        foreach ($codares as $codare){
+            $query = "SELECT DISTINCT V.codpes,L.nompes,V.nivpgm,L.codema
+                        FROM VINCULOPESSOAUSP as V 
+                        INNER JOIN LOCALIZAPESSOA as L
+                        ON (V.codpes = L.codpes)
+                        WHERE V.tipvin = 'ALUNOPOS' 
+                         AND V.sitatl = 'A'
+                         AND L.codundclg = convert(int, :codundclgi) 
+                         AND V.codare = convert(int, :codare)
+                        ORDER BY L.nompes ASC";
+            $param = [
+                        'codundclgi' => $codundclgi,
+                        'codare' => $codare,
+                    ];       
+            $alunosArea = DB::fetchAll($query, $param); 
+            $alunosArea = Uteis::utf8_converter($alunosArea);
+            $alunosArea = Uteis::trim_recursivo($alunosArea);
+            $alunosPrograma[$codare] = $alunosArea;
+        }
+        return $alunosPrograma;
+    }    
+
 }
