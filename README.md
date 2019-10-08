@@ -49,7 +49,6 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
  - *dump($codpes, $fields)*: recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão. 
                            O campos $fields é opcional.
  - *nome($nome)*: recebe uma string nome e retorna os resultados para a tabela Pessoa
- - *nomeCompleto($codpes)*: retorna o nome completo (nome social) da pessoa a partir do codpes
  - *cracha($codpes)*: recebe codpes e retorna todos campos da tabela catr_cracha para o codpes em questão 
  - *email($codpes)*: recebe codpes e retorna email de correspondência da pessoa
  - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
