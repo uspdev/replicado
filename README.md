@@ -15,9 +15,13 @@ seu código muito mais limpo e torna as consultas reutilizáveis:
 
     composer require uspdev/replicado
 
-## Biblioteca PHP usada para conexão (testado com PHP7.2):
+## Dependências
 
-    php-sybase
+É necessário pelo menos o PHP v7.0.
+
+Esta bliboteca precisa da extensão ```ext-sybase```. No ubuntu instale com
+
+    sudo apt install php-sybase
 
 ## Para testar:
 
