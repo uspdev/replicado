@@ -6,9 +6,10 @@ class Pessoa
 {
     private $uteis;
 
-    public static function dump($codpes)
+    public static function dump(int $codpes, array $fields = ['*'])
     {
-        $query = " SELECT * FROM PESSOA WHERE codpes = convert(int,:codpes)";
+        $columns = implode(",",$fields);
+        $query = " SELECT {$columns} FROM PESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
