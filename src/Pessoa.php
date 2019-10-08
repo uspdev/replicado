@@ -402,5 +402,18 @@ class Pessoa
         }
         return false;
     }
+    
+/**
+ * Retorna o nome completo (nome social) a partir do codpes
+ * @param type $codpes
+ * @return boolean
+ */
+    public static function nomeCompleto($codpes){
+        $pessoa = Pessoa::dump($codpes, ['nompesttd']);
+        if(!empty($pessoa)) {
+            return $pessoa;
+        }
+        return false;
+    }
 
 }
