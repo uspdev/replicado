@@ -25,6 +25,12 @@ Esta bliboteca precisa da extensão ```ext-sybase```. No ubuntu instale com
 
 ## Para testar:
 
+Rode na linha de comando
+
+    php test/run.php credentials.php
+
+Se preferir rode alguns exemplos
+
 ```php
     <?php
     namespace Meu\Lindo\App;

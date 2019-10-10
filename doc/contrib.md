@@ -5,8 +5,9 @@ O replicado pode consultar tanto o MSSQL quanto o sybase-ase e em diversas vers�
 * Procure abrir uma issue antes de começar a mexer no código.
 * As contribuições serão aceitas por meio de pull requests.
 * Ao criar um novo método atente para a documentação, tanto no código quanto no readme.
-* A branch master é consderada estável e em geral é usado em produção. 
-* Os releases não são muito regulares, daí novamente usar a branch master.
+* Ao criar um novo método, crie o teste correspondente.
+* A branch master é considerada estável e em geral é usado em produção. 
+* Os releases não são muito regulares, daí novamente usar a branch master em produção.
 
 ### SQL
 
