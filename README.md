@@ -135,7 +135,7 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
 
  - *areasProgramas(int $codundclgi, int $codcur = null)*: Retorna as áreas de concentração ativas dos programas de pós-graduação da unidade. Se informado o código do curso (programa), retorna apenas as áreas deste curso.
 
- - *alunosPrograma(int $codundclgi, int $codcur, int $codare = null)*: Retorna os alunos ativos de um programa (codcur) de pós da unidade (codundclgi), indexados pela área (codare). 
+ - *alunosPrograma(int $codundclgi, int $codcur, int $codare = null)*: Retorna os alunos ativos de um programa (codcur) de pós da unidade (codundclgi), se pedido, somente de uma área (codare). 
 
  ### Classe Bempatrimoniado
 

@@ -339,7 +339,8 @@ class Posgraduacao
         $alunosPrograma = array();
         // loop sobre as áreas
         foreach ($codares as $codare){
-            $query = "SELECT DISTINCT V.codpes,L.nompes,V.nivpgm,L.codema
+            $alunosArea = array();
+            $query = "SELECT DISTINCT V.codare,V.codpes,L.nompes,V.nivpgm,L.codema
                         FROM VINCULOPESSOAUSP as V 
                         INNER JOIN LOCALIZAPESSOA as L
                         ON (V.codpes = L.codpes)
@@ -352,12 +353,12 @@ class Posgraduacao
                         'codundclgi' => $codundclgi,
                         'codare' => $codare,
                     ];       
-            $alunosArea = DB::fetchAll($query, $param); 
+            $alunosArea = DB::fetchAll($query, $param);            
             $alunosArea = Uteis::utf8_converter($alunosArea);
             $alunosArea = Uteis::trim_recursivo($alunosArea);
-            $alunosPrograma[$codare] = $alunosArea;
+            $alunosPrograma = array_merge($alunosPrograma,$alunosArea);
         }
         return $alunosPrograma;
-    }    
+    }  
 
 }
