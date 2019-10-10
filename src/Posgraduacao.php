@@ -341,7 +341,7 @@ class Posgraduacao
      *
      * @return string
      */
-    public function idiomaDisciplina($codlinofe)
+    public static function idiomaDisciplina($codlinofe)
     {
         if (isset($codlinofe) && (!empty($codlinofe))) {
             $query = "SELECT dsclin
