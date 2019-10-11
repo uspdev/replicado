@@ -2,21 +2,20 @@
 
 use Uspdev\Replicado\Posgraduacao;
 
-include_once __DIR__ . '/../credentials.php';
+$ns = 'Uspdev\Replicado\Posgraduacao';
+$metodo = 'disciplinasOferecimento';
 
 $codare = isset($codare) ? $codare : null;
-echo "Método Posgraduacao::disciplinasOferecimento(codare=$codare) => ";
+echo "Método Posgraduacao::$metodo(codare=$codare) => ";
 
-if (is_callable(['Uspdev\Replicado\Posgraduacao', 'disciplinasOferecimento'], false, $callable_name)) {
-    echo ' . ';
-} else {
-    echo $callable_name . red(' indefinido') . PHP_EOL;
-}
+testa_existe_metodo([$ns, $metodo]);
 
 if (empty($codare)) {
-    echo red('codare não definido') . PHP_EOL;return;
+    echo red('parâmetro obrigatório não fornecido') . PHP_EOL;
+    return;
 }
-$res = Posgraduacao::disciplinasOferecimento($codare);
+
+$res = Posgraduacao::$metodo($codare);
 echo count($programas);
 echo green(' OK') . PHP_EOL;
 
@@ -31,6 +30,3 @@ $oferecimento = [
         'pval' => $res[0]['numofe'],
     ],
 ];
-
-// print_r($res);
-// exit;
