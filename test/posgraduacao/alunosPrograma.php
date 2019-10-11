@@ -2,29 +2,25 @@
 
 use Uspdev\Replicado\Posgraduacao;
 
-include_once __DIR__ . '/../credentials.php';
+$ns = 'Uspdev\Replicado\Posgraduacao';
+$metodo = 'alunosPrograma';
 
-$codcur = empty($codcur) ? '' : $codcur;
-$codare = empty($codare) ? '' : $codare;
+$codcur = empty($codcur) ? null : $codcur;
+$codare = empty($codare) ? null : $codare;
 
-echo "Método Posgraduacao::alunosPrograma(unidade=$unidade, cudcur=$codcur, codare=$codare) => ";
+echo "Método Posgraduacao::$metodo(unidade=$unidade, cudcur=$codcur, codare=$codare) => ";
 
-if (is_callable(['Uspdev\Replicado\Posgraduacao', 'alunosPrograma'], false, $callable_name)) {
-    echo ' . ';
+testa_existe_metodo([$ns, $metodo]);
+
+if (empty($codcur)) {
+    echo red('parâmetro obrigatório não fornecido') . PHP_EOL;
+    return;
+}
+
+$res = Posgraduacao::$metodo($unidade, $codcur, $codare);
+
+if ($res) {
+    echo count($res) . green(' OK') . PHP_EOL;
 } else {
-    //echo $callable_name;
-    echo red(' método indefinido') . PHP_EOL; return;
+    echo red(' algo deu errado') . PHP_EOL;
 }
-
-$alunosPrograma = Posgraduacao::alunosPrograma($unidade, $codcur, $codare);
-echo "\n";
-echo "Alunos ativos no programa $codcur: " . count($alunosPrograma) . "\n";
-print_r($alunosPrograma);exit;
-
-foreach ($alunosPrograma as $codare => $alunosArea) {
-    $i = 0;
-    foreach ($alunosArea as $a) {
-        echo ++$i . ", $codare, {$a['codpes']}, {$a['nompes']}, {$a['nivpgm']}, {$a['codema']} \n";
-    }
-}
-
