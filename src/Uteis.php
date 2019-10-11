@@ -214,4 +214,49 @@ class Uteis
         $replace = '$1';
         return preg_replace($pattern, $replace, $str);
     }
+
+    public static function dia_semana($dia)
+    {
+        // Formato padrão da base replicada
+        // ('2SG','3TR','4QA','5QI','6SX','7SB', '1DM')
+        $dia_semana_array = [
+            '2SG' => 'segunda-feira',
+            '3TR' => 'terça-feira',
+            '4QA' => 'quarta-feira',
+            '5QI' => 'quinta-feira',
+            '6SX' => 'sexta-feira',
+            '7SB' => 'sábado',
+            '1DM' => 'domingo',
+        ];
+
+        if (!empty($dia) && (isset($dia))) {
+            return $dia_semana_array["{$dia}"];
+        }
+
+        return '';
+    }
+
+    public static function horario_formatado($horario)
+    {
+        // O formato esperado é com quatro digito (ex.: 0830), 
+        // mas caso seja encontrado de outra forma, retorna o que foi passado
+        if (strlen($horario) == 4) {
+            $hora = $horario[0] . $horario[1];
+            $minuto = $horario[2] . $horario[3];
+            return  "{$hora}:{$minuto}";
+        }
+        return $horario;
+    }
+
+    public static function data_mes($data)
+    {
+        // Formato padrão da base replicada
+        // 2019-07-29 00:00:00
+        if (isset($data) && (!empty($data))) {
+            $data = date_create($data);
+            return date_format($data, 'd/m/Y');
+        }
+        return $data;
+    }
+
 }

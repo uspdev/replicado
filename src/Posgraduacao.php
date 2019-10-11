@@ -181,7 +181,7 @@ class Posgraduacao
            AND o.numseqdis = d.numseqdis
            AND o.sgldis = :sgldis
            AND o.numofe = convert(int, :numofe)
-           AND o.numseqdis = (SELECT MAX(numseqdis) FROM OFERECIMENTO WHERE sgldis = :sgldis)
+           AND o.numseqdis = (SELECT MAX(numseqdis) FROM OFERECIMENTO WHERE sgldis = :sgldis AND numofe = convert(int, :numofe))
         ";
         $param = [
             'sgldis' => $sgldis,
@@ -195,6 +195,15 @@ class Posgraduacao
         $result['espacoturma'] = self::espacoturma($result['sgldis'], $result['numseqdis'], $result['numofe']);
         $result['ministrante'] = self::ministrante($result['sgldis'], $result['numseqdis'], $result['numofe']);
 
+        // Tratamento das datas no formato d/m/Y
+        $result['dtainiofe'] = Uteis::data_mes($result['dtainiofe']);
+        $result['dtafimofe'] = Uteis::data_mes($result['dtafimofe']);
+        $result['dtalimcan'] = Uteis::data_mes($result['dtalimcan']);
+        
+        // Conversão codlin para nome completo do idioma
+        if (isset($result['codlinofe']) && (!empty($result['codlinofe']))) {
+            $result['codlinofe'] = self::idiomaDisciplina($result['codlinofe']);
+        }
         return $result;
     }
 
@@ -213,7 +222,7 @@ class Posgraduacao
     public static function espacoturma(string $sgldis, int $numseqdis, int $numofe)
     {
         $query = "SELECT *
-            FROM espacoturma
+            FROM ESPACOTURMA
             WHERE sgldis = :sgldis
             AND numseqdis = convert(int, :numseqdis)
             AND numofe = convert(int, :numofe)
@@ -226,6 +235,14 @@ class Posgraduacao
         $result = DB::fetchAll($query, $param);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
+        if ($result && (!empty($result))) {
+            // Percorre todos os dias que a disciplina é ministrada
+            foreach ($result as $key => $dados) {
+                $result[$key]['diasmnofe'] = Uteis::dia_semana($dados['diasmnofe']);
+                $result[$key]['horiniofe'] = Uteis::horario_formatado($dados['horiniofe']);
+                $result[$key]['horfimofe'] = Uteis::horario_formatado($dados['horfimofe']);
+            }
+        }
         return $result;
     }
 
@@ -242,7 +259,7 @@ class Posgraduacao
      */
     public static function ministrante(string $sgldis, int $numseqdis, int $numofe)
     {
-        $query = "SELECT r.codpes, p.nompes FROM r32turmindoc AS r, pessoa AS p
+        $query = "SELECT r.codpes, p.nompes FROM R32TURMINDOC AS r, PESSOA AS p
         WHERE r.codpes = p.codpes
         AND sgldis = :sgldis
         AND numseqdis = convert(int, :numseqdis)
@@ -361,4 +378,33 @@ class Posgraduacao
         return $alunosPrograma;
     }  
 
+  /**
+     * Retorna nome completo do idioma da disciplina
+     *
+     * É usado no contexto do oferecimento.
+     *
+     * @param string $codlinofe
+     *
+     * @return string
+     */
+    public static function idiomaDisciplina($codlinofe)
+    {
+        if (isset($codlinofe) && (!empty($codlinofe))) {
+            $query = "SELECT dsclin
+                        FROM IDIOMA
+                        WHERE codlin = :codlinofe";
+
+            $param = [
+                'codlinofe' => $codlinofe,
+            ];
+
+            $result = DB::fetchAll($query, $param);
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+
+            // Se for encontrado o nome do idioma, retornará apenas um registro
+            // então já devolve apenas o campo do nome na posição 0
+            return $result[0]['dsclin'];
+        }
+    }
 }

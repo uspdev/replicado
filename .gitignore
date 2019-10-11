@@ -12,6 +12,7 @@ index.php
 # test
 test.php
 log.log
+credentials.php
 
 # netbeans
 nbproject/

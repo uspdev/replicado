@@ -25,6 +25,12 @@ Esta bliboteca precisa da extensão ```ext-sybase```. No ubuntu instale com
 
 ## Para testar:
 
+Rode na linha de comando
+
+    php test/run.php credentials.php
+
+Se preferir rode alguns exemplos
+
 ```php
     <?php
     namespace Meu\Lindo\App;
@@ -139,8 +145,21 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
 
  ### Classe Bempatrimoniado
 
- - *dump($numpat)*: recebe numpat e retorna todos campos da tabela bempatrimoniado
- 
+ - *dump($numpat)*: recebe numpat e retorna todos campos da tabela bempatrimoniado  
+
+ - *ativos($params = null, $operador = 'AND')*: retorna todos campos da tabela BEMPATRIMONIADO dos patrimônios ativos. Pode-se utilizar o array $params no formato campo_tabela => valor para filtrar os bens e definir operador AND/OR (AND é o padrão);
+  * Exemplo utilização: 
+  ```php
+        $params = [
+            'codpes' => 11111111,
+            'epfmarpat' => 'MARCA',
+            'epforibem' => 'Doação',
+            'modpat' => 'CORE 2 DUO',
+            'codlocusp' => 11111,
+        ];
+        $bens = Bempatrimoniado::ativos($params); // utiliza operador AND por padrão
+        $bens = Bempatrimoniado::ativos($params, 'OR');
+  ```
  
 ## Contribuindo com esse projeto
 

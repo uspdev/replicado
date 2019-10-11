@@ -33,9 +33,38 @@ class Bempatrimoniado
         return false;
     }
 
-    public static function ativos()
+    /**
+     * Retorna todos bens patrimoniados ativos (com opção de filtro)
+     *  
+     * @param array $params (opcional) - campo_tabela => valor
+     * @param string $operador (default = AND) - operador da cláusula WHERE
+     * 
+     * @return array Retorna todos os campos da tabela BEMPATRIMONIADO
+     */
+    public static function ativos($params = null, $operador = 'AND')
     {
-        $query = " SELECT * FROM BEMPATRIMONIADO WHERE stabem = 'Ativo'";
+        if (is_null($params)) {
+            $query = " SELECT * FROM BEMPATRIMONIADO WHERE stabem = 'Ativo'";
+        } else {
+            $query = " SELECT * FROM BEMPATRIMONIADO WHERE stabem = 'Ativo' AND (";
+
+            foreach ($params as $campo => $valor) {
+                if (gettype($valor) == 'integer') {
+                    $query .= " {$campo} = {$valor} ";
+                } else if (gettype($valor) == 'string') {
+                    $valor = Uteis::removeAcentos($valor);
+                    $query .= " {$campo} LIKE '%{$valor}%' COLLATE Latin1_General_CI_AI ";
+                }
+
+                // Enquanto houver item no array, adiciona AND/OR na clásula WHERE
+                if (next($params)) {
+                    $query .= $operador;
+                } else {
+                    $query .= ")";
+                }
+            }
+        }
+
         $result = DB::fetchAll($query);
         $result = Uteis::utf8_converter($result);
         $result = Uteis::trim_recursivo($result);
