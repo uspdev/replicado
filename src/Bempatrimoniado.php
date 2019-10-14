@@ -7,9 +7,12 @@ class Bempatrimoniado
 
     private static $BEM_INFORMATICAS = [12513,51110,354384,354341,162213,9300,45624,57100];
 
-    public static function dump($numpat)
+    public static function dump(string $numpat, array $fields = ['*'])
     {
-        $query = " SELECT * FROM BEMPATRIMONIADO WHERE numpat = convert(decimal,:numpat)";
+        $numpat = str_replace('.', '', $numpat);
+        $columns = implode(",",$fields);
+
+        $query = " SELECT {$columns} FROM BEMPATRIMONIADO WHERE numpat = convert(decimal,:numpat)";
         $param = [
             'numpat' => $numpat,
         ];
@@ -25,11 +28,10 @@ class Bempatrimoniado
 
     public static function verifica($numpat)
     {
-        $result = Bempatrimoniado::dump($numpat);
-        if (isset($result) && $result['stabem'] == 'Ativo') {
+        $result = Bempatrimoniado::dump($numpat, ['stabem']);
+        if (isset($result) && $result == 'Ativo') {
             return true;
         }
-        
         return false;
     }
 

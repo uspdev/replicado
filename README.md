@@ -145,7 +145,8 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
 
  ### Classe Bempatrimoniado
 
- - *dump($numpat)*: recebe numpat e retorna todos campos da tabela bempatrimoniado  
+ - *dump($numpat, $cols)*: recebe numpat e retorna todos campos da tabela bempatrimoniado
+ - *verifica($numpat)*: recebe numpat e retorna true se o bem está ativo
 
  - *ativos($params = null, $operador = 'AND')*: retorna todos campos da tabela BEMPATRIMONIADO dos patrimônios ativos. Pode-se utilizar o array $params no formato campo_tabela => valor para filtrar os bens e definir operador AND/OR (AND é o padrão);
   * Exemplo utilização: 
