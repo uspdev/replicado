@@ -29,7 +29,7 @@ class Bempatrimoniado
     public static function verifica($numpat)
     {
         $result = Bempatrimoniado::dump($numpat, ['stabem']);
-        if (isset($result) && $result == 'Ativo') {
+        if (isset($result) && $result['stabem'] == 'Ativo') {
             return true;
         }
         return false;
