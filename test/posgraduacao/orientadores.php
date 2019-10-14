@@ -2,21 +2,20 @@
 
 use Uspdev\Replicado\Posgraduacao;
 
-include_once __DIR__ . '/../credentials.php';
+$ns = 'Uspdev\Replicado\Posgraduacao';
+$metodo = 'orientadores';
 
-$codare = empty($codare) ? '' : $codare;
+$codare = empty($codare) ? null : $codare;
 
-echo "Método Posgraduacao::orientadores(codare=$codare) => ";
+echo "Método Posgraduacao::$metodo(codare=$codare) => ";
 
-if (is_callable(['Uspdev\Replicado\Posgraduacao', 'orientadores'], false, $callable_name)) {
-    echo ' . ';
-} else {
-    //echo $callable_name;
-    echo red(' método indefinido') . PHP_EOL; return;
+testa_existe_metodo([$ns, $metodo]);
+
+if (empty($codare)) {
+    echo red('parâmetro obrigatório não fornecido') . PHP_EOL;
+    return;
 }
 
-$res = Posgraduacao::orientadores($codare);
-
+$res = Posgraduacao::$metodo($codare);
 echo count($res);
 echo green(' OK') . PHP_EOL;
-

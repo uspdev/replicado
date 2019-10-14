@@ -2,19 +2,16 @@
 
 use Uspdev\Replicado\Posgraduacao;
 
-include_once __DIR__ . '/../credentials.php';
+$ns = 'Uspdev\Replicado\Posgraduacao';
+$metodo = 'programas';
 
 $unidade = isset($unidade)?$unidade:null;
 
-echo "Método Posgraduacao::programas(unidade=$unidade) => ";
+echo "Método Posgraduacao::$metodo(unidade=$unidade) => ";
 
-if (is_callable(['Uspdev\Replicado\Posgraduacao', 'programas'], false, $callable_name)) {
-    echo ' . ';
-} else {
-    echo $callable_name . ' indefinido' . PHP_EOL;
-}
+testa_existe_metodo([$ns, $metodo]);
 
-$programas = Posgraduacao::programas($unidade);
+$programas = Posgraduacao::$metodo($unidade);
 echo count($programas);
 echo green(' OK') . PHP_EOL;
 
