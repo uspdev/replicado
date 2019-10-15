@@ -83,4 +83,49 @@ class DB
         }
         return self::$logger;
     }
+    
+    public static function criaFiltroBusca($filtros, $buscas, $tipos)
+    {
+        // Abre o parênteses dos filtros
+        $str_where = " WHERE (";
+        $params = [];
+        if (!empty($filtros) && (count($filtros) > 0)) {
+            foreach ($filtros as $coluna => $valor) {
+                if (array_key_exists($coluna, $tipos)) {
+                    $str_where .= " {$coluna} = convert({$tipos[$coluna]}, :{$coluna}) ";
+                    $params[$coluna] = "{$valor}";
+                } else {
+                    $str_where .= " {$coluna} = :{$coluna} ";
+                    $params[$coluna] = "{$valor}";
+                }
+                // Enquanto existir um filtro, adiciona o operador AND
+                if (next($filtros)) {
+                    $str_where .= ' AND ';
+                }
+            }
+        }
+
+        if (!empty($buscas) && (count($buscas) > 0)) {
+            // Caso exista um campo para busca, fecha os parênteses anterior
+            // e adiciona mais um AND (, que conterá os parâmetros de busca (OR)
+            $str_where .= ') AND (';
+            foreach ($buscas as $coluna => $valor) {
+                $str_where .= " {$coluna} LIKE :{$coluna} ";
+                $params[$coluna] = "%{$valor}%";
+
+                // Enquanto existir uma busca, adiciona o operador OR
+                if (next($buscas)) {
+                    $str_where .= ' OR ';
+                } else {
+                    // Fecha o parênteses do OR
+                    $str_where .= ') ';
+                }
+            }
+        } else {
+            // Fecha o parênteses dos filtros
+            $str_where .= ')';
+        }
+
+        return [$str_where, $params];
+    }
 }
