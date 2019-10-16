@@ -36,40 +36,19 @@ class Bempatrimoniado
     }
 
     /**
-     * Retorna todos bens patrimoniados ativos (com opção de filtro)
+     * Retorna todos bens patrimoniados ativos (com opção de filtros e buscas)
      *  
-     * @param array $params (opcional) - campo_tabela => valor
-     * @param string $operador (default = AND) - operador da cláusula WHERE
+     * @param array $filtros (default) - stabem => 'Ativo'
+     * @param array $buscas (opcional) - campo_tabela => valor
+     * @param array $tipos (opcional) - campo_tabela => tipo (ex.: codpes => int)
      * 
      * @return array Retorna todos os campos da tabela BEMPATRIMONIADO
      */
-    public static function ativos($params = null, $operador = 'AND')
+    public static function ativos(array $filtros = [], array $buscas = [], array $tipos = [])
     {
-        if (is_null($params)) {
-            $query = " SELECT * FROM BEMPATRIMONIADO WHERE stabem = 'Ativo'";
-        } else {
-            $query = " SELECT * FROM BEMPATRIMONIADO WHERE stabem = 'Ativo' AND (";
-
-            foreach ($params as $campo => $valor) {
-                if (gettype($valor) == 'integer') {
-                    $query .= " {$campo} = {$valor} ";
-                } else if (gettype($valor) == 'string') {
-                    $valor = Uteis::removeAcentos($valor);
-                    $query .= " {$campo} LIKE '%{$valor}%' COLLATE Latin1_General_CI_AI ";
-                }
-
-                // Enquanto houver item no array, adiciona AND/OR na clásula WHERE
-                if (next($params)) {
-                    $query .= $operador;
-                } else {
-                    $query .= ")";
-                }
-            }
-        }
-
-        $result = DB::fetchAll($query);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
+        $filtros['stabem'] = 'Ativo';
+        $result = self::bens($filtros, $buscas, $tipos);
+        
         return $result;
     }
 
@@ -81,4 +60,29 @@ class Bempatrimoniado
         } 
         return false;
     }
+
+    /**
+     * Retorna todos bens patrimoniados (com opção de filtros e buscas)
+     *  
+     * @param array $filtros (opcional) - campo_tabela => valor
+     * @param array $buscas (opcional) - campo_tabela => valor
+     * @param array $tipos (opcional) - campo_tabela => tipo (ex.: codpes => int)
+     * 
+     * @return array Retorna todos os campos da tabela BEMPATRIMONIADO
+     */
+    public static function bens(array $filtros = [], array $buscas = [], array $tipos = [])
+    {
+        $query = " SELECT * FROM BEMPATRIMONIADO ";
+        $filtros_buscas = DB::criaFiltroBusca($filtros, $buscas, $tipos);
+        // Atualiza a cláusula WHERE do sql
+        $query .= $filtros_buscas[0];
+        // Define os parâmetros para cláusula WHERE
+        $params = $filtros_buscas[1];
+    
+        $result = DB::fetchAll($query, $params);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
+    }
 }
+
