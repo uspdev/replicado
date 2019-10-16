@@ -87,9 +87,10 @@ class DB
     public static function criaFiltroBusca($filtros, $buscas, $tipos)
     {
         // Abre o parênteses dos filtros
-        $str_where = " WHERE (";
+        $str_where = "";
         $params = [];
         if (!empty($filtros) && (count($filtros) > 0)) {
+            $str_where .= " WHERE (";
             foreach ($filtros as $coluna => $valor) {
                 if (array_key_exists($coluna, $tipos)) {
                     $str_where .= " {$coluna} = convert({$tipos[$coluna]}, :{$coluna}) ";
@@ -108,7 +109,12 @@ class DB
         if (!empty($buscas) && (count($buscas) > 0)) {
             // Caso exista um campo para busca, fecha os parênteses anterior
             // e adiciona mais um AND (, que conterá os parâmetros de busca (OR)
-            $str_where .= ') AND (';
+            if (!empty($str_where)) {
+                $str_where .= ') AND (';
+            } else {
+                // Caso não tenha nenhum filtro anterior, adiciona o WHERE
+                $str_where .= " WHERE (";
+            }
             foreach ($buscas as $coluna => $valor) {
                 $str_where .= " {$coluna} LIKE :{$coluna} ";
                 $params[$coluna] = "%{$valor}%";
@@ -122,8 +128,10 @@ class DB
                 }
             }
         } else {
-            // Fecha o parênteses dos filtros
-            $str_where .= ')';
+            // Fecha o parênteses dos filtros, caso tenha sido aberto
+            if (!empty($str_where)) {
+                $str_where .= ')';
+            }
         }
 
         return [$str_where, $params];
