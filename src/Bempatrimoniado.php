@@ -42,7 +42,7 @@ class Bempatrimoniado
      * 
      * @return array Retorna todos os campos da tabela BEMPATRIMONIADO
      */
-    public static function ativos($filtros = [], $buscas = [], $tipos = [])
+    public static function ativos(array $filtros = [], array $buscas = [], array $tipos = [])
     {
         $filtros['stabem'] = 'Ativo';
         $result = self::bens($filtros, $buscas, $tipos);
@@ -68,7 +68,7 @@ class Bempatrimoniado
      * 
      * @return array Retorna todos os campos da tabela BEMPATRIMONIADO
      */
-    public static function bens($filtros = [], $buscas = [], $tipos = [])
+    public static function bens(array $filtros = [], array $buscas = [], array $tipos = [])
     {
         $query = " SELECT * FROM BEMPATRIMONIADO ";
         $filtros_buscas = DB::criaFiltroBusca($filtros, $buscas, $tipos);

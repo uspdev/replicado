@@ -147,18 +147,26 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
 
  - *dump($numpat)*: recebe numpat e retorna todos campos da tabela bempatrimoniado  
 
- - *ativos($params = null, $operador = 'AND')*: retorna todos campos da tabela BEMPATRIMONIADO dos patrimônios ativos. Pode-se utilizar o array $params no formato campo_tabela => valor para filtrar os bens e definir operador AND/OR (AND é o padrão);
+ - *bens($filtros = [], $buscas = [], $tipos = [])*: retorna todos campos da tabela BEMPATRIMONIADO dos patrimônios. Utilizar $filtros para valores exatos, $buscas com o *LIKE* e $tipos para colunas que precisam de convert.
+
+ - *ativos($filtros = [], $buscas = [], $tipos = [])*: retorna todos campos da tabela BEMPATRIMONIADO dos patrimônios ATIVOS. Utilizar $filtros para valores exatos, $buscas com o *LIKE* e $tipos para colunas que precisam de convert. Em $filtros já é adicionado por padrão o 'stabem' = 'Ativo'.
+
   * Exemplo utilização: 
   ```php
-        $params = [
+        $filtros = [
             'codpes' => 11111111,
-            'epfmarpat' => 'MARCA',
-            'epforibem' => 'Doação',
-            'modpat' => 'CORE 2 DUO',
             'codlocusp' => 11111,
         ];
-        $bens = Bempatrimoniado::ativos($params); // utiliza operador AND por padrão
-        $bens = Bempatrimoniado::ativos($params, 'OR');
+        $buscas = [
+            'epfmarpat' => 'MARCA',
+            'modpat' => 'CORE 2 DUO',
+        ];
+        $tipos = [
+            'codpes' => 'int',
+            'codlocusp' => 'numeric',
+        ]
+        $bens = Bempatrimoniado::bens($filtros, $buscas, $tipos); 
+        $ativos = Bempatrimoniado::ativos($filtros, $buscas, $tipos);
   ```
  
 ## Contribuindo com esse projeto

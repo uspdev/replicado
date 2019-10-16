@@ -83,8 +83,19 @@ class DB
         }
         return self::$logger;
     }
-    
-    public static function criaFiltroBusca($filtros, $buscas, $tipos)
+
+    /**
+     * Retorna array contendo string formatada do WHERE com os filtros/buscas e 
+     * as colunas => valores no formato para 'bind'
+     *  
+     * @param array $filtros (opcional) - campo_tabela => valor
+     * @param array $buscas (opcional) - campo_tabela => valor
+     * @param array $tipos (opcional) - campo_tabela => tipo (ex.: codpes => int)
+     * 
+     * @return array posição [0] => string WHERE, posição [1] = 'colunas' => valores
+     *
+     */
+    public static function criaFiltroBusca(array $filtros, array $buscas, array $tipos)
     {
         // Abre o parênteses dos filtros
         $str_where = "";
