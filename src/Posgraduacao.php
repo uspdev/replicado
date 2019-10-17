@@ -357,7 +357,7 @@ class Posgraduacao
         // loop sobre as áreas
         foreach ($codares as $codare){
             $alunosArea = array();
-            $query = "SELECT DISTINCT V.codare,V.codpes,L.nompes,V.nivpgm,L.codema
+            $query = "SELECT DISTINCT V.codare,V.codpes,L.nompes,V.nivpgm,L.codema, V.dtainivin
                         FROM VINCULOPESSOAUSP as V 
                         INNER JOIN LOCALIZAPESSOA as L
                         ON (V.codpes = L.codpes)
