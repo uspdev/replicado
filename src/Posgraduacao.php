@@ -263,7 +263,8 @@ class Posgraduacao
         WHERE r.codpes = p.codpes
         AND sgldis = :sgldis
         AND numseqdis = convert(int, :numseqdis)
-        AND numofe = convert(int, :numofe)";
+        AND numofe = convert(int, :numofe)
+        ORDER BY p.nompes ASC";
         $param = [
             'sgldis' => $sgldis,
             'numseqdis' => $numseqdis,
