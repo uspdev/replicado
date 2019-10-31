@@ -41,13 +41,14 @@ class Bempatrimoniado
      * @param array $filtros (default) - stabem => 'Ativo'
      * @param array $buscas (opcional) - campo_tabela => valor
      * @param array $tipos (opcional) - campo_tabela => tipo (ex.: codpes => int)
+     * @param integer $limite (default) - 2000
      * 
      * @return array Retorna todos os campos da tabela BEMPATRIMONIADO
      */
-    public static function ativos(array $filtros = [], array $buscas = [], array $tipos = [])
+    public static function ativos(array $filtros = [], array $buscas = [], array $tipos = [], int $limite = 2000)
     {
         $filtros['stabem'] = 'Ativo';
-        $result = self::bens($filtros, $buscas, $tipos);
+        $result = self::bens($filtros, $buscas, $tipos, $limite);
         
         return $result;
     }
@@ -67,12 +68,13 @@ class Bempatrimoniado
      * @param array $filtros (opcional) - campo_tabela => valor
      * @param array $buscas (opcional) - campo_tabela => valor
      * @param array $tipos (opcional) - campo_tabela => tipo (ex.: codpes => int)
+     * @param integer $limite (default) - 2000
      * 
      * @return array Retorna todos os campos da tabela BEMPATRIMONIADO
      */
-    public static function bens(array $filtros = [], array $buscas = [], array $tipos = [])
+    public static function bens(array $filtros = [], array $buscas = [], array $tipos = [], int $limite = 2000)
     {
-        $query = " SELECT * FROM BEMPATRIMONIADO ";
+        $query = " SELECT TOP {$limite} * FROM BEMPATRIMONIADO ";
         $filtros_buscas = DB::criaFiltroBusca($filtros, $buscas, $tipos);
         // Atualiza a cláusula WHERE do sql
         $query .= $filtros_buscas[0];
