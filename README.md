@@ -52,6 +52,12 @@ Se preferir rode alguns exemplos
 
    [https://uspdigital.usp.br/replunidade](https://uspdigital.usp.br/replunidade)
 
+
+## Contribuindo com este projeto:
+
+Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
+
+
 ## Métodos existentes:
 
 ### Classe Pessoa 
@@ -143,6 +149,8 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
 
  - *alunosPrograma(int $codundclgi, int $codcur, int $codare = null)*: Retorna os alunos ativos de um programa (codcur) de pós da unidade (codundclgi), se pedido, somente de uma área (codare). 
 
+ - *egressosArea(int $codare)*: Retorna lista de alunos que defenderam pós-graduação em determinada área.
+
  ### Classe Bempatrimoniado
 
  - *dump($numpat, $cols)*: recebe numpat e retorna todos campos da tabela bempatrimoniado
@@ -170,6 +178,3 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
         $ativos = Bempatrimoniado::ativos($filtros, $buscas, $tipos);
   ```
  
-## Contribuindo com esse projeto
-
-Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
