@@ -339,10 +339,10 @@ class Posgraduacao
  *  indexados pela área (codare).
  * Se codare não foi determinado, busca todas as áreas do programa.
  * 
- * @param int $codundclgi - código da unidade
- * @param int $codcur - código do curso/programa
- * @param type $codare - código da área (opcional)
- * @return array
+ * @param Int $codundclgi - código da unidade
+ * @param Int $codcur - código do curso/programa
+ * @param Int $codare - código da área (opcional)
+ * @return Array
  */    
     public static function alunosPrograma(int $codundclgi, int $codcur, int $codare = null){
         // se $codare é null, seleciona todas
@@ -384,7 +384,7 @@ class Posgraduacao
      *
      * É usado no contexto do oferecimento.
      *
-     * @param string $codlinofe
+     * @param String $codlinofe
      *
      * @return string
      */
@@ -407,5 +407,35 @@ class Posgraduacao
             // então já devolve apenas o campo do nome na posição 0
             return $result[0]['dsclin'];
         }
+    }
+
+
+    /**
+    * Retorna lista de alunos que defenderam pós-graduação em determinada área
+    *
+    * @param  Int $codare - código da área do programa de pós graduação
+    *
+    * @return Array
+    */
+    public static function egressosArea(int $codare)
+    {
+        // se não fizer join com TRABALHOPROG retornou um resultado menor que deveria (codare=18134)
+        $query = "SELECT p.nompesttd AS nompes, a.nivpgm, a.dtadfapgm --, t.tittrb
+            FROM HISTPROGRAMA AS h, PESSOA AS p, AGPROGRAMA AS a, TRABALHOPROG AS t
+            WHERE h.tiphstpgm = 'con' -- concluidos
+             AND t.codare = h.codare AND t.codpes = h.codpes AND t.numseqpgm = h.numseqpgm -- join trabalhoprog
+             AND p.codpes = h.codpes -- join pessoa
+             AND a.codpes = h.codpes AND a.codare = h.codare AND a.numseqpgm = h.numseqpgm -- join agprograma
+             AND h.codare = :codare
+            ORDER BY h.dtaocopgm DESC, h.codpes ASC
+        ";
+
+        $param = [
+            'codare' => $codare
+        ];
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
     }
 }

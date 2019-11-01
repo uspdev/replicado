@@ -35,3 +35,4 @@ include_once __DIR__ . '/posgraduacao/disciplinasOferecimento.php';
 include_once __DIR__ . '/posgraduacao/oferecimento.php';
 include_once __DIR__ . '/posgraduacao/areasPrograma.php';
 include_once __DIR__ . '/posgraduacao/alunosPrograma.php';
+include_once __DIR__ . '/posgraduacao/egressosArea.php';

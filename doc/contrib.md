@@ -33,6 +33,15 @@ $query = "SELECT *
 Fica mais conciso e facilita copiar e colar de um frontend de SGBD.
 
 
+### PHP
+
+* Deve-se adicionar o bloco phpdoc correspondente ao método
+
+* Os argumentos dos métodos devem ser tipados, incluindo int, string etc que são suportados a partir do php 7.0
+
+* Deve-se dar preferência para aspas simples em strings pois o PHP não tenta parsear seu conteúdo
+
+
 ### Compatibilidade 
 
 Como essa biblioteca roda em vários servidores temos de atentar para a compatibilidade de versão do PHP. A versão mínima que deve ser suportada é o PHP 7.0 que vem por padrão no Debian 9 Stretch. O Debian 10 Buster vem com php 7.3. O Ubuntu 18.04 vem com php 7.2.
