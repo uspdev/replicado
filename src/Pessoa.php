@@ -352,7 +352,7 @@ class Pessoa
         $query .= "WHERE tipvinext = :vinculo AND sitatl = 'A' AND ";
         $query .= "codundclg = convert(int,:codundclg)";
         $param = [
-            'vinculo' => utf8_decode($vinculo),
+            'vinculo' => iconv('ISO-8859-1', 'UTF-8', utf8_decode($vinculo)),
             'codundclg' => $codundclg,
         ];
         $result = DB::fetchAll($query, $param);
