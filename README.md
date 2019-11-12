@@ -89,7 +89,11 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
  - *totalVicunlo($vinculo,$unidade)*: retorna *total* de vínculo ativos na unidade
 
  - *totalPosNivelPrograma($nivpgm,$unidade)*: retorna *total de aluno de Pós matriculados* de acordo com o nível do programa, na unidade
- 
+
+ - *tiposVinculos($unidade)*: retorna *array* com os tipos de vínculos *regulares* ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'SERVIDOR', 'ESTAGIARIORH')
+
+ - *ativosVinculo($vinculo, $codundclgi)*: retorna *array* com as pessoas ativas de um tipo de vínculo 
+
 ### Classe Graduacao
 
  - *verifica($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na graduação da unidade
