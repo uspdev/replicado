@@ -403,11 +403,11 @@ class Pessoa
         return false;
     }
     
-/**
- * Retorna o nome completo (nome social) a partir do codpes
- * @param type $codpes
- * @return boolean
- */
+    /**
+     * Retorna o nome completo (nome social) a partir do codpes
+     * @param type $codpes
+     * @return boolean
+     */
     public static function nomeCompleto($codpes){
         $pessoa = Pessoa::dump($codpes, ['nompesttd']);
         if(!empty($pessoa)) {
@@ -416,4 +416,58 @@ class Pessoa
         return false;
     }
 
+    /**
+     * Método para retornar todos os tipos de vínculos possíveis
+     * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD'),
+     * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH') 
+     *
+     * @param Integer $codundclgi
+     * @return void
+     */
+    public static function tiposVinculos($codundclgi)
+    {
+        $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA 
+                    WHERE sitatl = 'A' AND codundclg = convert(int, :codundclgi) 
+                    AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'SERVIDOR', 'ESTAGIARIORH'))
+                    AND (tipvinext NOT IN ('Servidor Designado'))
+                    ORDER BY tipvinext";
+        $param = [
+            'codundclgi' => $codundclgi,
+        ];
+        $result = DB::fetchAll($query, $param);
+        if(!empty($result)) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result;
+        }
+        return false;
+    }
+
+    /**
+     * Método para retornar todas as pessoas ativas por vínculo
+     * Somente ATIVOS
+     *
+     * @param String $vinculo
+     * @param Integer $codundclgi
+     * @return void
+     */
+
+    public static function ativosVinculo($vinculo, $codundclgi) 
+    {
+        $query = "SELECT L.*, P.* FROM LOCALIZAPESSOA AS L 
+                    INNER JOIN PESSOA AS P ON (L.codpes = P.codpes) 
+                    WHERE (L.tipvinext = :vinculo AND L.codundclg = CONVERT(INT, :codundclgi) AND L.sitatl = 'A') 
+                    ORDER BY L.nompes";
+        $param = [
+            'codundclgi'    => $codundclgi,
+            'vinculo'       => $vinculo,
+        ];
+        $result = DB::fetchAll($query, $param);
+        if (!empty($result)) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result;
+        }
+        return false;
+    } 
 }
