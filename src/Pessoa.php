@@ -420,6 +420,7 @@ class Pessoa
      * Método para retornar todos os tipos de vínculos possíveis
      * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD'),
      * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH') 
+     * Incluido também os Docente Aposentado 
      *
      * @param Integer $codundclgi
      * @return void
@@ -427,9 +428,9 @@ class Pessoa
     public static function tiposVinculos($codundclgi)
     {
         $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA 
-                    WHERE sitatl = 'A' AND codundclg = convert(int, :codundclgi) 
+                    WHERE sitatl IN ('A', 'P') AND codundclg = convert(int, :codundclgi) 
                     AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'SERVIDOR', 'ESTAGIARIORH'))
-                    AND (tipvinext NOT IN ('Servidor Designado'))
+                    AND (tipvinext NOT IN ('Servidor Designado', 'Servidor Aposentado'))
                     ORDER BY tipvinext";
         $param = [
             'codundclgi' => $codundclgi,
@@ -446,6 +447,7 @@ class Pessoa
     /**
      * Método para retornar todas as pessoas ativas por vínculo
      * Somente ATIVOS
+     * Também Docente Aposentado 
      *
      * @param String $vinculo
      * @param Integer $codundclgi
@@ -456,7 +458,7 @@ class Pessoa
     {
         $query = "SELECT L.*, P.* FROM LOCALIZAPESSOA AS L 
                     INNER JOIN PESSOA AS P ON (L.codpes = P.codpes) 
-                    WHERE (L.tipvinext = :vinculo AND L.codundclg = CONVERT(INT, :codundclgi) AND L.sitatl = 'A') 
+                    WHERE (L.tipvinext = :vinculo AND L.codundclg = CONVERT(INT, :codundclgi) AND L.sitatl IN ('A', 'P')) 
                     ORDER BY L.nompes";
         $param = [
             'codundclgi'    => $codundclgi,

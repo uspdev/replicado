@@ -90,9 +90,9 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
 
  - *totalPosNivelPrograma($nivpgm,$unidade)*: retorna *total de aluno de Pós matriculados* de acordo com o nível do programa, na unidade
 
- - *tiposVinculos($unidade)*: retorna *array* com os tipos de vínculos *regulares* ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'SERVIDOR', 'ESTAGIARIORH')
+ - *tiposVinculos($unidade)*: retorna *array* com os tipos de vínculos *regulares* e também *Docente Aposentado* ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'SERVIDOR', 'ESTAGIARIORH')
 
- - *ativosVinculo($vinculo, $codundclgi)*: retorna *array* com as pessoas ativas de um tipo de vínculo 
+ - *ativosVinculo($vinculo, $codundclgi)*: retorna *array* com as pessoas ativas de um tipo de vínculo e também Docente Aposentado
 
 ### Classe Graduacao
 
