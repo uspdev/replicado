@@ -315,4 +315,27 @@ class Graduacao
         return $result;
     }
 
+    /**
+     * Departamento de Ensino do Aluno de Graduação
+     * 
+     * @param Int $codpes
+     * @param Int $codundclgi
+     * @return Array(nomabvset)
+     */    
+    public static function setorAluno($codpes, $codundclgi)
+    {
+        $codcur = self::curso($codpes, $codundclgi)['codcur'];
+        $codhab = self::curso($codpes, $codundclgi)['codhab'];
+        $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C 
+                    INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
+                    WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
+        $param = [
+            'codcur' => $codcur,
+            'codhab' => $codhab,
+        ];
+        $result = DB::fetch($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
+    }
 }
