@@ -9,10 +9,17 @@ use Monolog\Handler\StreamHandler;
 class DB
 {
     private static $instance;
+    private static $sgbd;
     private function __construct(){}
     private function __clone(){}
     private static $logger;
-
+    
+    public static function getSgbd() {
+        # Se o SGBD foi informado no .env da aplicação mantém, do contrário utiliza sybase como default
+        self::$sgbd = getenv('REPLICADO_SGBD') ?? 'sybase';
+        return self::$sgbd;
+    }
+    
     public static function getInstance(){
         $host = getenv('REPLICADO_HOST');
         $port = getenv('REPLICADO_PORT');

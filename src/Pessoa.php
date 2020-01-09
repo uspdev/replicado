@@ -453,13 +453,15 @@ class Pessoa
      * @param Integer $codundclgi
      * @return void
      */
-
     public static function ativosVinculo($vinculo, $codundclgi) 
     {
         $query = "SELECT L.*, P.* FROM LOCALIZAPESSOA AS L 
                     INNER JOIN PESSOA AS P ON (L.codpes = P.codpes) 
                     WHERE (L.tipvinext = :vinculo AND L.codundclg = CONVERT(INT, :codundclgi) AND L.sitatl IN ('A', 'P')) 
                     ORDER BY L.nompes";
+        # Neste método foi necessário verificar o SGBD por conta do CHARSET utilizado pelo replicado
+        $sgbd = DB::getSgbd();
+        $vinculo = ($sgbd == 'sybase') ? iconv('UTF-8', 'ISO-8859-1', $vinculo) : $vinculo;
         $param = [
             'codundclgi'    => $codundclgi,
             'vinculo'       => $vinculo,
