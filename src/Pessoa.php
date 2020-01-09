@@ -418,7 +418,7 @@ class Pessoa
 
     /**
      * Método para retornar todos os tipos de vínculos possíveis
-     * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD'),
+     * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT'),
      * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH') 
      * Incluido também os Docente Aposentado 
      *
@@ -429,7 +429,7 @@ class Pessoa
     {
         $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA 
                     WHERE sitatl IN ('A', 'P') AND codundclg = convert(int, :codundclgi) 
-                    AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'SERVIDOR', 'ESTAGIARIORH'))
+                    AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'))
                     AND (tipvinext NOT IN ('Servidor Designado', 'Servidor Aposentado'))
                     ORDER BY tipvinext";
         $param = [
