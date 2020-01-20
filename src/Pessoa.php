@@ -479,13 +479,13 @@ class Pessoa
         $query = " SELECT dtanas from PESSOA ";
         $query .= " WHERE codpes = convert(int,:codpes) ";
         $param = [
-            'codpes'        => $codpes,
+            'codpes' => $codpes,
         ];
         $result = DB::fetch($query, $param);
         if (!empty($result)) {
             $result['dtanas'] = Uteis::data_mes($result['dtanas']);
             return $result;
         }
-        return 'Número não encontrado';
+        return false;
     }  
 }
