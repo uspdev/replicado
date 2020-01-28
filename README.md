@@ -94,6 +94,8 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
 
  - *ativosVinculo($vinculo, $codundclgi)*: retorna *array* com as pessoas ativas de um tipo de vínculo e também Docente Aposentado
 
+ - *nascimento($codpes)*: retorna data de nascimento da pessoa
+
 ### Classe Graduacao
 
  - *verifica($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na graduação da unidade
