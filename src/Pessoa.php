@@ -473,7 +473,65 @@ class Pessoa
             return $result;
         }
         return false;
-    }
+    } 
+
+    /**
+     * Método para retornar todas os vínculos e setores de uma pessoa
+     * Fundamental para o uspdev/web-ldap-admin
+     * Somente ATIVOS
+     * Também Docente Aposentado 
+     *
+     * @param Integer $codpes
+     * @param Integer $codundclgi
+     * @return void
+     */
+    public static function vinculosSetores(int $codpes, int $codundclgi = 0)
+    {
+        // codfncetr = 0 não traz as linhas de registro de designados (chefias)
+        $query = "SELECT * FROM LOCALIZAPESSOA WHERE codpes = CONVERT(INT, :codpes) AND sitatl IN ('A', 'P') AND codfncetr = 0";
+        // Por precaução excluí funcionários aposentados
+        $query .= " AND tipvinext NOT IN ('Servidor Aposentado')";
+        // Somente os vínculos regulares 'ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'
+        $query .= " AND tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH')";
+        if ($codundclgi != 0) {
+            $query .= " AND codundclg = CONVERT(INT, :codundclgi)";
+        }
+        $param = [
+            'codpes' => $codpes,
+            'codundclgi' => $codundclgi,
+        ];
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        // Inicializa o array de vínculos e setores
+        $vinculosSetores = array();
+        foreach ($result as $row)
+        {
+            if (!empty($row['tipvinext'])) {
+                $vinculo = trim($row['tipvinext']);
+                // Adiciona os vínculos por extenso
+                array_push($vinculosSetores, $vinculo);
+                // Adiciona o departamento quando também for Aluno de Graduação
+                if (trim($row['tipvinext']) == 'Aluno de Graduação') {
+                    $setorGraduacao = Graduacao::setorAluno($row['codpes'], $codundclgi)['nomabvset'];
+                    array_push($vinculosSetores, $row['tipvinext'] . ' ' . $setorGraduacao);   
+                }             
+            }    
+            if (!empty(trim($row['nomabvset']))) {
+                $setor = trim($row['nomabvset']);
+                // Remove o código da unidade da sigla do setor 
+                $setor = str_replace('-' . $codundclgi, '', $setor);
+                // Adiciona as siglas dos setores
+                array_push($vinculosSetores, $setor);
+                // Adiciona os vínculos por extenso concatenando a sigla do setor
+                array_push($vinculosSetores, $row['tipvinext'] . ' ' . $setor);
+            }
+        }
+        $vinculosSetores = array_unique($vinculosSetores);
+        sort($vinculosSetores);
+
+        return $vinculosSetores;
+    }      
 
     public static function nascimento($codpes){
         $query = " SELECT dtanas from PESSOA ";
@@ -488,4 +546,5 @@ class Pessoa
         }
         return false;
     }  
+
 }

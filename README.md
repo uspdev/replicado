@@ -93,7 +93,9 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
  - *tiposVinculos($unidade)*: retorna *array* com os tipos de vínculos *regulares* e também *Docente Aposentado* ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'SERVIDOR', 'ESTAGIARIORH')
 
  - *ativosVinculo($vinculo, $codundclgi)*: retorna *array* com as pessoas ativas de um tipo de vínculo e também Docente Aposentado
-
+ 
+ - *vinculosSetores($codpes, $codundclgi)*: retorna *array* com os vínculos e setores que a pessoa possui
+ 
  - *nascimento($codpes)*: retorna data de nascimento da pessoa
 
 ### Classe Graduacao

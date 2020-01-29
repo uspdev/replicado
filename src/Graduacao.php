@@ -72,9 +72,17 @@ class Graduacao
             'codundclgi' => $codundclgi,
         ];
         $result = DB::fetch($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        // Nota: Situação a se tratar com log de ocorrências
+        // Por conta de divergências na consolidação das tabelas LOCALIZAPESSOA e VINCULOPESSOAUSP
+        // Alguns alunos ativos de graduação aparecem na LOCALIZAPESSOA e não aparecem na VINCULOPESSOAUSP
+        // Isso acontece devido aos agendamentos de consolidações
+        if ($result != false) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result;
+        } else {
+            return false;
+        }    
     }
 
     public static function programa($codpes)
@@ -334,8 +342,15 @@ class Graduacao
             'codhab' => $codhab,
         ];
         $result = DB::fetch($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
+        // Nota: Situação a se tratar com log de ocorrências
+        // Se o departamento de ensino do alguno de graduação não foi encontrado
+        if ($result != false) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+        } else {
+            // Será retornado 'DEPARTAMENTO NÃO ENCONTRADO' a fim de se detectar as situações ATÍPICAS em que isso ocorre 
+            $result = ['nomabvset' => 'DEPARTAMENTO NÃO ENCONTRADO'];
+        }
         return $result;
     }
 }
