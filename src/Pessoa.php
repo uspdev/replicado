@@ -532,4 +532,19 @@ class Pessoa
 
         return $vinculosSetores;
     }      
+
+    public static function nascimento($codpes){
+        $query = " SELECT dtanas from PESSOA ";
+        $query .= " WHERE codpes = convert(int,:codpes) ";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        $result = DB::fetch($query, $param);
+        if (!empty($result)) {
+            $result['dtanas'] = Uteis::data_mes($result['dtanas']);
+            return $result;
+        }
+        return false;
+    }  
+
 }

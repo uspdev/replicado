@@ -96,6 +96,8 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
  
  - *vinculosSetores($codpes, $codundclgi)*: retorna *array* com os vínculos e setores que a pessoa possui
  
+ - *nascimento($codpes)*: retorna data de nascimento da pessoa
+
 ### Classe Graduacao
 
  - *verifica($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na graduação da unidade
