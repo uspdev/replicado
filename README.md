@@ -185,4 +185,5 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
         $bens = Bempatrimoniado::bens($filtros, $buscas, $tipos); 
         $ativos = Bempatrimoniado::ativos($filtros, $buscas, $tipos);
   ```
- 
+### Classe Lattes 
+ - *idLattes($codpes)*: recebe o nº USP e retorna o ID Lattes da pessoa.
