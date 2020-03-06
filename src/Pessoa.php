@@ -9,7 +9,8 @@ class Pessoa
     public static function dump(int $codpes, array $fields = ['*'])
     {
         $columns = implode(",",$fields);
-        $query = " SELECT {$columns} FROM PESSOA WHERE codpes = convert(int,:codpes)";
+        $query = "SELECT {$columns} FROM PESSOA
+                    WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -24,7 +25,8 @@ class Pessoa
 
     public static function cracha($codpes)
     {
-        $query = " SELECT * FROM CATR_CRACHA WHERE codpescra = :codpes";
+        $query = "SELECT * FROM CATR_CRACHA
+                    WHERE codpescra = :codpes";
         $param = [
             'codpes' => $codpes,
         ];
@@ -39,7 +41,8 @@ class Pessoa
 
     public static function emails($codpes)
     {
-        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = convert(int,:codpes)";
+        $query = "SELECT * FROM EMAILPESSOA
+                    WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -55,7 +58,8 @@ class Pessoa
 
     public static function email($codpes)
     {
-        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = convert(int,:codpes)";
+        $query = "SELECT * FROM EMAILPESSOA
+                    WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -69,7 +73,8 @@ class Pessoa
 
     public static function emailusp($codpes)
     {
-        $query = " SELECT * FROM EMAILPESSOA WHERE codpes = convert(int,:codpes)";
+        $query = "SELECT * FROM EMAILPESSOA
+                    WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -92,8 +97,8 @@ class Pessoa
 
     public static function telefones($codpes)
     {
-        $query = " SELECT * FROM TELEFPESSOA ";
-        $query .= " WHERE TELEFPESSOA.codpes = convert(int,:codpes)";
+        $query = "SELECT * FROM TELEFPESSOA
+                    WHERE TELEFPESSOA.codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -114,9 +119,9 @@ class Pessoa
         $nome = trim($nome);
         $nome = strtoupper(str_replace(' ','%',$nome));
 
-        $query = " SELECT *"; 
-        $query .= " FROM PESSOA WHERE UPPER(PESSOA.nompes) LIKE :nome"; 
-        $query .= " ORDER BY PESSOA.nompes ASC "; 
+        $query = "SELECT * FROM PESSOA
+                    WHERE UPPER(PESSOA.nompes) LIKE :nome
+                    ORDER BY PESSOA.nompes ASC"; 
         $param = [
             'nome' => '%' . $nome . '%',
         ];
@@ -129,9 +134,9 @@ class Pessoa
 
     public static function nomeFonetico($nome)
     {
-        $query  = "SELECT *"; 
-        $query .= " FROM PESSOA WHERE PESSOA.nompesfon LIKE :nome";
-        $query .= " ORDER BY PESSOA.nompes ASC";
+        $query  = "SELECT * FROM PESSOA
+                    WHERE PESSOA.nompesfon LIKE :nome
+                    ORDER BY PESSOA.nompes ASC";
         $param = [
             'nome' => '%' . Uteis::fonetico($nome) . '%',
         ];
@@ -151,7 +156,8 @@ class Pessoa
 
     public static function vinculos(int $codpes, int $codundclgi = 0)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
+        $query = "SELECT * FROM LOCALIZAPESSOA
+                    WHERE codpes = convert(int,:codpes)";
         if($codundclgi != 0 ) {
             $query .= " AND codundclg = convert(int,:codundclgi)";
         }
@@ -191,7 +197,8 @@ class Pessoa
 
     public static function vinculosSiglas(int $codpes, int $codundclgi = 0)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
+        $query = "SELECT * FROM LOCALIZAPESSOA
+                    WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
         if($codundclgi != 0 ) {
             $query .= " AND codundclg = convert(int,:codundclgi)";
         }
@@ -215,7 +222,8 @@ class Pessoa
 
     public static function setoresSiglas(int $codpes, int $codundclgi = 0)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
+        $query = "SELECT * FROM LOCALIZAPESSOA
+                    WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
         if($codundclgi != 0 ) {
             $query .= " AND codundclg = convert(int,:codundclgi)";
         }
@@ -246,11 +254,12 @@ class Pessoa
      */
     public static function docentes($codundclgi)
     {
-        $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
-        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
-        $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Docente' ";
-        $query .= " AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A') ";
-        $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
+        $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
+                    INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
+                    WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Docente'
+                        AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
+                        AND LOCALIZAPESSOA.sitatl = 'A')
+                    ORDER BY LOCALIZAPESSOA.nompes";
         $param = [
             'codundclgi' => $codundclgi,
         ];
@@ -271,11 +280,12 @@ class Pessoa
      */
     public static function servidores($codundclgi)
     {
-        $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
-        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
-        $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor' ";
-        $query .= " AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A') ";
-        $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
+        $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
+                    INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
+                    WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor'
+                        AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
+                        AND LOCALIZAPESSOA.sitatl = 'A')
+                    ORDER BY LOCALIZAPESSOA.nompes";
         $param = [
             'codundclgi' => $codundclgi,
         ];
@@ -296,11 +306,12 @@ class Pessoa
      */
     public static function designados($codundclgi)
     {
-        $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
-        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
-        $query .= " WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor Designado' ";
-        $query .= " AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A') ";
-        $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
+        $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
+                    INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
+                    WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor Designado'
+                        AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
+                        AND LOCALIZAPESSOA.sitatl = 'A')
+                    ORDER BY LOCALIZAPESSOA.nompes";
         $param = [
             'codundclgi' => $codundclgi,
         ];
@@ -321,11 +332,12 @@ class Pessoa
      */
     public static function estagiarios($codundclgi)
     {
-        $query  = " SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA ";
-        $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes) ";
-        $query .= " WHERE ( LOCALIZAPESSOA.tipvin LIKE 'ESTAGIARIORH'";
-        $query .= " AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi) AND LOCALIZAPESSOA.sitatl = 'A') ";
-        $query .= " ORDER BY LOCALIZAPESSOA.nompes ";
+        $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
+                    INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
+                    WHERE ( LOCALIZAPESSOA.tipvin LIKE 'ESTAGIARIORH'
+                        AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
+                        AND LOCALIZAPESSOA.sitatl = 'A')
+                    ORDER BY LOCALIZAPESSOA.nompes";
         $param = [
             'codundclgi' => $codundclgi,
         ];
@@ -348,9 +360,10 @@ class Pessoa
      */
     public static function totalVinculo($vinculo, $codundclg)
     {
-        $query = "SELECT COUNT(codpes) as totalvinculo FROM LOCALIZAPESSOA ";
-        $query .= "WHERE tipvinext = :vinculo AND sitatl = 'A' AND ";
-        $query .= "codundclg = convert(int,:codundclg)";
+        $query = "SELECT COUNT(codpes) as totalvinculo FROM LOCALIZAPESSOA
+                    WHERE tipvinext = :vinculo
+                        AND sitatl = 'A' 
+                        AND codundclg = convert(int,:codundclg)";
         $param = [
             'vinculo' => $vinculo,
             'codundclg' => $codundclg,
@@ -371,11 +384,13 @@ class Pessoa
      */
     public static function totalPosNivelPrograma($nivpgm, $codundclg)
     {
-        $query = "SELECT COUNT(lp.codpes) AS totalnivpgm FROM LOCALIZAPESSOA AS lp ";
-        $query .= "INNER JOIN VINCULOPESSOAUSP AS vpu ";
-        $query .= "ON(lp.codpes = vpu.codpes AND lp.tipvin = vpu.tipvin) ";
-        $query .= "WHERE lp.tipvin='ALUNOPOS' AND lp.codundclg= convert(int,:codundclg) ";
-        $query .= "AND lp.sitatl='A' AND vpu.nivpgm=:nivpgm";
+        $query = "SELECT COUNT(lp.codpes) AS totalnivpgm FROM LOCALIZAPESSOA AS lp
+                    INNER JOIN VINCULOPESSOAUSP AS vpu
+                    ON(lp.codpes = vpu.codpes AND lp.tipvin = vpu.tipvin)
+                    WHERE lp.tipvin='ALUNOPOS' 
+                        AND lp.codundclg= convert(int,:codundclg)
+                        AND lp.sitatl='A' 
+                        AND vpu.nivpgm=:nivpgm";
 
         $param = [
             'nivpgm' => $nivpgm,
@@ -428,9 +443,10 @@ class Pessoa
     public static function tiposVinculos($codundclgi)
     {
         $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA 
-                    WHERE sitatl IN ('A', 'P') AND codundclg = convert(int, :codundclgi) 
-                    AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'))
-                    AND (tipvinext NOT IN ('Servidor Designado', 'Servidor Aposentado'))
+                    WHERE sitatl IN ('A', 'P') 
+                        AND codundclg = convert(int, :codundclgi) 
+                        AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'))
+                        AND (tipvinext NOT IN ('Servidor Designado', 'Servidor Aposentado'))
                     ORDER BY tipvinext";
         $param = [
             'codundclgi' => $codundclgi,
@@ -457,7 +473,9 @@ class Pessoa
     {
         $query = "SELECT L.*, P.* FROM LOCALIZAPESSOA AS L 
                     INNER JOIN PESSOA AS P ON (L.codpes = P.codpes) 
-                    WHERE (L.tipvinext = :vinculo AND L.codundclg = CONVERT(INT, :codundclgi) AND L.sitatl IN ('A', 'P')) 
+                    WHERE (L.tipvinext = :vinculo 
+                        AND L.codundclg = CONVERT(INT, :codundclgi) 
+                        AND L.sitatl IN ('A', 'P')) 
                     ORDER BY L.nompes";
         # Neste método foi necessário verificar o SGBD por conta do CHARSET utilizado pelo replicado
         $sgbd = DB::getSgbd();
@@ -534,8 +552,8 @@ class Pessoa
     }      
 
     public static function nascimento($codpes){
-        $query = " SELECT dtanas from PESSOA ";
-        $query .= " WHERE codpes = convert(int,:codpes) ";
+        $query = "SELECT dtanas from PESSOA
+                    WHERE codpes = convert(int,:codpes) ";
         $param = [
             'codpes' => $codpes,
         ];
