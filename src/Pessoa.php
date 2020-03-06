@@ -159,7 +159,7 @@ class Pessoa
         $query = "SELECT * FROM LOCALIZAPESSOA
                     WHERE codpes = convert(int,:codpes)";
         if($codundclgi != 0 ) {
-            $query .= "AND codundclg = convert(int,:codundclgi)";
+            $query .= " AND codundclg = convert(int,:codundclgi)";
         }
         $param = [
             'codpes' => $codpes,
@@ -200,7 +200,7 @@ class Pessoa
         $query = "SELECT * FROM LOCALIZAPESSOA
                     WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
         if($codundclgi != 0 ) {
-            $query .= "AND codundclg = convert(int,:codundclgi)";
+            $query .= " AND codundclg = convert(int,:codundclgi)";
         }
         $param = [
             'codpes' => $codpes,
@@ -225,7 +225,7 @@ class Pessoa
         $query = "SELECT * FROM LOCALIZAPESSOA
                     WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
         if($codundclgi != 0 ) {
-            $query .= "AND codundclg = convert(int,:codundclgi)";
+            $query .= " AND codundclg = convert(int,:codundclgi)";
         }
         $param = [
             'codpes' => $codpes,
