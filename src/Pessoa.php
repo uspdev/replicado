@@ -565,4 +565,20 @@ class Pessoa
         return false;
     }  
 
+    public static function verificaCoordCursosGrad($codpes)
+    {
+        $query = " SELECT COUNT(*) 
+                    FROM R10DOCCOOCUR rd
+                    WHERE (rd.codpes = $codpes) 
+                        AND fncpescur = 'COO' ";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        $result = DB::fetchAll($query, $param);
+        if($result == 0){
+            return false;
+        }
+        return true;
+    }
+
 }
