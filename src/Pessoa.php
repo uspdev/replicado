@@ -567,18 +567,18 @@ class Pessoa
 
     public static function verificaCoordCursosGrad($codpes)
     {
-        $query = " SELECT COUNT(*) 
-                    FROM R10DOCCOOCUR rd
-                    WHERE (rd.codpes = $codpes) 
-                        AND fncpescur = 'COO' ";
+        $query = "SELECT codpes 
+                    FROM LOCALIZAPESSOA  
+                    WHERE codpes = convert(int,:codpes)
+                        AND nomfnc LIKE '%Coord Cursos Grad%' ";
         $param = [
             'codpes' => $codpes,
         ];
         $result = DB::fetchAll($query, $param);
-        if($result == 0){
-            return false;
+        if (!empty($result)) {
+            return true;
         }
-        return true;
+        return false;
     }
 
 }
