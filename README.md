@@ -98,6 +98,8 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
  
  - *nascimento($codpes)*: retorna data de nascimento da pessoa
 
+ - *verificaCoordCursosGrad($codpes)*: retorna true ou false ao verificar pelo nº USP se a pessoa é coordenadora dos cursos de graduação
+
 ### Classe Graduacao
 
  - *verifica($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na graduação da unidade
