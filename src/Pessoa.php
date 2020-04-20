@@ -565,4 +565,20 @@ class Pessoa
         return false;
     }  
 
+    public static function verificaCoordCursosGrad($codpes)
+    {
+        $query = "SELECT codpes 
+                    FROM LOCALIZAPESSOA  
+                    WHERE codpes = convert(int,:codpes)
+                        AND nomfnc LIKE '%Coord Cursos Grad%' ";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        $result = DB::fetchAll($query, $param);
+        if (!empty($result)) {
+            return true;
+        }
+        return false;
+    }
+
 }
