@@ -99,6 +99,8 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
  - *nascimento($codpes)*: retorna data de nascimento da pessoa
 
  - *estagioUSP($codpes)*: recebe o número USP da pessoa e retorna true caso ela tenha um estágio na USP e false caso não tenha
+ 
+ - *verificaCoordCursosGrad($codpes)*: retorna true ou false ao verificar pelo nº USP se a pessoa é coordenadora dos cursos de graduação
 
 ### Classe Graduacao
 
@@ -189,4 +191,5 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
         $bens = Bempatrimoniado::bens($filtros, $buscas, $tipos); 
         $ativos = Bempatrimoniado::ativos($filtros, $buscas, $tipos);
   ```
- 
+### Classe Lattes 
+ - *idLattes($codpes)*: recebe o nº USP e retorna o ID Lattes da pessoa.
