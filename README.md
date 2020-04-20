@@ -187,4 +187,13 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
         $bens = Bempatrimoniado::bens($filtros, $buscas, $tipos); 
         $ativos = Bempatrimoniado::ativos($filtros, $buscas, $tipos);
   ```
- 
+ ### Classe Gênero
+
+ - *contaAlunoGR($codundclg, $sexpes)*: recebe o código da unidade e gênero (F,M) e retorna a quantidade de alunos da graduação com o gênero especificado
+
+ - *contaAlunoGRCurso($codundclg, $sexpes, $codcur)*: recebe o código da unidade, gênero (F,M) e código do curso de graduação para retornar a quantidade de alunos do curso de graduação com o gênero especificado
+
+- *contaDocente($codundclg, $sexpes)*: recebe o código da unidade e gênero (F,M) e retorna a quantidade de docentes ativos com o gênero especificado
+
+- *contaEstagiario($codundclg, $sexpes)*: recebe o código da unidade e gênero (F,M) e retorna a
+quantidade de estágiarios ativos na unidade com o gênero especificado
