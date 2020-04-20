@@ -563,7 +563,30 @@ class Pessoa
             return $result;
         }
         return false;
-    }  
+    }
+    
+    /**
+     * Método que verifica através do número USP se pessoa tem estágio USP ou não
+     * retorna true se a pessoa tiver um estágio na USP 
+     * ou false caso o contrário
+     * Somente ATIVOS
+     *
+     * @param Integer $codpes
+     * @return void
+     */
+    public static function estagioUSP($codpes){
+        $query = " SELECT codpes from LOCALIZAPESSOA ";
+        $query .= " WHERE codpes = convert(int,:codpes) ";
+        $query .= " AND tipvin LIKE 'ESTAGIARIORH' ";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        $result = DB::fetch($query, $param);
+        if (!empty($result)) {
+            return true;
+        }
+        return false;
+    }
 
     public static function verificaCoordCursosGrad($codpes)
     {

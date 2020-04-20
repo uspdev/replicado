@@ -98,6 +98,8 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
  
  - *nascimento($codpes)*: retorna data de nascimento da pessoa
 
+ - *estagioUSP($codpes)*: recebe o número USP da pessoa e retorna true caso ela tenha um estágio na USP e false caso não tenha
+ 
  - *verificaCoordCursosGrad($codpes)*: retorna true ou false ao verificar pelo nº USP se a pessoa é coordenadora dos cursos de graduação
 
 ### Classe Graduacao
