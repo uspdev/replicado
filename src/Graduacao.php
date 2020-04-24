@@ -353,4 +353,29 @@ class Graduacao
         }
         return $result;
     }
+
+    /**
+     * Método para retornar o total de alunos de graduação do gênero 
+     * e curso (opcional) especificado 
+     * @param Char $sexpes
+     * @param Integer $codcur (optional)
+     * @return void
+     */
+    public static function contarAtivosPorGenero($sexpes, $codcur = null){
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA ";
+        $query .= " JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes ";
+        $query .= " JOIN SITALUNOATIVOGR ON SITALUNOATIVOGR.codpes = LOCALIZAPESSOA.codpes ";
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' ";
+        $query .= " AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) ";
+        $query .= " AND PESSOA.sexpes = $sexpes AND SITALUNOATIVOGR.codcur = convert(int,:codcur) ";
+        $param = [
+            'sexpes' => $sexpes,
+            'codcur' => $codcur,
+        ];
+        $result = DB::fetch($query, $param);
+        if (!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
 }

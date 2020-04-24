@@ -98,9 +98,13 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
  
  - *nascimento($codpes)*: retorna data de nascimento da pessoa
 
- - *estagioUSP($codpes)*: recebe o número USP da pessoa e retorna true caso ela tenha um estágio na USP e false caso não tenha
+ - *verificaEstagioUSP($codpes)*: recebe o número USP da pessoa e retorna true caso ela tenha um estágio na USP e false caso não tenha
  
  - *verificaCoordCursosGrad($codpes)*: retorna true ou false ao verificar pelo nº USP se a pessoa é coordenadora dos cursos de graduação
+
+ - *contarDocentesAtivosPorGenero($sexpes)*: retorna o  total de docentes ativos na unidade com o gênero especificado 
+
+ - *contarEstagiarioAtivoPorGenero($sexpes)*: retorna o total de estágiarios ativos na unidade com gênero especificado
 
 ### Classe Graduacao
 
@@ -136,6 +140,8 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
  - *disciplinasEquivalentesCurriculo($codcur, $codhab)*: recebe o código do curso *string* e o código da habilitação *int* e retorna *array* com código da equivalência, os códigos, versões e obrigatoriedade das disciplinas e os códigos e versões de suas respectivas equivalências, em relação ao curriculo (grade curricular) atual do JupiterWeb
 
  - *setorAluno($codpes, $codundclgi)*: retorna *array* com a Sigla do Departamento de Ensino do Aluno de Graduação
+
+ - *contarAtivosPorGenero($sexpes, $codcur = null)*: recebe o gênero (F,M) e o código do curso (opcional) de graduação para retornar a quantidade de alunos de graduação com o gênero especificado
 
 ### Classe Posgraduacao
 

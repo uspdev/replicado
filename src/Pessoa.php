@@ -566,15 +566,15 @@ class Pessoa
     }
     
     /**
-     * Método que verifica através do número USP se pessoa tem estágio USP ou não
+     * Método que verifica através do número USP se a pessoa tem estágio USP ou não
      * retorna true se a pessoa tiver um estágio na USP 
      * ou false caso o contrário
      * Somente ATIVOS
      *
      * @param Integer $codpes
-     * @return void
+     * @return boolean
      */
-    public static function estagioUSP($codpes){
+    public static function verificaEstagioUSP($codpes){
         $query = " SELECT codpes from LOCALIZAPESSOA ";
         $query .= " WHERE codpes = convert(int,:codpes) ";
         $query .= " AND tipvin LIKE 'ESTAGIARIORH' ";
@@ -604,4 +604,46 @@ class Pessoa
         return false;
     }
 
+    /**
+     * Método para retornar o total de docentes ativos do gênero especificado
+     * @param Integer $codundclg
+     * @param Char $sexpes
+     * @return void
+     */
+    public static function contarDocentesAtivosPorGenero($sexpes){
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA ";
+        $query .= " JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes ";
+        $query .= " WHERE LOCALIZAPESSOA.tipvinext = 'Docente' ";
+        $query .= " AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) ";
+        $query .= " AND PESSOA.sexpes = $sexpes AND LOCALIZAPESSOA.sitatl = 'A' ";
+        $param = [
+            'sexpes' => $sexpes,
+        ];
+        $result = DB::fetch($query, $param);
+        if (!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
+
+    /**
+     * Método para retornar o total de estágiarios ativos na unidade do gênero especificado
+     * @param Char $sexpes
+     * @return void
+     */
+    public static function contarEstagiarioAtivoPorGenero($sexpes){
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA ";
+        $query .= " JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes ";
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ESTAGIARIORH' ";
+        $query .= " AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) ";
+        $query .= " AND PESSOA.sexpes = $sexpes ";
+        $param = [
+            'sexpes' => $sexpes,
+        ];
+        $result = DB::fetch($query, $param);
+        if (!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
 }

@@ -24,6 +24,7 @@ putenv('REPLICADO_DATABASE=replicacao');
 putenv('REPLICADO_USERNAME=user');
 putenv('REPLICADO_PASSWORD=password');
 putenv('REPLICADO_PATHLOG='.__DIR__.'/log.log');
+putenv('REPLICADO_CODUNDCLG=8');
 
 \$unidade = 00;
 \$codcur = 18005; // código do curso de PG
