@@ -597,7 +597,7 @@ class Pessoa
      * @param Integer $codpes
      * @return boolean
      */
-    public static function verificaCoordCursosGrad($codpes)
+    public static function verificarCoordCursosGrad($codpes)
     {
         $query = "SELECT codpes 
                     FROM LOCALIZAPESSOA  
