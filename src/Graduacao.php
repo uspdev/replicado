@@ -362,12 +362,12 @@ class Graduacao
      * @return void
      */
     public static function contarAtivosPorGenero($sexpes, $codcur = null){
-        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA ";
-        $query .= " JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes ";
-        $query .= " JOIN SITALUNOATIVOGR ON SITALUNOATIVOGR.codpes = LOCALIZAPESSOA.codpes ";
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' ";
-        $query .= " AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) ";
-        $query .= " AND PESSOA.sexpes = $sexpes AND SITALUNOATIVOGR.codcur = convert(int,:codcur) ";
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
+                    JOIN SITALUNOATIVOGR ON SITALUNOATIVOGR.codpes = LOCALIZAPESSOA.codpes 
+                    WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' 
+                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) 
+                    AND PESSOA.sexpes = :sexpes AND SITALUNOATIVOGR.codcur = convert(int,:codcur) ";
         $param = [
             'sexpes' => $sexpes,
             'codcur' => $codcur,

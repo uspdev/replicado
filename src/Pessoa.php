@@ -574,10 +574,10 @@ class Pessoa
      * @param Integer $codpes
      * @return boolean
      */
-    public static function verificaEstagioUSP($codpes){
-        $query = " SELECT codpes from LOCALIZAPESSOA ";
-        $query .= " WHERE codpes = convert(int,:codpes) ";
-        $query .= " AND tipvin LIKE 'ESTAGIARIORH' ";
+    public static function verificarEstagioUSP($codpes){
+        $query = " SELECT codpes from LOCALIZAPESSOA 
+                    WHERE codpes = convert(int,:codpes)
+                    AND tipvin LIKE 'ESTAGIARIORH' ";
         $param = [
             'codpes' => $codpes,
         ];
@@ -611,11 +611,11 @@ class Pessoa
      * @return void
      */
     public static function contarDocentesAtivosPorGenero($sexpes){
-        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA ";
-        $query .= " JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes ";
-        $query .= " WHERE LOCALIZAPESSOA.tipvinext = 'Docente' ";
-        $query .= " AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) ";
-        $query .= " AND PESSOA.sexpes = $sexpes AND LOCALIZAPESSOA.sitatl = 'A' ";
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
+                    WHERE LOCALIZAPESSOA.tipvinext = 'Docente' 
+                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) 
+                    AND PESSOA.sexpes = :sexpes AND LOCALIZAPESSOA.sitatl = 'A' ";
         $param = [
             'sexpes' => $sexpes,
         ];
@@ -631,12 +631,12 @@ class Pessoa
      * @param Char $sexpes
      * @return void
      */
-    public static function contarEstagiarioAtivoPorGenero($sexpes){
-        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA ";
-        $query .= " JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes ";
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ESTAGIARIORH' ";
-        $query .= " AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) ";
-        $query .= " AND PESSOA.sexpes = $sexpes ";
+    public static function contarEstagiariosAtivosPorGenero($sexpes){
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
+                    WHERE LOCALIZAPESSOA.tipvin = 'ESTAGIARIORH' 
+                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG'))
+                    AND PESSOA.sexpes = :sexpes ";
         $param = [
             'sexpes' => $sexpes,
         ];
