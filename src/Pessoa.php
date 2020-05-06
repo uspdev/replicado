@@ -566,18 +566,18 @@ class Pessoa
     }
     
     /**
-     * Método que verifica através do número USP se pessoa tem estágio USP ou não
+     * Método que verifica através do número USP se a pessoa tem estágio USP ou não
      * retorna true se a pessoa tiver um estágio na USP 
      * ou false caso o contrário
      * Somente ATIVOS
      *
      * @param Integer $codpes
-     * @return void
+     * @return boolean
      */
-    public static function estagioUSP($codpes){
-        $query = " SELECT codpes from LOCALIZAPESSOA ";
-        $query .= " WHERE codpes = convert(int,:codpes) ";
-        $query .= " AND tipvin LIKE 'ESTAGIARIORH' ";
+    public static function verificarEstagioUSP($codpes){
+        $query = " SELECT codpes from LOCALIZAPESSOA 
+                    WHERE codpes = convert(int,:codpes)
+                    AND tipvin LIKE 'ESTAGIARIORH' ";
         $param = [
             'codpes' => $codpes,
         ];
@@ -613,4 +613,46 @@ class Pessoa
         return false;
     }
 
+    /**
+     * Método para retornar o total de docentes ativos do gênero especificado
+     * @param Integer $codundclg
+     * @param Char $sexpes
+     * @return void
+     */
+    public static function contarDocentesAtivosPorGenero($sexpes){
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
+                    WHERE LOCALIZAPESSOA.tipvinext = 'Docente' 
+                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) 
+                    AND PESSOA.sexpes = :sexpes AND LOCALIZAPESSOA.sitatl = 'A' ";
+        $param = [
+            'sexpes' => $sexpes,
+        ];
+        $result = DB::fetch($query, $param);
+        if (!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
+
+    /**
+     * Método para retornar o total de estágiarios ativos na unidade do gênero especificado
+     * @param Char $sexpes
+     * @return void
+     */
+    public static function contarEstagiariosAtivosPorGenero($sexpes){
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
+                    WHERE LOCALIZAPESSOA.tipvin = 'ESTAGIARIORH' 
+                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG'))
+                    AND PESSOA.sexpes = :sexpes ";
+        $param = [
+            'sexpes' => $sexpes,
+        ];
+        $result = DB::fetch($query, $param);
+        if (!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
 }
