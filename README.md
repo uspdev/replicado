@@ -1,3 +1,13 @@
+[![Build Status](https://travis-ci.org/uspdev/replicado.svg?branch=master)](https://travis-ci.org/uspdev/replicado)
+[![Latest Stable Version](https://poser.pugx.org/uspdev/replicado/v/stable.svg)](https://packagist.org/packages/uspdev/replicado)
+[![Total Downloads](https://poser.pugx.org/uspdev/replicado/downloads.svg)](https://packagist.org/packages/uspdev/replicado)
+
+![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/uspdev/replicado.svg) 
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/uspdev/replicado.svg)
+
+![GitHub issues](https://img.shields.io/github/issues/uspdev/replicado.svg) 
+![GitHub closed issues](https://img.shields.io/github/issues-closed/uspdev/replicado.svg)
+
 ## Replicado
 
 Biblioteca PHP que abstrai o acesso aos dados do replicado USP, 
