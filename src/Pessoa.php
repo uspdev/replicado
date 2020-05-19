@@ -662,14 +662,14 @@ class Pessoa
      * @param Integer $codpes
      * @return array
     */
-    public static function endereco($codpes){
-        $query = "SELECT tl.nomtiplgr, p.epflgr, p.numlgr, p.cpllgr, p.nombro, l.cidloc, l.sglest, p.codendptl 
-                    FROM ENDPESSOA p 
-                    JOIN LOCALIDADE l
-                    ON p.codloc = l.codloc 
-                    JOIN TIPOLOGRADOURO tl
-                    ON p.codtiplgr = tl.codtiplgr 
-                    WHERE codpes = convert(int,:codpes)";
+    public static function obterEndereco($codpes){
+        $query = "SELECT TL.nomtiplgr, EP.epflgr, EP.numlgr, EP.cpllgr, EP.nombro, L.cidloc, L.sglest, EP.codendptl 
+                    FROM ENDPESSOA AS EP
+                    JOIN LOCALIDADE AS L
+                    ON EP.codloc = L.codloc 
+                    JOIN TIPOLOGRADOURO AS TL
+                    ON EP.codtiplgr = TL.codtiplgr 
+                    WHERE EP.codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];

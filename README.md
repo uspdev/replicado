@@ -117,7 +117,7 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
 
  - *contarEstagiariosAtivosPorGenero($sexpes)*: retorna o total de estágiarios ativos na unidade com gênero especificado
 
- - *endereco($codpes)*: recebe o número USP da pessoa e retorna o endereço
+ - *obterEndereco($codpes)*: recebe o número USP da pessoa e retorna o endereço
 
 ### Classe Graduacao
 
