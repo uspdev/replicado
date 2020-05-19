@@ -655,4 +655,30 @@ class Pessoa
         }
         return false;
     }
+
+    /**
+     * Método que recebe o codpes e retorna os campos para o endereço completo: 
+     * rua/avenida, número, complemento, bairro, cidade e UF. 
+     * @param Integer $codpes
+     * @return array
+    */
+    public static function endereco($codpes){
+        $query = "SELECT tl.nomtiplgr, p.epflgr, p.numlgr, p.cpllgr, p.nombro, l.cidloc, l.sglest, p.codendptl 
+                    FROM ENDPESSOA p 
+                    JOIN LOCALIDADE l
+                    ON p.codloc = l.codloc 
+                    JOIN TIPOLOGRADOURO tl
+                    ON p.codtiplgr = tl.codtiplgr 
+                    WHERE codpes = convert(int,:codpes)";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        $result = DB::fetch($query, $param);
+        if(!empty($result)) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result;
+        }
+        return false;
+    }
 }
