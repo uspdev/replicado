@@ -681,4 +681,25 @@ class Pessoa
         }
         return false;
     }
+
+    /**
+     * Método para retornar o total de servidores ativos na unidade do gênero especificado
+     * @param Char $sexpes
+     * @return void
+     */
+    public static function contarServidoresAtivosPorGenero($sexpes){
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
+                    WHERE LOCALIZAPESSOA.tipvinext LIKE 'Servidor'
+                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG'))
+                    AND PESSOA.sexpes = :sexpes ";
+        $param = [
+            'sexpes' => $sexpes,
+        ];
+        $result = DB::fetch($query, $param);
+        if (!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
 }
