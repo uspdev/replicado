@@ -119,6 +119,8 @@ Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
 
  - *obterEndereco($codpes)*: recebe o número USP da pessoa e retorna o endereço
 
+ - *contarServidoresAtivosPorGenero($sexpes)*: retorna o total de servidores ativos na unidade com gênero especificado
+
 ### Classe Graduacao
 
  - *verifica($codpes,$unidade)*: verifica se aluno (codpes) tem matrícula ativa na graduação da unidade
