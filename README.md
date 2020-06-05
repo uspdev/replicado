@@ -19,27 +19,21 @@ como por exemplo:
 Usa-se uma classe PHP que faz a abstração do acesso e portanto deixa 
 seu código muito mais limpo e torna as consultas reutilizáveis:
 
-    Pessoa::dump('123')
-
-## Adicione essa lib em seu projeto PHP:
-
-    composer require uspdev/replicado
+    Pessoa::dump('123');
 
 ## Dependências
 
-É necessário pelo menos o PHP v7.0.
+* É necessário pelo menos o PHP v7.0.
+* Esta biblioteca precisa da extensão `ext-sybase`. No ubuntu instale com `sudo apt install php-sybase`
+* monolog
 
-Esta bliboteca precisa da extensão ```ext-sybase```. No ubuntu instale com
+## Como usar
 
-    sudo apt install php-sybase
+Instale via composer
 
-## Para testar:
+    composer require uspdev/replicado
 
-Rode na linha de comando
-
-    php test/run.php credentials.php
-
-Se preferir rode alguns exemplos
+Exemplo de uso
 
 ```php
     <?php
@@ -59,55 +53,7 @@ Se preferir rode alguns exemplos
     print_r($emails);
 ```
 
-## Informações sobre tabelas:
-
-   [https://uspdigital.usp.br/replunidade](https://uspdigital.usp.br/replunidade)
-
-
-## Contribuindo com este projeto:
-
-Veja [aqui](doc/contrib.md) algumas orientações de como contribuir.
-
-
-## Métodos existentes:
-
-### Classe Pessoa 
-
- - *dump($codpes, $fields)*: recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão. 
-                           O campos $fields é opcional.
- - *nome($nome)*: recebe uma string nome e retorna os resultados para a tabela Pessoa
-
- - *nomeCompleto($codpes)*: recebe codpes e retorna o nome completo (nome social)
-
- - *cracha($codpes)*: recebe codpes e retorna todos campos da tabela catr_cracha para o codpes em questão 
-
- - *email($codpes)*: recebe codpes e retorna email de correspondência da pessoa
-
- - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
-
- - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
-
- - *vinculos($codpes)*: retorna vínculos ativos da pessoa
-
- - *vinculosSiglas($codpes,$unidade)*: retorna siglas de vínculos ativos da pessoa em uma dada unidade
-
- - *docentes($unidade)*: retorna *array* de todos os docentes ativos na unidade
-
- - *servidores($unidade)*: retorna *array* de todos os funcionários ativos na unidade
-
- - *estagiarios($unidade)*: retorna *array* de todos os estagiários ativos na unidade
-
- - *totalVicunlo($vinculo,$unidade)*: retorna *total* de vínculo ativos na unidade
-
- - *totalPosNivelPrograma($nivpgm,$unidade)*: retorna *total de aluno de Pós matriculados* de acordo com o nível do programa, na unidade
-
- - *tiposVinculos($unidade)*: retorna *array* com os tipos de vínculos *regulares* e também *Docente Aposentado* ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'SERVIDOR', 'ESTAGIARIORH')
-
- - *ativosVinculo($vinculo, $codundclgi)*: retorna *array* com as pessoas ativas de um tipo de vínculo e também Docente Aposentado
- 
- - *vinculosSetores($codpes, $codundclgi)*: retorna *array* com os vínculos e setores que a pessoa possui
- 
- - *nascimento($codpes)*: retorna data de nascimento da pessoa
+## Para testar
 
  - *verificarEstagioUSP($codpes)*: recebe o número USP da pessoa e retorna true caso ela tenha um estágio na USP e false caso não tenha
  
@@ -172,45 +118,28 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
 
  - *disciplina($sgldis)*: retorna *array* contendo todos os dados da disciplina indentificada por sua sigla - sgldis.
 
- - *disciplinasOferecimento($codare{, $data opcional})*: Retorna a lista de disciplinas em oferecimento no semestre de uma determinada área de concentração.
+    php test/run.php credentials.php
 
- - *oferecimento($sgldis, $numofe)*: Retorna dados de um oferecimento de disciplina incluindo local e ministrante.
+Se preferir crie e rode alguns exemplos.
 
- - *espacoturma($sgldis, $numseqdis, $numofe)*: Retorna local e horário dos oferecimentos da disciplina. É usado no contexto do oferecimento.
 
- - *ministrante($sgldis, $numseqdis, $numofe)*: Retorna lista de ministrantes da disciplina. É usado no contexto do oferecimento.
+O codundclg, na graduação, corresponde a um colegiado e uma unidade pode conter mais de um. Nesse caso, coloque em uma lista separada por vírgulas: `putenv('REPLICADO_CODUNDCLG=8,90');`
 
- - *areasProgramas(int $codundclgi, int $codcur = null)*: Retorna as áreas de concentração ativas dos programas de pós-graduação da unidade. Se informado o código do curso (programa), retorna apenas as áreas deste curso.
+## Informações sobre tabelas
 
- - *alunosPrograma(int $codundclgi, int $codcur, int $codare = null)*: Retorna os alunos ativos de um programa (codcur) de pós da unidade (codundclgi), se pedido, somente de uma área (codare). 
+   [https://uspdigital.usp.br/replunidade](https://uspdigital.usp.br/replunidade)
 
- - *egressosArea(int $codare)*: Retorna lista de alunos que defenderam pós-graduação em determinada área.
 
- ### Classe Bempatrimoniado
+## Contribuindo com este projeto
 
- - *dump($numpat, $cols)*: recebe numpat e retorna todos campos da tabela bempatrimoniado
- - *verifica($numpat)*: recebe numpat e retorna true se o bem está ativo
+Veja o arquivo [contrib.md](doc/contrib.md) com orientações de como contribuir.
 
- - *bens(array $filtros = [], array $buscas = [], array $tipos = [], int $limite = 2000)*: retorna todos campos da tabela BEMPATRIMONIADO dos patrimônios. Utilizar $filtros para valores exatos, $buscas com o *LIKE* e $tipos para colunas que precisam de convert. Por padrão, retorna 2000 registros.
+## Métodos existentes
 
- - *ativos(array $filtros = [], array $buscas = [], array $tipos = [], int $limite = 2000)*: retorna todos campos da tabela BEMPATRIMONIADO dos patrimônios ATIVOS. Utilizar $filtros para valores exatos, $buscas com o *LIKE* e $tipos para colunas que precisam de convert. Em $filtros já é adicionado por padrão o 'stabem' = 'Ativo'. Por padrão, retorna 2000 registros.
+Classes
 
-  * Exemplo utilização: 
-  ```php
-        $filtros = [
-            'codpes' => 11111111,
-            'codlocusp' => 11111,
-        ];
-        $buscas = [
-            'epfmarpat' => 'MARCA',
-            'modpat' => 'CORE 2 DUO',
-        ];
-        $tipos = [
-            'codpes' => 'int',
-            'codlocusp' => 'numeric',
-        ]
-        $bens = Bempatrimoniado::bens($filtros, $buscas, $tipos); 
-        $ativos = Bempatrimoniado::ativos($filtros, $buscas, $tipos);
-  ```
-### Classe Lattes 
- - *idLattes($codpes)*: recebe o nº USP e retorna o ID Lattes da pessoa.
+* [pessoa](doc/metodos_pessoa.md)
+* [graduacao](doc/metodos_graduacao.md)
+* [posgraduacao](doc/metodos_posgraduacao.md)
+* [bempatrimoniado](doc/metodos_bempatrimoniado.md)
+* [lattes](doc/metodos_lattes.md)
