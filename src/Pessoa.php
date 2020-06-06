@@ -684,7 +684,7 @@ class Pessoa
 
     /**
      * Método para retornar o total de servidores ativos na unidade do gênero especificado
-     * @param Char $sexpes
+     * @param Integer $codpes
      * @return int|bool
      */
     public static function contarServidoresAtivosPorGenero($sexpes){
@@ -702,5 +702,42 @@ class Pessoa
         }
         return false;
     }
-    
+
+    /**
+     * Método para retornar o telefone principal e o celular da pessoa com número USP especificado
+     * @param Int
+     * @return String
+     */
+    public static function obterTelefones($codpes){
+        $query = " SELECT numtel FROM TELEFPESSOA
+                    WHERE LOCALIZAPESSOA.codpes = convert(int,:codpes)
+                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG'))";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        $result = DB::fetch($query, $param);
+        if (!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
+
+    /**
+     * Método que dado um email USP, retorna o número USP da pessoa
+     * @param varchar
+     * @return boolean
+     */
+    public static function obterNumeroUsp($codema){
+        $query = " SELECT codpes FROM LOCALIZAPESSOA
+                    WHERE LOCALIZAPESSOA.codema = :codema
+                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG'))";
+        $param = [
+            'codema' => $codema,
+        ];
+        $result = DB::fetch($query, $param);
+        if (!empty($result)) {
+            return $result;
+        }
+        return false;
+    }
 }
