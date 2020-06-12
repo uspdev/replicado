@@ -704,14 +704,13 @@ class Pessoa
     }
 
     /**
-     * Método para retornar o telefone principal e o celular da pessoa com número USP especificado
+     * Método para retornar todos os números pessoais de telefone da pessoa com número USP especificado
      * @param Int
      * @return String
      */
-    public static function obterTelefones($codpes){
-        $query = " SELECT numtel FROM TELEFPESSOA
-                    WHERE LOCALIZAPESSOA.codpes = convert(int,:codpes)
-                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG'))";
+    public static function listarTelefonePorCodpes($codpes){
+        $query = " SELECT codddi, codddd, numtel FROM TELEFPESSOA
+                    WHERE TELEFPESSOA.codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
@@ -723,14 +722,13 @@ class Pessoa
     }
 
     /**
-     * Método que dado um email USP, retorna o número USP da pessoa
+     * Método que dado um email cadastrado no sistema (email usp ou alternativo), retorna o número USP da pessoa
      * @param varchar
      * @return boolean
      */
-    public static function obterNumeroUsp($codema){
-        $query = " SELECT codpes FROM LOCALIZAPESSOA
-                    WHERE LOCALIZAPESSOA.codema = :codema
-                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG'))";
+    public static function obterCodpesPorEmail($codema){
+        $query = " SELECT codpes FROM EMAILPESSOA
+                    WHERE EMAILPESSOA.codema = :codema";
         $param = [
             'codema' => $codema,
         ];

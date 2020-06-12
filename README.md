@@ -67,9 +67,9 @@ Exemplo de uso
 
  - *contarServidoresAtivosPorGenero($sexpes)*: retorna o total de servidores ativos na unidade com gênero especificado
 
- - *obterTelefones($codpes)*: Método para retornar o telefone principal e o celular da pessoa com número USP especificado
+ - *listarTelefonePorCodpes($codpes)*: Método para retornar todos os números pessoais de telefone da pessoa com número USP especificado
 
- - *obterNumeroUsp($codema)*: Método que dado um email USP, retorna o número USP da pessoa
+ - *obterCodpesPorEmail($codema)*: Método que dado um email cadastrado no sistema (email usp ou alternativo), retorna o número USP da pessoa
 
 ### Classe Graduacao
 
