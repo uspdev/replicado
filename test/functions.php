@@ -24,12 +24,13 @@ putenv('REPLICADO_DATABASE=replicacao');
 putenv('REPLICADO_USERNAME=user');
 putenv('REPLICADO_PASSWORD=password');
 putenv('REPLICADO_PATHLOG='.__DIR__.'/log.log');
-putenv('REPLICADO_CODUNDCLG=8');
+putenv('REPLICADO_CODUNDCLG=8'); // ou 8,44,43 para várias unidades
 
 \$unidade = 00;
 \$codcur = 18005; // código do curso de PG
 \$codare = 18134; // código de área da PG
 \$codpes = 1575309; // nro USP para testar se é aluno da PG ou não
+\$codset = 9999; ou '9999,8888,7777' // código do setor/departamento (pode ser mais de um)
 
 ";
 }

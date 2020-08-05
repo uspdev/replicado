@@ -251,6 +251,9 @@ class Pessoa
      *
      * @param Integer $codundclgi
      * @return void
+     * 
+     * !!! DEPRECADO -> usar listarDocentes()
+     * 
      */
     public static function docentes($codundclgi)
     {
@@ -681,4 +684,39 @@ class Pessoa
         }
         return false;
     }
+    
+    /**
+     * Método que lista os docentes de uma Unidade agrupando por setor (departamento)
+     * @param type $codset
+     * @return boolean
+     * 
+     * $codset pode ser um número (para um único setor)
+     *         ou
+     *         pode ser uma string com números separados por vírgula (para um ou mais de um setores)
+     * 
+     */
+    public static function listarDocentes($codset = FALSE){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $addquery = '';
+        if ($codset){
+            $addquery = "AND LOCALIZAPESSOA.codset IN ({$codset})";
+        }
+        $query = "SELECT * FROM LOCALIZAPESSOA
+            INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
+            WHERE (
+                LOCALIZAPESSOA.tipvinext LIKE 'Docente%'
+                AND LOCALIZAPESSOA.codundclg IN ({$unidades})
+                AND LOCALIZAPESSOA.sitatl = 'A'
+                $addquery
+                )
+            ORDER BY LOCALIZAPESSOA.nompes";        
+        $result = DB::fetchAll($query);
+        if(!empty($result)) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result);
+            return $result;
+        }
+        return false;
+    }
+    
 }

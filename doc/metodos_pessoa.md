@@ -18,7 +18,7 @@
 
  - *vinculosSiglas($codpes,$unidade)*: retorna siglas de vínculos ativos da pessoa em uma dada unidade
 
- - *docentes($unidade)*: retorna *array* de todos os docentes ativos na unidade
+ - *docentes($unidade)*: retorna *array* de todos os docentes ativos na unidade *DEPRECADO - usar listarDocentes()*
 
  - *servidores($unidade)*: retorna *array* de todos os funcionários ativos na unidade
 
@@ -45,3 +45,6 @@
  - *contarEstagiariosAtivosPorGenero($sexpes)*: retorna o total de estágiarios ativos na unidade com gênero especificado
 
  - *obterEndereco($codpes)*: recebe o número USP da pessoa e retorna o endereço
+
+ - *listarDocentes($codset)*: retorna *array* de todos os docentes ativos na unidade, e se solicitado, de apenas um setor/departamento
+
