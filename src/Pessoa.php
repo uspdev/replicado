@@ -257,22 +257,7 @@ class Pessoa
      */
     public static function docentes($codundclgi)
     {
-        $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
-                    INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
-                    WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Docente'
-                        AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
-                        AND LOCALIZAPESSOA.sitatl = 'A')
-                    ORDER BY LOCALIZAPESSOA.nompes";
-        $param = [
-            'codundclgi' => $codundclgi,
-        ];
-        $result = DB::fetchAll($query, $param);
-        if(!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return Pessoa::listarDocentes();
     }
     
    /**
@@ -699,17 +684,18 @@ class Pessoa
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $addquery = '';
         if ($codset){
-            $addquery = "AND LOCALIZAPESSOA.codset IN ({$codset})";
+            $addquery = "AND L.codset IN ({$codset})";
         }
-        $query = "SELECT * FROM LOCALIZAPESSOA
-            INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
+        $query = "SELECT * FROM LOCALIZAPESSOA L
+            INNER JOIN PESSOA P ON (L.codpes = P.codpes)
             WHERE (
-                LOCALIZAPESSOA.tipvinext LIKE 'Docente%'
-                AND LOCALIZAPESSOA.codundclg IN ({$unidades})
-                AND LOCALIZAPESSOA.sitatl = 'A'
+                L.tipvinext LIKE 'Docente%'
+                AND L.codundclg IN ({$unidades})
+                AND L.sitatl = 'A'
                 $addquery
                 )
-            ORDER BY LOCALIZAPESSOA.nompes";        
+            ORDER BY L.nompes";
+
         $result = DB::fetchAll($query);
         if(!empty($result)) {
             $result = Uteis::utf8_converter($result);

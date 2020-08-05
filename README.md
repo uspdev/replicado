@@ -53,6 +53,12 @@ Exemplo de uso
     print_r($emails);
 ```
 
+A variável *REPLICADO_CODUNDCLG* podem contem múltiplas unidades:
+
+    REPLICADO_CODUNDCLG=8,27
+
+Atenção, NÃO usar aspas: *REPLICADO_CODUNDCLG="8,27"*.
+
 ## Para testar
 
 Rode na linha de comando
