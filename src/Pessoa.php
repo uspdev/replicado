@@ -257,6 +257,7 @@ class Pessoa
      */
     public static function docentes($codundclgi)
     {
+        putenv("REPLICADO_CODUNDCLG={$codundclgi}");
         return Pessoa::listarDocentes();
     }
     
