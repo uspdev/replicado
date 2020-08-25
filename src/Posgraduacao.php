@@ -36,17 +36,17 @@ class Posgraduacao
         $result = Uteis::trim_recursivo($result);
         return $result;
     }
-
+    
     public static function programas($codundclgi, $codcur = null)
     {
         $query = "SELECT C.codcur, NC.nomcur";
         $query .= " FROM CURSO AS C";
         $query .= " INNER JOIN NOMECURSO AS NC ON C.codcur = NC.codcur";
-        $query .= " WHERE (C.codclg = :codundclgi) AND (C.tipcur = 'POS') AND (C.dtainiccp IS NOT NULL) AND (NC.dtafimcur IS NULL)";
+        $query .= " WHERE (C.codclg = CONVERT(INT, :codundclgi)) AND (C.tipcur = 'POS') AND (C.dtainiccp IS NOT NULL) AND (NC.dtafimcur IS NULL)";
         $param = ['codundclgi' => $codundclgi];
         if (!is_null($codcur)) {
             $param['codcur'] = $codcur;
-            $query .= " AND (C.codcur = :codcur)";
+            $query .= " AND (C.codcur = CONVERT(INT, :codcur))";
         }
         $query .= " ORDER BY NC.nomcur ASC ";
         $result = DB::fetchAll($query, $param);
