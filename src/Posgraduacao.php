@@ -294,7 +294,7 @@ class Posgraduacao
         $programasAreas = array();
         foreach ($programas as $p) {
             $codcur = $p['codcur'];
-            $query = "SELECT codare FROM AREA WHERE codcur = :codcur";
+            $query = "SELECT codare FROM AREA WHERE codcur = convert(int, :codcur)";
             $param = [
                 'codcur' => $codcur,
             ];
@@ -302,19 +302,16 @@ class Posgraduacao
             $i = 0;
             foreach ($codAreas as $a) {
                 $codare = $a['codare'];
-
-                $query = "SELECT TOP(1) N.codcur,N.codare,N.nomare "
-                    . " FROM NOMEAREA as N"
-                    . " INNER JOIN CREDAREA as C "
-                    . " ON N.codare = C.codare"
-                    . " WHERE N.codare = :codare "
-                    . " AND C.dtadtvare IS NULL";
-
+                $query = "SELECT TOP 1 N.codcur,N.codare,N.nomare ";
+                $query .= " FROM NOMEAREA as N";
+                $query .= " INNER JOIN CREDAREA as C ";
+                $query .= " ON N.codare = C.codare";
+                $query .= " WHERE N.codare = convert(int, :codare)";
+                $query .= " AND C.dtadtvare IS NULL";
                 $param = [
                     'codare' => $codare,
                 ];
                 $areas = DB::fetchAll($query, $param);
-
                 if (empty($areas)) {
                     continue;
                 }
