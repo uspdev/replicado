@@ -320,16 +320,18 @@ class Graduacao
      * @return void
      */
     public static function contarAtivosPorGenero($sexpes, $codcur = null){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+
         $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
                     JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
                     JOIN SITALUNOATIVOGR ON SITALUNOATIVOGR.codpes = LOCALIZAPESSOA.codpes 
                     WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' 
-                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) 
+                    AND LOCALIZAPESSOA.codundclg IN ({$unidades})
                     AND PESSOA.sexpes = :sexpes AND SITALUNOATIVOGR.codcur = convert(int,:codcur) ";
         $param = [
             'sexpes' => $sexpes,
             'codcur' => $codcur,
         ];
-        return DB::fetch($query, $param);
+        return DB::fetch($query, $param)['computed'];
     }
 }

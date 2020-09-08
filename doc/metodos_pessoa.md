@@ -48,3 +48,9 @@
 
  - *listarDocentes($codset)*: retorna *array* de todos os docentes ativos na unidade, e se solicitado, de apenas um setor/departamento
 
+ - *contarServidoresAtivosPorGenero($sexpes)*: retorna o total de servidores ativos na unidade com gênero especificado
+
+ - *listarTelefone($codpes)*: Método para retornar todos os números pessoais de telefone da pessoa com número USP especificado
+
+- *obterCodpesPorEmail($codema)*: Método que dado um email cadastrado no sistema (email usp ou alternativo), retorna o número USP da pessoa
+

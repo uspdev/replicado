@@ -659,4 +659,59 @@ class Pessoa
         return DB::fetchAll($query);
     }
     
+    /**
+     * Método para retornar o total de servidores ativos na unidade do gênero especificado
+     * @param Integer $codpes
+     * @return int|bool
+     */
+    public static function contarServidoresAtivosPorGenero($sexpes){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
+                    WHERE LOCALIZAPESSOA.tipvinext LIKE 'Servidor'
+                    AND LOCALIZAPESSOA.codundclg IN ({$unidades})
+                    AND PESSOA.sexpes = :sexpes ";
+        $param = [
+            'sexpes' => $sexpes,
+        ];
+        return DB::fetch($query, $param)['computed'];
+    }
+
+    /**
+     * Método para retornar todos os números pessoais de telefone da pessoa 
+     * com número USP especificado
+     * @param Integer $codpes
+     * @return array
+     */
+    public static function listarTelefones($codpes){
+        $query = " SELECT codddi, codddd, numtel FROM TELEFPESSOA
+                    WHERE TELEFPESSOA.codpes = convert(int,:codpes)";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        $result = DB::fetch($query, $param);
+        if(!empty($result)){
+            return '+'.$result['codddi'] . ' ' . $result['codddd'] . ' ' . $result['numtel'] ;
+        }
+        return $result;
+    }
+
+    /**
+     * Método que dado um email cadastrado no sistema (email usp ou alternativo), 
+     * retorna o número USP da pessoa
+     * @param String
+     * @return boolean
+     */
+    public static function obterCodpesPorEmail($codema){
+        $query = " SELECT codpes FROM EMAILPESSOA
+                    WHERE EMAILPESSOA.codema = :codema";
+        $param = [
+            'codema' => $codema,
+        ];
+        $result = DB::fetch($query, $param);
+        if(!empty($result)){
+            return $result['codpes'];
+        }
+        return $result;
+    }
 }
