@@ -410,7 +410,9 @@ class Pessoa
      * @return boolean
      */
     public static function nomeCompleto($codpes){
-        return Pessoa::dump($codpes, ['nompesttd']);
+        $result = Pessoa::dump($codpes, ['nompesttd']);
+        if(!empty($result)) return $result['nompesttd'];
+        return $result;
     }
 
     /**
