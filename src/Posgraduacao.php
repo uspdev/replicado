@@ -7,17 +7,19 @@ class Posgraduacao
     // verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
     public static function verifica($codpes, $codundclgi)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = :codpes";
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
         $result = DB::fetchAll($query, $param);
 
-        foreach ($result as $row) {
-            if (trim($row['tipvin']) == 'ALUNOPOS' && trim($row['sitatl']) == 'A' && trim($row['codundclg']) == $codundclgi) {
-                return true;
-            }
+        if(!empty($result)) {
+            foreach ($result as $row) {
+                if (trim($row['tipvin']) == 'ALUNOPOS' && trim($row['sitatl']) == 'A' && trim($row['codundclg']) == $codundclgi) {
+                    return true;
+                }
 
+            }
         }
         return false;
     }
@@ -31,10 +33,7 @@ class Posgraduacao
         $param = [
             'codundclgi' => $codundclgi,
         ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
     
     public static function programas($codundclgi, $codcur = null)
@@ -49,10 +48,7 @@ class Posgraduacao
             $query .= " AND (C.codcur = CONVERT(INT, :codcur))";
         }
         $query .= " ORDER BY NC.nomcur ASC ";
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -78,11 +74,7 @@ class Posgraduacao
 
         $param = ['codare' => $codare];
 
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
     public static function catalogoDisciplinas($codare)
@@ -99,10 +91,7 @@ class Posgraduacao
 
         $param = ['codare' => $codare];
 
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
     public static function disciplina($sgldis)
@@ -113,14 +102,7 @@ class Posgraduacao
 
         $param = ['sgldis' => $sgldis];
 
-        $result = DB::fetchAll($query, $param);
-        if ($result) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result[0];
-        } else {
-            return [];
-        }
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -156,10 +138,7 @@ class Posgraduacao
             'dtafimofe' => $inifim[1],
         ];
 
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);;
     }
 
     /**
@@ -189,8 +168,6 @@ class Posgraduacao
         ];
 
         $result = DB::fetch($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
 
         $result['espacoturma'] = self::espacoturma($result['sgldis'], $result['numseqdis'], $result['numofe']);
         $result['ministrante'] = self::ministrante($result['sgldis'], $result['numseqdis'], $result['numofe']);
@@ -233,8 +210,6 @@ class Posgraduacao
             'numofe' => $numofe,
         ];
         $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
         if ($result && (!empty($result))) {
             // Percorre todos os dias que a disciplina é ministrada
             foreach ($result as $key => $dados) {
@@ -270,10 +245,7 @@ class Posgraduacao
             'numseqdis' => $numseqdis,
             'numofe' => $numofe,
         ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
 /**
@@ -315,9 +287,6 @@ class Posgraduacao
                 if (empty($areas)) {
                     continue;
                 }
-
-                $areas = Uteis::utf8_converter($areas);
-                $areas = Uteis::trim_recursivo($areas);
 
                 $nomare = $areas[0]['nomare'];
 
@@ -368,9 +337,7 @@ class Posgraduacao
                         'codundclgi' => $codundclgi,
                         'codare' => $codare,
                     ];       
-            $alunosArea = DB::fetchAll($query, $param);            
-            $alunosArea = Uteis::utf8_converter($alunosArea);
-            $alunosArea = Uteis::trim_recursivo($alunosArea);
+            $alunosArea = DB::fetchAll($query, $param);
             $alunosPrograma = array_merge($alunosPrograma,$alunosArea);
         }
         return $alunosPrograma;
@@ -397,8 +364,6 @@ class Posgraduacao
             ];
 
             $result = DB::fetchAll($query, $param);
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
 
             // Se for encontrado o nome do idioma, retornará apenas um registro
             // então já devolve apenas o campo do nome na posição 0
@@ -430,9 +395,6 @@ class Posgraduacao
         $param = [
             'codare' => $codare
         ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 }
