@@ -13,13 +13,7 @@ class DB
     private function __construct(){}
     private function __clone(){}
     private static $logger;
-    
-    public static function getSgbd() {
-        # Se o SGBD foi informado no .env da aplicação mantém, do contrário utiliza sybase como default
-        self::$sgbd = getenv('REPLICADO_SGBD') ?? 'sybase';
-        return self::$sgbd;
-    }
-    
+       
     public static function getInstance(){
         $host = getenv('REPLICADO_HOST');
         $port = getenv('REPLICADO_PORT');
@@ -29,7 +23,7 @@ class DB
 
         if (!self::$instance) {
             try {
-                $dsn = "dblib:host={$host}:{$port};dbname={$db}";
+                $dsn = "dblib:host={$host}:{$port};dbname={$db};charset=UTF-8";
                 self::$instance = new PDO($dsn,$user,$pass);
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
             } catch (\Throwable $t) {
@@ -42,6 +36,10 @@ class DB
         return self::$instance;
     }
 
+    public static function sybase() {
+        return getenv('REPLICADO_SYBASE') ?? 0;
+    }
+
     // overhide fetch and fetchAll functions
     public static function fetch(string $query, array $param = null)
     {
@@ -49,6 +47,7 @@ class DB
             $stmt = self::getInstance()->prepare($query);
             if (!is_null($param)) {
                 foreach ($param as $campo => $valor) {
+                    $valor = DB::sybase() ? utf8_decode($valor) : $valor;
                     $stmt->bindValue(":$campo", $valor);
                 }
             }
@@ -59,7 +58,15 @@ class DB
             $log->error($t->getMessage());
             return false;
         }
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!empty($result) && self::sybase()) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result); 
+        }
+
+        return $result;
     }
 
     public static function fetchAll(string $query, array $param = null)
@@ -68,6 +75,7 @@ class DB
             $stmt = self::getInstance()->prepare($query);
             if (!is_null($param)) {
                 foreach ($param as $campo => $valor) {
+                    $valor = DB::sybase() ? utf8_decode($valor) : $valor;
                     $stmt->bindValue(":$campo", $valor);
                 }
             }
@@ -78,7 +86,13 @@ class DB
             $log->error($t->getMessage());
             return false;
         }
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (!empty($result) && self::sybase()) {
+            $result = Uteis::utf8_converter($result);
+            $result = Uteis::trim_recursivo($result); 
+        }
+        return $result;
     }
 
     private static function getLogger($channel_name)
