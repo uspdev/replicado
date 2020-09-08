@@ -41,13 +41,17 @@ Exemplo de uso
     require_once __DIR__ . '/vendor/autoload.php';
     use Uspdev\Replicado\Pessoa;
     
+    # Obrigatórias
     putenv('REPLICADO_HOST=192.168.100.89');
     putenv('REPLICADO_PORT=1498');
     putenv('REPLICADO_DATABASE=rep_dbc');
     putenv('REPLICADO_USERNAME=dbmaint_read');
     putenv('REPLICADO_PASSWORD=secret');
-    putenv('REPLICADO_PATHLOG=path/to/your.log');
     putenv('REPLICADO_CODUNDCLG=8');
+
+    # Opicionais
+    putenv('REPLICADO_PATHLOG=path/to/your.log');
+    putenv('REPLICADO_SYBASE=1');
 
     $emails = Pessoa::emails('123456');
     print_r($emails);

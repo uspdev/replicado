@@ -10,10 +10,6 @@ class Lattes
 		$param = [
             'codpes' => $codpes,
         ];
-        $result = DB::fetch($query, $param);
-        if(!empty($result)) {
-            return $result;
-        }
-        return false;
+        return DB::fetch($query, $param);
 	}
 }

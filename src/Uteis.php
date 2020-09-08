@@ -40,7 +40,6 @@ class Uteis
     public static function utf8_converter($array)
     {
         array_walk_recursive($array, function (&$item, $key) {
-            // fix ISO-8859-1 ?
             if (!mb_detect_encoding($item, 'utf-8', true)) {
                 $item = utf8_encode($item);
             }

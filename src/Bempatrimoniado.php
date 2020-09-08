@@ -17,13 +17,7 @@ class Bempatrimoniado
             'numpat' => $numpat,
         ];
 
-        $result = DB::fetch($query, $param);
-        if (!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return DB::fetch($query, $param);
     }
 
     public static function verifica($numpat)
@@ -48,9 +42,7 @@ class Bempatrimoniado
     public static function ativos(array $filtros = [], array $buscas = [], array $tipos = [], int $limite = 2000)
     {
         $filtros['stabem'] = 'Ativo';
-        $result = self::bens($filtros, $buscas, $tipos, $limite);
-        
-        return $result;
+        return self::bens($filtros, $buscas, $tipos, $limite);
     }
 
     public static function isInformatica($numpat)
@@ -81,10 +73,7 @@ class Bempatrimoniado
         // Define os parâmetros para cláusula WHERE
         $params = $filtros_buscas[1];
     
-        $result = DB::fetchAll($query, $params);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $params);
     }
 }
 

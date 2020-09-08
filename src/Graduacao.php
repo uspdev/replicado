@@ -44,10 +44,7 @@ class Graduacao
             $param['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
         }
         $query .= " ORDER BY nompes ASC";
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -71,18 +68,7 @@ class Graduacao
             'codpes' => $codpes,
             'codundclgi' => $codundclgi,
         ];
-        $result = DB::fetch($query, $param);
-        // Nota: Situação a se tratar com log de ocorrências
-        // Por conta de divergências na consolidação das tabelas LOCALIZAPESSOA e VINCULOPESSOAUSP
-        // Alguns alunos ativos de graduação aparecem na LOCALIZAPESSOA e não aparecem na VINCULOPESSOAUSP
-        // Isso acontece devido aos agendamentos de consolidações
-        if ($result != false) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        } else {
-            return false;
-        }    
+        return DB::fetch($query, $param);  
     }
 
     public static function programa($codpes)
@@ -94,10 +80,7 @@ class Graduacao
         $param = [
             'codpes' => $codpes,
         ];
-        $result = DB::fetch($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetch($query, $param);
     }
 
     public static function nomeCurso($codcur)
@@ -108,9 +91,8 @@ class Graduacao
             'codcur' => $codcur,
         ];
         $result = DB::fetch($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result['nomcur'];
+        if($result) return $result['nomcur'];
+        return $result;
     }
 
     public static function nomeHabilitacao($codhab, $codcur)
@@ -122,9 +104,8 @@ class Graduacao
             'codcur' => $codcur,
         ];
         $result = DB::fetch($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result['nomhab'];
+        if($result) return $result['nomhab'];
+        return $result;
     }
 
     public static function obterCursosHabilitacoes($codundclgi)
@@ -137,10 +118,7 @@ class Graduacao
         $param = [
             'codundclgi' => $codundclgi,
         ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -161,10 +139,7 @@ class Graduacao
         $query = substr($query, 0, -3);
         $query .= " ) ";
         $query .= " ORDER BY D1.coddis ASC"; 
-        $result = DB::fetchAll($query);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query);
     }
 
     /**
@@ -183,9 +158,8 @@ class Graduacao
             'coddis' => $coddis,
         ];
         $result = DB::fetch($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result['nomdis'];
+        if($result) return $result['nomdis'];
+        return $result;
     }
 
     /**
@@ -211,10 +185,7 @@ class Graduacao
             'ingresso' => $ingresso,
             'ingresso' => $ingresso,
         ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -233,9 +204,8 @@ class Graduacao
             'coddis' => $coddis,
         ];
         $result = DB::fetch($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result['creaul'];
+        if($result) return $result['creaul'];
+        return $result;
     }  
 
     /**
@@ -264,10 +234,7 @@ class Graduacao
             'codpes' => $codpes,
             'programa' => $programa,
         ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -290,10 +257,7 @@ class Graduacao
             'codcur' => $codcur,
             'codhab' => $codhab,
         ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -317,10 +281,7 @@ class Graduacao
             'codcur' => $codcur,
             'codhab' => $codhab,
         ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -344,10 +305,7 @@ class Graduacao
         $result = DB::fetch($query, $param);
         // Nota: Situação a se tratar com log de ocorrências
         // Se o departamento de ensino do alguno de graduação não foi encontrado
-        if ($result != false) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-        } else {
+        if ($result == false) {
             // Será retornado 'DEPARTAMENTO NÃO ENCONTRADO' a fim de se detectar as situações ATÍPICAS em que isso ocorre 
             $result = ['nomabvset' => 'DEPARTAMENTO NÃO ENCONTRADO'];
         }
@@ -362,20 +320,18 @@ class Graduacao
      * @return void
      */
     public static function contarAtivosPorGenero($sexpes, $codcur = null){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+
         $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
                     JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
                     JOIN SITALUNOATIVOGR ON SITALUNOATIVOGR.codpes = LOCALIZAPESSOA.codpes 
                     WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' 
-                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) 
+                    AND LOCALIZAPESSOA.codundclg IN ({$unidades})
                     AND PESSOA.sexpes = :sexpes AND SITALUNOATIVOGR.codcur = convert(int,:codcur) ";
         $param = [
             'sexpes' => $sexpes,
             'codcur' => $codcur,
         ];
-        $result = DB::fetch($query, $param);
-        if (!empty($result)) {
-            return $result;
-        }
-        return false;
+        return DB::fetch($query, $param)['computed'];
     }
 }

@@ -4,8 +4,14 @@ namespace Uspdev\Replicado;
 
 class Pessoa
 {
-    private $uteis;
 
+     /**
+     * Método para retornar campos da tabela pessoa
+     *
+     * @param Integer $codpes
+     * @param array $fields
+     * @return void
+     */
     public static function dump(int $codpes, array $fields = ['*'])
     {
         $columns = implode(",",$fields);
@@ -14,15 +20,15 @@ class Pessoa
         $param = [
             'codpes' => $codpes,
         ];
-        $result = DB::fetch($query, $param);
-        if (!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return DB::fetch($query, $param);
     }
 
+    /**
+     * Método para retornar campos da tabela cracha
+     *
+     * @param Integer $codpes
+     * @return array
+     */
     public static function cracha($codpes)
     {
         $query = "SELECT * FROM CATR_CRACHA
@@ -30,15 +36,15 @@ class Pessoa
         $param = [
             'codpes' => $codpes,
         ];
-        $result = DB::fetch($query, $param);
-        if (!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return DB::fetch($query, $param);
     }
 
+    /**
+     * Método para retornar array com todos emails da pessoa
+     *
+     * @param Integer $codpes
+     * @return array
+     */
     public static function emails($codpes)
     {
         $query = "SELECT * FROM EMAILPESSOA
@@ -47,7 +53,7 @@ class Pessoa
             'codpes' => $codpes,
         ];
         $result = DB::fetchAll($query, $param);
-        $emails= array();
+        $emails= [];
         foreach ($result as $row)
         {
             $email = trim($row['codema']);
@@ -56,6 +62,12 @@ class Pessoa
         return $emails;
     }
 
+    /**
+     * Método para retornar email de correspondência da pessoa
+     *
+     * @param Integer $codpes
+     * @return void
+     */
     public static function email($codpes)
     {
         $query = "SELECT * FROM EMAILPESSOA
@@ -69,8 +81,15 @@ class Pessoa
             if (trim($row['stamtr'])=='S')
                 return $row['codema'];
         }
+        return false;
     }
 
+    /**
+     * Método para retornar email usp da pessoa
+     *
+     * @param Integer $codpes
+     * @return void
+     */
     public static function emailusp($codpes)
     {
         $query = "SELECT * FROM EMAILPESSOA
@@ -92,9 +111,15 @@ class Pessoa
                     return $row['codema'];
             }
         }
-        return "e-mail usp não encontrado";
+        return false;
     }
 
+    /**
+     * Método para retornar array com telefones da pessoa
+     *
+     * @param Integer $codpes
+     * @return array
+     */
     public static function telefones($codpes)
     {
         $query = "SELECT * FROM TELEFPESSOA
@@ -113,9 +138,15 @@ class Pessoa
         return $telefones;
     }
 
+    /**
+     * Método para buscar pessoas por nome ou parte do nome
+     *
+     * @param string $nome
+     * @return array
+     */
     public static function nome($nome)
     {
-        $nome = utf8_decode(Uteis::removeAcentos($nome));
+        $nome = Uteis::removeAcentos($nome);
         $nome = trim($nome);
         $nome = strtoupper(str_replace(' ','%',$nome));
 
@@ -125,13 +156,15 @@ class Pessoa
         $param = [
             'nome' => '%' . $nome . '%',
         ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
+    /**
+     * Método para buscar pessoas por nomes fonéticos
+     *
+     * @param string $nome
+     * @return void
+     */
     public static function nomeFonetico($nome)
     {
         $query  = "SELECT * FROM PESSOA
@@ -140,20 +173,16 @@ class Pessoa
         $param = [
             'nome' => '%' . Uteis::fonetico($nome) . '%',
         ];
-        $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
-
-        return $result;
+        return DB::fetchAll($query, $param);
     }
 
     /**
      * Método para retornar vínculos de uma pessoa
      *
      * @param Integer $codpes
-     * @return void
+     * @param Integer $codundclgi
+     * @return array
      */
-
     public static function vinculos(int $codpes, int $codundclgi = 0)
     {
         $query = "SELECT * FROM LOCALIZAPESSOA
@@ -165,13 +194,10 @@ class Pessoa
             'codpes' => $codpes,
         ];
         $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
 
         $vinculos = array();
         foreach ($result as $row)
         {
-
             $vinculo = "";
             if (!empty($row['tipvinext']))
                 $vinculo = $vinculo  .  $row['tipvinext'];
@@ -183,7 +209,6 @@ class Pessoa
                 $vinculo = $vinculo . " - " . $row['sglclgund'];
 
             in_array($vinculo,$vinculos) ?:  array_push($vinculos,$vinculo);
-
         }
         return $vinculos;
     }
@@ -192,9 +217,9 @@ class Pessoa
      * Método que retornar siglas dos vínculos de uma pessoa em uma dada unidade
      *
      * @param Integer $codpes
+     * @param Integer $codundclgi
      * @return array
      */
-
     public static function vinculosSiglas(int $codpes, int $codundclgi = 0)
     {
         $query = "SELECT * FROM LOCALIZAPESSOA
@@ -207,8 +232,6 @@ class Pessoa
             'codundclgi' => $codundclgi,
         ];
         $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
 
         $vinculos = array();
         foreach ($result as $row)
@@ -220,6 +243,13 @@ class Pessoa
         return $vinculos;
     }
 
+    /**
+     * Método para retornar siglas dos setores que uma pessoa tem vínculo
+     *
+     * @param Integer $codpes
+     * @param Integer $codundclgi
+     * @return array
+     */
     public static function setoresSiglas(int $codpes, int $codundclgi = 0)
     {
         $query = "SELECT * FROM LOCALIZAPESSOA
@@ -232,8 +262,6 @@ class Pessoa
             'codundclgi' => $codundclgi,
         ];
         $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
 
         $setores = array();
         foreach ($result as $row)
@@ -278,13 +306,7 @@ class Pessoa
         $param = [
             'codundclgi' => $codundclgi,
         ];
-        $result = DB::fetchAll($query, $param);
-        if(!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return DB::fetchAll($query, $param);
     }
 
    /**
@@ -304,13 +326,7 @@ class Pessoa
         $param = [
             'codundclgi' => $codundclgi,
         ];
-        $result = DB::fetchAll($query, $param);
-        if(!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return DB::fetchAll($query, $param);
     }
     
     /**
@@ -330,13 +346,7 @@ class Pessoa
         $param = [
             'codundclgi' => $codundclgi,
         ];
-        $result = DB::fetchAll($query, $param);
-        if(!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -344,12 +354,11 @@ class Pessoa
      *
      * @param Integer $codundclg
      * @param String $vinculo
-     * @param Char $situacao
-     * @return void
+     * @return Integer
      */
     public static function totalVinculo($vinculo, $codundclg)
     {
-        $query = "SELECT COUNT(codpes) as totalvinculo FROM LOCALIZAPESSOA
+        $query = "SELECT COUNT(codpes) FROM LOCALIZAPESSOA
                     WHERE tipvinext = :vinculo
                         AND sitatl = 'A' 
                         AND codundclg = convert(int,:codundclg)";
@@ -357,11 +366,7 @@ class Pessoa
             'vinculo' => $vinculo,
             'codundclg' => $codundclg,
         ];
-        $result = DB::fetchAll($query, $param);
-        if(!empty($result)) {
-            return $result;
-        }
-        return false;
+        return DB::fetch($query, $param)['computed'];
     }
 
     /**
@@ -369,27 +374,23 @@ class Pessoa
      *
      * @param Integer $codundclg
      * @param String $nivpgm
-     * @return void
+     * @return Integer
      */
     public static function totalPosNivelPrograma($nivpgm, $codundclg)
     {
-        $query = "SELECT COUNT(lp.codpes) AS totalnivpgm FROM LOCALIZAPESSOA AS lp
+        $query = "SELECT COUNT(lp.codpes) FROM LOCALIZAPESSOA AS lp
                     INNER JOIN VINCULOPESSOAUSP AS vpu
                     ON(lp.codpes = vpu.codpes AND lp.tipvin = vpu.tipvin)
                     WHERE lp.tipvin='ALUNOPOS' 
                         AND lp.codundclg= convert(int,:codundclg)
-                        AND lp.sitatl='A' 
+                        AND lp.sitatl='A'
                         AND vpu.nivpgm=:nivpgm";
 
         $param = [
             'nivpgm' => $nivpgm,
             'codundclg' => $codundclg,
         ];
-        $result = DB::fetchAll($query, $param);
-        if(!empty($result)) {
-            return $result;
-        }
-        return false;
+        return DB::fetch($query, $param)['computed'];
     }
 
     /**
@@ -400,11 +401,7 @@ class Pessoa
     public static function todosVinculosExtenso()
     {
         $query = "SELECT DISTINCT(tipvinext) FROM LOCALIZAPESSOA";
-        $result = DB::fetchAll($query);
-        if(!empty($result)) {
-            return Uteis::utf8_converter($result);
-        }
-        return false;
+        return DB::fetchAll($query);
     }
     
     /**
@@ -413,11 +410,9 @@ class Pessoa
      * @return boolean
      */
     public static function nomeCompleto($codpes){
-        $pessoa = Pessoa::dump($codpes, ['nompesttd']);
-        if(!empty($pessoa)) {
-            return $pessoa;
-        }
-        return false;
+        $result = Pessoa::dump($codpes, ['nompesttd']);
+        if(!empty($result)) return $result['nompesttd'];
+        return $result;
     }
 
     /**
@@ -440,13 +435,7 @@ class Pessoa
         $param = [
             'codundclgi' => $codundclgi,
         ];
-        $result = DB::fetchAll($query, $param);
-        if(!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -466,20 +455,12 @@ class Pessoa
                         AND L.codundclg = CONVERT(INT, :codundclgi) 
                         AND L.sitatl IN ('A', 'P')) 
                     ORDER BY L.nompes";
-        # Neste método foi necessário verificar o SGBD por conta do CHARSET utilizado pelo replicado
-        $sgbd = DB::getSgbd();
-        $vinculo = ($sgbd == 'sybase') ? iconv('UTF-8', 'ISO-8859-1', $vinculo) : $vinculo;
+
         $param = [
             'codundclgi'    => $codundclgi,
             'vinculo'       => $vinculo,
         ];
-        $result = DB::fetchAll($query, $param);
-        if (!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return DB::fetchAll($query, $param);
     } 
 
     /**
@@ -508,8 +489,7 @@ class Pessoa
             'codundclgi' => $codundclgi,
         ];
         $result = DB::fetchAll($query, $param);
-        $result = Uteis::utf8_converter($result);
-        $result = Uteis::trim_recursivo($result);
+
         // Inicializa o array de vínculos e setores
         $vinculosSetores = array();
         foreach ($result as $row)
@@ -540,18 +520,18 @@ class Pessoa
         return $vinculosSetores;
     }      
 
+    /**
+     * Método para retornar data de nascimento de uma pessoa
+     *
+     * @param Integer $codpes
+     * @return void
+     */
     public static function nascimento($codpes){
-        $query = "SELECT dtanas from PESSOA
-                    WHERE codpes = convert(int,:codpes) ";
-        $param = [
-            'codpes' => $codpes,
-        ];
-        $result = DB::fetch($query, $param);
+        $result = self::dump($codpes);
         if (!empty($result)) {
-            $result['dtanas'] = Uteis::data_mes($result['dtanas']);
-            return $result;
+            return Uteis::data_mes($result['dtanas']);
         }
-        return false;
+        return $result;
     }
     
     /**
@@ -570,11 +550,7 @@ class Pessoa
         $param = [
             'codpes' => $codpes,
         ];
-        $result = DB::fetch($query, $param);
-        if (!empty($result)) {
-            return true;
-        }
-        return false;
+        return DB::fetch($query, $param);
     }
 
     /**
@@ -595,54 +571,45 @@ class Pessoa
         $param = [
             'codpes' => $codpes,
         ];
-        $result = DB::fetchAll($query, $param);
-        if (!empty($result)) {
-            return true;
-        }
-        return false;
+        return DB::fetchAll($query, $param);
     }
 
     /**
      * Método para retornar o total de docentes ativos do gênero especificado
-     * @param Integer $codundclg
      * @param Char $sexpes
-     * @return void
+     * @return Integer
      */
     public static function contarDocentesAtivosPorGenero($sexpes){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+
         $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
                     JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
                     WHERE LOCALIZAPESSOA.tipvinext = 'Docente' 
-                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG')) 
+                    AND LOCALIZAPESSOA.codundclg IN ({$unidades})
                     AND PESSOA.sexpes = :sexpes AND LOCALIZAPESSOA.sitatl = 'A' ";
         $param = [
             'sexpes' => $sexpes,
         ];
-        $result = DB::fetch($query, $param);
-        if (!empty($result)) {
-            return $result;
-        }
-        return false;
+        return DB::fetch($query, $param)['computed'];
     }
 
     /**
      * Método para retornar o total de estágiarios ativos na unidade do gênero especificado
      * @param Char $sexpes
-     * @return void
+     * @return Integer
      */
     public static function contarEstagiariosAtivosPorGenero($sexpes){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+
         $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
                     JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
                     WHERE LOCALIZAPESSOA.tipvin = 'ESTAGIARIORH' 
-                    AND LOCALIZAPESSOA.codundclg IN (getenv('REPLICADO_CODUNDCLG'))
+                    AND LOCALIZAPESSOA.codundclg IN ({$unidades})
                     AND PESSOA.sexpes = :sexpes ";
         $param = [
             'sexpes' => $sexpes,
         ];
-        $result = DB::fetch($query, $param);
-        if (!empty($result)) {
-            return $result;
-        }
-        return false;
+        return DB::fetch($query, $param)['computed'];
     }
 
     /**
@@ -662,13 +629,7 @@ class Pessoa
         $param = [
             'codpes' => $codpes,
         ];
-        $result = DB::fetch($query, $param);
-        if(!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return DB::fetch($query, $param);
     }
     
     /**
@@ -697,13 +658,43 @@ class Pessoa
                 )
             ORDER BY L.nompes";
 
-        $result = DB::fetchAll($query);
-        if(!empty($result)) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result);
-            return $result;
-        }
-        return false;
+        return DB::fetchAll($query);
     }
     
+    /**
+     * Método para retornar o total de servidores ativos na unidade do gênero especificado
+     * @param Integer $codpes
+     * @return int|bool
+     */
+    public static function contarServidoresAtivosPorGenero($sexpes){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
+                    WHERE LOCALIZAPESSOA.tipvinext LIKE 'Servidor'
+                    AND LOCALIZAPESSOA.codundclg IN ({$unidades})
+                    AND PESSOA.sexpes = :sexpes ";
+        $param = [
+            'sexpes' => $sexpes,
+        ];
+        return DB::fetch($query, $param)['computed'];
+    }
+
+    /**
+     * Método que dado um email cadastrado no sistema (email usp ou alternativo), 
+     * retorna o número USP da pessoa
+     * @param String
+     * @return boolean
+     */
+    public static function obterCodpesPorEmail($codema){
+        $query = " SELECT codpes FROM EMAILPESSOA
+                    WHERE EMAILPESSOA.codema = :codema";
+        $param = [
+            'codema' => $codema,
+        ];
+        $result = DB::fetch($query, $param);
+        if(!empty($result)){
+            return $result['codpes'];
+        }
+        return $result;
+    }
 }
