@@ -102,7 +102,7 @@ class Posgraduacao
 
         $param = ['sgldis' => $sgldis];
 
-        return DB::fetchAll($query, $param);
+        return DB::fetch($query, $param);
     }
 
     /**
