@@ -13,7 +13,7 @@ class DB
     private function __construct(){}
     private function __clone(){}
     private static $logger;
-       
+
     public static function getInstance(){
         $host = getenv('REPLICADO_HOST');
         $port = getenv('REPLICADO_PORT');
@@ -37,7 +37,8 @@ class DB
     }
 
     public static function sybase() {
-        return getenv('REPLICADO_SYBASE') ?? 0;
+        //return getenv('REPLICADO_SYBASE') ?? 0;
+        return 1;
     }
 
     // overhide fetch and fetchAll functions
