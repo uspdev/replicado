@@ -25,3 +25,5 @@
  - *alunosPrograma(int $codundclgi, int $codcur, int $codare = null)*: Retorna os alunos ativos de um programa (codcur) de pós da unidade (codundclgi), se pedido, somente de uma área (codare). 
 
  - *egressosArea(int $codare)*: Retorna lista de alunos que defenderam pós-graduação em determinada área.
+
+ - *contarAtivosPorGenero($sexpes, int $codare = null)*: recebe o gênero (F,M) e o código do programa (opcional) de pós-graduação para retornar a quantidade de alunos de pós-graduação com o gênero especificado.
