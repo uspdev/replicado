@@ -445,16 +445,25 @@ class Pessoa
      *
      * @param String $vinculo
      * @param Integer $codundclgi
+     * @param Integer $contar Default 0
      * @return void
      */
-    public static function ativosVinculo($vinculo, $codundclgi) 
+    public static function ativosVinculo($vinculo, $codundclgi, $contar = 0) 
     {
-        $query = "SELECT L.*, P.* FROM LOCALIZAPESSOA AS L 
-                    INNER JOIN PESSOA AS P ON (L.codpes = P.codpes) 
+        if ($contar == 0) {
+            $colunas = "L.*, P.*";
+            $ordem = "ORDER BY L.nompes";
+        } else {
+            $colunas = "COUNT(*) total";
+            $ordem = "";
+        }
+        
+        $query = "SELECT $colunas FROM LOCALIZAPESSOA L 
+                    INNER JOIN PESSOA P ON (L.codpes = P.codpes) 
                     WHERE (L.tipvinext = :vinculo 
                         AND L.codundclg = CONVERT(INT, :codundclgi) 
                         AND L.sitatl IN ('A', 'P')) 
-                    ORDER BY L.nompes";
+                    $ordem";
 
         $param = [
             'codundclgi'    => $codundclgi,

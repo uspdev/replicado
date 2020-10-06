@@ -30,7 +30,7 @@
 
  - *tiposVinculos($unidade)*: retorna *array* com os tipos de vínculos *regulares* e também *Docente Aposentado* ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'SERVIDOR', 'ESTAGIARIORH')
 
- - *ativosVinculo($vinculo, $codundclgi)*: retorna *array* com as pessoas ativas de um tipo de vínculo e também Docente Aposentado
+ - *ativosVinculo($vinculo, $codundclgi, $contar)*: por padrão retorna *array* com as pessoas ativas de um tipo de vínculo (tipvinext = tipo de vinculo extendido, ex.: Aluno de Pós-Graduação) e também Docente Aposentado, se o terceiro parâmetro *$contar* for igual a 1, retorna um *array* com o índice *total* que corresponde ao número total de pessoas do tipo de vínculo
  
  - *vinculosSetores($codpes, $codundclgi)*: retorna *array* com os vínculos e setores que a pessoa possui
  
