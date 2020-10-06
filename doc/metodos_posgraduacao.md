@@ -26,4 +26,4 @@
 
  - *egressosArea(int $codare)*: Retorna lista de alunos que defenderam pós-graduação em determinada área.
 
- - *contarAtivosPorGenero($sexpes, int $codare = null)*: recebe o gênero (F,M) e o código do programa (opcional) de pós-graduação para retornar a quantidade de alunos de pós-graduação com o gênero especificado.
+ - *contarAtivosPorGenero($sexpes, int $codare = null)*: recebe o gênero (F,M) para retornar a quantidade de alunos de pós-graduação ativos com o gênero especificado. Se informado o código do programa (opcional) de pós-graduação, retorna apenas os ativos deste programa, com o gênero especificado.

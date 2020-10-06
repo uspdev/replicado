@@ -401,8 +401,12 @@ class Posgraduacao
     /**
      * Método para retornar quantidade alunos de pós-graduação do gênero 
      * e programa (opcional) especificado 
+     * 
+     * Se $codare não for informado, irá retornar a quantidade de alunos de pós-graduação de todos os programas, do gênero especificado. 
+     * Se for informado, irá retornar a quantidade de alunos de pós-graduação somente do programa e do do gênero especificado.
+     * 
      * @param Char $sexpes
-     * @param Integer $codare (optional)
+     * @param Integer $codare (optional) - código da área pertencente a um programa de pós.
      * @return void
      */
     public static function contarAtivosPorGenero($sexpes, $codare = null){
