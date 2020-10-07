@@ -3,6 +3,7 @@
 *.swp
 src/replicado_queries
 composer.lock
+.phpunit.result.cache
 
 .idea
 
