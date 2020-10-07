@@ -40,6 +40,11 @@ class DeploySchemaTest extends TestCase
         $pessoa = file_get_contents(__DIR__. '/' . 'schemas/LOCALIZAPESSOA.sql');
         DB::getInstance()->exec($pessoa);
         $this->assertContains('LOCALIZAPESSOA', $this->getTables());
+
+        # 4. Load EMAILPESSOA schema
+        $pessoa = file_get_contents(__DIR__. '/' . 'schemas/EMAILPESSOA.sql');
+        DB::getInstance()->exec($pessoa);
+        $this->assertContains('EMAILPESSOA', $this->getTables());
     }
 
     public function test_deploy_data(){
@@ -87,6 +92,22 @@ class DeploySchemaTest extends TestCase
         }
         $computed = DB::fetch('SELECT COUNT(*) FROM LOCALIZAPESSOA');
         $this->assertSame(101, (int) $computed['computed']);
+
+        # 5. EMAILPESSOA
+        $sql = "INSERT INTO EMAILPESSOA (codpes, codema, stamtr) 
+                VALUES (convert(int,:codpes), :codema, :stamtr)";
+        $pessoas = DB::fetchAll('SELECT * FROM PESSOA');
+        foreach($pessoas as $pessoa){
+            $data = [
+                'codpes' => $pessoa['codpes'],
+                'codema' => $faker->email,
+                'stamtr' => 'S'
+            ];
+            DB::getInstance()->prepare($sql)->execute($data);
+        }
+        $computed = DB::fetch('SELECT COUNT(*) FROM EMAILPESSOA');
+        $this->assertSame(101, (int) $computed['computed']);
+
 
     }
 }
