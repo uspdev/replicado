@@ -417,11 +417,14 @@ class Posgraduacao
                     JOIN HISTPROGRAMA h ON h.codpes = l.codpes 
                     WHERE l.tipvin = 'ALUNOPOS' 
                     AND l.codundclg IN ({$unidades})
-                    AND p.sexpes = :sexpes AND h.codare = convert(int,:codare)";
+                    AND p.sexpes = :sexpes";
         $param = [
-            'sexpes' => $sexpes,
-            'codare' => $codare,
+            'sexpes' => $sexpes
         ];
+        if (!is_null($codare)) {
+            $param['codare'] = $codare;
+            $query .= " AND (h.codare = CONVERT(INT, :codare))";
+        }
         return DB::fetch($query, $param)['computed'];
     }
 }
