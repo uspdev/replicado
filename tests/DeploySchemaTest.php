@@ -13,9 +13,9 @@ class DeploySchemaTest extends TestCase
         putenv('REPLICADO_HOST=');
         putenv('REPLICADO_PORT=5050');
         putenv('REPLICADO_DATABASE=faker');
-        putenv('REPLICADO_USERNAME=');
+        putenv('REPLICADO_USERNAME=dbmaint');
         putenv('REPLICADO_PASSWORD=');
-        putenv('REPLICADO_CODUNDCLG=');
+        putenv('REPLICADO_CODUNDCLG=8');
     }
 
     private function getTables(){
@@ -35,6 +35,11 @@ class DeploySchemaTest extends TestCase
         $pessoa = file_get_contents(__DIR__. '/' . 'schemas/PESSOA.sql');
         DB::getInstance()->exec($pessoa);
         $this->assertContains('PESSOA', $this->getTables());
+
+        # 3. Load LOCALIZAPESSOA schema
+        $pessoa = file_get_contents(__DIR__. '/' . 'schemas/LOCALIZAPESSOA.sql');
+        DB::getInstance()->exec($pessoa);
+        $this->assertContains('LOCALIZAPESSOA', $this->getTables());
     }
 
     public function test_deploy_data(){
@@ -51,7 +56,8 @@ class DeploySchemaTest extends TestCase
 
         # 2. Populate PESSOA table with 100 people
         $faker = Factory::create();
-        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd) VALUES (convert(int,:codpes),:nompes, :nompesttd)";
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd) 
+                VALUES (convert(int,:codpes),:nompes, :nompesttd)";
         for ($i = 0; $i < 100; $i++) {
             $data = [
                 'codpes'    => $faker->randomNumber,
@@ -61,8 +67,26 @@ class DeploySchemaTest extends TestCase
             DB::getInstance()->prepare($sql)->execute($data);
         }
 
-        # Assertion
+        # 3. Assertion
         $computed = DB::fetch('SELECT COUNT(*) FROM PESSOA');
         $this->assertSame(101, (int) $computed['computed']);
+
+        # 4. A tabela LOCALIZAPESSOA será baseada na tabela PESSOA
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, nompes, sitatl, codundclg) 
+                VALUES (convert(int,:codpes), :tipvinext, :nompes, :sitatl, convert(int,:codundclg))";
+        $pessoas = DB::fetchAll('SELECT * FROM PESSOA');
+        foreach($pessoas as $pessoa){
+            $data = [
+                'codpes'    => $pessoa['codpes'],
+                'tipvinext' => 'Servidor',
+                'nompes'    => $pessoa['nompes'],
+                'sitatl'    => 'A',
+                'codundclg' => 8
+            ];
+            DB::getInstance()->prepare($sql)->execute($data);
+        }
+        $computed = DB::fetch('SELECT COUNT(*) FROM LOCALIZAPESSOA');
+        $this->assertSame(101, (int) $computed['computed']);
+
     }
 }
