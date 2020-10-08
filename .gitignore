@@ -9,6 +9,7 @@ composer.lock
 
 # index.php used for test
 index.php
+.env
 
 # test
 test.php
