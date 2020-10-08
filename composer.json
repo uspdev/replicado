@@ -18,9 +18,18 @@
             "Uspdev\\Replicado\\" : "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Uspdev\\Replicado\\Tests\\": "tests/"
+        }
+    },
     "require": {
         "php": ">=7.0",
         "ext-pdo_dblib": "*",
         "monolog/monolog": "^1.25 || ^2"
-    }
+    },
+     "require-dev": {
+        "phpunit/phpunit": "^8.0 || ^9.0",
+        "fzaninotto/faker": "^1.9"
+     }
 }
