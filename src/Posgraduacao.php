@@ -397,4 +397,34 @@ class Posgraduacao
         ];
         return DB::fetchAll($query, $param);
     }
+
+    /**
+     * Método para retornar quantidade alunos de pós-graduação do gênero 
+     * e programa (opcional) especificado 
+     * 
+     * Se $codare não for informado, irá retornar a quantidade de alunos de pós-graduação de todos os programas, do gênero especificado. 
+     * Se for informado, irá retornar a quantidade de alunos de pós-graduação somente do programa e do do gênero especificado.
+     * 
+     * @param Char $sexpes
+     * @param Integer $codare (optional) - código da área pertencente a um programa de pós.
+     * @return void
+     */
+    public static function contarAtivosPorGenero($sexpes, $codare = null){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+
+        $query = " SELECT COUNT(DISTINCT l.codpes) FROM LOCALIZAPESSOA l
+                    JOIN PESSOA p ON p.codpes = l.codpes 
+                    JOIN HISTPROGRAMA h ON h.codpes = l.codpes 
+                    WHERE l.tipvin = 'ALUNOPOS' 
+                    AND l.codundclg IN ({$unidades})
+                    AND p.sexpes = :sexpes";
+        $param = [
+            'sexpes' => $sexpes
+        ];
+        if (!is_null($codare)) {
+            $param['codare'] = $codare;
+            $query .= " AND (h.codare = CONVERT(INT, :codare))";
+        }
+        return DB::fetch($query, $param)['computed'];
+    }
 }
