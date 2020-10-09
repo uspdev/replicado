@@ -14,6 +14,8 @@
 
  - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
 
+ - *telefones($codpes)*: recebe codpes e retorna array com telefones da pessoa
+
  - *vinculos($codpes)*: retorna vínculos ativos da pessoa
 
  - *vinculosSiglas($codpes,$unidade)*: retorna siglas de vínculos ativos da pessoa em uma dada unidade
