@@ -334,4 +334,28 @@ class Graduacao
         ];
         return DB::fetch($query, $param)['computed'];
     }
+
+    /**
+     * Método para retornar se um codpes é coordenador de curso de graduação
+     * @param Integer $codpes
+     * @return boolean
+     */
+    public static function verificarCoordenadorCursoGrad(int $codpes)
+    {
+        $query = "SELECT COUNT(codpesdct) as qtde_cursos
+                    FROM CURSOGRCOORDENADOR
+                    WHERE codpesdct = convert(int, :codpes) AND (getdate() BETWEEN dtainicdn AND dtafimcdn)";
+
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        $result = DB::fetch($query, $param);
+
+        if ($result['qtde_cursos'] > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
