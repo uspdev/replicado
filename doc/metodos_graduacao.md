@@ -34,3 +34,5 @@ coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente
  - *setorAluno($codpes, $codundclgi)*: retorna *array* com a Sigla do Departamento de Ensino do Aluno de Graduação
 
  - *contarAtivosPorGenero($sexpes, $codcur = null)*: recebe o gênero (F,M) e o código do curso (opcional) de graduação para retornar a quantidade de alunos de graduação com o gênero especificado
+
+ - *verificarCoordenadorCursoGrad(int $codpes)*: recebe um codpes e retorna se a pessoa é ou não coordenador de algum curso de graduação na data atual
