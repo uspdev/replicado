@@ -706,4 +706,27 @@ class Pessoa
         }
         return $result;
     }
+
+    /**
+     * Método que dado um número usp retorna um ramal USP
+     * retorna o número USP da pessoa
+     * @param integer $codpes
+     * @return string
+     */
+    public static function obterRamalUsp(int $codpes) {
+        $query = " SELECT numtelfmt
+                    FROM LOCALIZAPESSOA
+                    WHERE LOCALIZAPESSOA.codpes = convert(int, :codpes)";
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        $result = DB::fetch($query, $param);
+
+        if(!empty($result)){
+            return $result['numtelfmt'];
+        }
+
+        return "";
+    }
 }
