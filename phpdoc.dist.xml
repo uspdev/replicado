@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpdoc>
   <title>Replicado Uspdev</title>
-  <description>This template allows users to produce checkstyle output</description>
   <parser>
     <target>docs</target>
   </parser>
