@@ -94,7 +94,7 @@ Ainda é necessário instalar:
 
 Gerando a documentação:
 
-    phpdoc run --config  phpdoc.tpl.xml
+    phpdoc
 
 Consulte a documentação em: 
 [https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.htm](https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.htm)
