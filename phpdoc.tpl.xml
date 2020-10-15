@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+  <title>Uspdev</title>
+  <description>This template allows users to produce checkstyle output</description>
+  <parser>
+    <target>docs</target>
+  </parser>
+
+  <transformer>
+    
+    <target>docs</target>
+  </transformer>
+  <files>
+    <directory>src</directory>
+    <directory>tests</directory>
+  </files>
+</phpdoc>

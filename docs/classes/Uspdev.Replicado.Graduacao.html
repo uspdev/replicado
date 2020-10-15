@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>Uspdev</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src').replace( /\\/g, '/');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">Uspdev</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/Uspdev.html">\Uspdev</a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">120</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1553961796"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-1553961796" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-242896409"></a>
+                                <a href="../namespaces/Uspdev.html" style="margin-left: 30px; padding-left: 0">Uspdev</a>
+            </div>
+            <div id="namespace-242896409" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-285542808"></a>
+                                <a href="../namespaces/Uspdev.Replicado.html" style="margin-left: 30px; padding-left: 0">Replicado</a>
+            </div>
+            <div id="namespace-285542808" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2137326252"></a>
+                                <a href="../namespaces/Uspdev.Replicado.Tests.html" style="margin-left: 30px; padding-left: 0">Tests</a>
+            </div>
+            <div id="namespace-2137326252" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.DeploySchemaTest.html">DeploySchemaTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.PessoaTest.html">PessoaTest</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Bempatrimoniado.html">Bempatrimoniado</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.DB.html">DB</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Graduacao.html">Graduacao</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Lattes.html">Lattes</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Pessoa.html">Pessoa</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Posgraduacao.html">Posgraduacao</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Uteis.html">Uteis</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/Uspdev.Replicado.html">\Uspdev\Replicado</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\Uspdev\Replicado</small>Graduacao</h1>
+                    <p><em></em></p>
+                    
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_verifica" class="">verifica()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_ativos" class="">ativos()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_curso" class="">curso()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_programa" class="">programa()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_nomeCurso" class="">nomeCurso()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_nomeHabilitacao" class="">nomeHabilitacao()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_obterCursosHabilitacoes" class="">obterCursosHabilitacoes()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_obterDisciplinas" class="">obterDisciplinas()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_nomeDisciplina" class="">nomeDisciplina()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_disciplinasConcluidas" class="">disciplinasConcluidas()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_creditosDisciplina" class="">creditosDisciplina()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_creditosDisciplinasConcluidasAproveitamentoEstudosExterior" class="">creditosDisciplinasConcluidasAproveitamentoEstudosExterior()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_disciplinasCurriculo" class="">disciplinasCurriculo()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_disciplinasEquivalentesCurriculo" class="">disciplinasEquivalentesCurriculo()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_setorAluno" class="">setorAluno()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_contarAtivosPorGenero" class="">contarAtivosPorGenero()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Graduacao.html#method_verificarCoordenadorCursoGrad" class="">verificarCoordenadorCursoGrad()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No private properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/src.Graduacao.html"><div class="path-wrapper">src/Graduacao.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">Default</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                    <div class="namespace-wrapper">\Uspdev\Replicado\Graduacao</div>
+                            </dd>
+
+                        
+                        
+                        
+                                                
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                        
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_verifica" name="method_verifica" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">verifica()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">verifica(  <span class="argument">$codpes</span>,   <span class="argument">$codundclgi</span>) </pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_ativos" name="method_ativos" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">ativos()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">ativos(  <span class="argument">$codundclgi</span>,   <span class="argument">$parteNome = null</span>) : \Uspdev\Replicado\array(campos</pre>
+                <p><em>Método para retornar alunos ativos na unidade</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$parteNome </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \Uspdev\Replicado\array(campos
+                                            &mdash; <p>tabela LOCALIZAPESSOA)</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_curso" name="method_curso" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">curso()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">curso(Int  <span class="argument">$codpes</span>, Int  <span class="argument">$codundclgi</span>) : \Uspdev\Replicado\array(codpes,</pre>
+                <p><em>Método para retornar dados do curso de um aluno na unidade</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Int</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Int</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \Uspdev\Replicado\array(codpes,
+                                            &mdash; <p>nompes, codcur, codhab, nomhab, dtainivin, codcurgrd)</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_programa" name="method_programa" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">programa()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">programa(  <span class="argument">$codpes</span>) </pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_nomeCurso" name="method_nomeCurso" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">nomeCurso()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">nomeCurso(  <span class="argument">$codcur</span>) </pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$codcur </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_nomeHabilitacao" name="method_nomeHabilitacao" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">nomeHabilitacao()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">nomeHabilitacao(  <span class="argument">$codhab</span>,   <span class="argument">$codcur</span>) </pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$codhab </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$codcur </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_obterCursosHabilitacoes" name="method_obterCursosHabilitacoes" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">obterCursosHabilitacoes()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">obterCursosHabilitacoes(  <span class="argument">$codundclgi</span>) </pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_obterDisciplinas" name="method_obterDisciplinas" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">obterDisciplinas()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">obterDisciplinas(Array  <span class="argument">$arrCoddis</span>) : void</pre>
+                <p><em>Método para obter as disciplinas de graduação oferecidas na unidade</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Array</td>
+                                <td>$arrCoddis </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_nomeDisciplina" name="method_nomeDisciplina" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">nomeDisciplina()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">nomeDisciplina(String  <span class="argument">$coddis</span>) : void</pre>
+                <p><em>Método para trazer o nome da disciplina de graduação</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>String</td>
+                                <td>$coddis </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_disciplinasConcluidas" name="method_disciplinasConcluidas" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">disciplinasConcluidas()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">disciplinasConcluidas(Int  <span class="argument">$codpes</span>,   <span class="argument">$codundclgi</span>) : void</pre>
+                <p><em>Método para trazer as disciplinas, status e créditos concluídos</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Int</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_creditosDisciplina" name="method_creditosDisciplina" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">creditosDisciplina()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">creditosDisciplina(string  <span class="argument">$coddis</span>) : integer</pre>
+                <p><em>Método para trazer os créditos de uma disciplina</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$coddis </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    integer
+                                            &mdash; <p>$creaul</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_creditosDisciplinasConcluidasAproveitamentoEstudosExterior" name="method_creditosDisciplinasConcluidasAproveitamentoEstudosExterior" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">creditosDisciplinasConcluidasAproveitamentoEstudosExterior()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">creditosDisciplinasConcluidasAproveitamentoEstudosExterior(Int  <span class="argument">$codpes</span>, Int  <span class="argument">$codundclgi</span>) : \Uspdev\Replicado\Array(coddis,</pre>
+                <p><em>Créditos atribuídos por Aproveitamento de Estudos no exterior
+Documentação da replicação: * credito-aula-atribuido
+                            * creaulatb
+                            * Número de Créditos aula, atribuído pelo órgão responsável,
+                              a uma disciplina livre cursada no exterior por aluno da USP.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Int</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Int</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \Uspdev\Replicado\Array(coddis,
+                                            &mdash; <p>creaulatb)</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_disciplinasCurriculo" name="method_disciplinasCurriculo" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">disciplinasCurriculo()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">disciplinasCurriculo(String  <span class="argument">$codcur</span>, Int  <span class="argument">$codhab</span>) : \Uspdev\Replicado\Array(coddis,</pre>
+                <p><em>Disciplinas (grade curricular) para um currículo atual no JúpiterWeb
+a partir do código do curso e da habilitação</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>String</td>
+                                <td>$codcur </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Int</td>
+                                <td>$codhab </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \Uspdev\Replicado\Array(coddis,
+                                            &mdash; <p>nomdis, verdis, numsemidl, tipobg)</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_disciplinasEquivalentesCurriculo" name="method_disciplinasEquivalentesCurriculo" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">disciplinasEquivalentesCurriculo()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">disciplinasEquivalentesCurriculo(String  <span class="argument">$codcur</span>, Int  <span class="argument">$codhab</span>) : \Uspdev\Replicado\Array(coddis,</pre>
+                <p><em>Disciplinas equivalentes de um currículo atual no JúpiterWeb
+a partir do código do curso e da habilitação</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>String</td>
+                                <td>$codcur </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Int</td>
+                                <td>$codhab </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \Uspdev\Replicado\Array(coddis,
+                                            &mdash; <p>verdis, tipobg, coddis_equivalente, verdis_equivalente)</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setorAluno" name="method_setorAluno" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setorAluno()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setorAluno(Int  <span class="argument">$codpes</span>, Int  <span class="argument">$codundclgi</span>) : \Uspdev\Replicado\Array(nomabvset)</pre>
+                <p><em>Departamento de Ensino do Aluno de Graduação</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Int</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Int</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \Uspdev\Replicado\Array(nomabvset)
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_contarAtivosPorGenero" name="method_contarAtivosPorGenero" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">contarAtivosPorGenero()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">contarAtivosPorGenero(\Uspdev\Replicado\Char  <span class="argument">$sexpes</span>, Integer  <span class="argument">$codcur = null</span>) : void</pre>
+                <p><em>Método para retornar o total de alunos de graduação do gênero
+e curso (opcional) especificado</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\Uspdev\Replicado\Char</td>
+                                <td>$sexpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codcur </td>
+                                <td><p>(optional)</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_verificarCoordenadorCursoGrad" name="method_verificarCoordenadorCursoGrad" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">verificarCoordenadorCursoGrad()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">verificarCoordenadorCursoGrad(Integer  <span class="argument">$codpes</span>) : boolean</pre>
+                <p><em>Método para retornar se um codpes é coordenador de curso de graduação</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">Graduacao.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/src/Graduacao.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/Uspdev.html">\Uspdev</a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on October 15th, 2020 at 04:01.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

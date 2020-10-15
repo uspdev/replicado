@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/uspdev/replicado.svg?branch=master)](https://travis-ci.org/uspdev/replicado)
 [![Latest Stable Version](https://poser.pugx.org/uspdev/replicado/v/stable.svg)](https://packagist.org/packages/uspdev/replicado)
 [![Total Downloads](https://poser.pugx.org/uspdev/replicado/downloads.svg)](https://packagist.org/packages/uspdev/replicado)
 
@@ -92,3 +91,7 @@ Classes
 * [posgraduacao](doc/metodos_posgraduacao.md)
 * [bempatrimoniado](doc/metodos_bempatrimoniado.md)
 * [lattes](doc/metodos_lattes.md)
+
+## Documentação
+
+    ./vendor/bin/phpdoc run --config  phpdoc.tpl.xml

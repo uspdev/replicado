@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>Uspdev</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src').replace( /\\/g, '/');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">Uspdev</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/Uspdev.html">\Uspdev</a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">120</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1859450406"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-1859450406" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1869104957"></a>
+                                <a href="../namespaces/Uspdev.html" style="margin-left: 30px; padding-left: 0">Uspdev</a>
+            </div>
+            <div id="namespace-1869104957" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-805549302"></a>
+                                <a href="../namespaces/Uspdev.Replicado.html" style="margin-left: 30px; padding-left: 0">Replicado</a>
+            </div>
+            <div id="namespace-805549302" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1180281199"></a>
+                                <a href="../namespaces/Uspdev.Replicado.Tests.html" style="margin-left: 30px; padding-left: 0">Tests</a>
+            </div>
+            <div id="namespace-1180281199" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.DeploySchemaTest.html">DeploySchemaTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.PessoaTest.html">PessoaTest</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Bempatrimoniado.html">Bempatrimoniado</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.DB.html">DB</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Graduacao.html">Graduacao</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Lattes.html">Lattes</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Pessoa.html">Pessoa</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Posgraduacao.html">Posgraduacao</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Uteis.html">Uteis</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/Uspdev.Replicado.html">\Uspdev\Replicado</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\Uspdev\Replicado</small>Pessoa</h1>
+                    <p><em></em></p>
+                    
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_dump" class="">dump()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_cracha" class="">cracha()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_emails" class="">emails()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_email" class="">email()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_emailusp" class="">emailusp()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_telefones" class="">telefones()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_nome" class="">nome()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_nomeFonetico" class="">nomeFonetico()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_vinculos" class="">vinculos()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_vinculosSiglas" class="">vinculosSiglas()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_setoresSiglas" class="">setoresSiglas()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_docentes" class="">docentes()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_servidores" class="">servidores()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_designados" class="">designados()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_estagiarios" class="">estagiarios()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_totalVinculo" class="">totalVinculo()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_totalPosNivelPrograma" class="">totalPosNivelPrograma()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_todosVinculosExtenso" class="">todosVinculosExtenso()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_nomeCompleto" class="">nomeCompleto()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_tiposVinculos" class="">tiposVinculos()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_ativosVinculo" class="">ativosVinculo()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_vinculosSetores" class="">vinculosSetores()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_nascimento" class="">nascimento()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_verificarEstagioUSP" class="">verificarEstagioUSP()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_verificarCoordCursosGrad" class="">verificarCoordCursosGrad()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_contarDocentesAtivosPorGenero" class="">contarDocentesAtivosPorGenero()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_contarEstagiariosAtivosPorGenero" class="">contarEstagiariosAtivosPorGenero()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_obterEndereco" class="">obterEndereco()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_listarDocentes" class="">listarDocentes()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_contarServidoresAtivosPorGenero" class="">contarServidoresAtivosPorGenero()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_obterCodpesPorEmail" class="">obterCodpesPorEmail()</a><br />
+                                                                    <a href="../classes/Uspdev.Replicado.Pessoa.html#method_obterRamalUsp" class="">obterRamalUsp()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No private properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/src.Pessoa.html"><div class="path-wrapper">src/Pessoa.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">Default</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                    <div class="namespace-wrapper">\Uspdev\Replicado\Pessoa</div>
+                            </dd>
+
+                        
+                        
+                        
+                                                
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                        
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_dump" name="method_dump" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">dump()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">dump(Integer  <span class="argument">$codpes</span>, array  <span class="argument">$fields = array(&#039;*&#039;)</span>) : void</pre>
+                <p><em>Método para retornar campos da tabela pessoa</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$fields </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_cracha" name="method_cracha" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">cracha()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">cracha(Integer  <span class="argument">$codpes</span>) : array</pre>
+                <p><em>Método para retornar campos da tabela cracha</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_emails" name="method_emails" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">emails()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">emails(Integer  <span class="argument">$codpes</span>) : array</pre>
+                <p><em>Método para retornar array com todos emails da pessoa</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_email" name="method_email" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">email()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">email(Integer  <span class="argument">$codpes</span>) : void</pre>
+                <p><em>Método para retornar email de correspondência da pessoa</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_emailusp" name="method_emailusp" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">emailusp()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">emailusp(Integer  <span class="argument">$codpes</span>) : void</pre>
+                <p><em>Método para retornar email usp da pessoa</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_telefones" name="method_telefones" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">telefones()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">telefones(Integer  <span class="argument">$codpes</span>) : array</pre>
+                <p><em>Método para retornar array com telefones da pessoa</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_nome" name="method_nome" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">nome()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">nome(string  <span class="argument">$nome</span>) : array</pre>
+                <p><em>Método para buscar pessoas por nome ou parte do nome</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$nome </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_nomeFonetico" name="method_nomeFonetico" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">nomeFonetico()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">nomeFonetico(string  <span class="argument">$nome</span>) : void</pre>
+                <p><em>Método para buscar pessoas por nomes fonéticos</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$nome </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_vinculos" name="method_vinculos" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">vinculos()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">vinculos(Integer  <span class="argument">$codpes</span>, Integer  <span class="argument">$codundclgi</span>) : array</pre>
+                <p><em>Método para retornar vínculos de uma pessoa</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_vinculosSiglas" name="method_vinculosSiglas" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">vinculosSiglas()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">vinculosSiglas(Integer  <span class="argument">$codpes</span>, Integer  <span class="argument">$codundclgi</span>) : array</pre>
+                <p><em>Método que retornar siglas dos vínculos de uma pessoa em uma dada unidade</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setoresSiglas" name="method_setoresSiglas" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setoresSiglas()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setoresSiglas(Integer  <span class="argument">$codpes</span>, Integer  <span class="argument">$codundclgi</span>) : array</pre>
+                <p><em>Método para retornar siglas dos setores que uma pessoa tem vínculo</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_docentes" name="method_docentes" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">docentes()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">docentes(Integer  <span class="argument">$codundclgi</span>) : void</pre>
+                <p><em>Método para retornar docentes ativos na unidade</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_servidores" name="method_servidores" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">servidores()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">servidores(Integer  <span class="argument">$codundclgi</span>) : void</pre>
+                <p><em>Método para retornar servidores ativos na unidade</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_designados" name="method_designados" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">designados()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">designados(Integer  <span class="argument">$codundclgi</span>) : void</pre>
+                <p><em>Método para retornar servidores designados ativos na unidade</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_estagiarios" name="method_estagiarios" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">estagiarios()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">estagiarios(Integer  <span class="argument">$codundclgi</span>) : void</pre>
+                <p><em>Método para retornar estagiários ativos na unidade</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_totalVinculo" name="method_totalVinculo" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">totalVinculo()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">totalVinculo(String  <span class="argument">$vinculo</span>, Integer  <span class="argument">$codundclg</span>) : Integer</pre>
+                <p><em>Método para retornar o total dos vinculos</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>String</td>
+                                <td>$vinculo </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclg </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    Integer
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_totalPosNivelPrograma" name="method_totalPosNivelPrograma" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">totalPosNivelPrograma()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">totalPosNivelPrograma(String  <span class="argument">$nivpgm</span>, Integer  <span class="argument">$codundclg</span>) : Integer</pre>
+                <p><em>Método para retornar o total do programa de Pós</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>String</td>
+                                <td>$nivpgm </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclg </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    Integer
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_todosVinculosExtenso" name="method_todosVinculosExtenso" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">todosVinculosExtenso()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">todosVinculosExtenso() : void</pre>
+                <p><em>Método para retornar todos os vínculos por extenso</em></p>
+                
+
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_nomeCompleto" name="method_nomeCompleto" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">nomeCompleto()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">nomeCompleto(\Uspdev\Replicado\type  <span class="argument">$codpes</span>) : boolean</pre>
+                <p><em>Retorna o nome completo (nome social) a partir do codpes</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\Uspdev\Replicado\type</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_tiposVinculos" name="method_tiposVinculos" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">tiposVinculos()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">tiposVinculos(Integer  <span class="argument">$codundclgi</span>) : void</pre>
+                <p><em>Método para retornar todos os tipos de vínculos possíveis
+Somente ATIVOS: alunos regulares, tipvin IN (&#039;ALUNOGR&#039;, &#039;ALUNOPOS&#039;, &#039;ALUNOCEU&#039;, &#039;ALUNOEAD&#039;, &#039;ALUNOPD&#039;, &#039;ALUNOCONVENIOINT&#039;),
+funcionários, estagiários e docentes, tipvin IN (&#039;SERVIDOR&#039;, &#039;ESTAGIARIORH&#039;)
+Incluido também os Docente Aposentado</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_ativosVinculo" name="method_ativosVinculo" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">ativosVinculo()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">ativosVinculo(String  <span class="argument">$vinculo</span>, Integer  <span class="argument">$codundclgi</span>, Integer  <span class="argument">$contar</span>) : void</pre>
+                <p><em>Método para retornar todas as pessoas ativas por vínculo
+Somente ATIVOS
+Também Docente Aposentado</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>String</td>
+                                <td>$vinculo </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$contar </td>
+                                <td><p>Default 0</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_vinculosSetores" name="method_vinculosSetores" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">vinculosSetores()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">vinculosSetores(Integer  <span class="argument">$codpes</span>, Integer  <span class="argument">$codundclgi</span>) : void</pre>
+                <p><em>Método para retornar todas os vínculos e setores de uma pessoa
+Fundamental para o uspdev/web-ldap-admin
+Somente ATIVOS
+Também Docente Aposentado</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codundclgi </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_nascimento" name="method_nascimento" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">nascimento()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">nascimento(Integer  <span class="argument">$codpes</span>) : void</pre>
+                <p><em>Método para retornar data de nascimento de uma pessoa</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_verificarEstagioUSP" name="method_verificarEstagioUSP" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">verificarEstagioUSP()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">verificarEstagioUSP(Integer  <span class="argument">$codpes</span>) : boolean</pre>
+                <p><em>Método que verifica através do número USP se a pessoa tem estágio USP ou não
+retorna true se a pessoa tiver um estágio na USP
+ou false caso o contrário
+Somente ATIVOS</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_verificarCoordCursosGrad" name="method_verificarCoordCursosGrad" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">verificarCoordCursosGrad()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">verificarCoordCursosGrad(Integer  <span class="argument">$codpes</span>) : boolean</pre>
+                <p><em>Método que verifica através do número USP se pessoa é coordenadora dos cursos de Graduação
+retorna true se a pessoa for coordenadora
+ou false caso o contrário
+Somente ATIVOS</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_contarDocentesAtivosPorGenero" name="method_contarDocentesAtivosPorGenero" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">contarDocentesAtivosPorGenero()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">contarDocentesAtivosPorGenero(\Uspdev\Replicado\Char  <span class="argument">$sexpes</span>) : Integer</pre>
+                <p><em>Método para retornar o total de docentes ativos do gênero especificado</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\Uspdev\Replicado\Char</td>
+                                <td>$sexpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    Integer
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_contarEstagiariosAtivosPorGenero" name="method_contarEstagiariosAtivosPorGenero" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">contarEstagiariosAtivosPorGenero()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">contarEstagiariosAtivosPorGenero(\Uspdev\Replicado\Char  <span class="argument">$sexpes</span>) : Integer</pre>
+                <p><em>Método para retornar o total de estágiarios ativos na unidade do gênero especificado</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\Uspdev\Replicado\Char</td>
+                                <td>$sexpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    Integer
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_obterEndereco" name="method_obterEndereco" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">obterEndereco()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">obterEndereco(Integer  <span class="argument">$codpes</span>) : array</pre>
+                <p><em>Método que recebe o codpes e retorna os campos para o endereço completo:
+rua/avenida, número, complemento, bairro, cidade e UF.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>Integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_listarDocentes" name="method_listarDocentes" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">listarDocentes()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">listarDocentes(\Uspdev\Replicado\type  <span class="argument">$codset = FALSE</span>) : boolean</pre>
+                <p><em>Método que lista os docentes de uma Unidade agrupando por setor (departamento)</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\Uspdev\Replicado\type</td>
+                                <td>$codset </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                            &mdash; <p>$codset pode ser um número (para um único setor)
+ou
+pode ser uma string com números separados por vírgula (para um ou mais de um setores)</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_contarServidoresAtivosPorGenero" name="method_contarServidoresAtivosPorGenero" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">contarServidoresAtivosPorGenero()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">contarServidoresAtivosPorGenero(  <span class="argument">$sexpes</span>) : integer|boolean</pre>
+                <p><em>Método para retornar o total de servidores ativos na unidade do gênero especificado</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$sexpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    integer|boolean
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_obterCodpesPorEmail" name="method_obterCodpesPorEmail" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">obterCodpesPorEmail()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">obterCodpesPorEmail(  <span class="argument">$codema</span>) : boolean</pre>
+                <p><em>Método que dado um email cadastrado no sistema (email usp ou alternativo),
+retorna o número USP da pessoa</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$codema </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_obterRamalUsp" name="method_obterRamalUsp" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">obterRamalUsp()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">obterRamalUsp(integer  <span class="argument">$codpes</span>) : string</pre>
+                <p><em>Método que dado um número usp retorna um ramal USP
+retorna o número USP da pessoa</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$codpes </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Uspdev.Replicado.Pessoa.html"><div class="path-wrapper">\Uspdev\Replicado\Pessoa</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">Pessoa.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/src/Pessoa.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/Uspdev.html">\Uspdev</a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on October 15th, 2020 at 04:01.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>
