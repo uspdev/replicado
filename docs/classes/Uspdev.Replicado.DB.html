@@ -24,7 +24,7 @@
     <script type="text/javascript">
     function loadExternalCodeSnippets() {
         Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
-            var src = pre.getAttribute('data-src').replace( /\\/g, '/');
+            var src = pre.getAttribute('data-src');
             var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
             var language = 'php';
 
@@ -114,12 +114,12 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="../reports/errors.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">120</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">126</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="../reports/markers.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
                                 </a>
                             </li>
                             <li>
@@ -144,43 +144,46 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-5364422"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-2034732537"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-5364422" class="accordion-body collapse in">
+            <div id="namespace-2034732537" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1787762964"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-964027952"></a>
                                 <a href="../namespaces/Uspdev.html" style="margin-left: 30px; padding-left: 0">Uspdev</a>
             </div>
-            <div id="namespace-1787762964" class="accordion-body collapse ">
+            <div id="namespace-964027952" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-132891647"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-314139754"></a>
                                 <a href="../namespaces/Uspdev.Replicado.html" style="margin-left: 30px; padding-left: 0">Replicado</a>
             </div>
-            <div id="namespace-132891647" class="accordion-body collapse ">
+            <div id="namespace-314139754" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-65379666"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1370881808"></a>
                                 <a href="../namespaces/Uspdev.Replicado.Tests.html" style="margin-left: 30px; padding-left: 0">Tests</a>
             </div>
-            <div id="namespace-65379666" class="accordion-body collapse ">
+            <div id="namespace-1370881808" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
                     <ul>
-                                                                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.DeploySchemaTest.html">DeploySchemaTest</a></li>
+                                                                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.BuildFakerDataTest.html">BuildFakerDataTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.DeploySchemaTest.html">DeploySchemaTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.GraduacaoTest.html">GraduacaoTest</a></li>
                                                     <li class="class"><a href="../classes/Uspdev.Replicado.Tests.PessoaTest.html">PessoaTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.PosgraduacaoTest.html">PosgraduacaoTest</a></li>
                                             </ul>
                 </div>
             </div>
@@ -306,7 +309,7 @@
                         
                         
                         
-                                                
+                        
                                                                         </dl>
                     <h2>Tags</h2>
                     <table class="table table-condensed">
@@ -415,16 +418,14 @@
 
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.DB.html"><div class="path-wrapper">\Uspdev\Replicado\DB</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -444,16 +445,14 @@
 
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.DB.html"><div class="path-wrapper">\Uspdev\Replicado\DB</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -486,16 +485,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.DB.html"><div class="path-wrapper">\Uspdev\Replicado\DB</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -528,16 +525,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.DB.html"><div class="path-wrapper">\Uspdev\Replicado\DB</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -579,16 +574,14 @@ as colunas =&gt; valores no formato para &#039;bind&#039;</em></p>
                                     <h4>Returns</h4>
                     array
                                             &mdash; <p>posição [0] =&gt; string WHERE, posição [1] = 'colunas' =&gt; valores</p>
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.DB.html"><div class="path-wrapper">\Uspdev\Replicado\DB</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -608,15 +601,13 @@ as colunas =&gt; valores no formato para &#039;bind&#039;</em></p>
 
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.DB.html"><div class="path-wrapper">\Uspdev\Replicado\DB</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -636,15 +627,13 @@ as colunas =&gt; valores no formato para &#039;bind&#039;</em></p>
 
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.DB.html"><div class="path-wrapper">\Uspdev\Replicado\DB</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -672,16 +661,14 @@ as colunas =&gt; valores no formato para &#039;bind&#039;</em></p>
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.DB.html"><div class="path-wrapper">\Uspdev\Replicado\DB</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -739,7 +726,7 @@ as colunas =&gt; valores no formato para &#039;bind&#039;</em></p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 15th, 2020 at 04:01.
+                    on October 15th, 2020 at 16:10.
                 </section>
             </section>
         </section>

@@ -24,7 +24,7 @@
     <script type="text/javascript">
     function loadExternalCodeSnippets() {
         Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
-            var src = pre.getAttribute('data-src').replace( /\\/g, '/');
+            var src = pre.getAttribute('data-src');
             var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
             var language = 'php';
 
@@ -114,12 +114,12 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="../reports/errors.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">120</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">126</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="../reports/markers.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
                                 </a>
                             </li>
                             <li>
@@ -144,43 +144,46 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1741301405"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-934578836"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1741301405" class="accordion-body collapse in">
+            <div id="namespace-934578836" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-89159017"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-222165316"></a>
                                 <a href="../namespaces/Uspdev.html" style="margin-left: 30px; padding-left: 0">Uspdev</a>
             </div>
-            <div id="namespace-89159017" class="accordion-body collapse ">
+            <div id="namespace-222165316" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1067601583"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-235739590"></a>
                                 <a href="../namespaces/Uspdev.Replicado.html" style="margin-left: 30px; padding-left: 0">Replicado</a>
             </div>
-            <div id="namespace-1067601583" class="accordion-body collapse ">
+            <div id="namespace-235739590" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-548383309"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2144266562"></a>
                                 <a href="../namespaces/Uspdev.Replicado.Tests.html" style="margin-left: 30px; padding-left: 0">Tests</a>
             </div>
-            <div id="namespace-548383309" class="accordion-body collapse ">
+            <div id="namespace-2144266562" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
                     <ul>
-                                                                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.DeploySchemaTest.html">DeploySchemaTest</a></li>
+                                                                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.BuildFakerDataTest.html">BuildFakerDataTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.DeploySchemaTest.html">DeploySchemaTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.GraduacaoTest.html">GraduacaoTest</a></li>
                                                     <li class="class"><a href="../classes/Uspdev.Replicado.Tests.PessoaTest.html">PessoaTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.PosgraduacaoTest.html">PosgraduacaoTest</a></li>
                                             </ul>
                 </div>
             </div>
@@ -312,7 +315,7 @@
                         
                         
                         
-                                                
+                        
                                                                         </dl>
                     <h2>Tags</h2>
                     <table class="table table-condensed">
@@ -354,16 +357,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -391,16 +392,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -433,16 +432,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -473,16 +470,14 @@ Issue #137</p>
                 
                                     <h4>Returns</h4>
                     array
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -510,16 +505,14 @@ Issue #137</p>
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -547,16 +540,14 @@ Issue #137</p>
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -590,16 +581,14 @@ no semestre que contém a data.</p>
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -616,7 +605,7 @@ no semestre que contém a data.</p>
                 <pre class="signature" style="margin-right: 54px;">oferecimento(string  <span class="argument">$sgldis</span>, integer  <span class="argument">$numofe</span>) : array</pre>
                 <p><em>Retorna dados de um oferecimento de disciplina incluindo local e ministrante.</em></p>
                 <p>Local e minsitrante podem ser mais de um então são retornados na forma de array.
-Link exemplo do Janus: <a href="https://uspdigital.usp.br/janus/componente/disciplinasOferecidasInicial.jsf?action=4&amp;sgldis=SHS5952&amp;ofe=1">https://uspdigital.usp.br/janus/componente/disciplinasOferecidasInicial.jsf?action=4&amp;sgldis=SHS5952&amp;ofe=1</a></p>
+Link exemplo do Janus: <a href="https://uspdigital.usp.br/janus/componente/disciplinasOferecidasInicial.jsf?action=4&sgldis=SHS5952&ofe=1">https://uspdigital.usp.br/janus/componente/disciplinasOferecidasInicial.jsf?action=4&sgldis=SHS5952&ofe=1</a></p>
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
@@ -635,16 +624,14 @@ Link exemplo do Janus: <a href="https://uspdigital.usp.br/janus/componente/disci
                 
                                     <h4>Returns</h4>
                     array
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -685,16 +672,14 @@ O nome desse método reflete o nome da tabela no BD.</p>
                 
                                     <h4>Returns</h4>
                     array
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -734,16 +719,14 @@ O nome desse método reflete o nome da tabela no BD.</p>
                 
                                     <h4>Returns</h4>
                     array
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -783,16 +766,14 @@ O nome desse método reflete o nome da tabela no BD.</p>
                                     <h4>Returns</h4>
                     \Uspdev\Replicado\type
                                             &mdash; <p>por Erickson Zanon - czanon@usp.br</p>
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -840,16 +821,14 @@ O nome desse método reflete o nome da tabela no BD.</p>
                 
                                     <h4>Returns</h4>
                     Array
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -879,16 +858,14 @@ O nome desse método reflete o nome da tabela no BD.</p>
                 
                                     <h4>Returns</h4>
                     string
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -920,16 +897,14 @@ O nome desse método reflete o nome da tabela no BD.</p>
                 
                                     <h4>Returns</h4>
                     Array
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -964,16 +939,14 @@ Se for informado, irá retornar a quantidade de alunos de pós-graduação somen
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Posgraduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Posgraduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -1031,7 +1004,7 @@ Se for informado, irá retornar a quantidade de alunos de pós-graduação somen
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 15th, 2020 at 04:01.
+                    on October 15th, 2020 at 16:10.
                 </section>
             </section>
         </section>
