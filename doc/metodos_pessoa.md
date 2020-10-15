@@ -4,8 +4,6 @@
                            O campos $fields é opcional.
  - *nome($nome)*: recebe uma string nome e retorna os resultados para a tabela Pessoa
 
- - *nomeCompleto($codpes)*: recebe codpes e retorna o nome completo (nome social)
-
  - *cracha($codpes)*: recebe codpes e retorna todos campos da tabela catr_cracha para o codpes em questão 
 
  - *email($codpes)*: recebe codpes e retorna email de correspondência da pessoa
@@ -52,5 +50,4 @@
 
  - *contarServidoresAtivosPorGenero($sexpes)*: retorna o total de servidores ativos na unidade com gênero especificado
 
-- *obterCodpesPorEmail($codema)*: Método que dado um email cadastrado no sistema (email usp ou alternativo), retorna o número USP da pessoa
 
