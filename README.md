@@ -97,4 +97,4 @@ Gerando a documentação:
     phpdoc
 
 Consulte a documentação em: 
-[https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.htm](https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.htm)
+[https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.htm](https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.html)
