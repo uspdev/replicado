@@ -20,4 +20,4 @@ credentials.php
 nbproject/
 
 # phpdoc
-docs/phpdoc-cache*
+#docs/phpdoc-cache*
