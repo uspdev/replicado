@@ -24,4 +24,18 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('Fulana da Silva',Pessoa::nomeCompleto(123456));
     }
+
+    public function test_obterCodpesPorEmail(){
+        DB::getInstance()->prepare('DELETE FROM EMAILPESSOA')->execute();
+
+        $sql = "INSERT INTO EMAILPESSOA (codpes, codema) VALUES 
+                                   (convert(int,:codpes),:codema)";
+
+        $data = [
+            'codpes' => 123456,
+            'codema' => 'fulana@usp.br'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('123456',Pessoa::obterCodpesPorEmail('fulana@usp.br'));
+    }
 }
