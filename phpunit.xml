@@ -13,6 +13,8 @@
         <testsuite name="Replicado Test Suite">
             <file>tests/DeploySchemaTest.php</file>
             <file>tests/PessoaTest.php</file>
+            <file>tests/GraduacaoTest.php</file>
+            <file>tests/PosgraduacaoTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

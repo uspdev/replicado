@@ -24,7 +24,7 @@
     <script type="text/javascript">
     function loadExternalCodeSnippets() {
         Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
-            var src = pre.getAttribute('data-src').replace( /\\/g, '/');
+            var src = pre.getAttribute('data-src');
             var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
             var language = 'php';
 
@@ -114,12 +114,12 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="../reports/errors.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">120</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">126</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="../reports/markers.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
                                 </a>
                             </li>
                             <li>
@@ -144,43 +144,46 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1553961796"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1651694644"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1553961796" class="accordion-body collapse in">
+            <div id="namespace-1651694644" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-242896409"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2048417550"></a>
                                 <a href="../namespaces/Uspdev.html" style="margin-left: 30px; padding-left: 0">Uspdev</a>
             </div>
-            <div id="namespace-242896409" class="accordion-body collapse ">
+            <div id="namespace-2048417550" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-285542808"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1253225355"></a>
                                 <a href="../namespaces/Uspdev.Replicado.html" style="margin-left: 30px; padding-left: 0">Replicado</a>
             </div>
-            <div id="namespace-285542808" class="accordion-body collapse ">
+            <div id="namespace-1253225355" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2137326252"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2031445402"></a>
                                 <a href="../namespaces/Uspdev.Replicado.Tests.html" style="margin-left: 30px; padding-left: 0">Tests</a>
             </div>
-            <div id="namespace-2137326252" class="accordion-body collapse ">
+            <div id="namespace-2031445402" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
                     <ul>
-                                                                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.DeploySchemaTest.html">DeploySchemaTest</a></li>
+                                                                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.BuildFakerDataTest.html">BuildFakerDataTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.DeploySchemaTest.html">DeploySchemaTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.GraduacaoTest.html">GraduacaoTest</a></li>
                                                     <li class="class"><a href="../classes/Uspdev.Replicado.Tests.PessoaTest.html">PessoaTest</a></li>
+                                                    <li class="class"><a href="../classes/Uspdev.Replicado.Tests.PosgraduacaoTest.html">PosgraduacaoTest</a></li>
                                             </ul>
                 </div>
             </div>
@@ -314,7 +317,7 @@
                         
                         
                         
-                                                
+                        
                                                                         </dl>
                     <h2>Tags</h2>
                     <table class="table table-condensed">
@@ -356,16 +359,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -401,16 +402,14 @@
                                     <h4>Returns</h4>
                     \Uspdev\Replicado\array(campos
                                             &mdash; <p>tabela LOCALIZAPESSOA)</p>
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -446,16 +445,14 @@
                                     <h4>Returns</h4>
                     \Uspdev\Replicado\array(codpes,
                                             &mdash; <p>nompes, codcur, codhab, nomhab, dtainivin, codcurgrd)</p>
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -483,16 +480,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -520,16 +515,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -562,16 +555,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -599,16 +590,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -636,16 +625,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -673,16 +660,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -715,16 +700,14 @@
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -755,16 +738,14 @@
                                     <h4>Returns</h4>
                     integer
                                             &mdash; <p>$creaul</p>
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -804,16 +785,14 @@ Documentação da replicação: * credito-aula-atribuido
                                     <h4>Returns</h4>
                     \Uspdev\Replicado\Array(coddis,
                                             &mdash; <p>creaulatb)</p>
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -850,16 +829,14 @@ a partir do código do curso e da habilitação</em></p>
                                     <h4>Returns</h4>
                     \Uspdev\Replicado\Array(coddis,
                                             &mdash; <p>nomdis, verdis, numsemidl, tipobg)</p>
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -896,16 +873,14 @@ a partir do código do curso e da habilitação</em></p>
                                     <h4>Returns</h4>
                     \Uspdev\Replicado\Array(coddis,
                                             &mdash; <p>verdis, tipobg, coddis_equivalente, verdis_equivalente)</p>
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -940,16 +915,14 @@ a partir do código do curso e da habilitação</em></p>
                 
                                     <h4>Returns</h4>
                     \Uspdev\Replicado\Array(nomabvset)
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -983,16 +956,14 @@ e curso (opcional) especificado</em></p>
                                             </table>
                 
                 
-                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -1022,16 +993,14 @@ e curso (opcional) especificado</em></p>
                 
                                     <h4>Returns</h4>
                     boolean
-                                    
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                             <span class="label label-info">static</span>
                                                             <dl>
-                                                    <dt>Inherited from</dt>
-                    <dd><a href="../classes/Uspdev.Replicado.Graduacao.html"><div class="path-wrapper">\Uspdev\Replicado\Graduacao</div></a></dd>
-                                                            </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr><td colspan="2"><em>None found</em></td></tr>
@@ -1089,7 +1058,7 @@ e curso (opcional) especificado</em></p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 15th, 2020 at 04:01.
+                    on October 15th, 2020 at 16:14.
                 </section>
             </section>
         </section>

@@ -50,7 +50,6 @@ Exemplo de uso
 
     # Opicionais
     putenv('REPLICADO_PATHLOG=path/to/your.log');
-    putenv('REPLICADO_SYBASE=1');
 
     $emails = Pessoa::emails('123456');
     print_r($emails);
@@ -70,7 +69,6 @@ Rode na linha de comando
 
 Se preferir crie e rode alguns exemplos.
 
-
 O codundclg, na graduação, corresponde a um colegiado e uma unidade pode conter mais de um. Nesse caso, coloque em uma lista separada por vírgulas: `putenv('REPLICADO_CODUNDCLG=8,90');`
 
 ## Informações sobre tabelas
@@ -82,16 +80,21 @@ O codundclg, na graduação, corresponde a um colegiado e uma unidade pode conte
 
 Veja o arquivo [contrib.md](doc/contrib.md) com orientações de como contribuir.
 
-## Métodos existentes
-
-Classes
-
-* [pessoa](doc/metodos_pessoa.md)
-* [graduacao](doc/metodos_graduacao.md)
-* [posgraduacao](doc/metodos_posgraduacao.md)
-* [bempatrimoniado](doc/metodos_bempatrimoniado.md)
-* [lattes](doc/metodos_lattes.md)
-
 ## Documentação
 
-    ./vendor/bin/phpdoc run --config  phpdoc.tpl.xml
+A documentação é auto-gerada com [phpDocumentor](https://www.phpdoc.org/), para instalá-lo:
+
+    wget http://phpdoc.org/phpDocumentor.phar
+    sudo mv phpDocumentor.phar /usr/local/bin/phpdoc
+    sudo chmod a+x /usr/local/bin/phpdoc
+
+Ainda é necessário instalar:
+
+    sudo apt install graphviz
+
+Gerando a documentação:
+
+    phpdoc run --config  phpdoc.tpl.xml
+
+Consulte a documentação em: 
+[https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.htm](https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.htm)
