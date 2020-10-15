@@ -6,13 +6,18 @@ class Lattes
 {
     /**
      * Recebe o número USP e retorna o ID Lattes da pessoa.
+     * 
+     * @param Integer $codpes
+     * @return String
      */
-    public static function idLattes($codpes)
+    public static function id($codpes)
 	{
-	    $query = "SELECT idfpescpq as idLattes from DIM_PESSOA_XMLUSP where codpes = convert(int,:codpes)";
+	    $query = "SELECT idfpescpq from DIM_PESSOA_XMLUSP where codpes = convert(int,:codpes)";
 		$param = [
             'codpes' => $codpes,
         ];
-        return DB::fetch($query, $param);
+        $result = DB::fetch($query, $param);
+        if($result) return $result['idfpescpq'];
+        return '';
 	}
 }

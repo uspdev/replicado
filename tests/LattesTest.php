@@ -8,17 +8,16 @@ use Uspdev\Replicado\DB;
 
 class LattesTest extends TestCase
 {
-    public function test_idLattes(){
+    public function test_id(){
         DB::getInstance()->prepare('DELETE FROM DIM_PESSOA_XMLUSP')->execute();
 
         $sql = "INSERT INTO DIM_PESSOA_XMLUSP (codpes, idfpescpq) VALUES 
-                                   (convert(int,:codpes),convert(int,:idfpescpq))";
+                                   (convert(int,:codpes), :idfpescpq)";
         $data = [
             'codpes' => 123456,
-            'idfpescpq' => 658585
+            'idfpescpq' => '1234567890'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-
-        $this->assertSame('658585',Lattes::idLattes(123456)['idLattes']);
+        $this->assertSame('1234567890',Lattes::id(123456));
     }
 }
