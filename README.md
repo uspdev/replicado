@@ -88,6 +88,10 @@ A documentação é auto-gerada com [phpDocumentor](https://www.phpdoc.org/), pa
     sudo mv phpDocumentor.phar /usr/local/bin/phpdoc
     sudo chmod a+x /usr/local/bin/phpdoc
 
+Ainda é necessário instalar:
+
+    sudo apt install graphviz
+
 Gerando a documentação:
 
     phpdoc run --config  phpdoc.tpl.xml
