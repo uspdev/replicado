@@ -4,7 +4,9 @@ namespace Uspdev\Replicado;
 
 class Posgraduacao
 {
-    // verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+    /*
+    ** Verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+    */
     public static function verifica($codpes, $codundclgi)
     {
         $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
