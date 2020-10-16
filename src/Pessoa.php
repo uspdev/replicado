@@ -689,7 +689,7 @@ class Pessoa
     }
 
     /**
-     * Método que dado um email cadastrado no sistema (email usp ou alternativo), 
+     * Método que recebe um email cadastrado no sistema (email usp ou alternativo) e
      * retorna o número USP da pessoa
      * @param String
      * @return boolean
@@ -701,10 +701,8 @@ class Pessoa
             'codema' => $codema,
         ];
         $result = DB::fetch($query, $param);
-        if(!empty($result)){
-            return $result['codpes'];
-        }
-        return $result;
+        if($result) return $result['codpes'];
+        return '';
     }
 
     /**

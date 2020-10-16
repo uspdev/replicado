@@ -4,4 +4,5 @@ create table LOCALIZAPESSOA (
     nompes varchar(120) null,
     sitatl char(1) null,
     codundclg smallint null,
+    nomfnc varchar(60) null,
 )

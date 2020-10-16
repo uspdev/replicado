@@ -38,4 +38,18 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('123456',Pessoa::obterCodpesPorEmail('fulana@usp.br'));
     }
+
+    public function test_verificarCoordCursosGrad(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nomfnc) VALUES 
+                                   (convert(int,:codpes),:nomfnc)";
+
+        $data = [ 
+            'codpes' => 123456,
+            'nomfnc' => 'Coord'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertTrue(true,Pessoa::verificarCoordCursosGrad('Coord'));
+    }
 }
