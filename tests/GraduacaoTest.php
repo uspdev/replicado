@@ -41,5 +41,21 @@ class GraduacaoTest extends TestCase
         $this->assertSame('História',Graduacao::nomeCurso('38'));
     }    
 
+    public function test_programa(){
+
+        DB::getInstance()->prepare('DELETE FROM HISTPROGGR')->execute();
+
+        $sql = "INSERT INTO HISTPROGGR (codpes,stapgm,dtaoco) VALUES 
+                                   (convert(int,:codpes),:stapgm,convert(datetime,:dtaoco))";
+
+        $data = [
+            'codpes' => 420983,
+            'stapgm' => false,
+            'dtaoco' => '2020-02-02'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame(false,Graduacao::programa('420983'));        
+    }
+
 }
 
