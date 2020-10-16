@@ -4,22 +4,22 @@ namespace Uspdev\Replicado;
 
 class Posgraduacao
 {
-    // verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+    /*
+    ** Verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+    */
     public static function verifica($codpes, $codundclgi)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
+        $query = "SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int, :codpes)";
         $param = [
             'codpes' => $codpes,
         ];
         $result = DB::fetchAll($query, $param);
 
-        if(!empty($result)) {
-            foreach ($result as $row) {
-                if (trim($row['tipvin']) == 'ALUNOPOS' && trim($row['sitatl']) == 'A' && trim($row['codundclg']) == $codundclgi) {
-                    return true;
-                }
-
+        foreach ($result as $row) {
+            if (trim($row['tipvin']) == 'ALUNOPOS' && trim($row['sitatl']) == 'A' && trim($row['codundclg']) == $codundclgi) {
+                return true;
             }
+
         }
         return false;
     }
@@ -33,7 +33,10 @@ class Posgraduacao
         $param = [
             'codundclgi' => $codundclgi,
         ];
-        return DB::fetchAll($query, $param);
+        $result = DB::fetchAll($query, $param);
+        $result = Uteis::utf8_converter($result);
+        $result = Uteis::trim_recursivo($result);
+        return $result;
     }
     
     public static function programas($codundclgi, $codcur = null)
