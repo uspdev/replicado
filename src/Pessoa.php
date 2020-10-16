@@ -40,7 +40,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar array com todos emails da pessoa
+     * Método que recebe número USP para retornar array com todos emails da pessoa
      *
      * @param Integer $codpes
      * @return array

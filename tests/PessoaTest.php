@@ -96,4 +96,18 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('fulana@usp.br',Pessoa::emailusp('123456'));
     }
+
+    public function test_emails(){
+        DB::getInstance()->prepare('DELETE FROM EMAILPESSOA')->execute();
+
+        $sql = "INSERT INTO EMAILPESSOA (codpes, codema) VALUES 
+                                   (convert(int,:codpes),:codema)";
+
+        $data = [
+            'codpes' => 123456,
+            'codema' => 'fulana@usp.br'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Pessoa::emails(123456));
+    }
 }
