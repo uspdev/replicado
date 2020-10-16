@@ -39,20 +39,6 @@ class PessoaTest extends TestCase
         $this->assertSame('123456',Pessoa::obterCodpesPorEmail('fulana@usp.br'));
     }
 
-    public function test_verificarCoordCursosGrad(){
-        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
-
-        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nomfnc) VALUES 
-                                   (convert(int,:codpes),:nomfnc)";
-
-        $data = [ 
-            'codpes' => 123456,
-            'nomfnc' => 'Coord'
-        ];
-        DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertTrue(true,Pessoa::verificarCoordCursosGrad('Coord'));
-    }
-
     public function test_verificarEstagioUSP(){
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
 
@@ -61,10 +47,10 @@ class PessoaTest extends TestCase
 
         $data = [
             'codpes' => 123456,
-            'tipvin' => 'ESTAGIARIO'
+            'tipvin' => 'ESTAGIARIORH'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertTrue(true,Pessoa::verificarEstagioUSP('ESTAGIARIO'));
+        $this->assertTrue(Pessoa::verificarEstagioUSP(123456));
     }
 
     public function test_email(){
