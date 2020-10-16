@@ -116,7 +116,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar array com telefones da pessoa
+     * Método que reecebe o número USP e retorna array com telefones da pessoa
      *
      * @param Integer $codpes
      * @return array

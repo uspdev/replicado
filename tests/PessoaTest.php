@@ -96,4 +96,19 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Pessoa::emails(123456));
     }
+
+    public function test_telefones(){
+        DB::getInstance()->prepare('DELETE FROM TELEFPESSOA')->execute();
+
+        $sql = "INSERT INTO TELEFPESSOA (codpes, codddd, numtel) VALUES 
+                                   (convert(int,:codpes),:codddd,:numtel)";
+
+        $data = [
+            'codpes' => 123456,
+            'codddd' => 11,
+            'numtel' => 954668532 
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('(11) 954668532',Pessoa::telefones(123456)[0]);
+    }
 }
