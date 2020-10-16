@@ -109,6 +109,6 @@ class PessoaTest extends TestCase
             'numtel' => 954668532 
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertIsArray(Pessoa::telefones(123456));
+        $this->assertSame('(11) 954668532',Pessoa::telefones(123456)[0]);
     }
 }
