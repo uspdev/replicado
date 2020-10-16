@@ -8,8 +8,6 @@
 
  - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
 
- - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
-
  - *telefones($codpes)*: recebe codpes e retorna array com telefones da pessoa
 
  - *vinculos($codpes)*: retorna vínculos ativos da pessoa

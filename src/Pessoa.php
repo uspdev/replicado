@@ -86,10 +86,10 @@ class Pessoa
     }
 
     /**
-     * Método para retornar email usp da pessoa
+     * Método que recebe número USP para retornar email USP da pessoa
      *
      * @param Integer $codpes
-     * @return void
+     * @return String
      */
     public static function emailusp($codpes)
     {
