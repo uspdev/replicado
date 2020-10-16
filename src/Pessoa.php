@@ -63,10 +63,11 @@ class Pessoa
     }
 
     /**
-     * Método para retornar email de correspondência da pessoa
+     * Método que recebe o número USP para retornar email de correspondência da pessoa, 
+     * cujo campo 'stamtr' é igual a 'S'
      *
      * @param Integer $codpes
-     * @return void
+     * @return String
      */
     public static function email($codpes)
     {

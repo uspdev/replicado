@@ -6,8 +6,6 @@
 
  - *cracha($codpes)*: recebe codpes e retorna todos campos da tabela catr_cracha para o codpes em questão 
 
- - *email($codpes)*: recebe codpes e retorna email de correspondência da pessoa
-
  - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
 
  - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
