@@ -36,8 +36,6 @@
  
  - *nascimento($codpes)*: retorna data de nascimento da pessoa
 
- - *verificarEstagioUSP($codpes)*: recebe o número USP da pessoa e retorna true caso ela tenha um estágio na USP e false caso não tenha
- 
  - *contarDocentesAtivosPorGenero($sexpes)*: retorna o  total de docentes ativos na unidade com o gênero especificado 
 
  - *contarEstagiariosAtivosPorGenero($sexpes)*: retorna o total de estágiarios ativos na unidade com gênero especificado

@@ -52,4 +52,18 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertTrue(true,Pessoa::verificarCoordCursosGrad('Coord'));
     }
+
+    public function test_verificarEstagioUSP(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvin) VALUES 
+                                   (convert(int,:codpes),:tipvin)";
+
+        $data = [
+            'codpes' => 123456,
+            'tipvin' => 'ESTAGIARIO'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertTrue(true,Pessoa::verificarEstagioUSP('ESTAGIARIO'));
+    }
 }
