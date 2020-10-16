@@ -50,11 +50,26 @@ class GraduacaoTest extends TestCase
 
         $data = [
             'codpes' => 420983,
-            'stapgm' => false,
+            'stapgm' => true,
             'dtaoco' => '2020-02-02'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame(false,Graduacao::programa('420983'));        
+        $this->assertTrue(true,Graduacao::programa('420983'));        
+    }
+
+    public function test_curso(){
+
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+    
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, codundclg) VALUES 
+                                   (convert(int,:codpes),convert(int,:codundclg))";
+
+        $data = [
+            'codpes' => 420983,
+            'codundclg' => 7,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertTrue(true, Graduacao::curso(123456, 7));   
     }
 
 }

@@ -52,7 +52,7 @@ class Graduacao
      *
      * @param Int $codpes
      * @param Int $codundclgi
-     * @return array(codpes, nompes, codcur, codhab, nomhab, dtainivin, codcurgrd)
+     * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
      */
     public static function curso($codpes, $codundclgi)
     {

@@ -6,8 +6,6 @@
 
  - *ativosCsv($unidade)*: retorna *csv* de todos alunos de graduação ativos na unidade
 
- - *curso($codpes,$unidade)*: retorna os dados acadêmicos do aluno de graduação ativo na unidade
-
  - *obterCursosHabilitacoes($unidade)*: retorna os cursos e habilitações na unidade
 
  - *obterDisciplinas($arrCoddis)*: recebe um *array* com o prefixo dos codigos das disciplinas e retorna *array* com todas as disciplinas na unidade
