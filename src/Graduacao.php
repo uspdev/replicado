@@ -71,6 +71,13 @@ class Graduacao
         return DB::fetch($query, $param);  
     }
 
+    /**
+     * Recebe o nº USP do aluno *int* e retorna *int* com o código do programa
+     * 
+     * @param Int $codpes
+     * @return Int
+     */
+
     public static function programa($codpes)
     {
         $query = " SELECT TOP 1 * FROM HISTPROGGR ";
@@ -83,6 +90,13 @@ class Graduacao
         return DB::fetch($query, $param);
     }
 
+    /**
+     * Retorna o nome do curso 
+     * 
+     * @param Int $codcur
+     * @return String
+     */
+
     public static function nomeCurso($codcur)
     {
         $query = " SELECT TOP 1 * FROM CURSOGR ";
@@ -94,6 +108,14 @@ class Graduacao
         if($result) return $result['nomcur'];
         return $result;
     }
+
+    /**
+     * Retorna o nome da habilitação
+     * 
+     * @param Int $codcur
+     * @param SmallInt $codhab
+     * @return String
+     */
 
     public static function nomeHabilitacao($codhab, $codcur)
     {
