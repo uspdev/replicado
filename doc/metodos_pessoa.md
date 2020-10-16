@@ -6,12 +6,6 @@
 
  - *cracha($codpes)*: recebe codpes e retorna todos campos da tabela catr_cracha para o codpes em questão 
 
- - *email($codpes)*: recebe codpes e retorna email de correspondência da pessoa
-
- - *emails($codpes)*: recebe codpes e retorna todos emails da pessoa
-
- - *emailusp($codpes)*: recebe codpes e retorna email usp da pessoa
-
  - *telefones($codpes)*: recebe codpes e retorna array com telefones da pessoa
 
  - *vinculos($codpes)*: retorna vínculos ativos da pessoa
@@ -35,10 +29,6 @@
  - *vinculosSetores($codpes, $codundclgi)*: retorna *array* com os vínculos e setores que a pessoa possui
  
  - *nascimento($codpes)*: retorna data de nascimento da pessoa
-
- - *verificarEstagioUSP($codpes)*: recebe o número USP da pessoa e retorna true caso ela tenha um estágio na USP e false caso não tenha
- 
- - *verificaCoordCursosGrad($codpes)*: retorna true ou false ao verificar pelo nº USP se a pessoa é coordenadora dos cursos de graduação
 
  - *contarDocentesAtivosPorGenero($sexpes)*: retorna o  total de docentes ativos na unidade com o gênero especificado 
 

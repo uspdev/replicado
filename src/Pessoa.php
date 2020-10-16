@@ -40,7 +40,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar array com todos emails da pessoa
+     * Método que recebe número USP para retornar array com todos emails da pessoa
      *
      * @param Integer $codpes
      * @return array
@@ -63,10 +63,11 @@ class Pessoa
     }
 
     /**
-     * Método para retornar email de correspondência da pessoa
+     * Método que recebe o número USP para retornar email de correspondência da pessoa, 
+     * cujo campo 'stamtr' é igual a 'S'
      *
      * @param Integer $codpes
-     * @return void
+     * @return String
      */
     public static function email($codpes)
     {
@@ -85,10 +86,10 @@ class Pessoa
     }
 
     /**
-     * Método para retornar email usp da pessoa
+     * Método que recebe número USP para retornar email USP da pessoa
      *
      * @param Integer $codpes
-     * @return void
+     * @return String
      */
     public static function emailusp($codpes)
     {
@@ -689,7 +690,7 @@ class Pessoa
     }
 
     /**
-     * Método que dado um email cadastrado no sistema (email usp ou alternativo), 
+     * Método que recebe um email cadastrado no sistema (email usp ou alternativo) e
      * retorna o número USP da pessoa
      * @param String
      * @return boolean
@@ -701,10 +702,8 @@ class Pessoa
             'codema' => $codema,
         ];
         $result = DB::fetch($query, $param);
-        if(!empty($result)){
-            return $result['codpes'];
-        }
-        return $result;
+        if($result) return $result['codpes'];
+        return '';
     }
 
     /**
