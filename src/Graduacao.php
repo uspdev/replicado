@@ -95,6 +95,10 @@ class Graduacao
         return $result;
     }
 
+    /**
+     * nomeHabilitacao($codhab, $codcur)*: retorna o nome da habilitação
+     */
+    
     public static function nomeHabilitacao($codhab, $codcur)
     {
         $query = " SELECT TOP 1 * FROM HABILITACAOGR ";
