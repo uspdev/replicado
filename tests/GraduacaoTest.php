@@ -25,4 +25,21 @@ class GraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('Inglês',Graduacao::nomeHabilitacao('804', '8051'));
     }
+
+    public function test_nomeCurso(){
+
+        DB::getInstance()->prepare('DELETE FROM CURSOGR')->execute();
+
+        $sql = "INSERT INTO CURSOGR (codcur,nomcur) VALUES 
+                                   (convert(int,:codcur),:nomcur)";
+
+        $data = [
+            'codcur' => '38',
+            'nomcur' => 'História'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('História',Graduacao::nomeCurso('38'));
+    }    
+
 }
+
