@@ -560,28 +560,9 @@ class Pessoa
         $param = [
             'codpes' => $codpes,
         ];
-        return DB::fetch($query, $param);
-    }
-
-    /**
-     * Método que verifica através do número USP se pessoa é coordenadora dos cursos de Graduação
-     * retorna true se a pessoa for coordenadora
-     * ou false caso o contrário
-     * Somente ATIVOS
-     *
-     * @param Integer $codpes
-     * @return boolean
-     */
-    public static function verificarCoordCursosGrad($codpes)
-    {
-        $query = "SELECT codpes 
-                    FROM LOCALIZAPESSOA  
-                    WHERE codpes = convert(int,:codpes)
-                        AND nomfnc LIKE '%Coord Cursos Grad%' ";
-        $param = [
-            'codpes' => $codpes,
-        ];
-        return DB::fetchAll($query, $param);
+        $result = DB::fetch($query, $param);
+        if(!empty($result)) return true;
+        return false;
     }
 
     /**
