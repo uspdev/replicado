@@ -18,7 +18,7 @@ class GraduacaoTest extends TestCase
                                    (convert(int,:codhab),convert(int,:codcur),:nomhab)";
 
         $data = [
-            'codhab' => '804',
+            'codhab' => 804,
             'codcur' => '8051',
             'nomhab' => 'Inglês'
         ];
