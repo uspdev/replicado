@@ -111,4 +111,19 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('(11) 954668532',Pessoa::telefones(123456)[0]);
     }
+
+    public function test_obterRamalUsp(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, numtelfmt) VALUES 
+                                   (convert(int,:codpes),:numtelfmt)";
+
+        $data = [
+            'codpes' => 123456,
+            'numtelfmt' => 954668532 
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('954668532',Pessoa::obterRamalUsp(123456));
+    }
+    
 }
