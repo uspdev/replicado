@@ -5,5 +5,6 @@ create table LOCALIZAPESSOA (
     tipvinext varchar(30) null,
     sitatl char(1) null,
     nomfnc varchar(60) null,
-    codundclg smallint null
+    codundclg smallint null, 
+    numtelfmt varchar(40) null
 )

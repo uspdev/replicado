@@ -688,8 +688,7 @@ class Pessoa
     }
 
     /**
-     * Método que dado um número usp retorna um ramal USP
-     * retorna o número USP da pessoa
+     * Método que dado um número USP retorna um ramal USP
      * @param integer $codpes
      * @return string
      */
