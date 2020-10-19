@@ -126,4 +126,21 @@ class PessoaTest extends TestCase
         $this->assertSame('954668532',Pessoa::obterRamalUsp(123456));
     }
     
+    public function test_vinculos(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, codundclg, tipvinext, nomfnc, nomset, sglclgund) VALUES 
+                                   (convert(int,:codpes), convert(int,:codundclg),:tipvinext,:nomfnc,:nomset,:sglclgund)";
+
+        $data = [
+            'codpes' => 123456,
+            'codundclg' => 8,
+            'tipvinext' => 'Estagiário',
+            'nomfnc' => 'Estagiário',
+            'nomset' => 'Diretoria Faculdade de Filosofia, Letras e Ciências Humanas',
+            'sglclgund' => 'CG',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame("Estagiário - Estagiário - Diretoria Faculdade de Filosofia, Letras e Ciências Humanas - CG",Pessoa::vinculos(123456)[0]);
+    }
 }
