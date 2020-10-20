@@ -99,13 +99,20 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
+    /**
+    * Retorna *array* do catálogo das disciplinas pertencentes à área de concentração.
+    * 
+    * @param  int $codare Código da área de concentração pertencente a um programa de pós.
+    *
+    * @return array
+    */
     public static function catalogoDisciplinas($codare)
     {
         $query = "SELECT DISTINCT r.sgldis, d.nomdis, r.numseqdis, r.dtaatvdis";
         $query .= " FROM R27DISMINCRE AS r, DISCIPLINA AS d";
         $query .= " WHERE d.sgldis = r.sgldis";
         $query .= " AND d.numseqdis = r.numseqdis";
-        $query .= " AND r.codare = :codare";
+        $query .= " AND r.codare = convert(int,:codare)";
         $query .= " AND (r.dtadtvdis IS NULL OR r.dtadtvdis > getdate())"; // não está desativado
         $query .= " AND d.dtaatvdis IS NOT NULL"; // está ativado
         $query .= " AND dateadd(yy,5,d.dtaatvdis)>=getdate()"; // disciplina mais nova que 5 anos
