@@ -5,7 +5,10 @@ namespace Uspdev\Replicado;
 class Posgraduacao
 {
     /*
-    ** Verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+    * Verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+    * 
+    * @param Integer $codpes, Integer $codundclgi
+    * @return Boolean(True, False)
     */
     public static function verifica($codpes, $codundclgi)
     {
@@ -26,11 +29,17 @@ class Posgraduacao
         return false;
     }
 
+    /*
+    * Retorna *array* de todos alunos de pós-graduação ativos na unidade
+    * 
+    * @param Integer $codundclgi
+    * @return Array
+    */
     public static function ativos($codundclgi)
     {
         $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)";
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOPOS' AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A'";
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOPOS' AND LOCALIZAPESSOA.codundclg = convert(int, :codundclgi) AND LOCALIZAPESSOA.sitatl = 'A'";
         $query .= " ORDER BY PESSOA.nompes ASC ";
         $param = [
             'codundclgi' => $codundclgi,
