@@ -215,7 +215,7 @@ class Pessoa
     }
 
     /**
-     * Método que retornar siglas dos vínculos de uma pessoa em uma dada unidade
+     * Método que retorna siglas dos vínculos ativos de uma pessoa, em uma dada unidade
      *
      * @param Integer $codpes
      * @param Integer $codundclgi

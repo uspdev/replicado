@@ -8,8 +8,6 @@
 
  - *telefones($codpes)*: recebe codpes e retorna array com telefones da pessoa
 
- - *vinculosSiglas($codpes,$unidade)*: retorna siglas de vínculos ativos da pessoa em uma dada unidade
-
  - *docentes($unidade)*: retorna *array* de todos os docentes ativos na unidade *DEPRECADO - usar listarDocentes()*
 
  - *servidores($unidade)*: retorna *array* de todos os funcionários ativos na unidade
