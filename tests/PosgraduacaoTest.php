@@ -54,4 +54,31 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Posgraduacao::ativos(8));
     }
+
+    public function test_programas(){
+        DB::getInstance()->prepare('DELETE FROM CURSO')->execute();
+        DB::getInstance()->prepare('DELETE FROM NOMECURSO')->execute();
+
+        $sql = "INSERT INTO CURSO (codcur, codclg, tipcur, dtainiccp) VALUES 
+                                   (convert(int,:codcur),convert(int,:codclg),:tipcur,:dtainiccp)";
+
+        $data = [
+            'codcur' => 123456,
+            'codclg' => 8,
+            'tipcur' => 'POS',
+            'dtainiccp' => '2020-10-20 00:00:00',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO NOMECURSO (codcur, nomcur, dtafimcur) VALUES 
+                                   (convert(int,:codcur),:nomcur,:dtafimcur)";
+
+        $data = [
+            'codcur' => 123456,
+            'nomcur' => 'Curso Exemplo',
+            'dtafimcur' => null,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::programas(8));
+    }
 }

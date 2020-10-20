@@ -47,6 +47,12 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
     
+    /*
+    * Retorna *array* dos programas de pós-graduação da unidade ou quando informado o código do curso/programa retorna somente os dados do programa solicitado
+    * 
+    * @param Integer $codundclgi, Integer $codcur
+    * @return Array
+    */
     public static function programas($codundclgi, $codcur = null)
     {
         $query = "SELECT C.codcur, NC.nomcur";
