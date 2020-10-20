@@ -159,4 +159,20 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('ALUNOGR',Pessoa::vinculosSiglas(123456,8)[0]);
     }
+
+    public function test_setoresSiglas(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, sitatl, codundclg, nomabvset) VALUES 
+                                   (convert(int,:codpes),:sitatl,convert(int,:codundclg),:nomabvset)";
+
+        $data = [
+            'codpes' => 123456,
+            'sitatl' => 'A',
+            'codundclg' => 8,
+            'nomabvset' => 'FFLCH',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('FFLCH',Pessoa::setoresSiglas(123456,8)[0]);
+    }
 }
