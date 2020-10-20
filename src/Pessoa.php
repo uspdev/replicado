@@ -286,7 +286,7 @@ class Pessoa
      */
     public static function docentes($codundclgi)
     {
-        putenv("REPLICADO_CODUNDCLG={$codundclgi}");
+        putenv('REPLICADO_CODUNDCLG=' . $codundclgi);
         return Pessoa::listarDocentes();
     }
     
@@ -351,7 +351,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar o total dos vinculos
+     * Método para retornar o total dos vinculos ativos na unidade
      *
      * @param Integer $codundclg
      * @param String $vinculo

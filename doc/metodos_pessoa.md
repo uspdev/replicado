@@ -14,8 +14,6 @@
 
  - *estagiarios($unidade)*: retorna *array* de todos os estagiários ativos na unidade
 
- - *totalVicunlo($vinculo,$unidade)*: retorna *total* de vínculo ativos na unidade
-
  - *totalPosNivelPrograma($nivpgm,$unidade)*: retorna *total de aluno de Pós matriculados* de acordo com o nível do programa, na unidade
 
  - *tiposVinculos($unidade)*: retorna *array* com os tipos de vínculos *regulares* e também *Docente Aposentado* ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'SERVIDOR', 'ESTAGIARIORH')

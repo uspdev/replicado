@@ -175,4 +175,20 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('FFLCH',Pessoa::setoresSiglas(123456,8)[0]);
     }
+
+    public function test_totalVinculo(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, codundclg, sitatl) VALUES 
+                                   (convert(int,:codpes),:tipvinext,convert(int,:codundclg),:sitatl)";                         
+
+        $data = [
+            'codpes' => 123456,
+            'tipvinext' => 'Servidor',
+            'codundclg' => 8,
+            'sitatl' => 'A'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('1',Pessoa::totalVinculo('Servidor', 8));
+    }
 }
