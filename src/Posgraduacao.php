@@ -4,11 +4,13 @@ namespace Uspdev\Replicado;
 
 class Posgraduacao
 {
-    /*
+    /**
     * Verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
     * 
-    * @param Integer $codpes, Integer $codundclgi
-    * @return Boolean(True, False)
+    * @param int $codpes Código da pessoa
+    * @param int $codundclgi Código da unidade
+    *
+    * @return bool
     */
     public static function verifica($codpes, $codundclgi)
     {
@@ -29,11 +31,12 @@ class Posgraduacao
         return false;
     }
 
-    /*
+    /**
     * Retorna *array* de todos alunos de pós-graduação ativos na unidade
     * 
-    * @param Integer $codundclgi
-    * @return Array
+    * @param int $codundclgi Código da unidade
+    *
+    * @return array
     */
     public static function ativos($codundclgi)
     {
@@ -47,11 +50,13 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
     
-    /*
+    /**
     * Retorna *array* dos programas de pós-graduação da unidade ou quando informado o código do curso/programa retorna somente os dados do programa solicitado
     * 
-    * @param Integer $codundclgi, Integer $codcur
-    * @return Array
+    * @param int $codundclgi Código da unidade
+    * @param int $codcur Código do curso
+    *
+    * @return array
     */
     public static function programas($codundclgi, $codcur = null)
     {
