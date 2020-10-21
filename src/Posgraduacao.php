@@ -4,8 +4,13 @@ namespace Uspdev\Replicado;
 
 class Posgraduacao
 {
-    /*
-    ** Verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+    /**
+    * Verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+    * 
+    * @param int $codpes Código da pessoa
+    * @param int $codundclgi Código da unidade
+    *
+    * @return bool
     */
     public static function verifica($codpes, $codundclgi)
     {
@@ -26,11 +31,18 @@ class Posgraduacao
         return false;
     }
 
+    /**
+    * Retorna *array* de todos alunos de pós-graduação ativos na unidade
+    * 
+    * @param int $codundclgi Código da unidade
+    *
+    * @return array
+    */
     public static function ativos($codundclgi)
     {
         $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)";
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOPOS' AND LOCALIZAPESSOA.codundclg = :codundclgi AND LOCALIZAPESSOA.sitatl = 'A'";
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOPOS' AND LOCALIZAPESSOA.codundclg = convert(int, :codundclgi) AND LOCALIZAPESSOA.sitatl = 'A'";
         $query .= " ORDER BY PESSOA.nompes ASC ";
         $param = [
             'codundclgi' => $codundclgi,
@@ -38,6 +50,14 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
     
+    /**
+    * Retorna *array* dos programas de pós-graduação da unidade ou quando informado o código do curso/programa retorna somente os dados do programa solicitado
+    * 
+    * @param int $codundclgi Código da unidade
+    * @param int $codcur Código do curso
+    *
+    * @return array
+    */
     public static function programas($codundclgi, $codcur = null)
     {
         $query = "SELECT C.codcur, NC.nomcur";
@@ -79,13 +99,20 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
+    /**
+    * Retorna *array* do catálogo das disciplinas pertencentes à área de concentração.
+    * 
+    * @param  int $codare Código da área de concentração pertencente a um programa de pós.
+    *
+    * @return array
+    */
     public static function catalogoDisciplinas($codare)
     {
         $query = "SELECT DISTINCT r.sgldis, d.nomdis, r.numseqdis, r.dtaatvdis";
         $query .= " FROM R27DISMINCRE AS r, DISCIPLINA AS d";
         $query .= " WHERE d.sgldis = r.sgldis";
         $query .= " AND d.numseqdis = r.numseqdis";
-        $query .= " AND r.codare = :codare";
+        $query .= " AND r.codare = convert(int,:codare)";
         $query .= " AND (r.dtadtvdis IS NULL OR r.dtadtvdis > getdate())"; // não está desativado
         $query .= " AND d.dtaatvdis IS NOT NULL"; // está ativado
         $query .= " AND dateadd(yy,5,d.dtaatvdis)>=getdate()"; // disciplina mais nova que 5 anos
@@ -96,6 +123,13 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
+    /**
+    * Retorna *array* contendo todos os dados da disciplina indentificada por sua sigla - sgldis.
+    * 
+    * @param  int $sgldis Código da área de concentração pertencente a um programa de pós.
+    *
+    * @return array
+    */
     public static function disciplina($sgldis)
     {
         $query = "SELECT TOP 1 * FROM DISCIPLINA";
@@ -123,14 +157,14 @@ class Posgraduacao
         $inifim = Uteis::semestre($data);
 
         $query = "SELECT  e.sgldis, MAX(e.numseqdis) AS numseqdis, o.numofe, d.nomdis";
-        $query .= " FROM oferecimento AS o, R27DISMINCRE AS r, espacoturma AS e, disciplina AS d";
+        $query .= " FROM OFERECIMENTO AS o, R27DISMINCRE AS r, ESPACOTURMA AS e, DISCIPLINA AS d";
         $query .= " WHERE e.sgldis = d.sgldis";
         $query .= " AND e.sgldis = r.sgldis";
         $query .= " AND o.sgldis = r.sgldis";
         $query .= " AND o.numseqdis = d.numseqdis";
         $query .= " AND o.dtainiofe > :dtainiofe";
         $query .= " AND o.dtafimofe < :dtafimofe";
-        $query .= " AND r.codare = :codare";
+        $query .= " AND r.codare = convert(int,:codare)";
         $query .= " GROUP BY e.sgldis, d.nomdis, o.numofe";
         $query .= " ORDER BY d.nomdis ASC";
 
