@@ -116,7 +116,7 @@ class Pessoa
     }
 
     /**
-     * Método que reecebe o número USP e retorna array com telefones da pessoa
+     * Método que recebe o número USP e retorna array com telefones da pessoa
      *
      * @param Integer $codpes
      * @return array
@@ -215,7 +215,7 @@ class Pessoa
     }
 
     /**
-     * Método que retornar siglas dos vínculos de uma pessoa em uma dada unidade
+     * Método que retorna siglas dos vínculos ativos de uma pessoa, em uma dada unidade
      *
      * @param Integer $codpes
      * @param Integer $codundclgi
@@ -286,7 +286,7 @@ class Pessoa
      */
     public static function docentes($codundclgi)
     {
-        putenv("REPLICADO_CODUNDCLG={$codundclgi}");
+        putenv('REPLICADO_CODUNDCLG=' . $codundclgi);
         return Pessoa::listarDocentes();
     }
     
@@ -351,7 +351,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar o total dos vinculos
+     * Método para retornar o total dos vinculos ativos na unidade
      *
      * @param Integer $codundclg
      * @param String $vinculo

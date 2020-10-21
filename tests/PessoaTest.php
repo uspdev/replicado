@@ -94,7 +94,9 @@ class PessoaTest extends TestCase
             'codema' => 'fulana@usp.br'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertIsArray(Pessoa::emails(123456));
+        $output = Pessoa::emails(123456);
+        $this->assertIsArray($output);
+        $this->assertSame('fulana@usp.br',$output[0]);
     }
 
     public function test_telefones(){
@@ -126,4 +128,69 @@ class PessoaTest extends TestCase
         $this->assertSame('954668532',Pessoa::obterRamalUsp(123456));
     }
     
+    public function test_vinculos(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, codundclg, tipvinext, nomfnc, nomset, sglclgund) VALUES 
+                                   (convert(int,:codpes), convert(int,:codundclg),:tipvinext,:nomfnc,:nomset,:sglclgund)";
+
+        $data = [
+            'codpes' => 123456,
+            'codundclg' => 8,
+            'tipvinext' => 'Estagiário',
+            'nomfnc' => 'Estagiário',
+            'nomset' => 'Diretoria Faculdade de Filosofia, Letras e Ciências Humanas',
+            'sglclgund' => 'CG',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame("Estagiário - Estagiário - Diretoria Faculdade de Filosofia, Letras e Ciências Humanas - CG",Pessoa::vinculos(123456)[0]);
+    }
+
+    public function test_vinculosSiglas(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, sitatl, codundclg, tipvin) VALUES 
+                                   (convert(int,:codpes),:sitatl,convert(int,:codundclg),:tipvin)";
+
+        $data = [
+            'codpes' => 123456,
+            'sitatl' => 'A',
+            'codundclg' => 8,
+            'tipvin' => 'ALUNOGR',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('ALUNOGR',Pessoa::vinculosSiglas(123456,8)[0]);
+    }
+
+    public function test_setoresSiglas(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, sitatl, codundclg, nomabvset) VALUES 
+                                   (convert(int,:codpes),:sitatl,convert(int,:codundclg),:nomabvset)";
+
+        $data = [
+            'codpes' => 123456,
+            'sitatl' => 'A',
+            'codundclg' => 8,
+            'nomabvset' => 'FFLCH',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('FFLCH',Pessoa::setoresSiglas(123456,8)[0]);
+    }
+
+    public function test_totalVinculo(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, codundclg, sitatl) VALUES 
+                                   (convert(int,:codpes),:tipvinext,convert(int,:codundclg),:sitatl)";                         
+
+        $data = [
+            'codpes' => 123456,
+            'tipvinext' => 'Servidor',
+            'codundclg' => 8,
+            'sitatl' => 'A'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('1',Pessoa::totalVinculo('Servidor', 8));
+    }
 }
