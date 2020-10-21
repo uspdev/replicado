@@ -204,7 +204,6 @@ class Posgraduacao
         ];
 
         $result = DB::fetch($query, $param);
-
         $result['espacoturma'] = self::espacoturma($result['sgldis'], $result['numseqdis'], $result['numofe']);
         $result['ministrante'] = self::ministrante($result['sgldis'], $result['numseqdis'], $result['numofe']);
 
@@ -212,7 +211,7 @@ class Posgraduacao
         $result['dtainiofe'] = Uteis::data_mes($result['dtainiofe']);
         $result['dtafimofe'] = Uteis::data_mes($result['dtafimofe']);
         $result['dtalimcan'] = Uteis::data_mes($result['dtalimcan']);
-        
+
         // Conversão codlin para nome completo do idioma
         if (isset($result['codlinofe']) && (!empty($result['codlinofe']))) {
             $result['codlinofe'] = self::idiomaDisciplina($result['codlinofe']);
