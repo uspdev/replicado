@@ -157,14 +157,14 @@ class Posgraduacao
         $inifim = Uteis::semestre($data);
 
         $query = "SELECT  e.sgldis, MAX(e.numseqdis) AS numseqdis, o.numofe, d.nomdis";
-        $query .= " FROM oferecimento AS o, R27DISMINCRE AS r, espacoturma AS e, disciplina AS d";
+        $query .= " FROM OFERECIMENTO AS o, R27DISMINCRE AS r, ESPACOTURMA AS e, DISCIPLINA AS d";
         $query .= " WHERE e.sgldis = d.sgldis";
         $query .= " AND e.sgldis = r.sgldis";
         $query .= " AND o.sgldis = r.sgldis";
         $query .= " AND o.numseqdis = d.numseqdis";
         $query .= " AND o.dtainiofe > :dtainiofe";
         $query .= " AND o.dtafimofe < :dtafimofe";
-        $query .= " AND r.codare = :codare";
+        $query .= " AND r.codare = convert(int,:codare)";
         $query .= " GROUP BY e.sgldis, d.nomdis, o.numofe";
         $query .= " ORDER BY d.nomdis ASC";
 

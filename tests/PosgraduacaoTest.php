@@ -154,4 +154,56 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Posgraduacao::disciplina('800PG'));
     }
+
+    public function test_disciplinasOferecimento(){
+        DB::getInstance()->prepare('DELETE FROM DISCIPLINA')->execute();
+        DB::getInstance()->prepare('DELETE FROM R27DISMINCRE')->execute();
+        DB::getInstance()->prepare('DELETE FROM OFERECIMENTO')->execute();
+        DB::getInstance()->prepare('DELETE FROM ESPACOTURMA')->execute();
+
+        $sql = "INSERT INTO DISCIPLINA (sgldis, numseqdis, nomdis, dtaatvdis) VALUES 
+                                (:sgldis,convert(int,:numseqdis),:nomdis,:dtaatvdis)";
+
+        $data = [
+            'sgldis' => '800PG',
+            'numseqdis' => 1,
+            'nomdis' => 'Disciplina de Teste',
+            'dtaatvdis' => '2020-10-20',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO R27DISMINCRE (codare, dtadtvdis, dtaatvdis, sgldis, numseqdis) VALUES 
+                                (convert(int,:codare),:dtadtvdis,:dtaatvdis,:sgldis,convert(int,:numseqdis))";
+
+        $data = [
+            'codare' => 800,
+            'dtadtvdis' => null,
+            'dtaatvdis' => '2020-10-20',
+            'sgldis' => '800PG',
+            'numseqdis' => 1,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO OFERECIMENTO (sgldis, numofe, dtainiofe, dtafimofe,numseqdis) VALUES 
+                                (:sgldis,convert(int,:numofe),:dtainiofe,:dtafimofe,convert(int,:numseqdis))";
+
+        $data = [
+            'sgldis' => '800PG',
+            'numofe' => 1,
+            'dtainiofe' => '2020-10-20',
+            'dtafimofe' => '2020-12-30',
+            'numseqdis' => 1,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO ESPACOTURMA (sgldis, numseqdis) VALUES 
+                                (:sgldis,convert(int,:numseqdis))";
+
+        $data = [
+            'sgldis' => '800PG',
+            'numseqdis' => 1,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::disciplinasOferecimento(800));
+    }
 }
