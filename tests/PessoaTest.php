@@ -94,7 +94,9 @@ class PessoaTest extends TestCase
             'codema' => 'fulana@usp.br'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertIsArray(Pessoa::emails(123456));
+        $output = Pessoa::emails(123456);
+        $this->assertIsArray($output);
+        $this->assertSame('fulana@usp.br',$output[0]);
     }
 
     public function test_telefones(){
