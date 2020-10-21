@@ -138,4 +138,20 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Posgraduacao::catalogoDisciplinas(800));
     }
+
+    public function test_disciplina(){
+        DB::getInstance()->prepare('DELETE FROM DISCIPLINA')->execute();
+
+        $sql = "INSERT INTO DISCIPLINA (sgldis, numseqdis, nomdis, dtaatvdis) VALUES 
+                                (:sgldis,convert(int,:numseqdis),:nomdis,:dtaatvdis)";
+
+        $data = [
+            'sgldis' => '800PG',
+            'numseqdis' => 1,
+            'nomdis' => 'Disciplina de Teste',
+            'dtaatvdis' => '2016-10-20',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::disciplina('800PG'));
+    }
 }

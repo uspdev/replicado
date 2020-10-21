@@ -123,6 +123,13 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
+    /**
+    * Retorna *array* contendo todos os dados da disciplina indentificada por sua sigla - sgldis.
+    * 
+    * @param  int $sgldis Código da área de concentração pertencente a um programa de pós.
+    *
+    * @return array
+    */
     public static function disciplina($sgldis)
     {
         $query = "SELECT TOP 1 * FROM DISCIPLINA";
