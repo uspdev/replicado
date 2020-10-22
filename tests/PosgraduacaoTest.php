@@ -283,4 +283,42 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Posgraduacao::ministrante('POS800', 1, 1));
     }
+
+    public function test_areasProgramas(){
+        DB::getInstance()->prepare('DELETE FROM AREA')->execute();
+        DB::getInstance()->prepare('DELETE FROM NOMEAREA')->execute();
+        DB::getInstance()->prepare('DELETE FROM CREDAREA')->execute();
+
+        $sql = "INSERT INTO AREA (codare, codcur) VALUES 
+                                (convert(int,:codare),convert(int,:codcur))";
+
+        $data = [
+            'codare' => 800,
+            'codcur' => 123456,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO NOMEAREA (codare, codcur, nomare) VALUES 
+                                (convert(int,:codare),convert(int,:codcur),:nomare)";
+
+        $data = [
+            'codare' => 800,
+            'codcur' => 123456,
+            'nomare' => 'Humanidades',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+       
+        $sql = "INSERT INTO CREDAREA (codare, codcur, dtadtvare) VALUES 
+                                (convert(int,:codare),convert(int,:codcur),:dtadtvare)";
+
+        $data = [
+            'codare' => 800,
+            'codcur' => 123456,
+            'dtadtvare' => null,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::areasProgramas(8));
+    }
+    
 }
