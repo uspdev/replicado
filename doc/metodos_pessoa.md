@@ -24,8 +24,6 @@
  
  - *nascimento($codpes)*: retorna data de nascimento da pessoa
 
- - *contarDocentesAtivosPorGenero($sexpes)*: retorna o  total de docentes ativos na unidade com o gênero especificado 
-
  - *contarEstagiariosAtivosPorGenero($sexpes)*: retorna o total de estágiarios ativos na unidade com gênero especificado
 
  - *obterEndereco($codpes)*: recebe o número USP da pessoa e retorna o endereço

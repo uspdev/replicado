@@ -193,4 +193,30 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('1',Pessoa::totalVinculo('Servidor', 8));
     }
+
+    public function test_contarDocentesAtivosPorGenero(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, codundclg, sitatl) VALUES 
+                                   (convert(int,:codpes),:tipvinext,convert(int,:codundclg),:sitatl)";
+
+        $data = [
+            'codpes' => 405117,
+            'tipvinext' => 'Docente',
+            'codundclg' => 8,
+            'sitatl' => 'A'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, sexpes) VALUES 
+                                   (convert(int,:codpes),:sexpes)";
+
+        $data = [
+            'codpes' => 405117,
+            'sexpes' => 'F',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('0',Pessoa::contarDocentesAtivosPorGenero('F'));        
+    }
 }
