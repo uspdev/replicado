@@ -369,4 +369,56 @@ class PosgraduacaoTest extends TestCase
 
         $this->assertSame($data['dsclin'],Posgraduacao::idiomaDisciplina('PT'));
     }
+
+    public function test_egressosArea(){
+        DB::getInstance()->prepare('DELETE FROM HISTPROGRAMA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM AGPROGRAMA')->execute();
+        DB::getInstance()->prepare('DELETE FROM TRABALHOPROG')->execute();
+
+        $sql = "INSERT INTO HISTPROGRAMA (codpes, tiphstpgm, numseqpgm, codare, dtaocopgm) VALUES 
+                                (convert(int,:codpes),:tiphstpgm,convert(int,:numseqpgm),convert(int,:codare),:dtaocopgm)";
+
+        $data = [
+            'codpes' => 123456,
+            'tiphstpgm' => 'con',
+            'numseqpgm' => 1,
+            'codare' => 800,
+            'dtaocopgm' => '2020-06-20',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd) VALUES 
+                                (convert(int,:codpes),:nompes,:nompesttd)";
+
+        $data = [
+            'codpes' => 123456,
+            'nompes' => 'Fulano da Silva',
+            'nompesttd' => 'Fulana da Silva',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO AGPROGRAMA (codpes, codare, numseqpgm, nivpgm, dtadfapgm) VALUES 
+                                (convert(int,:codpes),convert(int,:codare),convert(int,:numseqpgm),:nivpgm,:dtadfapgm)";
+
+        $data = [
+            'codpes' => 123456,
+            'codare' => 800,
+            'numseqpgm' => 1,
+            'nivpgm' => 'ME',
+            'dtadfapgm' => '2020-08-20',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO TRABALHOPROG (codare, codpes, numseqpgm) VALUES 
+                                (convert(int,:codare),convert(int,:codpes),convert(int,:numseqpgm))";
+
+        $data = [
+            'codare' => 800,
+            'codpes' => 123456,
+            'numseqpgm' => 1,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::egressosArea(800));
+    }
 }
