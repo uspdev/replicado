@@ -354,4 +354,19 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Posgraduacao::alunosPrograma(8, 123456));
     }
+
+    public function test_idiomaDisciplina(){
+        DB::getInstance()->prepare('DELETE FROM IDIOMA')->execute();
+
+        $sql = "INSERT INTO IDIOMA (codlin, dsclin) VALUES 
+                                   (:codlin,:dsclin)";
+
+        $data = [
+            'codlin' => 'PT',
+            'dsclin' => 'PORTUGUES',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $this->assertSame($data['dsclin'],Posgraduacao::idiomaDisciplina('PT'));
+    }
 }
