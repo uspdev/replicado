@@ -320,5 +320,38 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Posgraduacao::areasProgramas(8));
     }
-    
+
+    public function test_alunosPrograma(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM VINCULOPESSOAUSP')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nompes, tipvin, tipvinext, sitatl, codundclg) VALUES 
+                                   (convert(int,:codpes),:nompes,:tipvin,:tipvinext,:sitatl,convert(int,:codundclg))";
+
+        $data = [
+            'codpes' => 123456,
+            'nompes' => 'Fulano da Silva',
+            'tipvin' => 'ALUNOPOS',
+            'tipvinext' => 'Aluno da Pós-Graduação',
+            'sitatl' => 'A',
+            'codundclg' => 8,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO VINCULOPESSOAUSP (codpes, codare, codhab, dtainivin, codcurgrd, nivpgm, tipvin, sitatl) VALUES 
+                                   (convert(int,:codpes),convert(int,:codare),convert(int,:codhab),:dtainivin,convert(int,:codcurgrd),:nivpgm,:tipvin,:sitatl)";
+
+        $data = [
+            'codpes' => 123456,
+            'codare' => 800,
+            'codhab' => 2,
+            'dtainivin' => '2020-01-01 00:00:00',
+            'codcurgrd' => 1,
+            'nivpgm' => 'ME',
+            'tipvin' => 'ALUNOPOS',
+            'sitatl' => 'A',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::alunosPrograma(8, 123456));
+    }
 }
