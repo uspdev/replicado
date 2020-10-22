@@ -421,4 +421,47 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Posgraduacao::egressosArea(800));
     }
+
+    public function test_contarAtivosPorGenero(){
+        DB::getInstance()->prepare('DELETE FROM HISTPROGRAMA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO HISTPROGRAMA (codpes, tiphstpgm, numseqpgm, codare, dtaocopgm) VALUES 
+                                (convert(int,:codpes),:tiphstpgm,convert(int,:numseqpgm),convert(int,:codare),:dtaocopgm)";
+
+        $data = [
+            'codpes' => 123456,
+            'tiphstpgm' => 'con',
+            'numseqpgm' => 1,
+            'codare' => 800,
+            'dtaocopgm' => '2020-06-20',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, sexpes) VALUES 
+                                (convert(int,:codpes),:nompes,:nompesttd,:sexpes)";
+
+        $data = [
+            'codpes' => 123456,
+            'nompes' => 'Fulano da Silva',
+            'nompesttd' => 'Fulana da Silva',
+            'sexpes' => 'M',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nompes, tipvin, tipvinext, sitatl, codundclg) VALUES 
+                                   (convert(int,:codpes),:nompes,:tipvin,:tipvinext,:sitatl,convert(int,:codundclg))";
+
+        $data = [
+            'codpes' => 123456,
+            'nompes' => 'Fulano da Silva',
+            'tipvin' => 'ALUNOPOS',
+            'tipvinext' => 'Aluno da Pós-Graduação',
+            'sitatl' => 'A',
+            'codundclg' => 8,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('1', Posgraduacao::contarAtivosPorGenero('M'));
+    }
 }
