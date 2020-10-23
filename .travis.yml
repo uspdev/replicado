@@ -6,11 +6,14 @@ php:
 services:
   - docker
 
+before_script:
+  - cp .env.example .env
+
 before_install:
-- docker pull uspdev/asedocker
-- docker run -d -p 127.0.0.1:80:5000 uspdev/asedocker
-- docker ps -a
-#- docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
+  - docker pull uspdev/asedocker
+  - docker run -d -p 127.0.0.1:80:5000 uspdev/asedocker
+  - docker ps -a
+  #- docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
 
 #script:
 #  - vendor/bin/phpunit
