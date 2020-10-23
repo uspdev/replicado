@@ -8,12 +8,17 @@ services:
 
 before_script:
   - cp .env.example .env
+  - composer self-update
+  - composer install --prefer-source --no-interaction
 
 before_install:
   - docker pull uspdev/asedocker
-  - docker run -d -p 127.0.0.1:80:5000 uspdev/asedocker
+  - docker run --detach --publish 127.0.0.1:5000:5000 --hostname sybase uspdev/asedocker
   - docker ps -a
-  #- docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
+  - docker run uspdev/asedocker /bin/sh -c "source /opt/sybase/sap/SYBASE.sh && isql -Usa -PSybase123456789 -SSYBASE -i /root/create.sql"
 
-#script:
-#  - vendor/bin/phpunit
+script:
+  - vendor/bin/phpunit
+
+
+  
