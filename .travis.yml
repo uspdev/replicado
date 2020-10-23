@@ -9,9 +9,7 @@ services:
 before_install:
   - sudo apt-get -y install php-sybase
   - travis_wait 30 docker pull uspdev/asedocker
-  - docker run --detach --publish 127.0.0.1:5000:5000 --hostname sybase uspdev/asedocker
-  - docker ps -a
-  - docker run uspdev/asedocker /bin/sh -c "source /opt/sybase/sap/SYBASE.sh && isql -Usa -PSybase123456789 -SSYBASE -i /root/database.sql"
+  - docker run --detach --publish 127.0.0.1:5000:5000 --hostname sybase uspdev/asedocker /bin/sh -c "source /opt/sybase/sap/SYBASE.sh && isql -Usa -PSybase123456789 -SSYBASE -i /root/database.sql"
 
 before_script:
   - cp .env.example .env
@@ -20,6 +18,3 @@ before_script:
 
 script:
   - vendor/bin/phpunit
-
-
-  
