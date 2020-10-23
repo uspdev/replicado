@@ -2,6 +2,7 @@ language: php
 
 php:
   - 7.3
+  - sybase
 
 services:
   - docker
