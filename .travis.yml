@@ -13,6 +13,7 @@ services:
 #  - docker run --detach --publish 127.0.0.1:5000:5000 --hostname sybase uspdev/asedocker /bin/sh -c "source /opt/sybase/sap/SYBASE.sh && isql -Usa -PSybase123456789 -SSYBASE -i /root/database.sql"
 
 before_script:
+  - echo "extension = dblib.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - cp .env.example .env
   - composer self-update
   - composer install --prefer-source --no-interaction
