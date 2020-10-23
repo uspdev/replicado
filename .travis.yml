@@ -1,21 +1,24 @@
+dist: bionic
 language: php
-
 php:
   - 7.3
-
+   
 services:
   - docker
 
-#before_install:
-#  - sudo apt-get -y install php-sybase
-#  - travis_wait 30 docker pull uspdev/asedocker
-#  - docker run --detach --publish 127.0.0.1:5000:5000 --hostname sybase uspdev/asedocker /bin/sh -c "source /opt/sybase/sap/SYBASE.sh && isql -Usa -PSybase123456789 -SSYBASE -i /root/database.sql"
-
+before_install:
+  - sudo add-apt-repository -y ppa:ondrej/php
+  - sudo apt-get update
+  - sudo apt-get install -y php7.3-cli php7.3-xml php7.3-sybase php7.3-gd php7.3-xml php7.3-intl php7.3-mbstring freetds-bin
+  - curl -s https://getcomposer.org/installer | php7.3
+  - travis_wait 30 docker pull uspdev/asedocker
+  - docker run --detach --publish 127.0.0.1:5000:5000 --hostname sybase uspdev/asedocker
+  - sleep 300 # sap ase demora para subir
+  - tsql -H 127.0.0.1 -p 5000 -U sa -P Sybase123456789 < ./tests/schemas/database.sql
+  
 before_script:
-  - echo "extension = dblib.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - cp .env.example .env
-  - composer self-update
-  - composer install --prefer-source --no-interaction
+  - php7.3 composer.phar install --prefer-source --no-interaction
 
 script:
-  - vendor/bin/phpunit
+  - php7.3 ./vendor/bin/phpunit --debug -vvv

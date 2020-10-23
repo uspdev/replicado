@@ -20,7 +20,7 @@ class DB
         $db   = getenv('REPLICADO_DATABASE');
         $user = getenv('REPLICADO_USERNAME');
         $pass = getenv('REPLICADO_PASSWORD');
-
+        
         if (!self::$instance) {
             try {
                 $dsn = "dblib:host={$host}:{$port};dbname={$db};charset=UTF-8";
