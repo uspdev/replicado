@@ -566,7 +566,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar o total de docentes ativos do gênero especificado
+     * Método para retornar o total de docentes ativos na unidade do gênero especificado
      * @param Char $sexpes
      * @return Integer
      */

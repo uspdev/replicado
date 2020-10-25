@@ -193,4 +193,80 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('1',Pessoa::totalVinculo('Servidor', 8));
     }
+
+    public function test_contarDocentesAtivosPorGenero(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, codundclg, sitatl) VALUES 
+                                   (convert(int,:codpes),:tipvinext,convert(int,:codundclg),:sitatl)";
+
+        $data = [
+            'codpes' => 405117,
+            'tipvinext' => 'Docente',
+            'codundclg' => 8,
+            'sitatl' => 'A'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, sexpes) VALUES 
+                                   (convert(int,:codpes),:sexpes)";
+
+        $data = [
+            'codpes' => 405117,
+            'sexpes' => 'F',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('0',Pessoa::contarDocentesAtivosPorGenero('F'));        
+    }
+
+    public function test_contarEstagiariosAtivosPorGenero(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvin, codundclg) VALUES 
+                                   (convert(int,:codpes),:tipvin,convert(int,:codundclg))";
+
+        $data = [
+            'codpes' => 145368,
+            'tipvin' => 'ESTAGIARIORH',
+            'codundclg' => 8,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, sexpes) VALUES 
+                                   (convert(int,:codpes),:sexpes)";
+
+        $data = [
+            'codpes' => 145368,
+            'sexpes' => 'F',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('0',Pessoa::contarEstagiariosAtivosPorGenero('F'));        
+    }
+
+    public function test_contarServidoresAtivosPorGenero(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, codundclg) VALUES 
+                                   (convert(int,:codpes),:tipvinext,convert(int,:codundclg))";
+
+        $data = [
+            'codpes' => 1234567,
+            'tipvinext' => 'Servidor',
+            'codundclg' => 8
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, sexpes) VALUES 
+                                   (convert(int,:codpes),:sexpes)";
+
+        $data = [
+            'codpes' => 1234567,
+            'sexpes' => 'F',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('0',Pessoa::contarServidoresAtivosPorGenero('F'));        
+    }
 }
