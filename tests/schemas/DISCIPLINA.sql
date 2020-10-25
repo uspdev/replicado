@@ -3,4 +3,5 @@ create table DISCIPLINA (
     numseqdis smallint null,
     nomdis varchar(240) null,
     dtaatvdis smalldatetime null,
+    numcretotdis integer null,
 )
