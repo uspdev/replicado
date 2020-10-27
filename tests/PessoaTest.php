@@ -269,4 +269,72 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('0',Pessoa::contarServidoresAtivosPorGenero('F'));        
     }
+
+    public function test_totalPosNivelPrograma(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM VINCULOPESSOAUSP')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvin, codundclg, sitatl) VALUES 
+                                   (convert(int,:codpes),:tipvin,convert(int,:codundclg),:sitatl)";                         
+
+        $data = [
+            'codpes' => 12345,
+            'tipvin' => 'ALUNOPOS',
+            'codundclg' => 8,
+            'sitatl' => 'A'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO VINCULOPESSOAUSP (codpes, tipvin, nivpgm) VALUES 
+                                   (convert(int,:codpes),:tipvin,:nivpgm)";                         
+
+        $data = [
+            'codpes' => 12345,
+            'tipvin' => 'ALUNOPOS',
+            'nivpgm' => 'ME'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('0',Pessoa::totalPosNivelPrograma('ME', 8));
+    }
+
+    public function test_obterEndereco(){
+        DB::getInstance()->prepare('DELETE FROM ENDPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM LOCALIDADE')->execute();
+        DB::getInstance()->prepare('DELETE FROM TIPOLOGRADOURO')->execute();
+
+        $sql = "INSERT INTO ENDPESSOA (codpes, epflgr, numlgr, cpllgr, nombro, codendptl, codloc, codtiplgr) VALUES 
+                                   (convert(int,:codpes),:epflgr,:numlgr,:cpllgr,:nombro,:codendptl,convert(int,:codloc),convert(int,:codtiplgr))";                         
+
+        $data = [
+            'codpes' => 114478,
+            'epflgr' => 'Bosque',
+            'numlgr' => 8,
+            'cpllgr' => 'A22',
+            'nombro' => 'Centro',
+            'codendptl' => '09910370',
+            'codloc' => 6,
+            'codtiplgr' => 39
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO LOCALIDADE (codloc, cidloc, sglest) VALUES 
+                                   (convert(int,:codloc),:cidloc,:sglest)";                         
+
+        $data = [
+            'codloc' => 6,
+            'cidloc' => 'Diadema',
+            'sglest' => 'SP'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO TIPOLOGRADOURO (nomtiplgr, codtiplgr) VALUES 
+                                   (:nomtiplgr,convert(int,:codtiplgr))";                         
+
+        $data = [
+            'nomtiplgr' => 'Rua',
+            'codtiplgr' => 39
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame(null,Pessoa::obterEndereco(11284280)[0]);
+    }
 }

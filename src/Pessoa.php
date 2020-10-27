@@ -371,7 +371,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar o total do programa de Pós
+     * Método para retornar o total de alunos de Pós Graduação matriculados, de acordo com o nível do programa, na unidade
      *
      * @param Integer $codundclg
      * @param String $nivpgm
