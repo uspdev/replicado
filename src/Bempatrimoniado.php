@@ -7,6 +7,12 @@ class Bempatrimoniado
 
     private static $BEM_INFORMATICAS = [12513,51110,354384,354341,162213,9300,45624,57100];
 
+    /**
+     * Método que consulta a tebela BEMPATRIMONIADO e retona todos os campos
+     * @param Integer $numpat : Número de patrimônio
+     * @param array $fields : colunas usados no select
+     * @return array: campos da tabela BEMPATRIMONIADO
+     */
     public static function dump(string $numpat, array $fields = ['*'])
     {
         $numpat = str_replace('.', '', $numpat);
