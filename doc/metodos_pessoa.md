@@ -1,8 +1,5 @@
 ## Métodos da classe Pessoa 
 
- - *dump($codpes, $fields)*: recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão. 
-                           O campos $fields é opcional.
-
  - *telefones($codpes)*: recebe codpes e retorna array com telefones da pessoa
 
  - *docentes($unidade)*: retorna *array* de todos os docentes ativos na unidade *DEPRECADO - usar listarDocentes()*

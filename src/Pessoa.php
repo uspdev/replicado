@@ -6,7 +6,8 @@ class Pessoa
 {
 
      /**
-     * Método para retornar campos da tabela pessoa
+     * Método que recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão. 
+     * O campos $fields é opcional.
      *
      * @param Integer $codpes
      * @param array $fields

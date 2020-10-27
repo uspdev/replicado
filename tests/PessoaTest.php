@@ -379,4 +379,18 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Pessoa::nome('Fulano'));
     }
+
+    public function test_dump(){
+        
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO PESSOA (codpes) VALUES 
+                                   (convert(int,:codpes))";
+        $data = [
+            'codpes' => 123456
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $this->assertSame(null,Pessoa::dump(123456)['codpes']);
+    }
 }
