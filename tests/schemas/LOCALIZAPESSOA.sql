@@ -9,5 +9,6 @@ create table LOCALIZAPESSOA (
     numtelfmt varchar(40) null,
     sglclgund char(20) null, 
     nomset varchar(255) null,
-    nomabvset char(15) null
+    nomabvset char(15) null,
+    codfncetr int not null
 )
