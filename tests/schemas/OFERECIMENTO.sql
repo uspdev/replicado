@@ -4,4 +4,5 @@ create table OFERECIMENTO (
     numseqdis smallint null,
     dtainiofe smalldatetime null,
     dtafimofe smalldatetime null,
+    dtalimcan smalldatetime null,
 )

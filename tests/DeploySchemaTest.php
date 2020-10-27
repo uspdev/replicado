@@ -40,10 +40,12 @@ class DeploySchemaTest extends TestCase
         $schemas = scandir(__DIR__ . '/schemas/');
         $schemas = array_diff( $schemas, ['.','..'] );
         foreach($schemas as $schema){
-            $sql = file_get_contents(__DIR__ . '/' . 'schemas/' . $schema);
-            DB::getInstance()->exec($sql);
-            $table = explode('.',$schema)[0];
-            $this->assertContains($table, $this->getTables());
+            if ($schema != 'database.sql') {
+                $sql = file_get_contents(__DIR__ . '/' . 'schemas/' . $schema);
+                DB::getInstance()->exec($sql);
+                $table = explode('.',$schema)[0];
+                $this->assertContains($table, $this->getTables());
+            }
         }
     }
 

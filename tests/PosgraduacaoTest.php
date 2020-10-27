@@ -118,7 +118,7 @@ class PosgraduacaoTest extends TestCase
                                 (:sgldis,convert(int,:numseqdis),:nomdis,:dtaatvdis)";
 
         $data = [
-            'sgldis' => '800PG',
+            'sgldis' => 'POS800',
             'numseqdis' => 1,
             'nomdis' => 'Disciplina de Teste',
             'dtaatvdis' => '2016-10-20',
@@ -132,7 +132,7 @@ class PosgraduacaoTest extends TestCase
             'codare' => 800,
             'dtadtvdis' => null,
             'dtaatvdis' => '2016-10-20',
-            'sgldis' => '800PG',
+            'sgldis' => 'POS800',
             'numseqdis' => 1,
         ];
         DB::getInstance()->prepare($sql)->execute($data);
@@ -146,13 +146,13 @@ class PosgraduacaoTest extends TestCase
                                 (:sgldis,convert(int,:numseqdis),:nomdis,:dtaatvdis)";
 
         $data = [
-            'sgldis' => '800PG',
+            'sgldis' => 'POS800',
             'numseqdis' => 1,
             'nomdis' => 'Disciplina de Teste',
             'dtaatvdis' => '2016-10-20',
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertIsArray(Posgraduacao::disciplina('800PG'));
+        $this->assertIsArray(Posgraduacao::disciplina('POS800'));
     }
 
     public function test_disciplinasOferecimento(){
@@ -165,7 +165,7 @@ class PosgraduacaoTest extends TestCase
                                 (:sgldis,convert(int,:numseqdis),:nomdis,:dtaatvdis)";
 
         $data = [
-            'sgldis' => '800PG',
+            'sgldis' => 'POS800',
             'numseqdis' => 1,
             'nomdis' => 'Disciplina de Teste',
             'dtaatvdis' => '2020-10-20',
@@ -179,7 +179,7 @@ class PosgraduacaoTest extends TestCase
             'codare' => 800,
             'dtadtvdis' => null,
             'dtaatvdis' => '2020-10-20',
-            'sgldis' => '800PG',
+            'sgldis' => 'POS800',
             'numseqdis' => 1,
         ];
         DB::getInstance()->prepare($sql)->execute($data);
@@ -188,7 +188,7 @@ class PosgraduacaoTest extends TestCase
                                 (:sgldis,convert(int,:numofe),:dtainiofe,:dtafimofe,convert(int,:numseqdis))";
 
         $data = [
-            'sgldis' => '800PG',
+            'sgldis' => 'POS800',
             'numofe' => 1,
             'dtainiofe' => '2020-10-20',
             'dtafimofe' => '2020-12-30',
@@ -200,10 +200,268 @@ class PosgraduacaoTest extends TestCase
                                 (:sgldis,convert(int,:numseqdis))";
 
         $data = [
-            'sgldis' => '800PG',
+            'sgldis' => 'POS800',
             'numseqdis' => 1,
         ];
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Posgraduacao::disciplinasOferecimento(800));
+    }
+
+    public function test_oferecimento(){
+        DB::getInstance()->prepare('DELETE FROM DISCIPLINA')->execute();
+        DB::getInstance()->prepare('DELETE FROM OFERECIMENTO')->execute();
+
+        $sql = "INSERT INTO DISCIPLINA (sgldis, numseqdis, nomdis, dtaatvdis, numcretotdis) VALUES 
+                                (:sgldis,convert(int,:numseqdis),:nomdis,:dtaatvdis,convert(int,:numcretotdis))";
+
+        $data = [
+            'sgldis' => 'POS800',
+            'numseqdis' => 1,
+            'nomdis' => 'Disciplina de Teste',
+            'dtaatvdis' => '2020-10-20',
+            'numcretotdis' => 1,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO OFERECIMENTO (sgldis, numofe, dtainiofe, dtafimofe, dtalimcan,numseqdis) VALUES 
+                                (:sgldis,convert(int,:numofe),:dtainiofe,:dtafimofe,:dtalimcan,convert(int,:numseqdis))";
+
+        $data = [
+            'sgldis' => 'POS800',
+            'numofe' => 1,
+            'dtainiofe' => '2020-10-20',
+            'dtafimofe' => '2020-12-30',
+            'dtalimcan' => '2020-10-20',
+            'numseqdis' => 1,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::oferecimento('POS800', 1));
+    }
+
+    public function test_espacoturma(){
+        DB::getInstance()->prepare('DELETE FROM ESPACOTURMA')->execute();
+
+        $sql = "INSERT INTO ESPACOTURMA (sgldis, numseqdis, numofe, diasmnofe, horiniofe, horfimofe) VALUES 
+                                (:sgldis,convert(int,:numseqdis),convert(int,:numofe),:diasmnofe,:horiniofe,:horfimofe)";
+
+        $data = [
+            'sgldis' => 'POS800',
+            'numseqdis' => 1,
+            'numofe' => 1,
+            'diasmnofe' => '4QA',
+            'horiniofe' => '1200',
+            'horfimofe' => '1400',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $this->assertIsArray(Posgraduacao::espacoturma("POS800", 1, 1));
+    }
+
+    public function test_ministrante(){
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM R32TURMINDOC')->execute();
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd) VALUES 
+                                (convert(int,:codpes),:nompes,:nompesttd)";
+
+        $data = [
+            'codpes' => 123456,
+            'nompes' => 'Fulano da Silva',
+            'nompesttd' => 'Fulana da Silva',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO R32TURMINDOC (codpes, sgldis, numseqdis, numofe) VALUES 
+                                (convert(int,:codpes),:sgldis,convert(int,:numseqdis),convert(int,:numofe))";
+
+        $data = [
+            'codpes' => 123456,
+            'sgldis' => 'POS800',
+            'numseqdis' => 1,
+            'numofe' => 1,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::ministrante('POS800', 1, 1));
+    }
+
+    public function test_areasProgramas(){
+        DB::getInstance()->prepare('DELETE FROM AREA')->execute();
+        DB::getInstance()->prepare('DELETE FROM NOMEAREA')->execute();
+        DB::getInstance()->prepare('DELETE FROM CREDAREA')->execute();
+
+        $sql = "INSERT INTO AREA (codare, codcur) VALUES 
+                                (convert(int,:codare),convert(int,:codcur))";
+
+        $data = [
+            'codare' => 800,
+            'codcur' => 123456,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO NOMEAREA (codare, codcur, nomare) VALUES 
+                                (convert(int,:codare),convert(int,:codcur),:nomare)";
+
+        $data = [
+            'codare' => 800,
+            'codcur' => 123456,
+            'nomare' => 'Humanidades',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+       
+        $sql = "INSERT INTO CREDAREA (codare, codcur, dtadtvare) VALUES 
+                                (convert(int,:codare),convert(int,:codcur),:dtadtvare)";
+
+        $data = [
+            'codare' => 800,
+            'codcur' => 123456,
+            'dtadtvare' => null,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::areasProgramas(8));
+    }
+
+    public function test_alunosPrograma(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM VINCULOPESSOAUSP')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nompes, tipvin, tipvinext, sitatl, codundclg) VALUES 
+                                   (convert(int,:codpes),:nompes,:tipvin,:tipvinext,:sitatl,convert(int,:codundclg))";
+
+        $data = [
+            'codpes' => 123456,
+            'nompes' => 'Fulano da Silva',
+            'tipvin' => 'ALUNOPOS',
+            'tipvinext' => 'Aluno da Pós-Graduação',
+            'sitatl' => 'A',
+            'codundclg' => 8,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO VINCULOPESSOAUSP (codpes, codare, codhab, dtainivin, codcurgrd, nivpgm, tipvin, sitatl) VALUES 
+                                   (convert(int,:codpes),convert(int,:codare),convert(int,:codhab),:dtainivin,convert(int,:codcurgrd),:nivpgm,:tipvin,:sitatl)";
+
+        $data = [
+            'codpes' => 123456,
+            'codare' => 800,
+            'codhab' => 2,
+            'dtainivin' => '2020-01-01 00:00:00',
+            'codcurgrd' => 1,
+            'nivpgm' => 'ME',
+            'tipvin' => 'ALUNOPOS',
+            'sitatl' => 'A',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::alunosPrograma(8, 123456));
+    }
+
+    public function test_idiomaDisciplina(){
+        DB::getInstance()->prepare('DELETE FROM IDIOMA')->execute();
+
+        $sql = "INSERT INTO IDIOMA (codlin, dsclin) VALUES 
+                                   (:codlin,:dsclin)";
+
+        $data = [
+            'codlin' => 'PT',
+            'dsclin' => 'PORTUGUES',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $this->assertSame($data['dsclin'],Posgraduacao::idiomaDisciplina('PT'));
+    }
+
+    public function test_egressosArea(){
+        DB::getInstance()->prepare('DELETE FROM HISTPROGRAMA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM AGPROGRAMA')->execute();
+        DB::getInstance()->prepare('DELETE FROM TRABALHOPROG')->execute();
+
+        $sql = "INSERT INTO HISTPROGRAMA (codpes, tiphstpgm, numseqpgm, codare, dtaocopgm) VALUES 
+                                (convert(int,:codpes),:tiphstpgm,convert(int,:numseqpgm),convert(int,:codare),:dtaocopgm)";
+
+        $data = [
+            'codpes' => 123456,
+            'tiphstpgm' => 'con',
+            'numseqpgm' => 1,
+            'codare' => 800,
+            'dtaocopgm' => '2020-06-20',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd) VALUES 
+                                (convert(int,:codpes),:nompes,:nompesttd)";
+
+        $data = [
+            'codpes' => 123456,
+            'nompes' => 'Fulano da Silva',
+            'nompesttd' => 'Fulana da Silva',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO AGPROGRAMA (codpes, codare, numseqpgm, nivpgm, dtadfapgm) VALUES 
+                                (convert(int,:codpes),convert(int,:codare),convert(int,:numseqpgm),:nivpgm,:dtadfapgm)";
+
+        $data = [
+            'codpes' => 123456,
+            'codare' => 800,
+            'numseqpgm' => 1,
+            'nivpgm' => 'ME',
+            'dtadfapgm' => '2020-08-20',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO TRABALHOPROG (codare, codpes, numseqpgm) VALUES 
+                                (convert(int,:codare),convert(int,:codpes),convert(int,:numseqpgm))";
+
+        $data = [
+            'codare' => 800,
+            'codpes' => 123456,
+            'numseqpgm' => 1,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Posgraduacao::egressosArea(800));
+    }
+
+    public function test_contarAtivosPorGenero(){
+        DB::getInstance()->prepare('DELETE FROM HISTPROGRAMA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO HISTPROGRAMA (codpes, tiphstpgm, numseqpgm, codare, dtaocopgm) VALUES 
+                                (convert(int,:codpes),:tiphstpgm,convert(int,:numseqpgm),convert(int,:codare),:dtaocopgm)";
+
+        $data = [
+            'codpes' => 123456,
+            'tiphstpgm' => 'con',
+            'numseqpgm' => 1,
+            'codare' => 800,
+            'dtaocopgm' => '2020-06-20',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, sexpes) VALUES 
+                                (convert(int,:codpes),:nompes,:nompesttd,:sexpes)";
+
+        $data = [
+            'codpes' => 123456,
+            'nompes' => 'Fulano da Silva',
+            'nompesttd' => 'Fulana da Silva',
+            'sexpes' => 'M',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nompes, tipvin, tipvinext, sitatl, codundclg) VALUES 
+                                   (convert(int,:codpes),:nompes,:tipvin,:tipvinext,:sitatl,convert(int,:codundclg))";
+
+        $data = [
+            'codpes' => 123456,
+            'nompes' => 'Fulano da Silva',
+            'tipvin' => 'ALUNOPOS',
+            'tipvinext' => 'Aluno da Pós-Graduação',
+            'sitatl' => 'A',
+            'codundclg' => 8,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('1', Posgraduacao::contarAtivosPorGenero('M'));
     }
 }

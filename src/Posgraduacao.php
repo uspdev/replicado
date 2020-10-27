@@ -204,7 +204,6 @@ class Posgraduacao
         ];
 
         $result = DB::fetch($query, $param);
-
         $result['espacoturma'] = self::espacoturma($result['sgldis'], $result['numseqdis'], $result['numofe']);
         $result['ministrante'] = self::ministrante($result['sgldis'], $result['numseqdis'], $result['numofe']);
 
@@ -212,7 +211,7 @@ class Posgraduacao
         $result['dtainiofe'] = Uteis::data_mes($result['dtainiofe']);
         $result['dtafimofe'] = Uteis::data_mes($result['dtafimofe']);
         $result['dtalimcan'] = Uteis::data_mes($result['dtalimcan']);
-        
+
         // Conversão codlin para nome completo do idioma
         if (isset($result['codlinofe']) && (!empty($result['codlinofe']))) {
             $result['codlinofe'] = self::idiomaDisciplina($result['codlinofe']);
@@ -424,7 +423,7 @@ class Posgraduacao
              AND t.codare = h.codare AND t.codpes = h.codpes AND t.numseqpgm = h.numseqpgm -- join trabalhoprog
              AND p.codpes = h.codpes -- join pessoa
              AND a.codpes = h.codpes AND a.codare = h.codare AND a.numseqpgm = h.numseqpgm -- join agprograma
-             AND h.codare = :codare
+             AND h.codare = convert(int,:codare)
             ORDER BY h.dtaocopgm DESC, h.codpes ASC
         ";
 
