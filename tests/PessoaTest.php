@@ -337,4 +337,17 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame(null,Pessoa::obterEndereco(11284280)[0]);
     }
+
+    public function test_cracha(){
+        DB::getInstance()->prepare('DELETE FROM CATR_CRACHA')->execute();
+
+        $sql = "INSERT INTO CATR_CRACHA (codpescra) VALUES 
+                                   (:codpescra)";                         
+
+        $data = [
+            'codpescra' => '123456'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Pessoa::cracha('123456'));
+    }
 }

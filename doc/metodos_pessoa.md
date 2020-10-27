@@ -4,8 +4,6 @@
                            O campos $fields é opcional.
  - *nome($nome)*: recebe uma string nome e retorna os resultados para a tabela Pessoa
 
- - *cracha($codpes)*: recebe codpes e retorna todos campos da tabela catr_cracha para o codpes em questão 
-
  - *telefones($codpes)*: recebe codpes e retorna array com telefones da pessoa
 
  - *docentes($unidade)*: retorna *array* de todos os docentes ativos na unidade *DEPRECADO - usar listarDocentes()*

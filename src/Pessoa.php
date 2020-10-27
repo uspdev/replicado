@@ -24,7 +24,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar campos da tabela cracha
+     * Método que recebe codpes para retornar todos os campos da tabela cracha para o codpes em questão 
      *
      * @param Integer $codpes
      * @return array
