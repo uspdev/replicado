@@ -10,6 +10,5 @@ create table LOCALIZAPESSOA (
     sglclgund char(20) null, 
     nomset varchar(255) null,
     nomabvset char(15) null,
-    codfncetr int not null,
     codema smallint null,
 )

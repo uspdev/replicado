@@ -269,25 +269,33 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('0',Pessoa::contarServidoresAtivosPorGenero('F'));        
     }
-/*
-    public function test_vinculosSetores(){
-        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
 
-        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, sitatl, codfncetr, codundclg, tipvinext, tipvin, nomabvset) VALUES 
-                                   (convert(int,:codpes),:sitatl,:codfncetr,convert(int,:codundclg),:tipvinext,:tipvin,:nomabvset)";
+    public function test_totalPosNivelPrograma(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM VINCULOPESSOAUSP')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvin, codundclg, sitatl) VALUES 
+                                   (convert(int,:codpes),:tipvin,convert(int,:codundclg),:sitatl)";                         
 
         $data = [
-            'codpes' => 123456,
-            'sitatl' => 'A',
-            'codfncetr' => 0,
+            'codpes' => 12345,
+            'tipvin' => 'ALUNOPOS',
             'codundclg' => 8,
-            'tipvinext' => 'Servidor',
-            'tipvin' => 'SERVIDOR',
-            'nomabvset' => 'FFLCH'
+            'sitatl' => 'A'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        var_dump(Pessoa::vinculosSetores('123456,8'));
-        #$this->assertSame('FFLCH',Pessoa::vinculosSetores(123456,8)[0]);
-        
-    }*/
+
+        $sql = "INSERT INTO VINCULOPESSOAUSP (codpes, tipvin, nivpgm) VALUES 
+                                   (convert(int,:codpes),:tipvin,:nivpgm)";                         
+
+        $data = [
+            'codpes' => 12345,
+            'tipvin' => 'ALUNOPOS',
+            'nivpgm' => 'ME'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('0',Pessoa::totalPosNivelPrograma('ME', 8));
+    }
+
+    
 }
