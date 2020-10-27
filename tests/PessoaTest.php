@@ -350,4 +350,20 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Pessoa::cracha('123456'));
     }
+
+    public function test_tiposVinculos(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (sitatl, codundclg, tipvin, tipvinext) VALUES 
+                                   (:sitatl,convert(int, :codundclg),:tipvin,:tipvinext)";                         
+
+        $data = [
+            'sitatl' => 'A',
+            'codundclg' => 8,
+            'tipvin' => 'ALUNOGR',
+            'tipvinext' => 'Servidor'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Pessoa::tiposVinculos(8));
+    }
 }

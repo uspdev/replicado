@@ -417,7 +417,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar todos os tipos de vínculos possíveis
+     * Método para retornar todos os tipos de vínculos possíveis, com base na unidade
      * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT'),
      * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH') 
      * Incluido também os Docente Aposentado 
