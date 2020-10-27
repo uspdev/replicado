@@ -366,4 +366,17 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Pessoa::tiposVinculos(8));
     }
+
+    public function test_nome(){
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO PESSOA (nompes) VALUES 
+                                   (:nompes)";                         
+
+        $data = [
+            'nompes' => 'Fulano da Silva'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Pessoa::nome('Fulano'));
+    }
 }

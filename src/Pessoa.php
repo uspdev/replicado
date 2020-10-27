@@ -140,7 +140,7 @@ class Pessoa
     }
 
     /**
-     * Método para buscar pessoas por nome ou parte do nome
+     * Método para buscar pessoas por nome ou parte do nome, recebe uma string nome e retorna os resultados para a tabela Pessoa
      *
      * @param string $nome
      * @return array

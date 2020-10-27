@@ -2,7 +2,6 @@
 
  - *dump($codpes, $fields)*: recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão. 
                            O campos $fields é opcional.
- - *nome($nome)*: recebe uma string nome e retorna os resultados para a tabela Pessoa
 
  - *telefones($codpes)*: recebe codpes e retorna array com telefones da pessoa
 
