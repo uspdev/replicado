@@ -68,6 +68,7 @@ Atenção, NÃO usar aspas, como no neste exemplo: *REPLICADO_CODUNDCLG="8,27"*.
 
 ## Recomendações para contribuir com este projeto
 
+Vídeo:  [https://youtu.be/p5dFJOrMN30](https://youtu.be/p5dFJOrMN30)
 O replicado pode consultar tanto o MSSQL quanto o sybase-ase e em diversas versões diferentes. Dessa forma é necessário manter a compatibilidade com os diversos replicados das unidades.
 
 * Abra uma issue antes de começar a mexer no código. A discussão prévia é importante para alinhar as idéias.
