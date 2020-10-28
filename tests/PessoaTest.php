@@ -349,7 +349,7 @@ class PessoaTest extends TestCase
             'codpescra' => '123456'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertIsArray(Pessoa::cracha('123456'));
+        $this->assertSame('123456',Pessoa::cracha('123456')['codpescra']);
     }
 
     public function test_tiposVinculos(){
