@@ -1,7 +1,5 @@
 ## Métodos da classe Pessoa 
 
- - *telefones($codpes)*: recebe codpes e retorna array com telefones da pessoa
-
  - *docentes($unidade)*: retorna *array* de todos os docentes ativos na unidade *DEPRECADO - usar listarDocentes()*
 
  - *servidores($unidade)*: retorna *array* de todos os funcionários ativos na unidade

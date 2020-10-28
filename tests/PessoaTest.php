@@ -339,6 +339,7 @@ class PessoaTest extends TestCase
     }
 
     public function test_cracha(){
+        //arrumar
         DB::getInstance()->prepare('DELETE FROM CATR_CRACHA')->execute();
 
         $sql = "INSERT INTO CATR_CRACHA (codpescra) VALUES 
@@ -352,6 +353,7 @@ class PessoaTest extends TestCase
     }
 
     public function test_tiposVinculos(){
+        //arrumar
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
 
         $sql = "INSERT INTO LOCALIZAPESSOA (sitatl, codundclg, tipvin, tipvinext) VALUES 
@@ -368,6 +370,7 @@ class PessoaTest extends TestCase
     }
 
     public function test_nome(){
+        //arrumar
         DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
 
         $sql = "INSERT INTO PESSOA (nompes) VALUES 
@@ -393,4 +396,5 @@ class PessoaTest extends TestCase
 
         $this->assertSame(null,Pessoa::dump(123456)['codpes']);
     }
+
 }
