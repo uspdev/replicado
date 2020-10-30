@@ -411,25 +411,48 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
         DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
 
-        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvin, codundclg, sitatl) VALUES 
-                                   (convert(int,:codpes),:tipvin,convert(int,:codundclg),:sitatl)";
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvin, codundclg, sitatl) 
+                    VALUES (
+                        convert(int,:codpes),
+                        :tipvin,
+                        convert(int,:codundclg),
+                        :sitatl)
+                    ";
 
         $data = [
             'codpes' => 145368,
             'tipvin' => 'ESTAGIARIORH',
-            'codundclg' => 8,
+            'codundclg' => 2,
             'sitatl' => 'A'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO PESSOA (codpes) VALUES 
-                                   (convert(int,:codpes))";
+        $sql = "INSERT INTO PESSOA (codpes, nompes) 
+                    VALUES (
+                        convert(int,:codpes),
+                        :nompes
+                    )";
 
         $data = [
-            'codpes' => 145368
+            'codpes' => 145368,
+            'nompes' => 'Rita'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertIsArray(Pessoa::estagiarios(8));        
+        $this->assertSame([
+                    'codpes' => '145368',
+                    'nompes' => 'Rita',
+                    'tipvin' => 'ESTAGIARIORH',
+                    'tipvinext' => '',
+                    'sitatl' => 'A',
+                    'nomfnc' => '',
+                    'codundclg' => '2',
+                    'numtelfmt' => '',
+                    'sglclgund' => '',
+                    'nomset' => '',
+                    'nomabvset' => '',
+                    'codema' => '',
+                    'nompesttd' => '',
+                    'sexpes' => ''],Pessoa::estagiarios(2)[0]);        
     }
 
 }
