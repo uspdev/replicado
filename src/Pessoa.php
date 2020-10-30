@@ -335,7 +335,7 @@ class Pessoa
      * Método para retornar estagiários ativos na unidade
      *
      * @param Integer $codundclgi
-     * @return void
+     * @return array
      */
     public static function estagiarios($codundclgi)
     {
@@ -482,7 +482,7 @@ class Pessoa
      *
      * @param Integer $codpes
      * @param Integer $codundclgi
-     * @return void
+     * @return array
      */
     public static function vinculosSetores(int $codpes, int $codundclgi = 0)
     {

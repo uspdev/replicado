@@ -353,20 +353,26 @@ class PessoaTest extends TestCase
     }
 
     public function test_tiposVinculos(){
-        //arrumar
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
 
-        $sql = "INSERT INTO LOCALIZAPESSOA (sitatl, codundclg, tipvin, tipvinext) VALUES 
-                                   (:sitatl,convert(int, :codundclg),:tipvin,:tipvinext)";                         
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, sitatl, codundclg, tipvin, tipvinext) 
+                    VALUES (
+                        convert(int,:codpes),
+                        :sitatl,
+                        convert(int,:codundclg),
+                        :tipvin,
+                        :tipvinext
+                    )";                         
 
         $data = [
+            'codpes' => 11111,
             'sitatl' => 'A',
-            'codundclg' => 8,
+            'codundclg' => 1,
             'tipvin' => 'ALUNOGR',
-            'tipvinext' => 'Servidor'
+            'tipvinext' => 'Aluno de Graduação'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertIsArray(Pessoa::tiposVinculos(8));
+        $this->assertSame([["tipvinext" => 'Aluno de Graduação']],Pessoa::tiposVinculos(1));
     }
 
     public function test_nome(){
@@ -380,7 +386,7 @@ class PessoaTest extends TestCase
             'nompes' => 'Fulano da Silva'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertIsArray(Pessoa::nome('Fulano'));
+        $this->assertIsArray(Pessoa::nome('Fulano da Silva'));
     }
 
     public function test_dump(){
@@ -395,6 +401,31 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
 
         $this->assertSame(null,Pessoa::dump(123456)['codpes']);
+    }
+
+    public function test_estagiarios(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvin, codundclg, sitatl) VALUES 
+                                   (convert(int,:codpes),:tipvin,convert(int,:codundclg),:sitatl)";
+
+        $data = [
+            'codpes' => 145368,
+            'tipvin' => 'ESTAGIARIORH',
+            'codundclg' => 8,
+            'sitatl' => 'A'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes) VALUES 
+                                   (convert(int,:codpes))";
+
+        $data = [
+            'codpes' => 145368
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Pessoa::estagiarios(8));        
     }
 
 }
