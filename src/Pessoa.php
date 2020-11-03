@@ -6,7 +6,8 @@ class Pessoa
 {
 
      /**
-     * Método para retornar campos da tabela pessoa
+     * Método que recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão. 
+     * O campos $fields é opcional.
      *
      * @param Integer $codpes
      * @param array $fields
@@ -24,7 +25,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar campos da tabela cracha
+     * Método que recebe codpes para retornar todos os campos da tabela cracha para o codpes em questão 
      *
      * @param Integer $codpes
      * @return array
@@ -140,7 +141,7 @@ class Pessoa
     }
 
     /**
-     * Método para buscar pessoas por nome ou parte do nome
+     * Método para buscar pessoas por nome ou parte do nome, recebe uma string nome e retorna os resultados para a tabela Pessoa
      *
      * @param string $nome
      * @return array
@@ -334,7 +335,7 @@ class Pessoa
      * Método para retornar estagiários ativos na unidade
      *
      * @param Integer $codundclgi
-     * @return void
+     * @return array
      */
     public static function estagiarios($codundclgi)
     {
@@ -417,7 +418,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar todos os tipos de vínculos possíveis
+     * Método para retornar todos os tipos de vínculos possíveis, com base na unidade
      * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT'),
      * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH') 
      * Incluido também os Docente Aposentado 
@@ -481,7 +482,7 @@ class Pessoa
      *
      * @param Integer $codpes
      * @param Integer $codundclgi
-     * @return void
+     * @return array
      */
     public static function vinculosSetores(int $codpes, int $codundclgi = 0)
     {

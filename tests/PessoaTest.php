@@ -337,4 +337,122 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame(null,Pessoa::obterEndereco(11284280)[0]);
     }
+
+    public function test_cracha(){
+        //arrumar
+        DB::getInstance()->prepare('DELETE FROM CATR_CRACHA')->execute();
+
+        $sql = "INSERT INTO CATR_CRACHA (codpescra) VALUES 
+                                   (:codpescra)";                         
+
+        $data = [
+            'codpescra' => '123456'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('123456',Pessoa::cracha('123456')['codpescra']);
+    }
+
+    public function test_tiposVinculos(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, sitatl, codundclg, tipvin, tipvinext) 
+                    VALUES (
+                        convert(int,:codpes),
+                        :sitatl,
+                        convert(int,:codundclg),
+                        :tipvin,
+                        :tipvinext
+                    )";                         
+
+        $data = [
+            'codpes' => 11111,
+            'sitatl' => 'A',
+            'codundclg' => 1,
+            'tipvin' => 'ALUNOGR',
+            'tipvinext' => 'Aluno de Graduação'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame([["tipvinext" => 'Aluno de Graduação']],Pessoa::tiposVinculos(1));
+    }
+
+    public function test_nome(){
+        //arrumar
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes) 
+                    VALUES (
+                        convert(int,:codpes),
+                        :nompes
+                    )";                         
+
+        $data = [
+            'codpes' => 22222,
+            'nompes' => 'Hogwarts'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame(["codpes" => '22222', "nompes" => 'Hogwarts', "nompesttd" => '', "sexpes" => ''],Pessoa::nome('Hogwarts')[0]);
+    }
+
+    public function test_dump(){
+        
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO PESSOA (codpes) VALUES 
+                                   (convert(int,:codpes))";
+        $data = [
+            'codpes' => 123456
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $this->assertSame(null,Pessoa::dump(123456)['codpes']);
+    }
+
+    public function test_estagiarios(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvin, codundclg, sitatl) 
+                    VALUES (
+                        convert(int,:codpes),
+                        :tipvin,
+                        convert(int,:codundclg),
+                        :sitatl)
+                    ";
+
+        $data = [
+            'codpes' => 145368,
+            'tipvin' => 'ESTAGIARIORH',
+            'codundclg' => 2,
+            'sitatl' => 'A'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes) 
+                    VALUES (
+                        convert(int,:codpes),
+                        :nompes
+                    )";
+
+        $data = [
+            'codpes' => 145368,
+            'nompes' => 'Rita'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame([
+                    'codpes' => '145368',
+                    'nompes' => 'Rita',
+                    'tipvin' => 'ESTAGIARIORH',
+                    'tipvinext' => '',
+                    'sitatl' => 'A',
+                    'nomfnc' => '',
+                    'codundclg' => '2',
+                    'numtelfmt' => '',
+                    'sglclgund' => '',
+                    'nomset' => '',
+                    'nomabvset' => '',
+                    'codema' => '',
+                    'nompesttd' => '',
+                    'sexpes' => ''],Pessoa::estagiarios(2)[0]);        
+    }
+
 }
