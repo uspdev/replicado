@@ -295,7 +295,7 @@ class Pessoa
      * Método para retornar servidores ativos na unidade
      *
      * @param Integer $codundclgi
-     * @return void
+     * @return array
      */
     public static function servidores($codundclgi)
     {
