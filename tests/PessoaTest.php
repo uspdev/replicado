@@ -335,7 +335,21 @@ class PessoaTest extends TestCase
             'codtiplgr' => 39
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame(null,Pessoa::obterEndereco(11284280)[0]);
+
+        # esta pessoa não existe
+        $this->assertSame(false,Pessoa::obterEndereco(111111));
+
+        $data = [
+            'nomtiplgr' => 'Rua',
+            'epflgr' => 'Bosque',
+            'numlgr' => '8',
+            'cpllgr' => 'A22',
+            'nombro' => 'Centro',
+            'cidloc' => 'Diadema',
+            'sglest' => 'SP',
+            'codendptl' => '09910370',
+        ];
+        $this->assertSame($data,Pessoa::obterEndereco(114478));
     }
 
     public function test_cracha(){
@@ -380,31 +394,37 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
 
         $sql = "INSERT INTO PESSOA (codpes, nompes) 
-                    VALUES (
-                        convert(int,:codpes),
-                        :nompes
-                    )";                         
-
+                    VALUES (convert(int,:codpes), :nompes)";                         
         $data = [
             'codpes' => 22222,
             'nompes' => 'Hogwarts'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame(["codpes" => '22222', "nompes" => 'Hogwarts', "nompesttd" => '', "sexpes" => ''],Pessoa::nome('Hogwarts')[0]);
+
+        $data = [
+            'codpes' => '22222',
+            'nompes' => 'Hogwarts',
+            'nompesttd' => '',
+            'sexpes' => ''
+            ];
+        $this->assertSame($data,Pessoa::nome('Hogwarts')[0]);
+        $this->assertSame([],Pessoa::nome('Ninguém'));
     }
 
     public function test_dump(){
         
         DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
 
-        $sql = "INSERT INTO PESSOA (codpes) VALUES 
-                                   (convert(int,:codpes))";
+        $sql = "INSERT INTO PESSOA (codpes, nompes) 
+                VALUES (convert(int,:codpes), :nompes)";
         $data = [
-            'codpes' => 123456
+            'codpes' => 123456, 
+            'nompes'=>'Fulano de Teste'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $this->assertSame(null,Pessoa::dump(123456)['codpes']);
+        $this->assertSame('123456',Pessoa::dump(123456)['codpes']);
+        $this->assertSame(false,Pessoa::dump(111111));
     }
 
     public function test_estagiarios(){
@@ -412,12 +432,12 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
 
         $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvin, codundclg, sitatl) 
-                    VALUES (
-                        convert(int,:codpes),
-                        :tipvin,
-                        convert(int,:codundclg),
-                        :sitatl)
-                    ";
+                VALUES (
+                    convert(int,:codpes),
+                    :tipvin,
+                    convert(int,:codundclg),
+                    :sitatl)
+                ";
 
         $data = [
             'codpes' => 145368,
@@ -428,31 +448,34 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
 
         $sql = "INSERT INTO PESSOA (codpes, nompes) 
-                    VALUES (
-                        convert(int,:codpes),
-                        :nompes
-                    )";
+                VALUES (
+                    convert(int,:codpes),
+                    :nompes
+                )";
 
         $data = [
             'codpes' => 145368,
             'nompes' => 'Rita'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame([
-                    'codpes' => '145368',
-                    'nompes' => 'Rita',
-                    'tipvin' => 'ESTAGIARIORH',
-                    'tipvinext' => '',
-                    'sitatl' => 'A',
-                    'nomfnc' => '',
-                    'codundclg' => '2',
-                    'numtelfmt' => '',
-                    'sglclgund' => '',
-                    'nomset' => '',
-                    'nomabvset' => '',
-                    'codema' => '',
-                    'nompesttd' => '',
-                    'sexpes' => ''],Pessoa::estagiarios(2)[0]);        
+
+        $data = [
+            'codpes' => '145368',
+            'nompes' => 'Rita',
+            'tipvin' => 'ESTAGIARIORH',
+            'tipvinext' => '',
+            'sitatl' => 'A',
+            'nomfnc' => '',
+            'codundclg' => '2',
+            'numtelfmt' => '',
+            'sglclgund' => '',
+            'nomset' => '',
+            'nomabvset' => '',
+            'codema' => '',
+            'nompesttd' => '',
+            'sexpes' => ''
+        ];
+        $this->assertSame($data,Pessoa::estagiarios(2)[0]);        
     }
 
 }
