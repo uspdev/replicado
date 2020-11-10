@@ -5,6 +5,7 @@ namespace Uspdev\Replicado\Tests;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use Uspdev\Replicado\DB;
+use Uspdev\Replicado\Uteis;
 use Dotenv\Dotenv;
 
 class BuildFakerDataTest extends TestCase
@@ -12,17 +13,22 @@ class BuildFakerDataTest extends TestCase
 
     public function test_deploy_data()
     {
-
+        #1. Cleanup
+        #DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+        #DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        #DB::getInstance()->prepare('DELETE FROM EMAILPESSOA')->execute();
 
         # 2. Populate PESSOA table with 100 people
         $faker = Factory::create();
-        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd)
-                VALUES (convert(int,:codpes),:nompes, :nompesttd)";
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, nompesfon)
+                VALUES (convert(int,:codpes),:nompes, :nompesttd, :nompesfon)";
         for ($i = 0; $i < 100; $i++) {
+            $name = $faker->name;
             $data = [
                 'codpes' => $faker->randomNumber,
                 'nompes' => $faker->name,
-                'nompesttd' => $faker->name,
+                'nompesttd' => $name,
+                'nompesfon' => Uteis::fonetico($name),
             ];
             DB::getInstance()->prepare($sql)->execute($data);
         }
@@ -46,7 +52,7 @@ class BuildFakerDataTest extends TestCase
             DB::getInstance()->prepare($sql)->execute($data);
         }
         $computed = DB::fetch('SELECT COUNT(*) FROM LOCALIZAPESSOA');
-        $this->assertSame(101, (int) $computed['computed']);
+        $this->assertSame(100, (int) $computed['computed']);
 
         # 5. EMAILPESSOA
         $sql = "INSERT INTO EMAILPESSOA (codpes, codema, stamtr)
@@ -61,7 +67,7 @@ class BuildFakerDataTest extends TestCase
             DB::getInstance()->prepare($sql)->execute($data);
         }
         $computed = DB::fetch('SELECT COUNT(*) FROM EMAILPESSOA');
-        $this->assertSame(101, (int) $computed['computed']);
+        $this->assertSame(100, (int) $computed['computed']);
 
     }
 }

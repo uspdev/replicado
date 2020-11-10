@@ -21,3 +21,7 @@ nbproject/
 
 # phpdoc
 docs/phpdoc-cache*
+
+sandbox/
+
+test*.php
