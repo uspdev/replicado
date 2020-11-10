@@ -455,4 +455,51 @@ class PessoaTest extends TestCase
                     'sexpes' => ''],Pessoa::estagiarios(2)[0]);        
     }
 
+    public function test_servidores(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, codundclg, sitatl) 
+                    VALUES (
+                        convert(int,:codpes),
+                        :tipvinext,
+                        convert(int,:codundclg),
+                        :sitatl)
+                    ";
+
+        $data = [
+            'codpes' => 55555,
+            'tipvinext' => 'Servidor',
+            'codundclg' => 5,
+            'sitatl' => 'A'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes) 
+                    VALUES (
+                        convert(int,:codpes),
+                        :nompes
+                    )";
+
+        $data = [
+            'codpes' => 55555,
+            'nompes' => 'Tifany'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame([
+                    'codpes' => '55555',
+                    'nompes' => 'Tifany',
+                    'tipvin' => '',
+                    'tipvinext' => 'Servidor',
+                    'sitatl' => 'A',
+                    'nomfnc' => '',
+                    'codundclg' => '5',
+                    'numtelfmt' => '',
+                    'sglclgund' => '',
+                    'nomset' => '',
+                    'nomabvset' => '',
+                    'codema' => '',
+                    'nompesttd' => '',
+                    'sexpes' => ''],Pessoa::servidores(5)[0]);        
+    }
 }
