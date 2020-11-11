@@ -145,20 +145,11 @@ class Pessoa
      *
      * @param string $nome
      * @return array
+     * @deprecated em favor de procurarPorNome, em 10/11/2020
      */
     public static function nome($nome)
     {
-        $nome = Uteis::removeAcentos($nome);
-        $nome = trim($nome);
-        $nome = strtoupper(str_replace(' ','%',$nome));
-
-        $query = "SELECT * FROM PESSOA
-                    WHERE UPPER(PESSOA.nompes) LIKE :nome
-                    ORDER BY PESSOA.nompes ASC"; 
-        $param = [
-            'nome' => '%' . $nome . '%',
-        ];
-        return DB::fetchAll($query, $param);
+        return SELF::procurarPorNome($nome, false, false);
     }
 
     /**
@@ -166,14 +157,49 @@ class Pessoa
      *
      * @param string $nome
      * @return void
+     * @deprecated em favor de procurarPorNome, em 10/11/2020
      */
     public static function nomeFonetico($nome)
     {
-        $query  = "SELECT * FROM PESSOA
-                    WHERE PESSOA.nompesfon LIKE :nome
-                    ORDER BY PESSOA.nompes ASC";
+        return SELF::procurarPorNome($nome, true, false);
+    }
+
+    /**
+     * Método para buscar pessoas por nome ou parte do nome
+     * A busca pode ser fonética ou normal, somente ativos ou todos
+     * 
+     * @param String $nome Nome a ser buscado
+     * @param Bool $fonetico Se true faz busca no campo nompesfon, se false faz em nompesttd
+     * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a base
+     * @return array
+     * @author Masaki K Neto, em 10/11/2020
+     */
+    public static function procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true)
+    {
+        if ($fonetico) {
+            $nome = Uteis::fonetico($nome);
+            $campo = 'nompesfon';
+        } else {
+            $nome = trim($nome);
+            $nome = Uteis::substituiAcentosParaSql($nome);
+            $nome = strtoupper(str_replace(' ', '%', $nome));
+            $campo = 'nompesttd';
+        }
+
+        if ($ativos) {
+            # se ativos vamos fazer join com LOCALIZAPESSOA
+            $query = "SELECT P.* FROM PESSOA P, LOCALIZAPESSOA L
+                    WHERE UPPER(P.{$campo}) LIKE :nome
+                    AND L.codpes = P.codpes
+                    ORDER BY P.{$campo} ASC";
+        } else {
+            $query = "SELECT P.* FROM PESSOA P
+                    WHERE UPPER(P.{$campo}) LIKE :nome
+                    ORDER BY P.{$campo} ASC";
+        }
+
         $param = [
-            'nome' => '%' . Uteis::fonetico($nome) . '%',
+            'nome' => '%' . $nome . '%',
         ];
         return DB::fetchAll($query, $param);
     }

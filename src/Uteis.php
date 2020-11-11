@@ -37,6 +37,50 @@ class Uteis
         return strtr($str, $map);
     }
 
+    /**
+     * Substitui acentos por underscore para fazer consulta em BD pois é um caracter coringa
+     * 
+     * Para consultas em BD este método é melhor que o removeAcentos pois permite buscar
+     * tanto em palavras acentuadas quanto nas sem acento.
+     * Primeiro uso é em Pessoa::procurarPorNome
+     * 
+     * @param String $str
+     * @return String
+     * @author Masaki K Neto, em 10/11/2020
+     */
+    public static function substituiAcentosParaSql(string $str): string
+    {
+        $map = [
+            'á' => '_',
+            'à' => '_',
+            'ã' => '_',
+            'â' => '_',
+            'é' => '_',
+            'ê' => '_',
+            'í' => '_',
+            'ó' => '_',
+            'ô' => '_',
+            'õ' => '_',
+            'ú' => '_',
+            'ü' => '_',
+            'ç' => '_',
+            'Á' => '_',
+            'À' => '_',
+            'Ã' => '_',
+            'Â' => '_',
+            'É' => '_',
+            'Ê' => '_',
+            'Í' => '_',
+            'Ó' => '_',
+            'Ô' => '_',
+            'Õ' => '_',
+            'Ú' => '_',
+            'Ü' => '_',
+            'Ç' => '_',
+        ];
+        return strtr($str, $map);
+    }
+
     public static function utf8_converter($array)
     {
         array_walk_recursive($array, function (&$item, $key) {
@@ -56,7 +100,7 @@ class Uteis
     }
 
     /**
-     * Determina a data de início e a data de fim do semestre quer contém $data_string.
+     * Determina a data de início e a data de fim do semestre que contém $data_string.
      *
      * Se $date não for informado, utilizará a data corrente do sistema.
      * $data_string pode ser em qualquer formato aceito por DateTime para criar uma data
@@ -67,6 +111,7 @@ class Uteis
      * @param  string $data_string (opcional) Data na qual vai buscar os limites do semestre.
      *
      * @return Array formato ['yyymmdd', 'yyyymmdd']
+     * @author Masaki K Neto, em algum dia de 2019
      */
     public static function semestre(string $data_string = null)
     {
@@ -83,14 +128,20 @@ class Uteis
         return [$start, $end];
     }
 
-    /*
-     * As funções abaixo são utilizadas para o fonetico
-     * as regras utilizadas são as do sql e aplicadas na ordem sequencial, com algumas alterações ajustadas empiricamente
+    /**
+     * Retorna a strng correspondente à codificação fonética
+     * 
+     * Além desta, as funções abaixo são utilizadas para o fonetico
+     * as regras utilizadas são as do sql e aplicadas na ordem sequencial, 
+     * com algumas alterações ajustadas empiricamente
      * as exceções às regras estão documentadas na função
      * errou 200 numa amostra de 15K
+     * 
+     * @param String $str string de entrada
+     * @return String fonético de $str
+     * @author Masaki K Neto, em algum dia de 2018
      */
-
-    public static function fonetico($str)
+    public static function fonetico(string $str)
     {
         $log = false;
         $fon = ' ' . trim(mb_strtoupper($str)) . ' '; // vamos colocar espaços para poder identificar o início e o fim (diferente do sql)
