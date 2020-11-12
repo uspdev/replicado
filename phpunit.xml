@@ -19,6 +19,7 @@
             <file>tests/PosgraduacaoTest.php</file>
             <file>tests/LattesTest.php</file>
             <file>tests/BempatrimoniadoTest.php</file>
+            <file>tests/EstruturaTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>
