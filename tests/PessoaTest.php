@@ -562,4 +562,36 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('55555',Pessoa::servidores(5)[0]['codpes']);        
     }
+
+    public function test_ativosVinculo(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, codundclg, sitatl) 
+                VALUES (
+                    convert(int,:codpes),
+                    :tipvinext,
+                    convert(int,:codundclg),
+                    :sitatl)
+                ";
+
+        $data = [
+            'codpes' => 99999,
+            'tipvinext' => 'Docente Aposentado',
+            'codundclg' => 9,
+            'sitatl' => 'A'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes) 
+                    VALUES (
+                        convert(int,:codpes)
+                    )";
+
+        $data = [
+            'codpes' => 99999
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame([["total" => '0']],Pessoa::ativosVinculo('Docente Aposentado', 9, 1));        
+    }
 }
