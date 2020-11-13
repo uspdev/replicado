@@ -467,10 +467,11 @@ class Pessoa
     }
 
     /**
-     * Método para retornar todas as pessoas ativas por vínculo
-     * Somente ATIVOS
-     * Também Docente Aposentado 
-     *
+     * Método para retornar *array* com todas as pessoas ativas por vínculo
+     * Somente ATIVOS (também Docente Aposentado) 
+     * Se o terceiro parâmetro *$contar* for igual a 1, retorna um *array* 
+     * com o índice *total* que corresponde ao número total de pessoas do tipo de vínculo
+     * 
      * @param String $vinculo
      * @param Integer $codundclgi
      * @param Integer $contar Default 0
