@@ -4,4 +4,5 @@ create table PESSOA (
     nompesttd varchar(120) null,
     nompesfon varchar(120) null,
     sexpes varchar(20) null,
+    dtanas datetime not null
 )

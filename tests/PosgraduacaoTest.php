@@ -43,13 +43,14 @@ class PosgraduacaoTest extends TestCase
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd) VALUES 
-                                   (convert(int,:codpes),:nompes,:nompesttd)";
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, dtanas) VALUES 
+                                   (convert(int,:codpes),:nompes,:nompesttd,:dtanas)";
 
         $data = [
             'codpes' => 123456,
             'nompes' => 'Fulano da Silva',
             'nompesttd' => 'Fulana da Silva',
+            'dtanas' => '2013-08-06 00:00:00'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertIsArray(Posgraduacao::ativos(8));
@@ -86,13 +87,14 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
         DB::getInstance()->prepare('DELETE FROM R25CRECREDOC')->execute();
 
-        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd) VALUES 
-                                (convert(int,:codpes),:nompes,:nompesttd)";
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, dtanas) VALUES 
+                                (convert(int,:codpes),:nompes,:nompesttd,:dtanas)";
 
         $data = [
             'codpes' => 123456,
             'nompes' => 'Fulano da Silva',
             'nompesttd' => 'Fulana da Silva',
+            'dtanas' => '2018-02-06 00:00:00'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
@@ -261,13 +263,14 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
         DB::getInstance()->prepare('DELETE FROM R32TURMINDOC')->execute();
 
-        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd) VALUES 
-                                (convert(int,:codpes),:nompes,:nompesttd)";
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, dtanas) VALUES 
+                                (convert(int,:codpes),:nompes,:nompesttd,:dtanas)";
 
         $data = [
             'codpes' => 123456,
             'nompes' => 'Fulano da Silva',
             'nompesttd' => 'Fulana da Silva',
+            'dtanas' => '2018-08-06 00:00:00'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
@@ -388,13 +391,14 @@ class PosgraduacaoTest extends TestCase
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd) VALUES 
-                                (convert(int,:codpes),:nompes,:nompesttd)";
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, dtanas) VALUES 
+                                (convert(int,:codpes),:nompes,:nompesttd,:dtanas)";
 
         $data = [
             'codpes' => 123456,
             'nompes' => 'Fulano da Silva',
             'nompesttd' => 'Fulana da Silva',
+            'dtanas' => '2009-08-06 00:00:00'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
@@ -439,19 +443,20 @@ class PosgraduacaoTest extends TestCase
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, sexpes) VALUES 
-                                (convert(int,:codpes),:nompes,:nompesttd,:sexpes)";
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, sexpes, dtanas) VALUES 
+                                (convert(int,:codpes),:nompes,:nompesttd,:sexpes,:dtanas)";
 
         $data = [
             'codpes' => 123456,
             'nompes' => 'Fulano da Silva',
             'nompesttd' => 'Fulana da Silva',
             'sexpes' => 'M',
+            'dtanas' => '2019-11-05 00:00:00'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nompes, tipvin, tipvinext, sitatl, codundclg) VALUES 
-                                   (convert(int,:codpes),:nompes,:tipvin,:tipvinext,:sitatl,convert(int,:codundclg))";
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nompes, tipvin, tipvinext, sitatl, codundclg, codfncetr) VALUES 
+                                   (convert(int,:codpes),:nompes,:tipvin,:tipvinext,:sitatl,convert(int,:codundclg),convert(int,:codfncetr))";
 
         $data = [
             'codpes' => 123456,
@@ -460,6 +465,7 @@ class PosgraduacaoTest extends TestCase
             'tipvinext' => 'Aluno da Pós-Graduação',
             'sitatl' => 'A',
             'codundclg' => 8,
+            'codfncetr' => 0
         ];
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('1', Posgraduacao::contarAtivosPorGenero('M'));

@@ -306,7 +306,7 @@ class Pessoa
      * Método para retornar docentes ativos na unidade
      *
      * @param Integer $codundclgi
-     * @return void
+     * @return array
      * 
      * !!! DEPRECADO -> usar listarDocentes()
      * 
@@ -559,7 +559,7 @@ class Pessoa
     }      
 
     /**
-     * Método para retornar data de nascimento de uma pessoa
+     * Método para retornar data de nascimento de uma pessoa, com base no seu número USP ($codpes)
      *
      * @param Integer $codpes
      * @return void
@@ -653,8 +653,8 @@ class Pessoa
     
     /**
      * Método que lista os docentes de uma Unidade agrupando por setor (departamento)
-     * @param type $codset
-     * @return boolean
+     * @param type $codset - Código do setor
+     * @return array
      * 
      * $codset pode ser um número (para um único setor)
      *         ou

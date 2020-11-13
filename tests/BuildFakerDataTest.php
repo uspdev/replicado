@@ -20,8 +20,8 @@ class BuildFakerDataTest extends TestCase
 
         # 2. Populate PESSOA table with 100 people
         $faker = Factory::create();
-        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, nompesfon)
-                VALUES (convert(int,:codpes),:nompes, :nompesttd, :nompesfon)";
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, nompesfon, dtanas)
+                VALUES (convert(int,:codpes),:nompes, :nompesttd, :nompesfon, :dtanas)";
         for ($i = 0; $i < 100; $i++) {
             $name = $faker->name;
             $data = [
@@ -29,6 +29,7 @@ class BuildFakerDataTest extends TestCase
                 'nompes' => $faker->name,
                 'nompesttd' => $name,
                 'nompesfon' => Uteis::fonetico($name),
+                'dtanas' => '2000-04-01 00:00:00'
             ];
             DB::getInstance()->prepare($sql)->execute($data);
         }
@@ -38,8 +39,8 @@ class BuildFakerDataTest extends TestCase
         $this->assertSame(100, (int) $computed['computed']);
 
         # 4. A tabela LOCALIZAPESSOA será baseada na tabela PESSOA
-        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, nompes, sitatl, codundclg)
-                VALUES (convert(int,:codpes), :tipvinext, :nompes, :sitatl, convert(int,:codundclg))";
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, nompes, sitatl, codundclg, codfncetr)
+                VALUES (convert(int,:codpes), :tipvinext, :nompes, :sitatl, convert(int,:codundclg),convert(int,:codfncetr))";
         $pessoas = DB::fetchAll('SELECT * FROM PESSOA');
         foreach ($pessoas as $pessoa) {
             $data = [
@@ -48,6 +49,7 @@ class BuildFakerDataTest extends TestCase
                 'nompes' => $pessoa['nompes'],
                 'sitatl' => 'A',
                 'codundclg' => 8,
+                'codfncetr' => 0
             ];
             DB::getInstance()->prepare($sql)->execute($data);
         }

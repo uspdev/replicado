@@ -1,1084 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-    <meta charset="utf-8"/>
-    <title>     &raquo; Compilation errors
+    <meta charset="utf-8">
+    <title>    Replicado Uspdev &raquo; Compilation errors
 </title>
-    <meta name="author" content=""/>
-    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="../">
+    <link rel="icon" href="images/favicon.ico"/>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/base.css">
+            <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="css/template.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0=" crossorigin="anonymous" />
+                <script src="https://cdn.jsdelivr.net/npm/fuse.js@3.4.6"></script>
+        <script src="https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/js/all.min.js" integrity="sha256-0vuk8LXoyrmCjp1f0O300qo1M75ZQyhH9X3J6d+scmk=" crossorigin="anonymous"></script>
+        <script src="js/search.js"></script>
+        <script defer src="js/searchIndex.js"></script>
+    </head>
+<body id="top">
+    <header class="phpdocumentor-header phpdocumentor-section">
+    <h1 class="phpdocumentor-title"><a href="" class="phpdocumentor-title__link">Replicado Uspdev</a></h1>
+    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
+    <label class="phpdocumentor-header__menu-icon" for="menu-button">
+        <i class="fas fa-bars"></i>
+    </label>
+    <section data-search-form class="phpdocumentor-search">
+    <label>
+        <span class="visually-hidden">Search for</span>
+        <svg class="phpdocumentor-search__icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" stroke-width="2"/>
+            <line x1="12.4892" y1="12.2727" x2="19.1559" y2="18.9393" stroke="currentColor" stroke-width="3"/>
+        </svg>
+        <input type="search" class="phpdocumentor-field phpdocumentor-search__field" placeholder="Loading .." disabled />
+    </label>
+</section>
 
-    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
-    <link href="../css/font-awesome.min.css" rel="stylesheet">
-    <link href="../css/prism.css" rel="stylesheet" media="all"/>
-    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    <nav class="phpdocumentor-topnav">
+    <ul class="phpdocumentor-topnav__menu">
+        </ul>
+</nav>
+</header>
+
+    <main class="phpdocumentor">
+        <div class="phpdocumentor-section">
+            <input class="phpdocumentor-sidebar__menu-button" type="checkbox" id="sidebar-button" name="sidebar-button" />
+<label class="phpdocumentor-sidebar__menu-icon" for="sidebar-button">
+    Menu
+</label>
+<aside class="phpdocumentor-column -four phpdocumentor-sidebar">
     
-    <!--[if lt IE 9]>
-    <script src="../js/html5.js"></script>
-    <![endif]-->
-    <script src="../js/jquery-1.11.0.min.js"></script>
-    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
-    <script src="../js/jquery.smooth-scroll.js"></script>
-    <script src="../js/prism.min.js"></script>
-    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <section class="phpdocumentor-sidebar__category">
+        <h2 class="phpdocumentor-sidebar__category-header">Namespaces</h2>
+                                                <h4 class="phpdocumentor-sidebar__root-namespace"><a href="namespaces/uspdev.html"><abbr title="\Uspdev">Uspdev</abbr></a></h4>
+                <ul class="phpdocumentor-list">
+                                            <li><a href="namespaces/uspdev-replicado.html"><abbr title="\Uspdev\Replicado">Replicado</abbr></a></li>
+                                    </ul>
+                        </section>
+
     
-    <link rel="shortcut icon" href="../images/favicon.ico"/>
-    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
-    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
-    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
-</head>
-<body>
-
-<div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container">
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <i class="icon-ellipsis-vertical"></i>
-            </a>
-            <a class="brand" href="../index.html">Replicado Uspdev</a>
-
-            <div class="nav-collapse">
-                <ul class="nav pull-right">
-                                        <li class="dropdown">
-                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
-                            API Documentation <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                                                        <li><a href="../namespaces/Uspdev.html">\Uspdev</a></li>
-                                                    </ul>
-                    </li>
-                                        <li class="dropdown" id="charts-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            Charts <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="../graphs/class.html">
-                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="dropdown" id="reports-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            Reports <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="../reports/errors.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">128</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="../reports/markers.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="../reports/deprecated.html">
-                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <!--<div class="go_to_top">-->
-    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
-    <!--</div>-->
-</div>
-
-<div id="___" class="container-fluid">
-        <section class="row-fluid">
-        <div class="span2 sidebar">
-
-            <ul class="side-nav nav nav-list">
-                <li class="nav-header">Navigation</li>
-                                                                            <li><a href="#src/Posgraduacao.php"><i class="icon-file"></i> src/Posgraduacao.php</a></li>
-                                                                                                    <li><a href="#src/Pessoa.php"><i class="icon-file"></i> src/Pessoa.php</a></li>
-                                                                                                    <li><a href="#src/DB.php"><i class="icon-file"></i> src/DB.php</a></li>
-                                                                                                    <li><a href="#src/Uteis.php"><i class="icon-file"></i> src/Uteis.php</a></li>
-                                                                                                    <li><a href="#src/Graduacao.php"><i class="icon-file"></i> src/Graduacao.php</a></li>
-                                                                                                    <li><a href="#src/Lattes.php"><i class="icon-file"></i> src/Lattes.php</a></li>
-                                                                                                    <li><a href="#src/Bempatrimoniado.php"><i class="icon-file"></i> src/Bempatrimoniado.php</a></li>
-                                                                                                    <li><a href="#tests/BuildFakerDataTest.php"><i class="icon-file"></i> tests/BuildFakerDataTest.php</a></li>
-                                                                                                    <li><a href="#tests/DeploySchemaTest.php"><i class="icon-file"></i> tests/DeploySchemaTest.php</a></li>
-                                                                                                    <li><a href="#tests/GraduacaoTest.php"><i class="icon-file"></i> tests/GraduacaoTest.php</a></li>
-                                                                                                    <li><a href="#tests/LattesTest.php"><i class="icon-file"></i> tests/LattesTest.php</a></li>
-                                                                                                    <li><a href="#tests/PosgraduacaoTest.php"><i class="icon-file"></i> tests/PosgraduacaoTest.php</a></li>
-                                                                                                    <li><a href="#tests/PessoaTest.php"><i class="icon-file"></i> tests/PessoaTest.php</a></li>
-                                                                    </ul>
-        </div>
-
-        <div class="span10 offset2">
-            <ul class="breadcrumb">
-                <li><a href="../"><i class="icon-remove-sign"></i></a><span class="divider">\</span></li>
-                <li>Compilation Errors</li>
-            </ul>
-
-            
-                            <div class="package-contents">
-                                            <a name="src/Posgraduacao.php" id="src/Posgraduacao.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            src/Posgraduacao.php
-                            <small style="float: right;padding-right: 10px;">14</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>5</td>
-                                        <td>No summary for class \Uspdev\Replicado\Posgraduacao</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>8</td>
-                                        <td>Argument $codpes is missing from the Docblock of verifica</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>8</td>
-                                        <td>Argument $codundclgi is missing from the Docblock of verifica</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>8</td>
-                                        <td>No summary for method verifica()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>27</td>
-                                        <td>Argument $codundclgi is missing from the Docblock of ativos</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>27</td>
-                                        <td>No summary for method ativos()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>39</td>
-                                        <td>Argument $codundclgi is missing from the Docblock of programas</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>39</td>
-                                        <td>Argument $codcur is missing from the Docblock of programas</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>39</td>
-                                        <td>No summary for method programas()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>80</td>
-                                        <td>Argument $codare is missing from the Docblock of catalogoDisciplinas</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>80</td>
-                                        <td>No summary for method catalogoDisciplinas()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>97</td>
-                                        <td>Argument $sgldis is missing from the Docblock of disciplina</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>97</td>
-                                        <td>No summary for method disciplina()</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="src/Pessoa.php" id="src/Pessoa.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            src/Pessoa.php
-                            <small style="float: right;padding-right: 10px;">12</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>5</td>
-                                        <td>No summary for class \Uspdev\Replicado\Pessoa</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>359</td>
-                                        <td>Name of argument $vinculo does not match with the DocBlock&#039;s name $codundclg in totalVinculo()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>359</td>
-                                        <td>The type hint of the argument is incorrect for the type definition of the @param tag with argument $vinculo in totalVinculo()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>359</td>
-                                        <td>Name of argument $codundclg does not match with the DocBlock&#039;s name $vinculo in totalVinculo()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>359</td>
-                                        <td>The type hint of the argument is incorrect for the type definition of the @param tag with argument $codundclg in totalVinculo()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>379</td>
-                                        <td>Name of argument $nivpgm does not match with the DocBlock&#039;s name $codundclg in totalPosNivelPrograma()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>379</td>
-                                        <td>The type hint of the argument is incorrect for the type definition of the @param tag with argument $nivpgm in totalPosNivelPrograma()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>379</td>
-                                        <td>Name of argument $codundclg does not match with the DocBlock&#039;s name $nivpgm in totalPosNivelPrograma()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>379</td>
-                                        <td>The type hint of the argument is incorrect for the type definition of the @param tag with argument $codundclg in totalPosNivelPrograma()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>678</td>
-                                        <td>Name of argument $sexpes does not match with the DocBlock&#039;s name $codpes in contarServidoresAtivosPorGenero()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>notice</td>
-                                        <td>678</td>
-                                        <td>Parameter $codpes could not be found in contarServidoresAtivosPorGenero()</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="src/DB.php" id="src/DB.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            src/DB.php
-                            <small style="float: right;padding-right: 10px;">17</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>9</td>
-                                        <td>No summary for class \Uspdev\Replicado\DB</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>13</td>
-                                        <td>No summary for method __construct()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>14</td>
-                                        <td>No summary for method __clone()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>17</td>
-                                        <td>No summary for method getInstance()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>39</td>
-                                        <td>No summary for method sybase()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>45</td>
-                                        <td>Argument $query is missing from the Docblock of fetch</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>45</td>
-                                        <td>Argument $param is missing from the Docblock of fetch</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>45</td>
-                                        <td>No summary for method fetch()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>73</td>
-                                        <td>Argument $query is missing from the Docblock of fetchAll</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>73</td>
-                                        <td>Argument $param is missing from the Docblock of fetchAll</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>73</td>
-                                        <td>No summary for method fetchAll()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>99</td>
-                                        <td>Argument $channel_name is missing from the Docblock of getLogger</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>99</td>
-                                        <td>No summary for method getLogger()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>11</td>
-                                        <td>No summary for property $instance</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>12</td>
-                                        <td>No summary for property $sgbd</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>15</td>
-                                        <td>No summary for property $logger</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="src/Uteis.php" id="src/Uteis.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            src/Uteis.php
-                            <small style="float: right;padding-right: 10px;">34</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>5</td>
-                                        <td>No summary for class \Uspdev\Replicado\Uteis</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>7</td>
-                                        <td>Argument $str is missing from the Docblock of removeAcentos</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>7</td>
-                                        <td>No summary for method removeAcentos()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>40</td>
-                                        <td>Argument $array is missing from the Docblock of utf8_converter</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>40</td>
-                                        <td>No summary for method utf8_converter()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>50</td>
-                                        <td>Argument $array is missing from the Docblock of trim_recursivo</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>50</td>
-                                        <td>No summary for method trim_recursivo()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>93</td>
-                                        <td>Argument $str is missing from the Docblock of fonetico</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>93</td>
-                                        <td>No summary for method fonetico()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>145</td>
-                                        <td>Argument $str is missing from the Docblock of remove_especiais</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>145</td>
-                                        <td>No summary for method remove_especiais()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>153</td>
-                                        <td>Argument $str is missing from the Docblock of remove_accent</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>153</td>
-                                        <td>No summary for method remove_accent()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>162</td>
-                                        <td>Argument $str is missing from the Docblock of remove_prep</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>162</td>
-                                        <td>No summary for method remove_prep()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>169</td>
-                                        <td>Argument $str is missing from the Docblock of trata_inicio_palavras</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>169</td>
-                                        <td>No summary for method trata_inicio_palavras()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>176</td>
-                                        <td>Argument $str is missing from the Docblock of trata_fim_palavras</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>176</td>
-                                        <td>No summary for method trata_fim_palavras()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>187</td>
-                                        <td>Argument $str is missing from the Docblock of trata_meio_palavras</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>187</td>
-                                        <td>No summary for method trata_meio_palavras()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>195</td>
-                                        <td>Argument $str is missing from the Docblock of trata_ln_consoante</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>195</td>
-                                        <td>No summary for method trata_ln_consoante()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>203</td>
-                                        <td>Argument $str is missing from the Docblock of troca_fonemas</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>203</td>
-                                        <td>No summary for method troca_fonemas()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>210</td>
-                                        <td>Argument $str is missing from the Docblock of elimina_repetidas</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>210</td>
-                                        <td>No summary for method elimina_repetidas()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>217</td>
-                                        <td>Argument $dia is missing from the Docblock of dia_semana</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>217</td>
-                                        <td>No summary for method dia_semana()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>238</td>
-                                        <td>Argument $horario is missing from the Docblock of horario_formatado</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>238</td>
-                                        <td>No summary for method horario_formatado()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>250</td>
-                                        <td>Argument $data is missing from the Docblock of data_mes</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>250</td>
-                                        <td>No summary for method data_mes()</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="src/Graduacao.php" id="src/Graduacao.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            src/Graduacao.php
-                            <small style="float: right;padding-right: 10px;">20</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>5</td>
-                                        <td>No summary for class \Uspdev\Replicado\Graduacao</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>7</td>
-                                        <td>Argument $codpes is missing from the Docblock of verifica</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>7</td>
-                                        <td>Argument $codundclgi is missing from the Docblock of verifica</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>7</td>
-                                        <td>No summary for method verifica()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>33</td>
-                                        <td>Name of argument $codundclgi does not match with the DocBlock&#039;s name $condundclgi in ativos()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>33</td>
-                                        <td>Name of argument $parteNome does not match with the DocBlock&#039;s name $partNome in ativos()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>notice</td>
-                                        <td>33</td>
-                                        <td>Parameter $condundclgi could not be found in ativos()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>notice</td>
-                                        <td>33</td>
-                                        <td>Parameter $partNome could not be found in ativos()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>74</td>
-                                        <td>Argument $codpes is missing from the Docblock of programa</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>74</td>
-                                        <td>No summary for method programa()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>86</td>
-                                        <td>Argument $codcur is missing from the Docblock of nomeCurso</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>86</td>
-                                        <td>No summary for method nomeCurso()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>98</td>
-                                        <td>Argument $codhab is missing from the Docblock of nomeHabilitacao</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>98</td>
-                                        <td>Argument $codcur is missing from the Docblock of nomeHabilitacao</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>98</td>
-                                        <td>No summary for method nomeHabilitacao()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>111</td>
-                                        <td>Argument $codundclgi is missing from the Docblock of obterCursosHabilitacoes</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>111</td>
-                                        <td>No summary for method obterCursosHabilitacoes()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>171</td>
-                                        <td>Argument $codundclgi is missing from the Docblock of disciplinasConcluidas</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>171</td>
-                                        <td>Name of argument $codundclgi does not match with the DocBlock&#039;s name $codpes in disciplinasConcluidas()</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="src/Lattes.php" id="src/Lattes.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            src/Lattes.php
-                            <small style="float: right;padding-right: 10px;">2</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>5</td>
-                                        <td>No summary for class \Uspdev\Replicado\Lattes</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="src/Bempatrimoniado.php" id="src/Bempatrimoniado.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            src/Bempatrimoniado.php
-                            <small style="float: right;padding-right: 10px;">10</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>5</td>
-                                        <td>No summary for class \Uspdev\Replicado\Bempatrimoniado</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>10</td>
-                                        <td>Argument $numpat is missing from the Docblock of dump</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>10</td>
-                                        <td>Argument $fields is missing from the Docblock of dump</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>10</td>
-                                        <td>No summary for method dump()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>23</td>
-                                        <td>Argument $numpat is missing from the Docblock of verifica</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>23</td>
-                                        <td>No summary for method verifica()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>48</td>
-                                        <td>Argument $numpat is missing from the Docblock of isInformatica</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>48</td>
-                                        <td>No summary for method isInformatica()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>8</td>
-                                        <td>No summary for property $BEM_INFORMATICAS</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="tests/BuildFakerDataTest.php" id="tests/BuildFakerDataTest.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            tests/BuildFakerDataTest.php
-                            <small style="float: right;padding-right: 10px;">3</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>10</td>
-                                        <td>No summary for class \Uspdev\Replicado\Tests\BuildFakerDataTest</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>13</td>
-                                        <td>No summary for method test_deploy_data()</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="tests/DeploySchemaTest.php" id="tests/DeploySchemaTest.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            tests/DeploySchemaTest.php
-                            <small style="float: right;padding-right: 10px;">5</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>10</td>
-                                        <td>No summary for class \Uspdev\Replicado\Tests\DeploySchemaTest</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>12</td>
-                                        <td>No summary for method setUp()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>25</td>
-                                        <td>No summary for method getTables()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>31</td>
-                                        <td>No summary for method test_deploy_schema()</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="tests/GraduacaoTest.php" id="tests/GraduacaoTest.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            tests/GraduacaoTest.php
-                            <small style="float: right;padding-right: 10px;">2</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>8</td>
-                                        <td>No summary for class \Uspdev\Replicado\Tests\GraduacaoTest</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="tests/LattesTest.php" id="tests/LattesTest.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            tests/LattesTest.php
-                            <small style="float: right;padding-right: 10px;">3</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>9</td>
-                                        <td>No summary for class \Uspdev\Replicado\Tests\LattesTest</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>11</td>
-                                        <td>No summary for method test_id()</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="tests/PosgraduacaoTest.php" id="tests/PosgraduacaoTest.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            tests/PosgraduacaoTest.php
-                            <small style="float: right;padding-right: 10px;">2</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>8</td>
-                                        <td>No summary for class \Uspdev\Replicado\Tests\PosgraduacaoTest</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
-                                            <a name="tests/PessoaTest.php" id="tests/PessoaTest.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            tests/PessoaTest.php
-                            <small style="float: right;padding-right: 10px;">4</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>10</td>
-                                        <td>No summary for class \Uspdev\Replicado\Tests\PessoaTest</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>12</td>
-                                        <td>No summary for method test_nomeCompleto()</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>28</td>
-                                        <td>No summary for method test_obterCodpesPorEmail()</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                    </div>
+    <section class="phpdocumentor-sidebar__category">
+        <h2 class="phpdocumentor-sidebar__category-header">Reports</h2>
+                <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/deprecated.html">Deprecated</a></h3>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/errors.html">Errors</a></h3>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/markers.html">Markers</a></h3>
     </section>
 
-    <footer class="row-fluid">
-        <section class="span10 offset2">
-            <section class="row-fluid">
-                <section class="span10 offset1">
-                    <section class="row-fluid footer-sections">
-                        <section class="span4">
-                                                        <h1><i class="icon-code"></i></h1>
-                            <div>
-                                <ul>
-                                                                            <li><a href="../namespaces/Uspdev.html">\Uspdev</a></li>
-                                                                    </ul>
-                            </div>
-                        </section>
-                        <section class="span4">
-                                                        <h1><i class="icon-bar-chart"></i></h1>
-                            <div>
-                                <ul>
-                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
-                                </ul>
-                            </div>
-                        </section>
-                        <section class="span4">
-                                                        <h1><i class="icon-pushpin"></i></h1>
-                            <div>
-                                <ul>
-                                    <li><a href="../reports/errors.html">Errors</a></li>
-                                    <li><a href="../reports/markers.html">Markers</a></li>
-                                </ul>
-                            </div>
-                        </section>
-                    </section>
-                </section>
-            </section>
-            <section class="row-fluid">
-                <section class="span10 offset1">
-                    <hr />
-                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 15th, 2020 at 21:57.
-                </section>
-            </section>
-        </section>
-    </footer>
-</div>
+    <section class="phpdocumentor-sidebar__category">
+        <h2 class="phpdocumentor-sidebar__category-header">Indices</h2>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="indices/files.html">Files</a></h3>
+    </section>
+</aside>
 
+            <div class="phpdocumentor-column -eight phpdocumentor-content">
+                <ul class="phpdocumentor-breadcrumbs">
+    <li><a href="">Home</a></li>
+</ul>
+
+<div class="phpdocumentor-row">
+    <h2 class="phpdocumentor-content__title">Errors</h2>
+
+        <h3>Table of Contents</h3>
+    <table class="phpdocumentor-table_of_contents">
+                                            <tr>
+                    <td class="phpdocumentor-cell"><a href="reports/errors.html#src/Bempatrimoniado.php">src/Bempatrimoniado.php</a></td>
+                    <td class="phpdocumentor-cell">1</td>
+                </tr>
+                                                            <tr>
+                    <td class="phpdocumentor-cell"><a href="reports/errors.html#src/Graduacao.php">src/Graduacao.php</a></td>
+                    <td class="phpdocumentor-cell">5</td>
+                </tr>
+                                    </table>
+    
+    
+            <a id="src/Bempatrimoniado.php"></a>
+        <h3><abbr title="src/Bempatrimoniado.php">Bempatrimoniado.php</abbr></h3>
+        <table>
+            <thead>
+                <tr>
+                    <th class="phpdocumentor-heading">Type</th>
+                    <th class="phpdocumentor-heading">Line</th>
+                    <th class="phpdocumentor-heading">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                            <tr>
+                    <td class="phpdocumentor-cell">ERROR</td>
+                    <td class="phpdocumentor-cell">0</td>
+                    <td class="phpdocumentor-cell">Tag &quot;return&quot; with body &quot;@return array: campos da tabela BEMPATRIMONIADO&quot; has error &quot;\Uspdev\Replicado\array:&quot; is not a valid Fqsen.</td>
+                </tr>
+                        </tbody>
+        </table>
+            <a id="src/Graduacao.php"></a>
+        <h3><abbr title="src/Graduacao.php">Graduacao.php</abbr></h3>
+        <table>
+            <thead>
+                <tr>
+                    <th class="phpdocumentor-heading">Type</th>
+                    <th class="phpdocumentor-heading">Line</th>
+                    <th class="phpdocumentor-heading">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                            <tr>
+                    <td class="phpdocumentor-cell">ERROR</td>
+                    <td class="phpdocumentor-cell">0</td>
+                    <td class="phpdocumentor-cell">Tag &quot;return&quot; with body &quot;@return array(campos tabela LOCALIZAPESSOA)&quot; has error &quot;\Uspdev\Replicado\campos tabela LOCALIZAPESSOA&quot; is not a valid Fqsen.</td>
+                </tr>
+                            <tr>
+                    <td class="phpdocumentor-cell">ERROR</td>
+                    <td class="phpdocumentor-cell">0</td>
+                    <td class="phpdocumentor-cell">Tag &quot;return&quot; with body &quot;@return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)&quot; has error &quot;\Uspdev\Replicado\, &quot; is not a valid Fqsen.</td>
+                </tr>
+                            <tr>
+                    <td class="phpdocumentor-cell">ERROR</td>
+                    <td class="phpdocumentor-cell">0</td>
+                    <td class="phpdocumentor-cell">Tag &quot;return&quot; with body &quot;@return Array(coddis, creaulatb)&quot; has error &quot;\Uspdev\Replicado\, &quot; is not a valid Fqsen.</td>
+                </tr>
+                            <tr>
+                    <td class="phpdocumentor-cell">ERROR</td>
+                    <td class="phpdocumentor-cell">0</td>
+                    <td class="phpdocumentor-cell">Tag &quot;return&quot; with body &quot;@return Array(coddis, nomdis, verdis, numsemidl, tipobg)&quot; has error &quot;\Uspdev\Replicado\, &quot; is not a valid Fqsen.</td>
+                </tr>
+                            <tr>
+                    <td class="phpdocumentor-cell">ERROR</td>
+                    <td class="phpdocumentor-cell">0</td>
+                    <td class="phpdocumentor-cell">Tag &quot;return&quot; with body &quot;@return Array(coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente)&quot; has error &quot;\Uspdev\Replicado\, &quot; is not a valid Fqsen.</td>
+                </tr>
+                        </tbody>
+        </table>
+    </div>
+                <section data-search-results class="phpdocumentor-search-results phpdocumentor-search-results--hidden">
+    <section class="phpdocumentor-search-results__dialog">
+        <header class="phpdocumentor-search-results__header">
+            <h2 class="phpdocumentor-search-results__title">Search results</h2>
+            <button class="phpdocumentor-search-results__close"><i class="fas fa-times"></i></button>
+        </header>
+        <section class="phpdocumentor-search-results__body">
+            <ul class="phpdocumentor-search-results__entries"></ul>
+        </section>
+    </section>
+</section>
+            </div>
+        </div>
+        <a href="reports/errors.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
+
+    </main>
+
+    <script>
+        cssVars({});
+    </script>
 </body>
 </html>
