@@ -807,4 +807,67 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame([0 => 'Estagiário', 1 => 'Estagiário FFLCH', 2 => 'FFLCH'],Pessoa::vinculosSetores(10101, 9));        
     }
+
+    public function test_docentes(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, codundclg, sitatl, codset, codfncetr) 
+                VALUES (
+                    convert(int,:codpes),
+                    :tipvinext,
+                    convert(int,:codundclg),
+                    :sitatl,
+                    convert(int,:codset),
+                    convert(int,:codfncetr)
+                )";
+
+        $data = [
+            'codpes' => 101010,
+            'tipvinext' => 'Docente',
+            'codundclg' => 8,
+            'sitatl' => 'A',
+            'codset' => 598,
+            'codfncetr' => 0
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, dtanas) 
+                VALUES (
+                    convert(int,:codpes),
+                    :nompes,
+                    :nompesttd,
+                    :dtanas
+                )";
+
+        $data = [
+            'codpes' => 101010,
+            'nompes' => 'Fredie',
+            'nompesttd' => 'Fredie Silva',
+            'dtanas' => '1990-11-05 00:00:00'
+        ];
+        
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame([[
+            'codpes' => '101010',
+            'tipvin' => '',
+            'tipvinext' => 'Docente',
+            'nompes' => 'Fredie',
+            'sitatl' => 'A',
+            'nomfnc' => '',
+            'codundclg' => '8',
+            'numtelfmt' => '',
+            'sglclgund' => '',
+            'codset' => '598',
+            'nomabvset' => '',
+            'nomset' => '',
+            'codema' => '',
+            'tipdsg' => '',
+            'codfncetr' => '0',
+            'nompesttd' => 'Fredie Silva',
+            'nompesfon' => '',
+            'sexpes' => '',
+            'dtanas' => '1990-11-05 00:00:00'
+        ]],Pessoa::docentes(8));        
+    }    
 }

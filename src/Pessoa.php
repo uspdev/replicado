@@ -306,7 +306,7 @@ class Pessoa
      * Método para retornar docentes ativos na unidade
      *
      * @param Integer $codundclgi
-     * @return void
+     * @return array
      * 
      * !!! DEPRECADO -> usar listarDocentes()
      * 
