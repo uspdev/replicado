@@ -559,7 +559,7 @@ class Pessoa
     }      
 
     /**
-     * Método para retornar data de nascimento de uma pessoa
+     * Método para retornar data de nascimento de uma pessoa, com base no seu número USP ($codpes)
      *
      * @param Integer $codpes
      * @return void

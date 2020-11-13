@@ -20,8 +20,8 @@ class BuildFakerDataTest extends TestCase
 
         # 2. Populate PESSOA table with 100 people
         $faker = Factory::create();
-        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, nompesfon)
-                VALUES (convert(int,:codpes),:nompes, :nompesttd, :nompesfon)";
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, nompesfon, dtanas)
+                VALUES (convert(int,:codpes),:nompes, :nompesttd, :nompesfon, :dtanas)";
         for ($i = 0; $i < 100; $i++) {
             $name = $faker->name;
             $data = [
@@ -29,6 +29,7 @@ class BuildFakerDataTest extends TestCase
                 'nompes' => $faker->name,
                 'nompesttd' => $name,
                 'nompesfon' => Uteis::fonetico($name),
+                'dtanas' => '2000-04-01 00:00:00'
             ];
             DB::getInstance()->prepare($sql)->execute($data);
         }
