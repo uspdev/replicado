@@ -1,5 +1,7 @@
 create table CURSOGRCOORDENADOR (
     codpesdct int not null,
-    dtainicdn smalldatetime null,
+    codcur int not null,
+    codhab smallint not null,
+    dtainicdn smalldatetime not null,
     dtafimcdn smalldatetime null,
 )
