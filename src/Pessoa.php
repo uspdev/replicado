@@ -653,8 +653,8 @@ class Pessoa
     
     /**
      * Método que lista os docentes de uma Unidade agrupando por setor (departamento)
-     * @param type $codset
-     * @return boolean
+     * @param type $codset - Código do setor
+     * @return array
      * 
      * $codset pode ser um número (para um único setor)
      *         ou

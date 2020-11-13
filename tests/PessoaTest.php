@@ -710,4 +710,46 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('05/11/2018',Pessoa::nascimento(454545));
     }
+
+    public function test_listarDocentes(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, codundclg, sitatl, codset) 
+                VALUES (
+                    convert(int,:codpes),
+                    :tipvinext,
+                    convert(int,:codundclg),
+                    :sitatl,
+                    convert(int,:codset)
+                )";
+
+        $data = [
+            'codpes' => 101010,
+            'tipvinext' => 'Docente',
+            'codundclg' => 9,
+            'sitatl' => 'A',
+            'codset' => 598
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, dtanas) 
+                VALUES (
+                    convert(int,:codpes),
+                    :nompes,
+                    :nompesttd,
+                    :dtanas
+                )";
+
+        $data = [
+            'codpes' => 101010,
+            'nompes' => 'Fredie',
+            'nompesttd' => 'Fredie Silva',
+            'dtanas' => '1990-11-05 00:00:00'
+        ];
+        
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame([],Pessoa::listarDocentes(598));        
+    }
+
 }
