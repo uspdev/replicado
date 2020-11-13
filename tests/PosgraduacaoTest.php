@@ -455,8 +455,8 @@ class PosgraduacaoTest extends TestCase
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nompes, tipvin, tipvinext, sitatl, codundclg) VALUES 
-                                   (convert(int,:codpes),:nompes,:tipvin,:tipvinext,:sitatl,convert(int,:codundclg))";
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nompes, tipvin, tipvinext, sitatl, codundclg, codfncetr) VALUES 
+                                   (convert(int,:codpes),:nompes,:tipvin,:tipvinext,:sitatl,convert(int,:codundclg),convert(int,:codfncetr))";
 
         $data = [
             'codpes' => 123456,
@@ -465,6 +465,7 @@ class PosgraduacaoTest extends TestCase
             'tipvinext' => 'Aluno da Pós-Graduação',
             'sitatl' => 'A',
             'codundclg' => 8,
+            'codfncetr' => 0
         ];
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('1', Posgraduacao::contarAtivosPorGenero('M'));

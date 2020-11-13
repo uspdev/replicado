@@ -39,8 +39,8 @@ class BuildFakerDataTest extends TestCase
         $this->assertSame(100, (int) $computed['computed']);
 
         # 4. A tabela LOCALIZAPESSOA será baseada na tabela PESSOA
-        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, nompes, sitatl, codundclg)
-                VALUES (convert(int,:codpes), :tipvinext, :nompes, :sitatl, convert(int,:codundclg))";
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, nompes, sitatl, codundclg, codfncetr)
+                VALUES (convert(int,:codpes), :tipvinext, :nompes, :sitatl, convert(int,:codundclg),convert(int,:codfncetr))";
         $pessoas = DB::fetchAll('SELECT * FROM PESSOA');
         foreach ($pessoas as $pessoa) {
             $data = [
@@ -49,6 +49,7 @@ class BuildFakerDataTest extends TestCase
                 'nompes' => $pessoa['nompes'],
                 'sitatl' => 'A',
                 'codundclg' => 8,
+                'codfncetr' => 0
             ];
             DB::getInstance()->prepare($sql)->execute($data);
         }

@@ -115,8 +115,8 @@ class EstruturaTest extends TestCase
             DB::getInstance()->prepare($sql_setor)->execute($data_setor);
         }
 
-        $sql_pessoa = "INSERT INTO LOCALIZAPESSOA (codpes, nompes, nomfnc, codset, tipvinext, tipdsg) VALUES 
-                (convert(int,:codpes), :nompes, :nomfnc, convert(int,:codset), :tipvinext, :tipdsg)";
+        $sql_pessoa = "INSERT INTO LOCALIZAPESSOA (codpes, nompes, nomfnc, codset, tipvinext, tipdsg, codfncetr) VALUES 
+                (convert(int,:codpes), :nompes, :nomfnc, convert(int,:codset), :tipvinext, :tipdsg, convert(int,:codfncetr))";
 
         $data_pessoas = [
             [
@@ -125,7 +125,8 @@ class EstruturaTest extends TestCase
                 'nomfnc' => 'Diretor',
                 'codset' => 1,
                 'tipvinext' => 'Servidor Designado',
-                'tipdsg' => 'D'
+                'tipdsg' => 'D',
+                'codfncetr' => 0
             ],
             [
                 'codpes' => 56789,
@@ -133,7 +134,8 @@ class EstruturaTest extends TestCase
                 'nomfnc' => 'Chefe Adm Serviço',
                 'codset' => 2,
                 'tipvinext' => 'Servidor Designado',
-                'tipdsg' => 'D'
+                'tipdsg' => 'D',
+                'codfncetr' => 0
             ],
             [
                 'codpes' => 101112,
@@ -141,7 +143,8 @@ class EstruturaTest extends TestCase
                 'nomfnc' => 'Chefe de Seção',
                 'codset' => 2,
                 'tipvinext' => 'Servidor Designado',
-                'tipdsg' => 'S'
+                'tipdsg' => 'S',
+                'codfncetr' => 0
             ],
             [
                 'codpes' => 131415,
@@ -149,7 +152,8 @@ class EstruturaTest extends TestCase
                 'nomfnc' => 'Chefe',
                 'codset' => 4,
                 'tipvinext' => 'Servidor Designado',
-                'tipdsg' => 'D'
+                'tipdsg' => 'D',
+                'codfncetr' => 0
             ],
             [
                 'codpes' => 161718,
@@ -157,7 +161,8 @@ class EstruturaTest extends TestCase
                 'nomfnc' => 'Vice Chefe',
                 'codset' => 1,
                 'tipvinext' => 'Servidor Designado',
-                'tipdsg' => 'D'
+                'tipdsg' => 'D',
+                'codfncetr' => 0
             ]
         ];
 
