@@ -21,10 +21,3 @@
  - *disciplinasCurriculo($codcur, $codhab)*: recebe o código do curso *string* e o código da habilitação *int* e retorna *array* com os códigos, nomes, versões, semestres ideias e obrigatoriedade das disciplinas do curriculo (grade curricular) atual do JupiterWeb
 coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente 
 
- - *disciplinasEquivalentesCurriculo($codcur, $codhab)*: recebe o código do curso *string* e o código da habilitação *int* e retorna *array* com código da equivalência, os códigos, versões e obrigatoriedade das disciplinas e os códigos e versões de suas respectivas equivalências, em relação ao curriculo (grade curricular) atual do JupiterWeb
-
- - *setorAluno($codpes, $codundclgi)*: retorna *array* com a Sigla do Departamento de Ensino do Aluno de Graduação
-
- - *contarAtivosPorGenero($sexpes, $codcur = null)*: recebe o gênero (F,M) e o código do curso (opcional) de graduação para retornar a quantidade de alunos de graduação com o gênero especificado
-
- - *verificarCoordenadorCursoGrad(int $codpes)*: recebe um codpes e retorna se a pessoa é ou não coordenador de algum curso de graduação na data atual
