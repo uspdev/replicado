@@ -869,5 +869,20 @@ class PessoaTest extends TestCase
             'sexpes' => '',
             'dtanas' => '1990-11-05 00:00:00'
         ]],Pessoa::docentes(8));        
-    }    
+    } 
+    
+    public function test_verificarExAlunoGrad(){
+        DB::getInstance()->prepare('DELETE FROM TITULOPES')->execute();
+
+        $sql = "INSERT INTO TITULOPES (codpes, codorg, codcur) 
+                    VALUES (convert(int,:codpes),convert(int,:codorg),convert(int,:codcur))";
+
+        $data = [
+            'codpes' => 858585,
+            'codorg' => 8,
+            'codcur' => 22
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertTrue(Pessoa::verificarExAlunoGrad(858585, 8));
+    }
 }
