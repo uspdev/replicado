@@ -869,5 +869,5 @@ class PessoaTest extends TestCase
             'sexpes' => '',
             'dtanas' => '1990-11-05 00:00:00'
         ]],Pessoa::docentes(8));        
-    }    
+    } 
 }
