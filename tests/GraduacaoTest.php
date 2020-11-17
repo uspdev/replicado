@@ -75,6 +75,21 @@ class GraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertTrue(true, Graduacao::curso(123456, 7));
     }
+    
+    public function test_verificarExAlunoGrad(){
+        DB::getInstance()->prepare('DELETE FROM TITULOPES')->execute();
+
+        $sql = "INSERT INTO TITULOPES (codpes, codorg, codcur) 
+                    VALUES (convert(int,:codpes),convert(int,:codorg),convert(int,:codcur))";
+
+        $data = [
+            'codpes' => 858585,
+            'codorg' => 8,
+            'codcur' => 22
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertTrue(Graduacao::verificarExAlunoGrad(858585, 8));
+    }
 
     public function test_verificarPessoaGraduadaUnidade()
     {
