@@ -268,5 +268,40 @@ class GraduacaoTest extends TestCase
         $this->assertIsArray(Graduacao::setorAluno(123467, 8));   
     }
 
+    public function test_disciplinasConcluidas(){
+        DB::getInstance()->prepare('DELETE FROM HISTESCOLARGR')->execute();
+        DB::getInstance()->prepare('DELETE FROM DISCIPLINAGR')->execute();
+
+        $sql = "INSERT INTO HISTESCOLARGR (codpes,codpgm,coddis,verdis,codtur,rstfim,stamtr) VALUES 
+                                   (convert(int,:codpes),convert(tinyint,:codpgm),:coddis,convert(tinyint,:verdis),:codtur,:rstfim,:stamtr)";
+
+        $data = [
+            'codpes' => '123467',
+            'codpgm' => '11',
+            'coddis' => 'CED0043',
+            'verdis' => '3',
+            'codtur' => '0',
+            'rstfim' => 'A',
+            'stamtr' => 'A',
+        ];    
+
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO DISCIPLINAGR (coddis,verdis,creaul,cretrb) VALUES 
+                                   (:coddis,convert(tinyint,:verdis),convert(tinyint,:creaul),convert(tinyint,:cretrb))";
+
+        $data = [
+            'coddis' => 'CED0043',
+            'verdis' => '3',
+            'creaul' => '12',
+            'cretrb' => '4',
+        ];    
+
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $this->assertIsArray(Graduacao::disciplinasConcluidas(123467, 8));
+    }
+
+
 }
 

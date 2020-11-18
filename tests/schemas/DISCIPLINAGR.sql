@@ -3,4 +3,5 @@ create table DISCIPLINAGR (
     verdis tinyint not null,
     nomdis varchar(240) not null,
     creaul tinyint null,
+    cretrb tinyint null,
 )

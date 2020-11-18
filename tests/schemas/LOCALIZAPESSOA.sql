@@ -13,9 +13,6 @@ create table LOCALIZAPESSOA (
     nomset varchar(255) null,
     codema varchar(80) null,
     tipdsg char(1) null,
-<<<<<<< HEAD
     nompesfon varchar(120) null,
-=======
     codfncetr  int not null
->>>>>>> upstream/master
 )
