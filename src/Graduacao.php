@@ -4,15 +4,6 @@ namespace Uspdev\Replicado;
 
 class Graduacao
 {
-
-    /**
-     * Método para verificar se aluno (codpes) tem matrícula ativa na graduação da unidade
-     *
-     * @param Int $codpes
-     * @param Smallint $codundclgi
-     * @return boolean
-     */  
-
     public static function verifica($codpes, $codundclgi)
     {
         $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
@@ -40,9 +31,7 @@ class Graduacao
      * @param Int $condundclgi
      * @param String $partNome (optional)
      * @return array(campos tabela LOCALIZAPESSOA)
-     */   
-
-    public static function ativos($codundclgi, $parteNome = null)
+     */    public static function ativos($codundclgi, $parteNome = null)
     {
         $param = [
             'codundclgi' => $codundclgi,
@@ -66,7 +55,6 @@ class Graduacao
      * @param Int $codundclgi
      * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
      */
-
     public static function curso($codpes, $codundclgi)
     {
         $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
@@ -143,13 +131,6 @@ class Graduacao
         return $result;
     }
 
-    /**
-     * Método para retornar os cursos e habilitações na unidade
-     *
-     * @param Smallint $codundclgi
-     * @return void
-     */
-
     public static function obterCursosHabilitacoes($codundclgi)
     {
         $query = " SELECT CURSOGR.*, HABILITACAOGR.* FROM CURSOGR, HABILITACAOGR";
@@ -169,7 +150,6 @@ class Graduacao
      * @param Array $arrCoddis
      * @return void
      */
-
     public static function obterDisciplinas($arrCoddis)
     {
         $query = " SELECT D1.* FROM DISCIPLINAGR AS D1";
@@ -191,7 +171,6 @@ class Graduacao
      * @param String $coddis
      * @return void
      */
-
     public static function nomeDisciplina($coddis)
     {
         $query = " SELECT D1.* FROM DISCIPLINAGR AS D1";
@@ -212,7 +191,6 @@ class Graduacao
      * @param Int $codpes
      * @return void
      */
-
     public static function disciplinasConcluidas($codpes, $codundclgi)
     {
         $programa = self::programa($codpes);
@@ -239,7 +217,6 @@ class Graduacao
      * @param string $coddis
      * @return int $creaul
      */
-
     public static function creditosDisciplina($coddis)
     {
         $query = " SELECT D1.creaul FROM DISCIPLINAGR AS D1";
@@ -264,7 +241,6 @@ class Graduacao
      * @param Int $codundclgi
      * @return Array(coddis, creaulatb)
      */
-
     public static function creditosDisciplinasConcluidasAproveitamentoEstudosExterior($codpes, $codundclgi)
     {
         $programa = self::programa($codpes);
@@ -292,7 +268,6 @@ class Graduacao
      * @param Int $codhab
      * @return Array(coddis, nomdis, verdis, numsemidl, tipobg)
      */
-
     public static function disciplinasCurriculo($codcur, $codhab)
     {
         $query = "SELECT G.coddis, D.nomdis, G.verdis, G.numsemidl, G.tipobg ";
@@ -316,7 +291,6 @@ class Graduacao
      * @param Int $codhab
      * @return Array(coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente)
      */
-
     public static function disciplinasEquivalentesCurriculo($codcur, $codhab)
     {
         $query = "SELECT G.codeqv, G.coddis, G.verdis, GC.tipobg, E.coddis as coddis_eq, E.verdis as verdis_eq ";
@@ -339,8 +313,7 @@ class Graduacao
      * @param Int $codpes
      * @param Int $codundclgi
      * @return Array(nomabvset)
-     */  
-
+     */
     public static function setorAluno($codpes, $codundclgi)
     {
         $codcur = self::curso($codpes, $codundclgi)['codcur'];
@@ -391,7 +364,6 @@ class Graduacao
      * @param Integer $codpes
      * @return boolean
      */
-    
     public static function verificarCoordenadorCursoGrad(int $codpes)
     {
         $query = "SELECT COUNT(codpesdct) as qtde_cursos
