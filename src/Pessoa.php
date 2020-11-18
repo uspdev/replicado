@@ -301,21 +301,6 @@ class Pessoa
         }
         return $setores;
     }
-
-    /**
-     * Método para retornar docentes ativos na unidade
-     *
-     * @param Integer $codundclgi
-     * @return array
-     * 
-     * !!! DEPRECADO -> usar listarDocentes()
-     * 
-     */
-    public static function docentes($codundclgi)
-    {
-        putenv('REPLICADO_CODUNDCLG=' . $codundclgi);
-        return Pessoa::listarDocentes();
-    }
     
    /**
      * Método para retornar servidores ativos na unidade
