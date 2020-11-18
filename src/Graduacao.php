@@ -15,19 +15,20 @@ class Graduacao
 
     public static function verifica($codpes, $codundclgi)
     {
-        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)"; 
+        $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
         $result = DB::fetchAll($query, $param);
 
-        if(!empty($result)) {
-            foreach ($result as $row)
-            {
-                if (trim($row['tipvin']) == 'ALUNOGR' && 
-                   trim($row['sitatl']) == 'A'  && 
-                   trim($row['codundclg']) == $codundclgi) 
-                   return true;
+        if (!empty($result)) {
+            foreach ($result as $row) {
+                if (
+                    trim($row['tipvin']) == 'ALUNOGR' &&
+                    trim($row['sitatl']) == 'A'  &&
+                    trim($row['codundclg']) == $codundclgi
+                )
+                    return true;
             }
         }
         return false;
@@ -50,7 +51,7 @@ class Graduacao
         $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)";
         if (!is_null($parteNome)) {
             $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
-            $parteNome = strtoupper(str_replace(' ','%',$parteNome));
+            $parteNome = strtoupper(str_replace(' ', '%', $parteNome));
             $query .= " AND nompesfon LIKE :parteNome";
             $param['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
         }
@@ -80,7 +81,7 @@ class Graduacao
             'codpes' => $codpes,
             'codundclgi' => $codundclgi,
         ];
-        return DB::fetch($query, $param);  
+        return DB::fetch($query, $param);
     }
 
     /**
@@ -117,7 +118,7 @@ class Graduacao
             'codcur' => $codcur,
         ];
         $result = DB::fetch($query, $param);
-        if($result) return $result['nomcur'];
+        if ($result) return $result['nomcur'];
         return $result;
     }
 
@@ -138,7 +139,7 @@ class Graduacao
             'codcur' => $codcur,
         ];
         $result = DB::fetch($query, $param);
-        if($result) return $result['nomhab'];
+        if ($result) return $result['nomhab'];
         return $result;
     }
 
@@ -180,7 +181,7 @@ class Graduacao
         }
         $query = substr($query, 0, -3);
         $query .= " ) ";
-        $query .= " ORDER BY D1.coddis ASC"; 
+        $query .= " ORDER BY D1.coddis ASC";
         return DB::fetchAll($query);
     }
 
@@ -201,7 +202,7 @@ class Graduacao
             'coddis' => $coddis,
         ];
         $result = DB::fetch($query, $param);
-        if($result) return $result['nomdis'];
+        if ($result) return $result['nomdis'];
         return $result;
     }
 
@@ -249,9 +250,9 @@ class Graduacao
             'coddis' => $coddis,
         ];
         $result = DB::fetch($query, $param);
-        if($result) return $result['creaul'];
+        if ($result) return $result['creaul'];
         return $result;
-    }  
+    }
 
     /**
      * Créditos atribuídos por Aproveitamento de Estudos no exterior
@@ -368,8 +369,8 @@ class Graduacao
      * @param Integer $codcur (optional)
      * @return void
      */
-
-    public static function contarAtivosPorGenero($sexpes, $codcur = null){
+    public static function contarAtivosPorGenero($sexpes, $codcur = null)
+    {
         $unidades = getenv('REPLICADO_CODUNDCLG');
 
         $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
@@ -408,5 +409,60 @@ class Graduacao
         } else {
             return false;
         }
+    }
+
+    /**
+     * Método para retornar se uma pessoas é graduada nos cursos da unidade
+     * @param Integer $codpes
+     * @return boolean
+     */
+    public static function verificarPessoaGraduadaUnidade(int $codpes)
+    {
+        $cursos = getenv('REPLICADO_CODCUR');
+
+        if (empty($cursos) || ($cursos == null)) {
+            return false;
+        }
+
+        $query = "SELECT p.codpes
+                    FROM PROGRAMAGR p INNER JOIN HABILPROGGR h ON (p.codpes = h.codpes AND p.codpgm = h.codpgm)
+                    WHERE p.codpes = convert(int, :codpes)
+                        AND tipencpgm LIKE :tipencpgm
+                        AND h.dtaclcgru IS NOT NULL
+                        AND h.codcur IN ({$cursos})";
+        $param = [
+            'codpes' => $codpes,
+            'tipencpgm' => 'Conclus_o'
+        ];
+
+        $result = DB::fetch($query, $param);
+
+        if ($result) {
+            return true;
+        }
+    }
+
+    /*
+     * Método que verifica através do número USP e código da unidade
+     * se a pessoa é Ex-Aluna de Graduação ou não
+     * retorna true se a pessoa for Ex-Aluna de Graduação USP 
+     * ou false, caso o contrário
+     *      
+     * @param Integer $codpes : Número USP 
+     * @param Integer $codorg : Código da unidade
+     * @return boolean
+     */
+    public static function verificarExAlunoGrad($codpes, $codorg){
+        $query = " SELECT codpes from TITULOPES 
+                    WHERE codpes = convert(int,:codpes)
+                    AND codcur IS NOT NULL
+                    AND codorg = convert(int,:codorg) ";
+        $param = [
+            'codpes' => $codpes,
+            'codorg' => $codorg
+        ];
+        $result = DB::fetch($query, $param);
+        if(!empty($result)) return true;
+        return false;
     }
 }

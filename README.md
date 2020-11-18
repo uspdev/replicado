@@ -48,6 +48,7 @@ Exemplo de uso
     putenv('REPLICADO_USERNAME=dbmaint_read');
     putenv('REPLICADO_PASSWORD=secret');
     putenv('REPLICADO_CODUNDCLG=8');
+    putenv('REPLICADO_CODCUR=1,2,3');
 
     # Opicionais
     putenv('REPLICADO_PATHLOG=path/to/your.log');
