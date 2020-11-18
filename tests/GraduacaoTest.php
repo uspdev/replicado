@@ -302,5 +302,50 @@ class GraduacaoTest extends TestCase
         $this->assertIsArray(Graduacao::disciplinasConcluidas(123467, 8));
     }
 
+    public function test_creditosDisciplinasConcluidasAproveitamentoEstudosExterior(){
+
+        DB::getInstance()->prepare('DELETE FROM DISCIPLINAGR')->execute();
+        DB::getInstance()->prepare('DELETE FROM HISTESCOLARGR')->execute();
+        DB::getInstance()->prepare('DELETE FROM REQUERHISTESC')->execute();
+    
+        $sql = "INSERT INTO REQUERHISTESC (codpes,coddis,verdis,codtur,creaulatb) VALUES 
+                                    (convert(int,:codpes),:coddis,convert(tinyint,:verdis),:codtur,convert(tinyint,:creaulatb))";
+
+        $data = [
+            'codpes' => '123467',
+            'coddis' => 'CED0043',
+            'verdis' => '3',
+            'codtur' => '0',
+            'creaulatb' => '10',
+        ];
+
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO HISTESCOLARGR (codpes,codpgm,coddis,verdis,codtur,rstfim) VALUES 
+                                   (convert(int,:codpes),convert(tinyint,:codpgm),:coddis,convert(tinyint,:verdis),:codtur,:rstfim)";
+
+        $data = [
+            'codpes' => '123467',
+            'codpgm' => '11',
+            'coddis' => 'CED0043',
+            'verdis' => '3',
+            'codtur' => '0',
+            'rstfim' => 'D',
+        ];    
+
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO DISCIPLINAGR (coddis,verdis) VALUES 
+                                   (:coddis,convert(tinyint,:verdis))";
+
+        $data = [
+            'coddis' => 'CED0043',
+            'verdis' => '3',
+        ];    
+
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Graduacao::creditosDisciplinasConcluidasAproveitamentoEstudosExterior(123467, 8));   
+    }
+
 
 }
