@@ -412,6 +412,7 @@ class Graduacao
         if ($result) {
             return true;
         }
+    }
 
     /*
      * Método que verifica através do número USP e código da unidade
