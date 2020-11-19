@@ -807,4 +807,41 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame([0 => 'Estagiário', 1 => 'Estagiário FFLCH', 2 => 'FFLCH'],Pessoa::vinculosSetores(10101, 9));        
     }
+
+    public function test_listarDocentesAposentadosSenior(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM VINCSATPROFSENIOR')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, sitatl, codset) 
+                VALUES (
+                    convert(int,:codpes),
+                    :tipvinext,
+                    :sitatl,
+                    convert(int,:codset)
+                )";
+
+        $data = [
+            'codpes' => 909090,
+            'tipvinext' => 'Docente Aposentado',
+            'sitatl' => 'P',
+            'codset' => 55
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO VINCSATPROFSENIOR (codpes, codund, dtafimcbd) 
+                VALUES (
+                    convert(int,:codpes),
+                    convert(tinyint,:codund),
+                    :dtafimcbd
+                )";
+
+        $data = [
+            'codpes' => 909090,
+            'codund' => 7,
+            'dtafimcbd' => '2023-11-05 00:00:00'
+        ];
+        
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame([],Pessoa::listarDocentesAposentadosSenior(55));        
+    }
 }

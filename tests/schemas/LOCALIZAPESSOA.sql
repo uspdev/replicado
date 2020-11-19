@@ -14,5 +14,5 @@ create table LOCALIZAPESSOA (
     codema varchar(80) null,
     tipdsg char(1) null,
     nompesfon varchar(120) null,
-    codfncetr  int not null
+    codfncetr int not null
 )
