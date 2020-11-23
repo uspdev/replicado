@@ -807,4 +807,65 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame([0 => 'Estagiário', 1 => 'Estagiário FFLCH', 2 => 'FFLCH'],Pessoa::vinculosSetores(10101, 9));        
     }
+
+    public function test_listarDocentesAposentadosSenior(){
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM VINCSATPROFSENIOR')->execute();
+
+        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, sitatl, codset, codfncetr, nompes) 
+                VALUES (
+                    convert(int,:codpes),
+                    :tipvinext,
+                    :sitatl,
+                    convert(int,:codset),
+                    convert(int,:codfncetr),
+                    :nompes
+                )";
+
+        $data = [
+            'codpes' => 98958989,
+            'tipvinext' => 'Docente Aposentado',
+            'sitatl' => 'P',
+            'codset' => 666,
+            'codfncetr' => 0,
+            'nompes' => 'Maria'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO VINCSATPROFSENIOR (codpes, codund, dtafimcbd) 
+                VALUES (
+                    convert(int,:codpes),
+                    convert(int,:codund),
+                    :dtafimcbd
+                )";
+
+        $data = [
+            'codpes' => 98958989,
+            'codund' => 8,
+            'dtafimcbd' => '2024-11-05 00:00:00',
+        ];
+        
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame([
+            0 => Array(
+                'codpes' => '98958989',
+                'tipvin' => '',
+                'tipvinext' => 'Docente Aposentado',
+                'nompes' => 'Maria',
+                'sitatl' => 'P',
+                'nomfnc' => '',
+                'codundclg' => '',
+                'numtelfmt' => '',
+                'sglclgund' => '',
+                'codset' => '666',
+                'nomabvset' => '',
+                'nomset' => '',
+                'codema' => '',
+                'tipdsg' => '',
+                'nompesfon' => '',
+                'codfncetr' => '0',
+                'codund' => '8',
+                'dtafimcbd' => '2024-11-05 00:00:00'
+        )],Pessoa::listarDocentesAposentadosSenior());   
+    }
 }
