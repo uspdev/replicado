@@ -470,4 +470,19 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('1', Posgraduacao::contarAtivosPorGenero('M'));
     }
+
+    public function test_verificarExAlunoPos(){
+        DB::getInstance()->prepare('DELETE FROM TITULOPES')->execute();
+
+        $sql = "INSERT INTO TITULOPES (codpes, codorg, codcurpgr) 
+                    VALUES (convert(int,:codpes),convert(int,:codorg),convert(int,:codcurpgr))";
+
+        $data = [
+            'codpes' => 13131313,
+            'codorg' => 7,
+            'codcurpgr' => 22
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertTrue(true, Posgraduacao::verificarExAlunoPos(13131313, 7));
+    }
 }

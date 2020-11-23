@@ -462,4 +462,28 @@ class Posgraduacao
         }
         return DB::fetch($query, $param)['computed'];
     }
+
+    /*
+     * Método que verifica através do número USP e código da unidade
+     * se a pessoa é Ex-Aluna de Pós-Graduação ou não
+     * retorna true se a pessoa for Ex-Aluna de Pós-Graduação USP 
+     * ou false, caso o contrário
+     *      
+     * @param Integer $codpes : Número USP 
+     * @param Integer $codorg : Código da unidade
+     * @return boolean
+     */
+    public static function verificarExAlunoPos($codpes, $codorg){
+        $query = " SELECT codpes from TITULOPES 
+                    WHERE codpes = convert(int,:codpes)
+                    AND codcurpgr IS NOT NULL
+                    AND codorg = convert(int,:codorg) ";
+        $param = [
+            'codpes' => $codpes,
+            'codorg' => $codorg
+        ];
+        $result = DB::fetch($query, $param);
+        if(!empty($result)) return true;
+        return false;
+    }
 }

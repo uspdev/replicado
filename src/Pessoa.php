@@ -722,4 +722,36 @@ class Pessoa
         return "";
     }
 
+    /**
+     * Método que lista docentes aposentados Sênior (em atividade) 
+     * de uma unidade por setor (departamento) solicitado 
+     * @param type $codset - Código do setor
+     * @return array
+     * 
+     * $codset pode ser um número (para um único setor)
+     *         ou
+     *         pode ser uma string com números separados por vírgula (para um ou mais de um setores)
+     * 
+     */
+    public static function listarDocentesAposentadosSenior($codset = FALSE){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $current = date("Y-m-d H:i:s");
+        $addquery = '';
+        if ($codset){
+            $addquery = "AND L.codset IN ({$codset})";
+        }
+        $query = "SELECT L.nompes FROM LOCALIZAPESSOA L
+            INNER JOIN VINCSATPROFSENIOR V ON (L.codpes = V.codpes)
+            WHERE (
+                L.tipvinext = 'Docente Aposentado'
+                AND L.sitatl = 'P'
+                AND V.codund IN ({$unidades})
+                AND V.dtafimcbd > '{$current}'
+                $addquery
+                )
+            ORDER BY L.nompes";
+
+        return DB::fetchAll($query);
+    }
+
 }
