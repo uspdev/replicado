@@ -740,7 +740,7 @@ class Pessoa
         if ($codset){
             $addquery = "AND L.codset IN ({$codset})";
         }
-        $query = "SELECT L.nompes FROM LOCALIZAPESSOA L
+        $query = "SELECT * FROM LOCALIZAPESSOA L
             INNER JOIN VINCSATPROFSENIOR V ON (L.codpes = V.codpes)
             WHERE (
                 L.tipvinext = 'Docente Aposentado'
