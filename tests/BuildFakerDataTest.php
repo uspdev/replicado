@@ -14,9 +14,9 @@ class BuildFakerDataTest extends TestCase
     public function test_deploy_data()
     {
         #1. Cleanup
-        #DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
-        #DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
-        #DB::getInstance()->prepare('DELETE FROM EMAILPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM EMAILPESSOA')->execute();
 
         # 2. Populate PESSOA table with 100 people
         $faker = Factory::create();
