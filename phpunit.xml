@@ -19,7 +19,7 @@
             <file>tests/LattesTest.php</file>
             <file>tests/BempatrimoniadoTest.php</file>
             <file>tests/EstruturaTest.php</file>
-            <file>tests/BuildFakerDataTest.php</file>
+            <!-- <file>tests/BuildFakerDataTest.php</file> -->
         </testsuite>
     </testsuites>
 </phpunit>
