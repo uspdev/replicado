@@ -8,6 +8,8 @@ use Uspdev\Replicado\DB;
 use Uspdev\Replicado\Uteis;
 use Dotenv\Dotenv;
 
+/** Build faker data after run all phpunit tests
+ */
 class BuildFakerDataTest extends TestCase
 {
 
