@@ -20,6 +20,7 @@ class DeploySchemaTest extends TestCase
         putenv('REPLICADO_USERNAME=' . getenv('TEST_SYBASE_USERNAME'));
         putenv('REPLICADO_PASSWORD=' . getenv('TEST_SYBASE_PASSWORD'));
         putenv('REPLICADO_CODUNDCLG=' . getenv('TEST_SYBASE_CODUNDCLG'));
+        putenv('REPLICADO_SYBASE=1');
     }
 
     private function getTables()
