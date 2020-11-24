@@ -2,6 +2,8 @@
 
 namespace Uspdev\Replicado;
 
+use ZipArchive;
+
 class Uteis
 {
     public static function removeAcentos($str)
@@ -306,6 +308,28 @@ class Uteis
             $data = date_create($data);
             return date_format($data, 'd/m/Y');
         }
+        return $data;
+    }
+
+    /**
+     * Method got from https://stackoverflow.com/questions/9248331/php-read-zip-file-contents-without-saving-on-server
+     * Método que recebe um buffer content em zip com apenas um arquivo
+     * e devolve a string do arquivo. Usado para pegar o xml do lattes como string
+     */
+    public static function unzip($zipData) {
+        // save content into temp file
+        $tempFile = tempnam(sys_get_temp_dir(), 'feed');
+        file_put_contents($tempFile, $zipData);
+    
+        // unzip content of first file from archive
+        $zip = new ZipArchive();
+        $zip->open($tempFile);
+        $data = $zip->getFromIndex(0);
+    
+        // cleanup temp file
+        $zip->close();
+        unlink($tempFile);
+    
         return $data;
     }
 
