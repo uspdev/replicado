@@ -437,4 +437,17 @@ class Graduacao
         if(!empty($result)) return true;
         return false;
     }
+
+    public static function obterGradeHoraria($codpes){
+        $current = date("Y") . (date("m") > 6? 2:1);
+
+        $query =  "SELECT h.coddis, h.codtur, o.diasmnocp, p.horent, p.horsai FROM HISTESCOLARGR h 
+                    INNER JOIN OCUPTURMA o ON (h.coddis = o.coddis AND h.codtur = o.codtur)
+                    INNER JOIN PERIODOHORARIO p ON (o.codperhor = p.codperhor)
+                    WHERE h.codpes = convert(int,:codpes) AND h.codtur LIKE '%{$current}%'";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        return DB::fetchAll($query, $param);
+    }
 }
