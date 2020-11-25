@@ -133,8 +133,6 @@ class Lattes
                     ? $lattes['DADOS-GERAIS']['RESUMO-CV']['@attributes'][$campo]
                     : false;
         
-        if(!$resumo_cv) return false;
-        
-        return $resumo_cv;
+        return $resumo_cv ? $resumo_cv : false;
     }
 }
