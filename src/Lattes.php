@@ -124,10 +124,15 @@ class Lattes
      */
     public static function getResumoCV($codpes, $idioma = 'pt'){
         $lattes = self::getArray($codpes);
-  
+
+        if(!$lattes) return false;
+
         $campo = 'TEXTO-RESUMO-CV-RH';
         if(strtolower($idioma) == 'en') $campo .= '-EN'; 
-        $resumo_cv = $lattes['DADOS-GERAIS']['RESUMO-CV']['@attributes'][$campo];
+        $resumo_cv = isset($lattes['DADOS-GERAIS']['RESUMO-CV']['@attributes'][$campo]) 
+                    ? $lattes['DADOS-GERAIS']['RESUMO-CV']['@attributes'][$campo]
+                    : false;
+        
         if(!$resumo_cv) return false;
         
         return $resumo_cv;
