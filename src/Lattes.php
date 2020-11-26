@@ -112,4 +112,27 @@ class Lattes
         if(!$id) return false;
         return json_decode(self::getJson($codpes),TRUE);
     }
+
+     /**
+     * Recebe o número USP e devolve o resumo do currículo do lattes
+     * 
+     * @param Integer $codpes
+     * @param String $idioma 
+     * @return String|Bool
+     * 
+     * Valores aceitos para idioma: 'pt' (português) e 'en' (inglês)
+     */
+    public static function getResumoCV($codpes, $idioma = 'pt'){
+        $lattes = self::getArray($codpes);
+
+        if(!$lattes) return false;
+
+        $campo = 'TEXTO-RESUMO-CV-RH';
+        if(strtolower($idioma) == 'en') $campo .= '-EN'; 
+        $resumo_cv = isset($lattes['DADOS-GERAIS']['RESUMO-CV']['@attributes'][$campo]) 
+                    ? $lattes['DADOS-GERAIS']['RESUMO-CV']['@attributes'][$campo]
+                    : false;
+        
+        return $resumo_cv;
+    }
 }
