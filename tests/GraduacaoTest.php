@@ -347,5 +347,42 @@ class GraduacaoTest extends TestCase
         $this->assertIsArray(Graduacao::creditosDisciplinasConcluidasAproveitamentoEstudosExterior(123467, 8));   
     }
 
+    public function test_obterGradeHoraria(){
+        DB::getInstance()->prepare('DELETE FROM HISTESCOLARGR')->execute();
+        DB::getInstance()->prepare('DELETE FROM OCUPTURMA')->execute();
+        DB::getInstance()->prepare('DELETE FROM PERIODOHORARIO')->execute();
+    
+        $sql = "INSERT INTO HISTESCOLARGR (codpes,coddis,codtur) VALUES 
+                                    (convert(int,:codpes),:coddis,:codtur)";
+
+        $data = [
+            'codpes' => '123467',
+            'coddis' => 'CED0043',
+            'codtur' => 1997103
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO OCUPTURMA (coddis,codtur, diasmnocp, codperhor) VALUES 
+                                    (:coddis,:codtur,:diasmnocp,convert(numeric,:codperhor))";
+
+        $data = [
+            'coddis' => 'CED0043',
+            'codtur' => 0,
+            'diasmnocp' => 'sex',
+            'codperhor' => 72
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PERIODOHORARIO (codperhor, horent, horsai) VALUES 
+                                    (convert(numeric,:codperhor),:horent,:horsai)";
+
+        $data = [
+            'codperhor' => 1,
+            'horent' => '07:00',
+            'horsai' => '09:00'
+        ]; 
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertIsArray(Graduacao::obterGradeHoraria(123467));   
+    }
 
 }
