@@ -113,6 +113,27 @@ class Lattes
         return json_decode(self::getJson($codpes),TRUE);
     }
 
+    /**
+     * Recebe o número USP e devolve array dos prêmios e títulos cadastros no currículo Lattes,
+     * com o respectivo ano de prêmiação
+     * 
+     * @param Integer $codpes
+     * @return String|Bool
+     */
+    public static function getPremios($codpes){
+        $lattes = self::getArray($codpes);
+        $premios = $lattes['DADOS-GERAIS'];
+        if(array_key_exists('PREMIOS-TITULOS',$premios)){
+            $premios = $lattes['DADOS-GERAIS']['PREMIOS-TITULOS']['PREMIO-TITULO'];
+            $nome_premios = [];
+            foreach($premios as $p){
+                array_push($nome_premios, $p['@attributes']['NOME-DO-PREMIO-OU-TITULO'] . ' - Ano: ' . $p['@attributes']['ANO-DA-PREMIACAO']);
+            }     
+        return $nome_premios;
+        }
+        else return false;
+     }
+  
      /**
      * Recebe o número USP e devolve o resumo do currículo do lattes
      * 
