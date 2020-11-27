@@ -327,11 +327,11 @@ class Uteis
     
         if($zip->numFiles > 0) {
             $data = $zip->getFromIndex(0);
+            $zip->close();
         } else {
             $data = false;
         }
 
-        $zip->close();
         unlink($tempFile);
     
         return $data;
