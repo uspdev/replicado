@@ -34,7 +34,7 @@ class Lattes
             'codpes' => $codpes,
         ];
         $result = DB::fetch($query, $param);
-        
+
         if(!empty($result)) return $result['imgarqxml'];
         return false;
     }
@@ -81,10 +81,10 @@ class Lattes
      * @return String|Bool
      */
     public static function getXml($codpes){
-        $id = self::id($codpes);
-        if(!$id) return false;
+        $zip = self::getZip($codpes);
+        if(!$zip) return false;
 
-        return Uteis::unzip(self::getZip($codpes));
+        return Uteis::unzip($zip);
     }
 
     /**
@@ -94,11 +94,10 @@ class Lattes
      * @return String|Bool
      */
     public static function getJson($codpes){
-        $id = self::id($codpes);
-        if(!$id) return false;
-        $xml_string = Uteis::unzip(self::getZip($codpes));
-        $xml = simplexml_load_string($xml_string);
-        return json_encode($xml);
+        $xml = self::getXml($codpes);
+        if(!$xml) return false;
+
+        return json_encode(simplexml_load_string($xml));
     }
 
     /**
@@ -108,9 +107,9 @@ class Lattes
      * @return String|Bool
      */
     public static function getArray($codpes){
-        $id = self::id($codpes);
-        if(!$id) return false;
-        return json_decode(self::getJson($codpes),TRUE);
+        $json = self::getJson($codpes);
+        if(!$json) return false;
+        return json_decode($json,TRUE);
     }
 
     /**
@@ -122,6 +121,8 @@ class Lattes
      */
     public static function getPremios($codpes){
         $lattes = self::getArray($codpes);
+        if(!$lattes) return false;
+
         $premios = $lattes['DADOS-GERAIS'];
         if(array_key_exists('PREMIOS-TITULOS',$premios)){
             $premios = $lattes['DADOS-GERAIS']['PREMIOS-TITULOS']['PREMIO-TITULO'];
