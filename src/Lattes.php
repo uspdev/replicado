@@ -28,7 +28,7 @@ class Lattes
      * @return String|Bool
      */
     public static function getZip($codpes){
-        putenv('REPLICADO_SYBASE=0');
+        putenv('REPLICADO_SYBASE=0'); # hotfix -  o utf8_encode estraga o zip
         $query = "SELECT imgarqxml from DIM_PESSOA_XMLUSP WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
@@ -36,6 +36,7 @@ class Lattes
         $result = DB::fetch($query, $param);
 
         if(!empty($result)) return $result['imgarqxml'];
+        putenv('REPLICADO_SYBASE=1'); # hotfix -  o utf8_encode estraga o zip
         return false;
     }
 
