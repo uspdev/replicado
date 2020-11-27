@@ -320,13 +320,17 @@ class Uteis
         // save content into temp file
         $tempFile = tempnam(sys_get_temp_dir(), 'feed');
         file_put_contents($tempFile, $zipData);
-    
+
         // unzip content of first file from archive
         $zip = new ZipArchive();
         $zip->open($tempFile);
-        $data = $zip->getFromIndex(0);
     
-        // cleanup temp file
+        if($zip->numFiles > 0) {
+            $data = $zip->getFromIndex(0);
+        } else {
+            $data = false;
+        }
+
         $zip->close();
         unlink($tempFile);
     
