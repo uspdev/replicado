@@ -122,13 +122,16 @@ class Lattes
      */
     public static function getPremios($codpes){
         $lattes = self::getArray($codpes);
-        if(!$lattes) return false;
+        if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
 
         $premios = $lattes['DADOS-GERAIS'];
         if(array_key_exists('PREMIOS-TITULOS',$premios)){
             $premios = $lattes['DADOS-GERAIS']['PREMIOS-TITULOS']['PREMIO-TITULO'];
             $nome_premios = [];
             foreach($premios as $p){
+                if(!isset($p['@attributes']['NOME-DO-PREMIO-OU-TITULO'])){
+                    return false;
+                }else
                 array_push($nome_premios, $p['@attributes']['NOME-DO-PREMIO-OU-TITULO'] . ' - Ano: ' . $p['@attributes']['ANO-DA-PREMIACAO']);
             }     
         return $nome_premios;
@@ -136,15 +139,14 @@ class Lattes
         else return false;
      }
   
-     /**
-     * Recebe o número USP e devolve o resumo do currículo do lattes
-     * 
-     * @param Integer $codpes
-     * @param String $idioma 
-     * @return String|Bool
-     * 
-     * Valores aceitos para idioma: 'pt' (português) e 'en' (inglês)
-     */
+    /**
+    * Recebe o número USP e devolve o resumo do currículo do lattes
+    * 
+    * @param Integer $codpes
+    * @param String $idioma = Valores aceitos para idioma: 'pt' (português) e 'en' (inglês)
+    * @return String|Bool
+    * 
+    */
     public static function getResumoCV($codpes, $idioma = 'pt'){
         $lattes = self::getArray($codpes);
 
@@ -159,35 +161,52 @@ class Lattes
         return $resumo_cv;
     }
 
-     /**
-     * Recebe o número USP e devolve array dos 5 últimos artigos cadastros no currículo Lattes,
-     * com o respectivo título do artigo, nome da revista ou períodico, volume, número de páginas e ano de publicação
-     * 
-     * @param Integer $codpes
-     * @return String|Bool
-     */
-    public static function getArtigos($codpes){
+    /**
+    * Recebe o número USP e devolve array com os últimos artigos cadastrados no currículo Lattes,
+    * com o respectivo título do artigo, nome da revista ou períodico, volume, número de páginas e ano de publicação
+    *  
+    * @param Integer $codpes = Número USP
+    * @param Integer $limit = Número de artigos a serem retornados, se não preenchido, o valor default é 5
+    * @return String|Bool
+    */
+    public static function getArtigos($codpes, $limit = 5){
         $lattes = self::getArray($codpes);
-        
-        if(!$lattes) return false;
-
+        if(!$lattes && !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) return false;
         $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA'];
+
         if(array_key_exists('ARTIGOS-PUBLICADOS',$artigos)){
-        $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA']['ARTIGOS-PUBLICADOS']['ARTIGO-PUBLICADO'];
-        usort($artigos, function ($a, $b) {
-            return (int)$b['@attributes']['SEQUENCIA-PRODUCAO'] - (int)$a['@attributes']['SEQUENCIA-PRODUCAO'];
-        });
-        $i = 0;
-        $ultimos_artigos = [];
+            $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA']['ARTIGOS-PUBLICADOS']['ARTIGO-PUBLICADO'];
+            //ordena em ordem decrescente.
+            usort($artigos, function ($a, $b) {
+                if(!isset($b['@attributes']['SEQUENCIA-PRODUCAO'])){
+                    return 0;
+                }
+                return (int)$b['@attributes']['SEQUENCIA-PRODUCAO'] - (int)$a['@attributes']['SEQUENCIA-PRODUCAO'];
+            });
+            //verificação para saber se há apenas 1 artigo
+            if(!isset($artigos[1]['@attributes']['SEQUENCIA-PRODUCAO'])){
+                $aux = $artigos;
+                $artigos = [];
+                $artigos[0] = $aux;
+            }         
+            $i = 0;
+            $ultimos_artigos = [];
             foreach($artigos as $val){
-                if($i > 4) break; $i++; 
-                array_push($ultimos_artigos,$val['DADOS-BASICOS-DO-ARTIGO']['@attributes']['TITULO-DO-ARTIGO'] . 
-                ' - Título do periódico ou revista: ' . $val['DETALHAMENTO-DO-ARTIGO']['@attributes']['TITULO-DO-PERIODICO-OU-REVISTA'] .
-                ' - Volume: ' . $val['DETALHAMENTO-DO-ARTIGO']['@attributes']['VOLUME'] . 
-                ' - Páginas: ' . $val['DETALHAMENTO-DO-ARTIGO']['@attributes']['PAGINA-INICIAL'] . '-'. $val['DETALHAMENTO-DO-ARTIGO']['@attributes']['PAGINA-FINAL'] .
-                ' - Ano: ' . $val['DADOS-BASICOS-DO-ARTIGO']['@attributes']['ANO-DO-ARTIGO']);
+                if($limit != -1 && $i > ($limit - 1) ) break; $i++; //-1 retorna tudo
+                $dados_basicos = (!isset($val['DADOS-BASICOS-DO-ARTIGO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-ARTIGO';
+                $detalhamento = (!isset($val['DETALHAMENTO-DO-ARTIGO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-ARTIGO';
+               
+                $aux_artigo = [
+                    'TITULO-DO-ARTIGO' => $val[$dados_basicos]['@attributes']['TITULO-DO-ARTIGO'] ?? '',
+                    'TITULO-DO-PERIODICO-OU-REVISTA' => $val[$detalhamento]['@attributes']['TITULO-DO-PERIODICO-OU-REVISTA'] ?? '',
+                    'VOLUME' => $val[$detalhamento]['@attributes']['VOLUME'] ?? '',
+                    'PAGINA-INICIAL' => $val[$detalhamento]['@attributes']['PAGINA-INICIAL'] ?? '',
+                    'PAGINA-FINAL' => $val[$detalhamento]['@attributes']['PAGINA-FINAL'] ?? '',
+                    'ANO' => $val[$dados_basicos]['@attributes']['ANO-DO-ARTIGO'] ?? '',
+                ];
+                array_push($ultimos_artigos, $aux_artigo);
             }
-        return $ultimos_artigos;
+            return $ultimos_artigos;
         } else return false;
     }
 }
