@@ -158,4 +158,36 @@ class Lattes
         
         return $resumo_cv;
     }
+
+     /**
+     * Recebe o número USP e devolve array dos 5 últimos artigos cadastros no currículo Lattes,
+     * com o respectivo título do artigo, nome da revista ou períodico, volume, número de páginas e ano de publicação
+     * 
+     * @param Integer $codpes
+     * @return String|Bool
+     */
+    public static function getArtigos($codpes){
+        $lattes = self::getArray($codpes);
+        
+        if(!$lattes) return false;
+
+        $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA'];
+        if(array_key_exists('ARTIGOS-PUBLICADOS',$artigos)){
+        $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA']['ARTIGOS-PUBLICADOS']['ARTIGO-PUBLICADO'];
+        usort($artigos, function ($a, $b) {
+            return (int)$b['@attributes']['SEQUENCIA-PRODUCAO'] - (int)$a['@attributes']['SEQUENCIA-PRODUCAO'];
+        });
+        $i = 0;
+        $ultimos_artigos = [];
+            foreach($artigos as $val){
+                if($i > 4) break; $i++; 
+                array_push($ultimos_artigos,$val['DADOS-BASICOS-DO-ARTIGO']['@attributes']['TITULO-DO-ARTIGO'] . 
+                ' - Título do periódico ou revista: ' . $val['DETALHAMENTO-DO-ARTIGO']['@attributes']['TITULO-DO-PERIODICO-OU-REVISTA'] .
+                ' - Volume: ' . $val['DETALHAMENTO-DO-ARTIGO']['@attributes']['VOLUME'] . 
+                ' - Páginas: ' . $val['DETALHAMENTO-DO-ARTIGO']['@attributes']['PAGINA-INICIAL'] . '-'. $val['DETALHAMENTO-DO-ARTIGO']['@attributes']['PAGINA-FINAL'] .
+                ' - Ano: ' . $val['DADOS-BASICOS-DO-ARTIGO']['@attributes']['ANO-DO-ARTIGO']);
+            }
+        return $ultimos_artigos;
+        } else return false;
+    }
 }
