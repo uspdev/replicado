@@ -74,29 +74,31 @@ class GraduacaoTest extends TestCase
     public function test_obterDisciplinas(){
         DB::getInstance()->prepare('DELETE FROM DISCIPLINAGR')->execute();
 
-        $sql = "INSERT INTO DISCIPLINAGR (verdis,coddis) VALUES 
-                                   (convert(tinyint,:verdis),:coddis)";
+        $sql = "INSERT INTO DISCIPLINAGR (verdis,coddis,nomdis) VALUES 
+                                   (convert(tinyint,:verdis),:coddis,:nomdis)";
 
-        $data = [
+        $data1 = [
             'verdis' => '2',
             'coddis' => 'JOR0031',
+            'nomdis' => 'Disciplina 1'
         ];
         $data2 = [
             'verdis' => '5',
             'coddis' => 'TLF0023',
+            'nomdis' => 'Disciplina 2'
         ];
         $data3 = [
             'verdis' => '1',
             'coddis' => 'TLC0023',
+            'nomdis' => 'Disciplina 3'
         ];
 
-        DB::getInstance()->prepare($sql)->execute($data);
+        DB::getInstance()->prepare($sql)->execute($data1);
         DB::getInstance()->prepare($sql)->execute($data2);
         DB::getInstance()->prepare($sql)->execute($data3);
 
-        $array = ['TLC0023','TLF0023'];
-
-        $this->assertIsArray(Graduacao::obterDisciplinas($array));
+        $array = ['JOR0031','TLC0023','TLF0023'];
+        $this->assertSame('Disciplina 1',Graduacao::obterDisciplinas($array)[0]['nomdis']);
     }
 
     public function test_nomeHabilitacao(){
