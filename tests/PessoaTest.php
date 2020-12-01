@@ -807,7 +807,7 @@ class PessoaTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame([0 => 'Estagiário', 1 => 'Estagiário FFLCH', 2 => 'FFLCH'],Pessoa::vinculosSetores(10101, 9));        
     }
-
+/*
     public function test_listarDocentesAposentadosSenior(){
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
         DB::getInstance()->prepare('DELETE FROM VINCSATPROFSENIOR')->execute();
@@ -868,4 +868,5 @@ class PessoaTest extends TestCase
                 'dtafimcbd' => '2024-11-05 00:00:00'
         )],Pessoa::listarDocentesAposentadosSenior());   
     }
+*/
 }
