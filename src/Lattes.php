@@ -209,4 +209,56 @@ class Lattes
             return $ultimos_artigos;
         } else return false;
     }
+
+
+    /**
+    * Recebe o número USP e devolve a linha de pesquisa
+    * 
+    * @param Integer $codpes
+    * @return String|Bool
+    * 
+    */
+    public static function getLinhasPesquisa($codpes){
+        $lattes = self::getArray($codpes);
+        $linhas_de_pesquisa = [];
+        if(!$lattes) return false;
+
+        if(isset($lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL']))
+        {
+            $atuacao_profissional = $lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'];
+            foreach($atuacao_profissional as $ap){
+                
+                if(isset($ap['ATIVIDADES-DE-PESQUISA-E-DESENVOLVIMENTO']['PESQUISA-E-DESENVOLVIMENTO'])){
+                    foreach ($ap['ATIVIDADES-DE-PESQUISA-E-DESENVOLVIMENTO']['PESQUISA-E-DESENVOLVIMENTO'] as $linha_pesquisa) {
+                        
+
+                        if(isset($linha_pesquisa['LINHA-DE-PESQUISA'])){
+                            foreach($linha_pesquisa['LINHA-DE-PESQUISA'] as $lp){
+                                if(isset($lp['@attributes']['TITULO-DA-LINHA-DE-PESQUISA'])){
+                                    array_push($linhas_de_pesquisa, $lp['@attributes']['TITULO-DA-LINHA-DE-PESQUISA']);
+                                }
+                            }
+                        }else{
+                            foreach($linha_pesquisa as $lp){
+                                if(isset($lp['@attributes']['TITULO-DA-LINHA-DE-PESQUISA'])){
+                                    array_push($linhas_de_pesquisa, $lp['@attributes']['TITULO-DA-LINHA-DE-PESQUISA']);
+                                }
+                            }
+                        }
+                        
+                        if(isset($linha_pesquisa['LINHA-DE-PESQUISA']['@attributes']['TITULO-DA-LINHA-DE-PESQUISA'])){
+                            array_push($linhas_de_pesquisa, $linha_pesquisa['LINHA-DE-PESQUISA']['@attributes']['TITULO-DA-LINHA-DE-PESQUISA']);
+                        }elseif (isset($linha_pesquisa['@attributes']['TITULO-DA-LINHA-DE-PESQUISA'])) {
+                            array_push($linhas_de_pesquisa, $linha_pesquisa['@attributes']['TITULO-DA-LINHA-DE-PESQUISA']);
+                        }
+                    }
+                }
+            }
+            return $linhas_de_pesquisa;
+        }
+        return false;
+    
+    }
+
+
 }
