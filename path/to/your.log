@@ -1,4 +1,0 @@
-[2020-12-01T14:48:27.017432-03:00] Conexão.ERROR: SQLSTATE[HY000] Unable to connect: Adaptive Server is unavailable or does not exist (cloud.fflch.usp.br:5005) (severity 9) [] []
-[2020-12-01T14:49:05.760583-03:00] Conexão.ERROR: SQLSTATE[HY000] Unable to connect: Adaptive Server is unavailable or does not exist (cloud.fflch.usp.br:5005) (severity 9) [] []
-[2020-12-01T14:55:37.220731-03:00] Conexão.ERROR: SQLSTATE[HY000] Unable to connect: Adaptive Server is unavailable or does not exist (cloud.fflch.usp.br:5005) (severity 9) [] []
-[2020-12-01T14:58:59.690428-03:00] Conexão.ERROR: SQLSTATE[HY000] Unable to connect: Adaptive Server is unavailable or does not exist (cloud.fflch.usp.br:5005) (severity 9) [] []
