@@ -10,7 +10,8 @@ use Faker\Factory;
 
 class GraduacaoTest extends TestCase
 {
-    public function test_verifica(){
+    public function test_verifica()
+    {
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
 
         $sql = "INSERT INTO LOCALIZAPESSOA (tipvin,sitatl,codundclg,codpes) VALUES 
@@ -23,10 +24,11 @@ class GraduacaoTest extends TestCase
             'codpes' => 4509883,
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertTrue(true,Graduacao::verifica(4509883, 2));
+        $this->assertTrue(true, Graduacao::verifica(4509883, 2));
     }
 
-    public function test_ativos(){
+    public function test_ativos()
+    {
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
 
         $sql = "INSERT INTO LOCALIZAPESSOA (codundclg,tipvin,nompesfon) VALUES 
@@ -42,9 +44,10 @@ class GraduacaoTest extends TestCase
         $this->assertIsArray(Graduacao::ativos(2, 'Jorge'));
     }
 
-    public function test_obterCursosHabilitacoes(){
+    public function test_obterCursosHabilitacoes()
+    {
         DB::getInstance()->prepare('DELETE FROM CURSOGR')->execute();
-        DB::getInstance()->prepare('DELETE FROM HABILITACAOGR')->execute();        
+        DB::getInstance()->prepare('DELETE FROM HABILITACAOGR')->execute();
 
         $sql = "INSERT INTO CURSOGR (codclg,codcur,dtaatvcur) VALUES 
                                    (convert(smallint,:codclg),convert(int,:codcur),convert(smalldatetime,:dtaatvcur))";
@@ -71,7 +74,8 @@ class GraduacaoTest extends TestCase
         $this->assertIsArray(Graduacao::obterCursosHabilitacoes(2));
     }
 
-    public function test_obterDisciplinas(){
+    public function test_obterDisciplinas()
+    {
         DB::getInstance()->prepare('DELETE FROM DISCIPLINAGR')->execute();
 
         $sql = "INSERT INTO DISCIPLINAGR (verdis,coddis) VALUES 
@@ -94,12 +98,13 @@ class GraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data2);
         DB::getInstance()->prepare($sql)->execute($data3);
 
-        $array = ['TLC0023','TLF0023'];
+        $array = ['TLC0023', 'TLF0023'];
 
         $this->assertIsArray(Graduacao::obterDisciplinas($array));
     }
 
-    public function test_nomeHabilitacao(){
+    public function test_nomeHabilitacao()
+    {
         # Limpando Tabela
         DB::getInstance()->prepare('DELETE FROM HABILITACAOGR')->execute();
 
@@ -113,10 +118,11 @@ class GraduacaoTest extends TestCase
             'dtaatvhab' => '2005-09-10',
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame('Alemão',Graduacao::nomeHabilitacao(804,8051));
+        $this->assertSame('Alemão', Graduacao::nomeHabilitacao(804, 8051));
     }
 
-    public function test_nomeCurso(){
+    public function test_nomeCurso()
+    {
 
         DB::getInstance()->prepare('DELETE FROM CURSOGR')->execute();
 
@@ -130,10 +136,11 @@ class GraduacaoTest extends TestCase
             'dtaatvcur' => '2010-10-10',
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame('Letras',Graduacao::nomeCurso(38));
-    }    
+        $this->assertSame('Letras', Graduacao::nomeCurso(38));
+    }
 
-    public function test_programa(){
+    public function test_programa()
+    {
 
         DB::getInstance()->prepare('DELETE FROM HISTPROGGR')->execute();
 
@@ -146,13 +153,14 @@ class GraduacaoTest extends TestCase
             'dtaoco' => '2020-02-02'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertTrue(true,Graduacao::programa('420983'));        
+        $this->assertTrue(true, Graduacao::programa('420983'));
     }
 
-    public function test_nomeDisciplina(){
+    public function test_nomeDisciplina()
+    {
 
         DB::getInstance()->prepare('DELETE FROM DISCIPLINAGR')->execute();
-    
+
         $sql = "INSERT INTO DISCIPLINAGR (coddis, verdis, nomdis) VALUES 
                                    (:coddis,convert(tinyint,:verdis),:nomdis)";
 
@@ -162,14 +170,15 @@ class GraduacaoTest extends TestCase
             'nomdis' => 'Arqueologia Mesopotamica',
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame('Arqueologia Mesopotamica', Graduacao::nomeDisciplina('TLC0023'));   
-    }    
+        $this->assertSame('Arqueologia Mesopotamica', Graduacao::nomeDisciplina('TLC0023'));
+    }
 
 
-    public function test_creditosDisciplina(){
+    public function test_creditosDisciplina()
+    {
 
         DB::getInstance()->prepare('DELETE FROM DISCIPLINAGR')->execute();
-    
+
         $sql = "INSERT INTO DISCIPLINAGR (coddis, verdis, nomdis, creaul) VALUES 
                                    (:coddis,convert(tinyint,:verdis),:nomdis,convert(tinyint,:creaul))";
 
@@ -180,13 +189,14 @@ class GraduacaoTest extends TestCase
             'creaul' => '12',
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame('12', Graduacao::creditosDisciplina('TLC0023'));   
-    }    
+        $this->assertSame('12', Graduacao::creditosDisciplina('TLC0023'));
+    }
 
-    public function test_curso(){
+    public function test_curso()
+    {
 
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
-    
+
         $sql = "INSERT INTO LOCALIZAPESSOA (codpes, codundclg) VALUES 
                                    (convert(int,:codpes),convert(int,:codundclg))";
 
@@ -195,30 +205,32 @@ class GraduacaoTest extends TestCase
             'codundclg' => 7,
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertTrue(true, Graduacao::curso(123456, 7));   
+        $this->assertTrue(true, Graduacao::curso(123456, 7));
     }
 
-    public function test_verificarCoordenadorCursoGrad(){
+    public function test_verificarCoordenadorCursoGrad()
+    {
 
         DB::getInstance()->prepare('DELETE FROM CURSOGRCOORDENADOR')->execute();
-    
+
         $sql = "INSERT INTO CURSOGRCOORDENADOR (codpesdct, dtainicdn, dtafimcdn) VALUES 
                                    (convert(int,:codpesdct), convert(smalldatetime,:dtainicdn), convert(smalldatetime,:dtafimcdn))";
 
         $data = [
             'codpesdct' => 333444,
-            'dtainicdn' => '2020-03-14 00:00:00', 
+            'dtainicdn' => '2020-03-14 00:00:00',
             'dtafimcdn' => '2021-03-13 00:00:00',
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertTrue(true, Graduacao::verificarCoordenadorCursoGrad(333444));   
+        $this->assertTrue(true, Graduacao::verificarCoordenadorCursoGrad(333444));
     }
 
-    public function test_contarAtivosPorGenero(){
+    public function test_contarAtivosPorGenero()
+    {
 
         DB::getInstance()->prepare('DELETE FROM SITALUNOATIVOGR')->execute();
-        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();                
-    
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+
         $sql = "INSERT INTO PESSOA (sexpes) VALUES 
                                    (:sexpes)";
 
@@ -234,16 +246,17 @@ class GraduacaoTest extends TestCase
         $data = [
             'codcur' => 4,
         ];
-        
+
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame('0', Graduacao::contarAtivosPorGenero('M', 4));      
+        $this->assertSame('0', Graduacao::contarAtivosPorGenero('M', 4));
     }
 
-    public function test_setorAluno(){
+    public function test_setorAluno()
+    {
 
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
         DB::getInstance()->prepare('DELETE FROM CURSOGRCOORDENADOR')->execute();
-    
+
         $sql = "INSERT INTO LOCALIZAPESSOA (codpes, nomabvset) VALUES 
                                    (convert(int,:codpes),:nomabvset)";
 
@@ -265,10 +278,11 @@ class GraduacaoTest extends TestCase
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $this->assertIsArray(Graduacao::setorAluno(123467, 8));   
+        $this->assertIsArray(Graduacao::setorAluno(123467, 8));
     }
 
-    public function test_disciplinasConcluidas(){
+    public function test_disciplinasConcluidas()
+    {
         DB::getInstance()->prepare('DELETE FROM HISTESCOLARGR')->execute();
         DB::getInstance()->prepare('DELETE FROM DISCIPLINAGR')->execute();
 
@@ -283,7 +297,7 @@ class GraduacaoTest extends TestCase
             'codtur' => '0',
             'rstfim' => 'A',
             'stamtr' => 'A',
-        ];    
+        ];
 
         DB::getInstance()->prepare($sql)->execute($data);
 
@@ -295,19 +309,20 @@ class GraduacaoTest extends TestCase
             'verdis' => '3',
             'creaul' => '12',
             'cretrb' => '4',
-        ];    
+        ];
 
         DB::getInstance()->prepare($sql)->execute($data);
 
         $this->assertIsArray(Graduacao::disciplinasConcluidas(123467, 8));
     }
 
-    public function test_creditosDisciplinasConcluidasAproveitamentoEstudosExterior(){
+    public function test_creditosDisciplinasConcluidasAproveitamentoEstudosExterior()
+    {
 
         DB::getInstance()->prepare('DELETE FROM DISCIPLINAGR')->execute();
         DB::getInstance()->prepare('DELETE FROM HISTESCOLARGR')->execute();
         DB::getInstance()->prepare('DELETE FROM REQUERHISTESC')->execute();
-    
+
         $sql = "INSERT INTO REQUERHISTESC (codpes,coddis,verdis,codtur,creaulatb) VALUES 
                                     (convert(int,:codpes),:coddis,convert(tinyint,:verdis),:codtur,convert(tinyint,:creaulatb))";
 
@@ -331,7 +346,7 @@ class GraduacaoTest extends TestCase
             'verdis' => '3',
             'codtur' => '0',
             'rstfim' => 'D',
-        ];    
+        ];
 
         DB::getInstance()->prepare($sql)->execute($data);
 
@@ -341,17 +356,18 @@ class GraduacaoTest extends TestCase
         $data = [
             'coddis' => 'CED0043',
             'verdis' => '3',
-        ];    
+        ];
 
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertIsArray(Graduacao::creditosDisciplinasConcluidasAproveitamentoEstudosExterior(123467, 8));   
+        $this->assertIsArray(Graduacao::creditosDisciplinasConcluidasAproveitamentoEstudosExterior(123467, 8));
     }
 
-    public function test_obterGradeHoraria(){
+    public function test_obterGradeHoraria()
+    {
         DB::getInstance()->prepare('DELETE FROM HISTESCOLARGR')->execute();
         DB::getInstance()->prepare('DELETE FROM OCUPTURMA')->execute();
         DB::getInstance()->prepare('DELETE FROM PERIODOHORARIO')->execute();
-    
+
         $sql = "INSERT INTO HISTESCOLARGR (codpes,coddis,codtur) VALUES 
                                     (convert(int,:codpes),:coddis,:codtur)";
 
@@ -380,9 +396,42 @@ class GraduacaoTest extends TestCase
             'codperhor' => 1,
             'horent' => '07:00',
             'horsai' => '09:00'
-        ]; 
+        ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertIsArray(Graduacao::obterGradeHoraria(123467));   
+        $this->assertIsArray(Graduacao::obterGradeHoraria(123467));
     }
 
+    public function test_verificarPessoaGraduadaUnidade()
+    {
+        putenv('REPLICADO_CODCUR=81003');
+        // PROGRAMAGR
+        DB::getInstance()->prepare('DELETE FROM PROGRAMAGR')->execute();
+
+        $sql = "INSERT INTO PROGRAMAGR (codpgm, codpes, tipencpgm)
+                VALUES (convert(int, :codpgm), convert(int, :codpes), :tipencpgm)";
+
+        $data = [
+            'codpgm' => 1,
+            'codpes' => 123456,
+            'tipencpgm' => 'Conclusao' //adicionado sem acento por problema de codificação
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        // HABILPROGGR
+        DB::getInstance()->prepare('DELETE FROM HABILPROGGR')->execute();
+        $sql = "INSERT INTO HABILPROGGR (codpgm, codpes, codcur, codhab, dtaclcgru, tipenchab)
+                VALUES (convert(int, :codpgm), convert(int, :codpes), convert(int, :codcur), convert(int, :codhab), :dtaclcgru, :tipenchab)";
+
+        $data = [
+            'codpgm' => 1,
+            'codpes' => 123456,
+            'codcur' => 81003,
+            'codhab' => 4,
+            'dtaclcgru' => '2012-02-02 00:00:00',
+            'tipenchab' => 'Termino' //adicionado sem acento por problema de codificação
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $this->assertTrue(Graduacao::verificarPessoaGraduadaUnidade(123456), 'Graduação não encontrada');
+    }
 }
