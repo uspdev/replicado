@@ -486,4 +486,27 @@ class Posgraduacao
         if(!empty($result)) return true;
         return false;
     }
+
+    /**
+     * Retorna lista de orientandos de um docente, 
+     * com os nomes e o respectivo nível de programa de pós graduação (MESTRADO ou DOUTORADO).
+     *
+     * @param  int $codpes: Número USP do docente (orientador).
+     *
+     * @return array
+     */
+    public static function obterOrientandos($codpes)
+    {
+        $query = " SELECT DISTINCT (v.nompes), (v.nivpgm)
+                    FROM R39PGMORIDOC r
+                    INNER JOIN VINCULOPESSOAUSP v  ON r.codpespgm = v.codpes
+                    WHERE r.codpes = convert(int,:codpes) 
+                    AND r.dtafimort = NULL  
+                    AND v.nivpgm IS NOT NULL
+                    ORDER BY v.nompes ";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        return DB::fetchAll($query, $param);
+    }
 }
