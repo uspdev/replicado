@@ -489,7 +489,7 @@ class Posgraduacao
 
     /**
      * Retorna lista de orientandos de um docente, 
-     * com os nomes e o respectivo nível de programa de pós graduação (MESTRADO ou DOUTORADO).
+     * com os nomes e o respectivo nível de programa de pós graduação (MESTRADO, DOUTORADO ou DOUTORADO DIRETO).
      *
      * @param  int $codpes: Número USP do docente (orientador).
      *
