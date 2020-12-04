@@ -210,7 +210,6 @@ class Lattes
         } else return false;
     }
 
-
     /**
     * Recebe o número USP e devolve a linha de pesquisa
     * 
@@ -260,5 +259,42 @@ class Lattes
     
     }
 
+    /**
+    * Recebe o número USP e devolve array com os 5 últimos livros publicados cadastrados no currículo Lattes,
+    * com o respectivo título do livro, ano, número de páginas e nome da editora
+    *  
+    * @param Integer $codpes = Número USP
+    * @param Integer $limit = Número de livros a serem retornados, se não preenchido, o valor default é 5
+    * @return String|Bool
+    */
+    public static function getLivrosPublicados($codpes, $limit = 5){
+        $lattes = self::getArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'])) return false;
+        
+        $livros = $lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'];
+        if(array_key_exists('LIVROS-PUBLICADOS-OU-ORGANIZADOS',$livros)){
+            $livros = $lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS']['LIVROS-PUBLICADOS-OU-ORGANIZADOS']['LIVRO-PUBLICADO-OU-ORGANIZADO'];
+                if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS']['LIVROS-PUBLICADOS-OU-ORGANIZADOS']['LIVRO-PUBLICADO-OU-ORGANIZADO'])){
+                    return false;
+                }else
+            $i = 0;
+            $ultimos_livros = [];
+            foreach($livros as $val){
+                if($limit != -1 && $i > ($limit - 1) ) break; $i++; 
+                $dados_basicos = (!isset($val['DADOS-BASICOS-DO-LIVRO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-LIVRO';
+                $detalhamento = (!isset($val['DETALHAMENTO-DO-LIVRO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-LIVRO';
+               
+                $aux_livro = [
+                    'TITULO-DO-LIVRO' => $val[$dados_basicos]['@attributes']['TITULO-DO-LIVRO'] ?? '',
+                    'ANO' => $val[$dados_basicos]['@attributes']['ANO'] ?? '',
+                    'NUMERO-DE-PAGINAS' => $val[$detalhamento]['@attributes']['NUMERO-DE-PAGINAS'] ?? '',
+                    'NOME-DA-EDITORA' => $val[$detalhamento]['@attributes']['NOME-DA-EDITORA'] ?? '',
+                ];
+                array_push($ultimos_livros, $aux_livro);
+            }
+            return $ultimos_livros;
+        } else return false;
+    }
 
 }
