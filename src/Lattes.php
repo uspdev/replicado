@@ -161,7 +161,7 @@ class Lattes
         return $resumo_cv;
     }
 
-    /**
+     /**
     * Recebe o número USP e devolve array com os últimos artigos cadastrados no currículo Lattes,
     * com o respectivo título do artigo, nome da revista ou períodico, volume, número de páginas e ano de publicação
     *  
@@ -195,7 +195,23 @@ class Lattes
                 if($limit != -1 && $i > ($limit - 1) ) break; $i++; //-1 retorna tudo
                 $dados_basicos = (!isset($val['DADOS-BASICOS-DO-ARTIGO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-ARTIGO';
                 $detalhamento = (!isset($val['DETALHAMENTO-DO-ARTIGO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-ARTIGO';
+                $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                usort($val[$autores], function ($a, $b) {
+                    if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                        return 0;
+                    }
+                    return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                });
                
+                foreach($val[$autores] as $autor){
+                    array_push($aux_autores, [
+                        "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                        "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                        ]);
+                }
                 $aux_artigo = [
                     'TITULO-DO-ARTIGO' => $val[$dados_basicos]['@attributes']['TITULO-DO-ARTIGO'] ?? '',
                     'TITULO-DO-PERIODICO-OU-REVISTA' => $val[$detalhamento]['@attributes']['TITULO-DO-PERIODICO-OU-REVISTA'] ?? '',
@@ -203,6 +219,7 @@ class Lattes
                     'PAGINA-INICIAL' => $val[$detalhamento]['@attributes']['PAGINA-INICIAL'] ?? '',
                     'PAGINA-FINAL' => $val[$detalhamento]['@attributes']['PAGINA-FINAL'] ?? '',
                     'ANO' => $val[$dados_basicos]['@attributes']['ANO-DO-ARTIGO'] ?? '',
+                    'AUTORES' => $aux_autores
                 ];
                 array_push($ultimos_artigos, $aux_artigo);
             }
@@ -284,12 +301,32 @@ class Lattes
                 if($limit != -1 && $i > ($limit - 1) ) break; $i++; 
                 $dados_basicos = (!isset($val['DADOS-BASICOS-DO-LIVRO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-LIVRO';
                 $detalhamento = (!isset($val['DETALHAMENTO-DO-LIVRO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-LIVRO';
+                $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                usort($val[$autores], function ($a, $b) {
+                    if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                        return 0;
+                    }
+                    return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                });
                
+                foreach($val[$autores] as $autor){
+                    array_push($aux_autores, [
+                        "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                        "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                        ]);
+                }
+               
+
                 $aux_livro = [
                     'TITULO-DO-LIVRO' => $val[$dados_basicos]['@attributes']['TITULO-DO-LIVRO'] ?? '',
                     'ANO' => $val[$dados_basicos]['@attributes']['ANO'] ?? '',
                     'NUMERO-DE-PAGINAS' => $val[$detalhamento]['@attributes']['NUMERO-DE-PAGINAS'] ?? '',
                     'NOME-DA-EDITORA' => $val[$detalhamento]['@attributes']['NOME-DA-EDITORA'] ?? '',
+                    'CIDADE-DA-EDITORA' => $val[$detalhamento]['@attributes']['CIDADE-DA-EDITORA'] ?? '',
+                    'AUTORES' => $aux_autores
                 ];
                 array_push($ultimos_livros, $aux_livro);
             }
