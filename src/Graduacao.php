@@ -31,7 +31,8 @@ class Graduacao
      * @param Int $condundclgi
      * @param String $partNome (optional)
      * @return array(campos tabela LOCALIZAPESSOA)
-     */    public static function ativos($codundclgi, $parteNome = null)
+     */
+    public static function ativos($codundclgi, $parteNome = null)
     {
         $param = [
             'codundclgi' => $codundclgi,
