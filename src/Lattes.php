@@ -161,7 +161,7 @@ class Lattes
         return $resumo_cv;
     }
 
-    /**
+     /**
     * Recebe o número USP e devolve array com os últimos artigos cadastrados no currículo Lattes,
     * com o respectivo título do artigo, nome da revista ou períodico, volume, número de páginas e ano de publicação
     *  
@@ -195,7 +195,23 @@ class Lattes
                 if($limit != -1 && $i > ($limit - 1) ) break; $i++; //-1 retorna tudo
                 $dados_basicos = (!isset($val['DADOS-BASICOS-DO-ARTIGO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-ARTIGO';
                 $detalhamento = (!isset($val['DETALHAMENTO-DO-ARTIGO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-ARTIGO';
+                $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                usort($val[$autores], function ($a, $b) {
+                    if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                        return 0;
+                    }
+                    return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                });
                
+                foreach($val[$autores] as $autor){
+                    array_push($aux_autores, [
+                        "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                        "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                        ]);
+                }
                 $aux_artigo = [
                     'TITULO-DO-ARTIGO' => $val[$dados_basicos]['@attributes']['TITULO-DO-ARTIGO'] ?? '',
                     'TITULO-DO-PERIODICO-OU-REVISTA' => $val[$detalhamento]['@attributes']['TITULO-DO-PERIODICO-OU-REVISTA'] ?? '',
@@ -203,11 +219,61 @@ class Lattes
                     'PAGINA-INICIAL' => $val[$detalhamento]['@attributes']['PAGINA-INICIAL'] ?? '',
                     'PAGINA-FINAL' => $val[$detalhamento]['@attributes']['PAGINA-FINAL'] ?? '',
                     'ANO' => $val[$dados_basicos]['@attributes']['ANO-DO-ARTIGO'] ?? '',
+                    'AUTORES' => $aux_autores
                 ];
                 array_push($ultimos_artigos, $aux_artigo);
             }
             return $ultimos_artigos;
         } else return false;
+    }
+
+    /**
+    * Recebe o número USP e devolve a linha de pesquisa
+    * 
+    * @param Integer $codpes
+    * @return String|Bool
+    * 
+    */
+    public static function getLinhasPesquisa($codpes){
+        $lattes = self::getArray($codpes);
+        $linhas_de_pesquisa = [];
+        if(!$lattes) return false;
+
+        if(isset($lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL']))
+        {
+            $atuacao_profissional = $lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'];
+            foreach($atuacao_profissional as $ap){
+                
+                if(isset($ap['ATIVIDADES-DE-PESQUISA-E-DESENVOLVIMENTO']['PESQUISA-E-DESENVOLVIMENTO'])){
+                    foreach ($ap['ATIVIDADES-DE-PESQUISA-E-DESENVOLVIMENTO']['PESQUISA-E-DESENVOLVIMENTO'] as $linha_pesquisa) {
+                        
+
+                        if(isset($linha_pesquisa['LINHA-DE-PESQUISA'])){
+                            foreach($linha_pesquisa['LINHA-DE-PESQUISA'] as $lp){
+                                if(isset($lp['@attributes']['TITULO-DA-LINHA-DE-PESQUISA'])){
+                                    array_push($linhas_de_pesquisa, $lp['@attributes']['TITULO-DA-LINHA-DE-PESQUISA']);
+                                }
+                            }
+                        }else{
+                            foreach($linha_pesquisa as $lp){
+                                if(isset($lp['@attributes']['TITULO-DA-LINHA-DE-PESQUISA'])){
+                                    array_push($linhas_de_pesquisa, $lp['@attributes']['TITULO-DA-LINHA-DE-PESQUISA']);
+                                }
+                            }
+                        }
+                        
+                        if(isset($linha_pesquisa['LINHA-DE-PESQUISA']['@attributes']['TITULO-DA-LINHA-DE-PESQUISA'])){
+                            array_push($linhas_de_pesquisa, $linha_pesquisa['LINHA-DE-PESQUISA']['@attributes']['TITULO-DA-LINHA-DE-PESQUISA']);
+                        }elseif (isset($linha_pesquisa['@attributes']['TITULO-DA-LINHA-DE-PESQUISA'])) {
+                            array_push($linhas_de_pesquisa, $linha_pesquisa['@attributes']['TITULO-DA-LINHA-DE-PESQUISA']);
+                        }
+                    }
+                }
+            }
+            return $linhas_de_pesquisa;
+        }
+        return false;
+    
     }
 
     /**
@@ -235,16 +301,84 @@ class Lattes
                 if($limit != -1 && $i > ($limit - 1) ) break; $i++; 
                 $dados_basicos = (!isset($val['DADOS-BASICOS-DO-LIVRO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-LIVRO';
                 $detalhamento = (!isset($val['DETALHAMENTO-DO-LIVRO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-LIVRO';
+                $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                usort($val[$autores], function ($a, $b) {
+                    if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                        return 0;
+                    }
+                    return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                });
                
+                foreach($val[$autores] as $autor){
+                    array_push($aux_autores, [
+                        "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                        "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                        ]);
+                }
+               
+
                 $aux_livro = [
                     'TITULO-DO-LIVRO' => $val[$dados_basicos]['@attributes']['TITULO-DO-LIVRO'] ?? '',
                     'ANO' => $val[$dados_basicos]['@attributes']['ANO'] ?? '',
                     'NUMERO-DE-PAGINAS' => $val[$detalhamento]['@attributes']['NUMERO-DE-PAGINAS'] ?? '',
                     'NOME-DA-EDITORA' => $val[$detalhamento]['@attributes']['NOME-DA-EDITORA'] ?? '',
+                    'CIDADE-DA-EDITORA' => $val[$detalhamento]['@attributes']['CIDADE-DA-EDITORA'] ?? '',
+                    'AUTORES' => $aux_autores
                 ];
                 array_push($ultimos_livros, $aux_livro);
             }
             return $ultimos_livros;
+        } else return false;
+    }
+
+    /**
+    * Recebe o número USP e devolve array com os 5 últimos capítulos de livros publicados cadastrados no currículo Lattes,
+    * com o respectivo título do capítulo, título do livro, número de volumes, página inicial e final do capítulo, ano e nome da editora.
+    *  
+    * @param Integer $codpes = Número USP
+    * @param Integer $limit = Número de capítulos publicados a serem retornados, se não preenchido, o valor default é 5
+    * @return String|Bool
+    */
+    public static function getCapitulosLivros($codpes, $limit = 5){
+        $lattes = self::getArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'])) return false;
+        $capitulos = $lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'];
+        
+        if(array_key_exists('CAPITULOS-DE-LIVROS-PUBLICADOS',$capitulos)){
+            $capitulos = $lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS']['CAPITULOS-DE-LIVROS-PUBLICADOS']['CAPITULO-DE-LIVRO-PUBLICADO'];
+                if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS']['CAPITULOS-DE-LIVROS-PUBLICADOS']['CAPITULO-DE-LIVRO-PUBLICADO'])){
+                    return false;
+                } else
+            //ordena em ordem decrescente.
+            usort($capitulos, function ($a, $b) {
+                if(!isset($b['@attributes']['SEQUENCIA-PRODUCAO'])){
+                    return 0;
+                }
+                return (int)$b['@attributes']['SEQUENCIA-PRODUCAO'] - (int)$a['@attributes']['SEQUENCIA-PRODUCAO'];
+            });
+            $i = 0;
+            $ultimos_capitulos = [];
+            foreach($capitulos as $val){
+                if($limit != -1 && $i > ($limit - 1) ) break; $i++; //-1 retorna tudo
+                $dados_basicos = (!isset($val['DADOS-BASICOS-DO-CAPITULO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-CAPITULO';
+                $detalhamento = (!isset($val['DETALHAMENTO-DO-CAPITULO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-CAPITULO';
+               
+                $aux_capitulo = [
+                    'TITULO-DO-CAPITULO-DO-LIVRO' => $val[$dados_basicos]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'] ?? '',
+                    'TITULO-DO-LIVRO' => $val[$detalhamento]['@attributes']['TITULO-DO-LIVRO'] ?? '',
+                    'NUMERO-DE-VOLUMES' => $val[$detalhamento]['@attributes']['NUMERO-DE-VOLUMES'] ?? '',
+                    'PAGINA-INICIAL' => $val[$detalhamento]['@attributes']['PAGINA-INICIAL'] ?? '',
+                    'PAGINA-FINAL' => $val[$detalhamento]['@attributes']['PAGINA-FINAL'] ?? '',
+                    'ANO' => $val[$dados_basicos]['@attributes']['ANO'] ?? '',
+                    'NOME-DA-EDITORA' => $val[$detalhamento]['@attributes']['NOME-DA-EDITORA'] ?? '',
+                ];
+                array_push($ultimos_capitulos, $aux_capitulo);
+            }
+            return $ultimos_capitulos;
         } else return false;
     }
 }

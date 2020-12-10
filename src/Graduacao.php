@@ -384,7 +384,9 @@ class Graduacao
     }
 
     /**
-     * Método para retornar se uma pessoas é graduada nos cursos da unidade
+     * Método para retornar se uma pessoa é graduada nos cursos da unidade
+     * Retornará true caso tenha status Conclusão em um programa ou uma habilitação,
+     * caso contrário, retornará false
      * @param Integer $codpes
      * @return boolean
      */
@@ -399,12 +401,13 @@ class Graduacao
         $query = "SELECT p.codpes
                     FROM PROGRAMAGR p INNER JOIN HABILPROGGR h ON (p.codpes = h.codpes AND p.codpgm = h.codpgm)
                     WHERE p.codpes = convert(int, :codpes)
-                        AND tipencpgm LIKE :tipencpgm
+                        AND (tipencpgm LIKE :tipencpgm OR tipenchab LIKE :tipenchab)
                         AND h.dtaclcgru IS NOT NULL
                         AND h.codcur IN ({$cursos})";
         $param = [
             'codpes' => $codpes,
-            'tipencpgm' => 'Conclus_o'
+            'tipencpgm' => 'Conclus_o',
+            'tipenchab' => 'Conclus_o'
         ];
 
         $result = DB::fetch($query, $param);
@@ -412,6 +415,8 @@ class Graduacao
         if ($result) {
             return true;
         }
+
+        return false;
     }
 
     /*
@@ -424,7 +429,8 @@ class Graduacao
      * @param Integer $codorg : Código da unidade
      * @return boolean
      */
-    public static function verificarExAlunoGrad($codpes, $codorg){
+    public static function verificarExAlunoGrad($codpes, $codorg)
+    {
         $query = " SELECT codpes from TITULOPES 
                     WHERE codpes = convert(int,:codpes)
                     AND codcur IS NOT NULL
@@ -434,12 +440,13 @@ class Graduacao
             'codorg' => $codorg
         ];
         $result = DB::fetch($query, $param);
-        if(!empty($result)) return true;
+        if (!empty($result)) return true;
         return false;
     }
 
-    public static function obterGradeHoraria($codpes){
-        $current = date("Y") . (date("m") > 6? 2:1);
+    public static function obterGradeHoraria($codpes)
+    {
+        $current = date("Y") . (date("m") > 6 ? 2 : 1);
 
         $query =  "SELECT h.coddis, h.codtur, o.diasmnocp, p.horent, p.horsai FROM HISTESCOLARGR h 
                     INNER JOIN OCUPTURMA o ON (h.coddis = o.coddis AND h.codtur = o.codtur)
