@@ -485,4 +485,23 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertTrue(true, Posgraduacao::verificarExAlunoPos(13131313, 7));
     }
+
+    public function test_membrosBanca(){
+        DB::getInstance()->prepare('DELETE FROM R48PGMTRBDOC')->execute();
+
+        $sql = "INSERT INTO R48PGMTRBDOC (codpes, codpesdct, codare, numseqpgm) VALUES (
+            convert(int,:codpes),
+            convert(int,:codpesdct),
+            convert(int,:codare),
+            convert(int,:numseqpgm))";
+
+        $data = [
+            'codpes' => 123456,
+            'codpesdct' => 987654,
+            'codare' => 8000,
+            'numseqpgm' => 1
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame('987654', Posgraduacao::membrosBanca(123456)[0]);
+    }
 }
