@@ -490,6 +490,10 @@ class Posgraduacao
     /**
      * Retorna os membros da banca de um discente
      * Pode-se especificar ou não o programa ou o número sequencial
+     * @param Integer $codpes : Número USP 
+     * @param Integer $codare : Código da programa de Pós
+     * @param Integer $numseqpgm : Número sequencial em que o maior indica último vínculo
+     * @return array|boolean
      **/
     public function membrosBanca($codpes, $codare = null, $numseqpgm = null){
       $query = " SELECT codpesdct from R48PGMTRBDOC r
@@ -509,6 +513,7 @@ class Posgraduacao
       }
 
       $result = DB::fetchAll($query, $param);
-      return array_column($result, 'codpesdct');
+      if($result) return array_column($result, 'codpesdct');
+      return false;
     }
 }
