@@ -486,4 +486,29 @@ class Posgraduacao
         if(!empty($result)) return true;
         return false;
     }
+
+    /**
+     * Retorna os membros da banca de um discente
+     * Pode-se especificar ou não o programa ou o número sequencial
+     **/
+    public function membrosBanca($codpes, $codare = null, $numseqpgm = null){
+      $query = " SELECT codpesdct from R48PGMTRBDOC r
+                   WHERE r.codpes = convert(int,:codpes)";
+      $param = [
+            'codpes'    => $codpes,
+          ];
+
+      if(!is_null($codare)){
+        $query .= " AND r.codare = convert(int,:codare)";
+        $param['codare'] = $codare;
+      }
+      if(!is_null($numseqpgm)){
+        $query .= " AND r.numseqpgm = convert(int,:numseqpgm)";
+        $param['numseqpgm'] = $numseqpgm;
+
+      }
+
+      $result = DB::fetchAll($query, $param);
+      return array_column($result, 'codpesdct');
+    }
 }
