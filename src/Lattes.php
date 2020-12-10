@@ -362,21 +362,36 @@ class Lattes
             });
             $i = 0;
             $ultimos_capitulos = [];
-            foreach($capitulos as $val){
-                if($limit != -1 && $i > ($limit - 1) ) break; $i++; //-1 retorna tudo
-                $dados_basicos = (!isset($val['DADOS-BASICOS-DO-CAPITULO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-CAPITULO';
-                $detalhamento = (!isset($val['DETALHAMENTO-DO-CAPITULO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-CAPITULO';
-               
+            if(isset($capitulos[1]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'])){
                 $aux_capitulo = [
-                    'TITULO-DO-CAPITULO-DO-LIVRO' => $val[$dados_basicos]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'] ?? '',
-                    'TITULO-DO-LIVRO' => $val[$detalhamento]['@attributes']['TITULO-DO-LIVRO'] ?? '',
-                    'NUMERO-DE-VOLUMES' => $val[$detalhamento]['@attributes']['NUMERO-DE-VOLUMES'] ?? '',
-                    'PAGINA-INICIAL' => $val[$detalhamento]['@attributes']['PAGINA-INICIAL'] ?? '',
-                    'PAGINA-FINAL' => $val[$detalhamento]['@attributes']['PAGINA-FINAL'] ?? '',
-                    'ANO' => $val[$dados_basicos]['@attributes']['ANO'] ?? '',
-                    'NOME-DA-EDITORA' => $val[$detalhamento]['@attributes']['NOME-DA-EDITORA'] ?? '',
+                    'TITULO-DO-CAPITULO-DO-LIVRO' => $capitulos[1]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'] ?? '',
+                    'TITULO-DO-LIVRO' => $capitulos[2]['@attributes']['TITULO-DO-LIVRO'] ?? '',
+                    'NUMERO-DE-VOLUMES' => $capitulos[2]['@attributes']['NUMERO-DE-VOLUMES'] ?? '',
+                    'PAGINA-INICIAL' => $capitulos[2]['@attributes']['PAGINA-INICIAL'] ?? '',
+                    'PAGINA-FINAL' => $capitulos[2]['@attributes']['PAGINA-FINAL'] ?? '',
+                    'ANO' => $capitulos[1]['@attributes']['ANO'] ?? '',
+                    'NOME-DA-EDITORA' => $capitulos[2]['@attributes']['NOME-DA-EDITORA'] ?? '',
                 ];
                 array_push($ultimos_capitulos, $aux_capitulo);
+            }else{
+                foreach($capitulos as $val){
+                    if($limit != -1 && $i > ($limit - 1) ) break; $i++; //-1 retorna tudo
+                    $dados_basicos = (!isset($val['DADOS-BASICOS-DO-CAPITULO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-CAPITULO';
+                    $detalhamento = (!isset($val['DETALHAMENTO-DO-CAPITULO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-CAPITULO';
+                
+                    if(isset($val[$dados_basicos]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'])){
+                        $aux_capitulo = [
+                            'TITULO-DO-CAPITULO-DO-LIVRO' => $val[$dados_basicos]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'] ?? '',
+                            'TITULO-DO-LIVRO' => $val[$detalhamento]['@attributes']['TITULO-DO-LIVRO'] ?? '',
+                            'NUMERO-DE-VOLUMES' => $val[$detalhamento]['@attributes']['NUMERO-DE-VOLUMES'] ?? '',
+                            'PAGINA-INICIAL' => $val[$detalhamento]['@attributes']['PAGINA-INICIAL'] ?? '',
+                            'PAGINA-FINAL' => $val[$detalhamento]['@attributes']['PAGINA-FINAL'] ?? '',
+                            'ANO' => $val[$dados_basicos]['@attributes']['ANO'] ?? '',
+                            'NOME-DA-EDITORA' => $val[$detalhamento]['@attributes']['NOME-DA-EDITORA'] ?? '',
+                        ];
+                        array_push($ultimos_capitulos, $aux_capitulo);
+                    }
+                }
             }
             return $ultimos_capitulos;
         } else return false;
