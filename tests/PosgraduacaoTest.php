@@ -542,4 +542,52 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('987654', Posgraduacao::membrosBanca(123456)[0]);
     }
+
+    public function test_obterOrientandosConcluidos(){
+        DB::getInstance()->prepare('DELETE FROM R39PGMORIDOC')->execute();
+        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+        DB::getInstance()->prepare('DELETE FROM NOMEAREA')->execute();
+        DB::getInstance()->prepare('DELETE FROM AGPROGRAMA')->execute();
+
+        $sql = "INSERT INTO R39PGMORIDOC (codpes, codpespgm, codare, dtafimort) 
+                    VALUES (convert(int,:codpes),convert(int,:codpespgm),convert(int,:codare),:dtafimort)";
+
+        $data = [
+            'codpes' => 11698748,
+            'codpespgm' => 123695,
+            'codare' => 7,
+            'dtafimort' => '2019-11-05 00:00:00',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO PESSOA (codpes, nompes) 
+                    VALUES (convert(int,:codpes),:nompes)";
+
+        $data = [
+            'codpes' => 123695,
+            'nompes' => 'Henry'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO NOMEAREA (codare, nomare, dtafimare) 
+                    VALUES (convert(int,:codare),:nomare,:dtafimare)";
+
+        $data = [
+            'codare' => 6,
+            'nomare' => 'Estudo',
+            'dtafimare' => '2019-11-05 00:00:00'            
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO AGPROGRAMA (codpes, dtadfapgm, nivpgm) 
+                    VALUES (convert(int,:codpes),:dtadfapgm,:nivpgm)";
+
+        $data = [
+            'codpes' => 123695,
+            'dtadfapgm' => '2019-11-05 00:00:00',
+            'nivpgm' => 'MO'            
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame(Array(), Posgraduacao::obterOrientandosConcluidos(11698748));
+    }
 }
