@@ -518,7 +518,7 @@ class Posgraduacao
     }
     
     /*
-     * Retorna lista de orientandos de um docente, 
+     * Retorna lista de orientandos ativos de um docente (orientador), 
      * com o nome, o respectivo nível de programa de pós graduação 
      * (Mestrado, Doutoradp ou Doutoradp Direto) e nome da área.
      *
@@ -526,7 +526,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function obterOrientandos($codpes)
+    public static function obterOrientandosAtivos($codpes)
     {
         $query = " SELECT DISTINCT (v.nompes), (v.nivpgm), (n.nomare)
                     FROM R39PGMORIDOC r
