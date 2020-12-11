@@ -485,4 +485,42 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertTrue(true, Posgraduacao::verificarExAlunoPos(13131313, 7));
     }
+
+    public function test_obterOrientandos(){
+        DB::getInstance()->prepare('DELETE FROM R39PGMORIDOC')->execute();
+        DB::getInstance()->prepare('DELETE FROM VINCULOPESSOAUSP')->execute();
+        DB::getInstance()->prepare('DELETE FROM NOMEAREA')->execute();
+
+        $sql = "INSERT INTO R39PGMORIDOC (codpes, codpespgm, codare, dtafimort) 
+                    VALUES (convert(int,:codpes),convert(int,:codpespgm),convert(int,:codare),:dtafimort)";
+
+        $data = [
+            'codpes' => 7777777,
+            'codpespgm' => 123695,
+            'codare' => 7,
+            'dtafimort' => NULL,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO VINCULOPESSOAUSP (codpes, nompes, nivpgm) 
+                    VALUES (convert(int,:codpes),:nompes,:nivpgm)";
+
+        $data = [
+            'codpes' => 123695,
+            'nompes' => 'Henry',
+            'nivpgm' => 'MO'
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO NOMEAREA (codare, nomare, dtafimare) 
+                    VALUES (convert(int,:codare),:nomare,:dtafimare)";
+
+        $data = [
+            'codare' => 6,
+            'nomare' => 'Estudo',
+            'dtafimare' => NULL            
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+        $this->assertSame(Array(), Posgraduacao::obterOrientandos(7777777));
+    }
 }
