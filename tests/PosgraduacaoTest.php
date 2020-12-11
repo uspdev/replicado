@@ -486,7 +486,6 @@ class PosgraduacaoTest extends TestCase
         $this->assertTrue(true, Posgraduacao::verificarExAlunoPos(13131313, 7));
     }
 
-<<<<<<< HEAD
     public function test_obterOrientandos(){
         DB::getInstance()->prepare('DELETE FROM R39PGMORIDOC')->execute();
         DB::getInstance()->prepare('DELETE FROM VINCULOPESSOAUSP')->execute();
@@ -523,7 +522,8 @@ class PosgraduacaoTest extends TestCase
         ];
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame(Array(), Posgraduacao::obterOrientandos(7777777));
-=======
+    }
+
     public function test_membrosBanca(){
         DB::getInstance()->prepare('DELETE FROM R48PGMTRBDOC')->execute();
 
@@ -541,6 +541,5 @@ class PosgraduacaoTest extends TestCase
         ];
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertSame('987654', Posgraduacao::membrosBanca(123456)[0]);
->>>>>>> upstream/master
     }
 }
