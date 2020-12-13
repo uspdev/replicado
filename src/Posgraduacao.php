@@ -518,22 +518,53 @@ class Posgraduacao
     }
     
     /*
-     * Retorna lista de orientandos de um docente, 
-     * com os nomes e o respectivo nível de programa de pós graduação (MESTRADO, DOUTORADO ou DOUTORADO DIRETO).
+     * Retorna lista de orientandos ativos de um docente (orientador), 
+     * com o nome, o respectivo nível de programa de pós graduação 
+     * (Mestrado, Doutorado ou Doutorado Direto) e nome da área.
      *
      * @param  int $codpes: Número USP do docente (orientador).
      *
      * @return array
      */
-    public static function obterOrientandos($codpes)
+    public static function obterOrientandosAtivos($codpes)
     {
-        $query = " SELECT DISTINCT (v.nompes), (v.nivpgm)
+        $query = " SELECT DISTINCT (v.nompes), (v.nivpgm), (n.nomare)
                     FROM R39PGMORIDOC r
                     INNER JOIN VINCULOPESSOAUSP v  ON r.codpespgm = v.codpes
+                    INNER JOIN NOMEAREA n ON r.codare = n.codare
                     WHERE r.codpes = convert(int,:codpes) 
                     AND r.dtafimort = NULL  
+                    AND n.dtafimare = NULL 
                     AND v.nivpgm IS NOT NULL
                     ORDER BY v.nompes ";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        return DB::fetchAll($query, $param);
+    }
+
+    /*
+     * Retorna lista de orientandos que já concluíram seus programas (Mestrado, Doutorado ou Doutorado Direto), 
+     * a partir do número USP do orientador.
+     * Retorna o nome, o respectivo nível de programa de pós graduação, nome da área e data de defesa do programa.
+     *
+     * @param  int $codpes: Número USP do docente (orientador).
+     *
+     * @return array
+     */
+    public static function obterOrientandosConcluidos($codpes)
+    {   
+        $query = " SELECT DISTINCT (p.nompes), (a.nivpgm), (n.nomare), (a.dtadfapgm)
+                    FROM R39PGMORIDOC r
+                    INNER JOIN PESSOA p  ON r.codpespgm = p.codpes
+                    INNER JOIN NOMEAREA n ON r.codare = n.codare
+                    INNER JOIN AGPROGRAMA a ON a.codpes = r.codpespgm
+                    WHERE r.codpes = convert(int,:codpes) 
+                    AND r.dtafimort IS NOT NULL
+                    AND n.dtafimare IS NOT NULL  
+                    AND a.dtadfapgm IS NOT NULL
+                    AND a.nivpgm IS NOT NULL
+                    ORDER BY a.nivpgm ";
         $param = [
             'codpes' => $codpes,
         ];
