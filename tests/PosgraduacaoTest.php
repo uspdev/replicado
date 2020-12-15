@@ -553,41 +553,48 @@ class PosgraduacaoTest extends TestCase
                     VALUES (convert(int,:codpes),convert(int,:codpespgm),convert(int,:codare),:dtafimort)";
 
         $data = [
-            'codpes' => 11698748,
-            'codpespgm' => 123695,
-            'codare' => 7,
+            'codpes' => 11698748, #Número USP do docente, a ser passado no parâmetro.
+            'codpespgm' => 123695, #Número USP do orientando, a ser retornado.
+            'codare' => 6,
             'dtafimort' => '2019-11-05 00:00:00',
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO PESSOA (codpes, nompes) 
-                    VALUES (convert(int,:codpes),:nompes)";
+        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, nompesfon, sexpes, dtanas) 
+                    VALUES (convert(int,:codpes),:nompes,:nompesttd,:nompesfon,:sexpes, :dtanas)";
 
         $data = [
-            'codpes' => 123695,
-            'nompes' => 'Henry'
+            'codpes'    => 123695, #Número USP do orientando, a ser retornado.
+            'nompes'    => 'Henry',
+            'nompesttd' => 'Henry',
+            'nompesfon' => 'Henry',
+            'sexpes'    => 'M',
+            'dtanas'    => '1986-11-05 00:00:00',
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO NOMEAREA (codare, nomare, dtafimare) 
-                    VALUES (convert(int,:codare),:nomare,:dtafimare)";
+        $sql = "INSERT INTO NOMEAREA (codare, nomare,codcur, dtafimare) 
+                    VALUES (convert(int,:codare),:nomare,convert(int,:codcur),:dtafimare)";
 
         $data = [
             'codare' => 6,
             'nomare' => 'Estudo',
+            'codcur' => 123,
             'dtafimare' => '2019-11-05 00:00:00'            
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO AGPROGRAMA (codpes, dtadfapgm, nivpgm) 
-                    VALUES (convert(int,:codpes),:dtadfapgm,:nivpgm)";
+        $sql = "INSERT INTO AGPROGRAMA (codpes, dtadfapgm, nivpgm, codare) 
+                    VALUES (convert(int,:codpes),:dtadfapgm,:nivpgm, convert(int,:codare))";
 
         $data = [
-            'codpes' => 123695,
+            'codpes' => 123695, #Número USP do orientando, a ser retornado.
+            'codare' => 6,
             'dtadfapgm' => '2019-11-05 00:00:00',
             'nivpgm' => 'MO'            
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame(Array(), Posgraduacao::obterOrientandosConcluidos(11698748));
+
+        $this->assertSame('Henry', Posgraduacao::obterOrientandosConcluidos(11698748)[0]['nompes']);
     }
 }

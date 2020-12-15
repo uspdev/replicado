@@ -546,7 +546,7 @@ class Posgraduacao
     /*
      * Retorna lista de orientandos que já concluíram seus programas (Mestrado, Doutorado ou Doutorado Direto), 
      * a partir do número USP do orientador.
-     * Retorna o nome, o respectivo nível de programa de pós graduação, nome da área e data de defesa do programa.
+     * Retorna o número USP, nome, o respectivo nível de programa de pós graduação, nome da área e data de defesa do programa.
      *
      * @param  int $codpes: Número USP do docente (orientador).
      *
@@ -554,7 +554,7 @@ class Posgraduacao
      */
     public static function obterOrientandosConcluidos($codpes)
     {   
-        $query = " SELECT DISTINCT (p.nompes), (a.nivpgm), (n.nomare), (a.dtadfapgm)
+        $query = " SELECT DISTINCT (r.codpespgm), (p.nompes), (a.nivpgm), (n.nomare), (a.dtadfapgm)
                     FROM R39PGMORIDOC r
                     INNER JOIN PESSOA p  ON r.codpespgm = p.codpes
                     INNER JOIN NOMEAREA n ON r.codare = n.codare
