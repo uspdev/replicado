@@ -495,33 +495,37 @@ class PosgraduacaoTest extends TestCase
                     VALUES (convert(int,:codpes),convert(int,:codpespgm),convert(int,:codare),:dtafimort)";
 
         $data = [
-            'codpes' => 7777777,
-            'codpespgm' => 123695,
+            'codpes' => 19639477, #Número USP do docente, a ser passado no parâmetro.
+            'codpespgm' => 36363639, #Número USP do orientando, a ser retornado.
             'codare' => 7,
             'dtafimort' => NULL,
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO VINCULOPESSOAUSP (codpes, nompes, nivpgm) 
-                    VALUES (convert(int,:codpes),:nompes,:nivpgm)";
+        $sql = "INSERT INTO VINCULOPESSOAUSP (codpes, codare, codhab, nompes, nivpgm, dtainivin) 
+                    VALUES (convert(int,:codpes),convert(int,:codare),convert(int,:codhab),:nompes,:nivpgm,:dtainivin)";
 
         $data = [
-            'codpes' => 123695,
-            'nompes' => 'Henry',
-            'nivpgm' => 'MO'
+            'codpes' => 36363639,
+            'codare' => 7,
+            'codhab' => 3,
+            'nompes' => 'Nina',
+            'nivpgm' => 'MB',
+            'dtainivin' => '2019-01-01 00:00:00'
         ];
         DB::getInstance()->prepare($sql)->execute($data);
 
-        $sql = "INSERT INTO NOMEAREA (codare, nomare, dtafimare) 
-                    VALUES (convert(int,:codare),:nomare,:dtafimare)";
+        $sql = "INSERT INTO NOMEAREA (codare, nomare, codcur, dtafimare) 
+                    VALUES (convert(int,:codare),:nomare,convert(int,:codcur),:dtafimare)";
 
         $data = [
-            'codare' => 6,
-            'nomare' => 'Estudo',
+            'codare' => 7,
+            'nomare' => 'Língua',
+            'codcur' => 1234,
             'dtafimare' => NULL            
         ];
         DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame(Array(), Posgraduacao::obterOrientandosAtivos(7777777));
+        $this->assertSame('Nina', Posgraduacao::obterOrientandosAtivos(19639477)[0]['nompes']);
     }
 
     public function test_membrosBanca(){

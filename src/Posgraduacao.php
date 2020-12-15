@@ -519,7 +519,7 @@ class Posgraduacao
     
     /*
      * Retorna lista de orientandos ativos de um docente (orientador), 
-     * com o nome, o respectivo nível de programa de pós graduação 
+     * com o número USP, nome, o respectivo nível de programa de pós graduação 
      * (Mestrado, Doutorado ou Doutorado Direto) e nome da área.
      *
      * @param  int $codpes: Número USP do docente (orientador).
@@ -528,7 +528,7 @@ class Posgraduacao
      */
     public static function obterOrientandosAtivos($codpes)
     {
-        $query = " SELECT DISTINCT (v.nompes), (v.nivpgm), (n.nomare)
+        $query = " SELECT DISTINCT (r.codpespgm), (v.nompes), (v.nivpgm), (n.nomare)
                     FROM R39PGMORIDOC r
                     INNER JOIN VINCULOPESSOAUSP v  ON r.codpespgm = v.codpes
                     INNER JOIN NOMEAREA n ON r.codare = n.codare
