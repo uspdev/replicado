@@ -153,13 +153,6 @@ com o índice *total* que corresponde ao número total de pessoas do tipo de ví
 <dd>Método para retornar servidores designados ativos na unidade</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a href="classes/Uspdev-Replicado-Pessoa.html#method_docentes">docentes()</a>
-    <span>
-                        &nbsp;: void    </span>
-</dt>
-<dd>Método para retornar docentes ativos na unidade</dd>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a href="classes/Uspdev-Replicado-Pessoa.html#method_dump">dump()</a>
     <span>
                         &nbsp;: void    </span>
@@ -201,6 +194,14 @@ cujo campo &#039;stamtr&#039; é igual a &#039;S&#039;</dd>
                         &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
 <dd>Método que lista os docentes de uma Unidade agrupando por setor (departamento)</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/Uspdev-Replicado-Pessoa.html#method_listarDocentesAposentadosSenior">listarDocentesAposentadosSenior()</a>
+    <span>
+                        &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Método que lista docentes aposentados Sênior (em atividade)
+de uma unidade por setor (departamento) solicitado</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a href="classes/Uspdev-Replicado-Pessoa.html#method_nascimento">nascimento()</a>
@@ -373,7 +374,7 @@ Também Docente Aposentado</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">480</span>
+    <span class="phpdocumentor-element-found-in__line">465</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar *array* com todas as pessoas ativas por vínculo
@@ -438,7 +439,7 @@ com o índice *total* que corresponde ao número total de pessoas do tipo de ví
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">601</span>
+    <span class="phpdocumentor-element-found-in__line">586</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar o total de docentes ativos na unidade do gênero especificado</p>
@@ -483,7 +484,7 @@ com o índice *total* que corresponde ao número total de pessoas do tipo de ví
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">620</span>
+    <span class="phpdocumentor-element-found-in__line">605</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar o total de estágiarios ativos na unidade do gênero especificado</p>
@@ -528,7 +529,7 @@ com o índice *total* que corresponde ao número total de pessoas do tipo de ví
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">688</span>
+    <span class="phpdocumentor-element-found-in__line">673</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar o total de servidores ativos na unidade do gênero especificado</p>
@@ -617,7 +618,7 @@ com o índice *total* que corresponde ao número total de pessoas do tipo de ví
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">346</span>
+    <span class="phpdocumentor-element-found-in__line">331</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar servidores designados ativos na unidade</p>
@@ -646,52 +647,6 @@ com o índice *total* que corresponde ao número total de pessoas do tipo de ví
     <span class="phpdocumentor-signature__response_type">void</span>
             &mdash;
             <section class="phpdocumentor-description"></section>
-
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                    -static                    "
->
-    <h4 class="phpdocumentor-element__name" id="method_docentes">
-        docentes()
-        <a href="classes/Uspdev-Replicado-Pessoa.html#method_docentes" class="headerlink"><i class="fas fa-link"></i></a>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">314</span>
-</aside>
-
-        <p class="phpdocumentor-summary">Método para retornar docentes ativos na unidade</p>
-
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__name">docentes</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$codundclgi</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
-
-        <section class="phpdocumentor-description"></section>
-
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$codundclgi</span>
-                : <span class="phpdocumentor-signature__argument__return-type">int</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
-
-            </dd>
-            </dl>
-
-    
-
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">void</span>
-            &mdash;
-            <section class="phpdocumentor-description"><p>!!! DEPRECADO -&gt; usar listarDocentes()</p>
-</section>
 
     
 </article>
@@ -898,7 +853,7 @@ cujo campo &#039;stamtr&#039; é igual a &#039;S&#039;</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">366</span>
+    <span class="phpdocumentor-element-found-in__line">351</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar estagiários ativos na unidade</p>
@@ -943,7 +898,7 @@ cujo campo &#039;stamtr&#039; é igual a &#039;S&#039;</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">664</span>
+    <span class="phpdocumentor-element-found-in__line">649</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método que lista os docentes de uma Unidade agrupando por setor (departamento)</p>
@@ -987,6 +942,58 @@ pode ser uma string com números separados por vírgula (para um ou mais de um s
             -public
                                     -static                    "
 >
+    <h4 class="phpdocumentor-element__name" id="method_listarDocentesAposentadosSenior">
+        listarDocentesAposentadosSenior()
+        <a href="classes/Uspdev-Replicado-Pessoa.html#method_listarDocentesAposentadosSenior" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">736</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Método que lista docentes aposentados Sênior (em atividade)
+de uma unidade por setor (departamento) solicitado</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__name">listarDocentesAposentadosSenior</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\Uspdev\Replicado\type">type</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$codset</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">FALSE</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$codset</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\Uspdev\Replicado\type">type</abbr></span>
+                 = <span class="phpdocumentor-signature__argument__default-value">FALSE</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><ul>
+<li>Código do setor</li>
+</ul>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>$codset pode ser um número (para um único setor)
+ou
+pode ser uma string com números separados por vírgula (para um ou mais de um setores)</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
     <h4 class="phpdocumentor-element__name" id="method_nascimento">
         nascimento()
         <a href="classes/Uspdev-Replicado-Pessoa.html#method_nascimento" class="headerlink"><i class="fas fa-link"></i></a>
@@ -994,7 +1001,7 @@ pode ser uma string com números separados por vírgula (para um ou mais de um s
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">567</span>
+    <span class="phpdocumentor-element-found-in__line">552</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar data de nascimento de uma pessoa, com base no seu número USP ($codpes)</p>
@@ -1099,7 +1106,7 @@ pode ser uma string com números separados por vírgula (para um ou mais de um s
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">440</span>
+    <span class="phpdocumentor-element-found-in__line">425</span>
 </aside>
 
         <p class="phpdocumentor-summary">Retorna o nome completo (nome social) a partir do codpes</p>
@@ -1204,7 +1211,7 @@ pode ser uma string com números separados por vírgula (para um ou mais de um s
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">707</span>
+    <span class="phpdocumentor-element-found-in__line">692</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método que recebe um email cadastrado no sistema (email usp ou alternativo) e
@@ -1249,7 +1256,7 @@ retorna o número USP da pessoa</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">640</span>
+    <span class="phpdocumentor-element-found-in__line">625</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método que recebe o codpes e retorna os campos para o endereço completo:
@@ -1295,7 +1302,7 @@ rua/avenida, número, complemento, bairro, cidade e UF.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">723</span>
+    <span class="phpdocumentor-element-found-in__line">708</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método que dado um número USP retorna um ramal USP</p>
@@ -1420,7 +1427,7 @@ A busca pode ser fonética ou normal, somente ativos ou todos</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">326</span>
+    <span class="phpdocumentor-element-found-in__line">311</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar servidores ativos na unidade</p>
@@ -1563,7 +1570,7 @@ A busca pode ser fonética ou normal, somente ativos ou todos</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">455</span>
+    <span class="phpdocumentor-element-found-in__line">440</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar todos os tipos de vínculos possíveis, com base na unidade
@@ -1611,7 +1618,7 @@ Incluido também os Docente Aposentado</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">429</span>
+    <span class="phpdocumentor-element-found-in__line">414</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar todos os vínculos por extenso</p>
@@ -1645,7 +1652,7 @@ Incluido também os Docente Aposentado</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">407</span>
+    <span class="phpdocumentor-element-found-in__line">392</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar o total de alunos de Pós Graduação matriculados, de acordo com o nível do programa, na unidade</p>
@@ -1698,7 +1705,7 @@ Incluido também os Docente Aposentado</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">387</span>
+    <span class="phpdocumentor-element-found-in__line">372</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar o total dos vinculos ativos na unidade</p>
@@ -1751,7 +1758,7 @@ Incluido também os Docente Aposentado</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">584</span>
+    <span class="phpdocumentor-element-found-in__line">569</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método que verifica através do número USP se a pessoa tem estágio USP ou não
@@ -1852,7 +1859,7 @@ Somente ATIVOS</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Pessoa.php"><a href="files/src-pessoa.html"><abbr title="src/Pessoa.php">Pessoa.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">514</span>
+    <span class="phpdocumentor-element-found-in__line">499</span>
 </aside>
 
         <p class="phpdocumentor-summary">Método para retornar todas os vínculos e setores de uma pessoa

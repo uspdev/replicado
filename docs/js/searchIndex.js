@@ -201,6 +201,21 @@ Search.appendIndex(
             "summary": "M\u00E9todo\u0020para\u0020retornar\u0020se\u0020um\u0020codpes\u0020\u00E9\u0020coordenador\u0020de\u0020curso\u0020de\u0020gradua\u00E7\u00E3o",
             "url": "classes/Uspdev-Replicado-Graduacao.html#method_verificarCoordenadorCursoGrad"
         },                {
+            "fqsen": "\\Uspdev\\Replicado\\Graduacao\u003A\u003AverificarPessoaGraduadaUnidade\u0028\u0029",
+            "name": "verificarPessoaGraduadaUnidade",
+            "summary": "M\u00E9todo\u0020para\u0020retornar\u0020se\u0020uma\u0020pessoa\u0020\u00E9\u0020graduada\u0020nos\u0020cursos\u0020da\u0020unidade\nRetornar\u00E1\u0020true\u0020caso\u0020tenha\u0020status\u0020Conclus\u00E3o\u0020em\u0020um\u0020programa\u0020ou\u0020uma\u0020habilita\u00E7\u00E3o,\ncaso\u0020contr\u00E1rio,\u0020retornar\u00E1\u0020false",
+            "url": "classes/Uspdev-Replicado-Graduacao.html#method_verificarPessoaGraduadaUnidade"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Graduacao\u003A\u003AverificarExAlunoGrad\u0028\u0029",
+            "name": "verificarExAlunoGrad",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Graduacao.html#method_verificarExAlunoGrad"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Graduacao\u003A\u003AobterGradeHoraria\u0028\u0029",
+            "name": "obterGradeHoraria",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Graduacao.html#method_obterGradeHoraria"
+        },                {
             "fqsen": "\\Uspdev\\Replicado\\Lattes",
             "name": "Lattes",
             "summary": "",
@@ -210,6 +225,66 @@ Search.appendIndex(
             "name": "id",
             "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020retorna\u0020o\u0020ID\u0020Lattes\u0020da\u0020pessoa.",
             "url": "classes/Uspdev-Replicado-Lattes.html#method_id"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AgetZip\u0028\u0029",
+            "name": "getZip",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020retorna\u0020o\u0020bin\u00E1rio\u0020zip\u0020do\u0020lattes",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_getZip"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AsaveZip\u0028\u0029",
+            "name": "saveZip",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020salva\u0020o\u0020zip\u0020do\u0020lattes",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_saveZip"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AsaveXml\u0028\u0029",
+            "name": "saveXml",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020salva\u0020o\u0020xml\u0020do\u0020lattes",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_saveXml"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AgetXml\u0028\u0029",
+            "name": "getXml",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020devolve\u0020XML\u0020do\u0020lattes",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_getXml"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AgetJson\u0028\u0029",
+            "name": "getJson",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020devolve\u0020json\u0020do\u0020lattes",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_getJson"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AgetArray\u0028\u0029",
+            "name": "getArray",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020devolve\u0020array\u0020do\u0020lattes",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_getArray"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AgetPremios\u0028\u0029",
+            "name": "getPremios",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020devolve\u0020array\u0020dos\u0020pr\u00EAmios\u0020e\u0020t\u00EDtulos\u0020cadastros\u0020no\u0020curr\u00EDculo\u0020Lattes,\ncom\u0020o\u0020respectivo\u0020ano\u0020de\u0020pr\u00EAmia\u00E7\u00E3o",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_getPremios"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AgetResumoCV\u0028\u0029",
+            "name": "getResumoCV",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020devolve\u0020o\u0020resumo\u0020do\u0020curr\u00EDculo\u0020do\u0020lattes",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_getResumoCV"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AgetArtigos\u0028\u0029",
+            "name": "getArtigos",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020devolve\u0020array\u0020com\u0020os\u0020\u00FAltimos\u0020artigos\u0020cadastrados\u0020no\u0020curr\u00EDculo\u0020Lattes,\ncom\u0020o\u0020respectivo\u0020t\u00EDtulo\u0020do\u0020artigo,\u0020nome\u0020da\u0020revista\u0020ou\u0020per\u00EDodico,\u0020volume,\u0020n\u00FAmero\u0020de\u0020p\u00E1ginas\u0020e\u0020ano\u0020de\u0020publica\u00E7\u00E3o",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_getArtigos"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AgetLinhasPesquisa\u0028\u0029",
+            "name": "getLinhasPesquisa",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020devolve\u0020a\u0020linha\u0020de\u0020pesquisa",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_getLinhasPesquisa"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AgetLivrosPublicados\u0028\u0029",
+            "name": "getLivrosPublicados",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020devolve\u0020array\u0020com\u0020os\u00205\u0020\u00FAltimos\u0020livros\u0020publicados\u0020cadastrados\u0020no\u0020curr\u00EDculo\u0020Lattes,\ncom\u0020o\u0020respectivo\u0020t\u00EDtulo\u0020do\u0020livro,\u0020ano,\u0020n\u00FAmero\u0020de\u0020p\u00E1ginas\u0020e\u0020nome\u0020da\u0020editora",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_getLivrosPublicados"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Lattes\u003A\u003AgetCapitulosLivros\u0028\u0029",
+            "name": "getCapitulosLivros",
+            "summary": "Recebe\u0020o\u0020n\u00FAmero\u0020USP\u0020e\u0020devolve\u0020array\u0020com\u0020os\u00205\u0020\u00FAltimos\u0020cap\u00EDtulos\u0020de\u0020livros\u0020publicados\u0020cadastrados\u0020no\u0020curr\u00EDculo\u0020Lattes,\ncom\u0020o\u0020respectivo\u0020t\u00EDtulo\u0020do\u0020cap\u00EDtulo,\u0020t\u00EDtulo\u0020do\u0020livro,\u0020n\u00FAmero\u0020de\u0020volumes,\u0020p\u00E1gina\u0020inicial\u0020e\u0020final\u0020do\u0020cap\u00EDtulo,\u0020ano\u0020e\u0020nome\u0020da\u0020editora.",
+            "url": "classes/Uspdev-Replicado-Lattes.html#method_getCapitulosLivros"
         },                {
             "fqsen": "\\Uspdev\\Replicado\\Pessoa",
             "name": "Pessoa",
@@ -275,11 +350,6 @@ Search.appendIndex(
             "name": "setoresSiglas",
             "summary": "M\u00E9todo\u0020para\u0020retornar\u0020siglas\u0020dos\u0020setores\u0020que\u0020uma\u0020pessoa\u0020tem\u0020v\u00EDnculo",
             "url": "classes/Uspdev-Replicado-Pessoa.html#method_setoresSiglas"
-        },                {
-            "fqsen": "\\Uspdev\\Replicado\\Pessoa\u003A\u003Adocentes\u0028\u0029",
-            "name": "docentes",
-            "summary": "M\u00E9todo\u0020para\u0020retornar\u0020docentes\u0020ativos\u0020na\u0020unidade",
-            "url": "classes/Uspdev-Replicado-Pessoa.html#method_docentes"
         },                {
             "fqsen": "\\Uspdev\\Replicado\\Pessoa\u003A\u003Aservidores\u0028\u0029",
             "name": "servidores",
@@ -376,6 +446,11 @@ Search.appendIndex(
             "summary": "M\u00E9todo\u0020que\u0020dado\u0020um\u0020n\u00FAmero\u0020USP\u0020retorna\u0020um\u0020ramal\u0020USP",
             "url": "classes/Uspdev-Replicado-Pessoa.html#method_obterRamalUsp"
         },                {
+            "fqsen": "\\Uspdev\\Replicado\\Pessoa\u003A\u003AlistarDocentesAposentadosSenior\u0028\u0029",
+            "name": "listarDocentesAposentadosSenior",
+            "summary": "M\u00E9todo\u0020que\u0020lista\u0020docentes\u0020aposentados\u0020S\u00EAnior\u0020\u0028em\u0020atividade\u0029\nde\u0020uma\u0020unidade\u0020por\u0020setor\u0020\u0028departamento\u0029\u0020solicitado",
+            "url": "classes/Uspdev-Replicado-Pessoa.html#method_listarDocentesAposentadosSenior"
+        },                {
             "fqsen": "\\Uspdev\\Replicado\\Posgraduacao",
             "name": "Posgraduacao",
             "summary": "",
@@ -455,6 +530,26 @@ Search.appendIndex(
             "name": "contarAtivosPorGenero",
             "summary": "M\u00E9todo\u0020para\u0020retornar\u0020quantidade\u0020alunos\u0020de\u0020p\u00F3s\u002Dgradua\u00E7\u00E3o\u0020do\u0020g\u00EAnero\ne\u0020programa\u0020\u0028opcional\u0029\u0020especificado",
             "url": "classes/Uspdev-Replicado-Posgraduacao.html#method_contarAtivosPorGenero"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Posgraduacao\u003A\u003AverificarExAlunoPos\u0028\u0029",
+            "name": "verificarExAlunoPos",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Posgraduacao.html#method_verificarExAlunoPos"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Posgraduacao\u003A\u003AmembrosBanca\u0028\u0029",
+            "name": "membrosBanca",
+            "summary": "Retorna\u0020os\u0020membros\u0020da\u0020banca\u0020de\u0020um\u0020discente\nPode\u002Dse\u0020especificar\u0020ou\u0020n\u00E3o\u0020o\u0020programa\u0020ou\u0020o\u0020n\u00FAmero\u0020sequencial",
+            "url": "classes/Uspdev-Replicado-Posgraduacao.html#method_membrosBanca"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Posgraduacao\u003A\u003AobterOrientandosAtivos\u0028\u0029",
+            "name": "obterOrientandosAtivos",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Posgraduacao.html#method_obterOrientandosAtivos"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Posgraduacao\u003A\u003AobterOrientandosConcluidos\u0028\u0029",
+            "name": "obterOrientandosConcluidos",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Posgraduacao.html#method_obterOrientandosConcluidos"
         },                {
             "fqsen": "\\Uspdev\\Replicado\\Uteis",
             "name": "Uteis",
@@ -551,6 +646,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/Uspdev-Replicado-Uteis.html#method_data_mes"
         },                {
+            "fqsen": "\\Uspdev\\Replicado\\Uteis\u003A\u003Aunzip\u0028\u0029",
+            "name": "unzip",
+            "summary": "Method\u0020got\u0020from\u0020https\u003A\/\/stackoverflow.com\/questions\/9248331\/php\u002Dread\u002Dzip\u002Dfile\u002Dcontents\u002Dwithout\u002Dsaving\u002Don\u002Dserver\nM\u00E9todo\u0020que\u0020recebe\u0020um\u0020buffer\u0020content\u0020em\u0020zip\u0020com\u0020apenas\u0020um\u0020arquivo\ne\u0020devolve\u0020a\u0020string\u0020do\u0020arquivo.\u0020Usado\u0020para\u0020pegar\u0020o\u0020xml\u0020do\u0020lattes\u0020como\u0020string",
+            "url": "classes/Uspdev-Replicado-Uteis.html#method_unzip"
+        },                {
             "fqsen": "\\Uspdev\\Replicado\\Tests\\BempatrimoniadoTest",
             "name": "BempatrimoniadoTest",
             "summary": "",
@@ -563,7 +663,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Uspdev\\Replicado\\Tests\\BuildFakerDataTest",
             "name": "BuildFakerDataTest",
-            "summary": "",
+            "summary": "Build\u0020faker\u0020data\u0020after\u0020run\u0020all\u0020phpunit\u0020tests",
             "url": "classes/Uspdev-Replicado-Tests-BuildFakerDataTest.html"
         },                {
             "fqsen": "\\Uspdev\\Replicado\\Tests\\BuildFakerDataTest\u003A\u003Atest_deploy_data\u0028\u0029",
@@ -611,6 +711,26 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html"
         },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_verifica\u0028\u0029",
+            "name": "test_verifica",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_verifica"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_ativos\u0028\u0029",
+            "name": "test_ativos",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_ativos"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_obterCursosHabilitacoes\u0028\u0029",
+            "name": "test_obterCursosHabilitacoes",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_obterCursosHabilitacoes"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_obterDisciplinas\u0028\u0029",
+            "name": "test_obterDisciplinas",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_obterDisciplinas"
+        },                {
             "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_nomeHabilitacao\u0028\u0029",
             "name": "test_nomeHabilitacao",
             "summary": "",
@@ -626,10 +746,55 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_programa"
         },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_nomeDisciplina\u0028\u0029",
+            "name": "test_nomeDisciplina",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_nomeDisciplina"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_creditosDisciplina\u0028\u0029",
+            "name": "test_creditosDisciplina",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_creditosDisciplina"
+        },                {
             "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_curso\u0028\u0029",
             "name": "test_curso",
             "summary": "",
             "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_curso"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_verificarCoordenadorCursoGrad\u0028\u0029",
+            "name": "test_verificarCoordenadorCursoGrad",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_verificarCoordenadorCursoGrad"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_contarAtivosPorGenero\u0028\u0029",
+            "name": "test_contarAtivosPorGenero",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_contarAtivosPorGenero"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_setorAluno\u0028\u0029",
+            "name": "test_setorAluno",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_setorAluno"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_disciplinasConcluidas\u0028\u0029",
+            "name": "test_disciplinasConcluidas",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_disciplinasConcluidas"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_creditosDisciplinasConcluidasAproveitamentoEstudosExterior\u0028\u0029",
+            "name": "test_creditosDisciplinasConcluidasAproveitamentoEstudosExterior",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_creditosDisciplinasConcluidasAproveitamentoEstudosExterior"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_obterGradeHoraria\u0028\u0029",
+            "name": "test_obterGradeHoraria",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_obterGradeHoraria"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\GraduacaoTest\u003A\u003Atest_verificarPessoaGraduadaUnidade\u0028\u0029",
+            "name": "test_verificarPessoaGraduadaUnidade",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-GraduacaoTest.html#method_test_verificarPessoaGraduadaUnidade"
         },                {
             "fqsen": "\\Uspdev\\Replicado\\Tests\\LattesTest",
             "name": "LattesTest",
@@ -786,6 +951,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/Uspdev-Replicado-Tests-PessoaTest.html#method_test_listarDocentes"
         },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\PessoaTest\u003A\u003Atest_vinculosSetores\u0028\u0029",
+            "name": "test_vinculosSetores",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-PessoaTest.html#method_test_vinculosSetores"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\PessoaTest\u003A\u003Atest_listarDocentesAposentadosSenior\u0028\u0029",
+            "name": "test_listarDocentesAposentadosSenior",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-PessoaTest.html#method_test_listarDocentesAposentadosSenior"
+        },                {
             "fqsen": "\\Uspdev\\Replicado\\Tests\\PosgraduacaoTest",
             "name": "PosgraduacaoTest",
             "summary": "",
@@ -865,6 +1040,26 @@ Search.appendIndex(
             "name": "test_contarAtivosPorGenero",
             "summary": "",
             "url": "classes/Uspdev-Replicado-Tests-PosgraduacaoTest.html#method_test_contarAtivosPorGenero"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\PosgraduacaoTest\u003A\u003Atest_verificarExAlunoPos\u0028\u0029",
+            "name": "test_verificarExAlunoPos",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-PosgraduacaoTest.html#method_test_verificarExAlunoPos"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\PosgraduacaoTest\u003A\u003Atest_obterOrientandosAtivos\u0028\u0029",
+            "name": "test_obterOrientandosAtivos",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-PosgraduacaoTest.html#method_test_obterOrientandosAtivos"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\PosgraduacaoTest\u003A\u003Atest_membrosBanca\u0028\u0029",
+            "name": "test_membrosBanca",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-PosgraduacaoTest.html#method_test_membrosBanca"
+        },                {
+            "fqsen": "\\Uspdev\\Replicado\\Tests\\PosgraduacaoTest\u003A\u003Atest_obterOrientandosConcluidos\u0028\u0029",
+            "name": "test_obterOrientandosConcluidos",
+            "summary": "",
+            "url": "classes/Uspdev-Replicado-Tests-PosgraduacaoTest.html#method_test_obterOrientandosConcluidos"
         },                {
             "fqsen": "\\Uspdev\\Replicado\\Tests\\UteisTest",
             "name": "UteisTest",
