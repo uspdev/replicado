@@ -167,12 +167,15 @@ class Lattes
     *  
     * @param Integer $codpes = Número USP
     * @param Integer $limit = Número de artigos a serem retornados, se não preenchido, o valor default é 5
+    * @param String $tipo = Valores possíveis para determinar o limite: 'ano' e 'registro'. Default: últimos 5 anos. 
     * @return String|Bool
     */
-    public static function getArtigos($codpes, $limit = 5){
+    public static function getArtigos($codpes, $limit = 5, $tipo = 'ano'){
         $lattes = self::getArray($codpes);
         if(!$lattes && !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) return false;
         $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA'];
+        $limit_ano = date("Y") - $limit;
+
 
         if(array_key_exists('ARTIGOS-PUBLICADOS',$artigos)){
             $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA']['ARTIGOS-PUBLICADOS']['ARTIGO-PUBLICADO'];
@@ -192,7 +195,6 @@ class Lattes
             $i = 0;
             $ultimos_artigos = [];
             foreach($artigos as $val){
-                if($limit != -1 && $i > ($limit - 1) ) break; $i++; //-1 retorna tudo
                 $dados_basicos = (!isset($val['DADOS-BASICOS-DO-ARTIGO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-ARTIGO';
                 $detalhamento = (!isset($val['DETALHAMENTO-DO-ARTIGO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-ARTIGO';
                 $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
@@ -221,6 +223,14 @@ class Lattes
                     'ANO' => $val[$dados_basicos]['@attributes']['ANO-DO-ARTIGO'] ?? '',
                     'AUTORES' => $aux_autores
                 ];
+
+                if($tipo == 'registro'){
+                    if($limit != -1 && $i > ($limit - 1) ) break;  //-1 retorna tudo
+                }else if($tipo == 'ano'){
+                    if($limit != -1 &&  $aux_artigo['ANO'] <  $limit_ano ) break;
+                }
+                $i++;
+
                 array_push($ultimos_artigos, $aux_artigo);
             }
             return $ultimos_artigos;
@@ -282,13 +292,15 @@ class Lattes
     *  
     * @param Integer $codpes = Número USP
     * @param Integer $limit = Número de livros a serem retornados, se não preenchido, o valor default é 5
+    * @param String $tipo = Valores possíveis para determinar o limite: 'ano' e 'registro'. Default: últimos 5 anos. 
     * @return String|Bool
     */
-    public static function getLivrosPublicados($codpes, $limit = 5){
+    public static function getLivrosPublicados($codpes, $limit = 5, $tipo = 'ano'){
         $lattes = self::getArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'])) return false;
-        
+        $limit_ano = date("Y") - $limit;
+
         $livros = $lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'];
         if(array_key_exists('LIVROS-PUBLICADOS-OU-ORGANIZADOS',$livros)){
             $livros = $lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS']['LIVROS-PUBLICADOS-OU-ORGANIZADOS']['LIVRO-PUBLICADO-OU-ORGANIZADO'];
@@ -297,27 +309,38 @@ class Lattes
                 }else
             $i = 0;
             $ultimos_livros = [];
+            
+            usort($livros, function ($a, $b) {
+                if(!isset($b['@attributes']['SEQUENCIA-PRODUCAO'])){
+                    return 0;
+                }
+                return (int)$b['@attributes']['SEQUENCIA-PRODUCAO'] - (int)$a['@attributes']['SEQUENCIA-PRODUCAO'];
+            });
             foreach($livros as $val){
-                if($limit != -1 && $i > ($limit - 1) ) break; $i++; 
+                
                 $dados_basicos = (!isset($val['DADOS-BASICOS-DO-LIVRO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-LIVRO';
                 $detalhamento = (!isset($val['DETALHAMENTO-DO-LIVRO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-LIVRO';
                 $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
                 
                 $aux_autores = [];
-                usort($val[$autores], function ($a, $b) {
-                    if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
-                        return 0;
+                if(isset($val[$autores])){
+
+                    usort($val[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($val[$autores] as $autor){
+                        array_push($aux_autores, [
+                            "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                            "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                            "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                            ]);
                     }
-                    return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
-                });
-               
-                foreach($val[$autores] as $autor){
-                    array_push($aux_autores, [
-                        "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
-                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
-                        "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
-                        ]);
                 }
+                
                
 
                 $aux_livro = [
@@ -328,8 +351,17 @@ class Lattes
                     'CIDADE-DA-EDITORA' => $val[$detalhamento]['@attributes']['CIDADE-DA-EDITORA'] ?? '',
                     'AUTORES' => $aux_autores
                 ];
+                
+
+                if($tipo == 'registro'){
+                    if($limit != -1 && $i > ($limit - 1) ) break;  //-1 retorna tudo
+                }else if($tipo == 'ano'){
+                    if($limit != -1 &&  $aux_livro['ANO'] <  $limit_ano ) break;
+                }
+                $i++;
                 array_push($ultimos_livros, $aux_livro);
             }
+            
             return $ultimos_livros;
         } else return false;
     }
@@ -395,5 +427,155 @@ class Lattes
             }
             return $ultimos_capitulos;
         } else return false;
+    }
+    
+
+    /**
+    * Recebe o número USP e devolve array com a tese especificada (MESTRADO ou DOUTORADO), cadastrada no currículo Lattes.
+    * Retorna o título da tese e as palavras-chaves.
+    *  
+    * @param Integer $codpes = Número USP
+    * @param String $tipo = Tipo da tese: DOUTORADO ou MESTRADO, o valor default é DOUTORADO
+    * @return String|Bool
+    */
+    public static function getTeses($codpes, $tipo = 'DOUTORADO'){
+        $lattes = self::getArray($codpes);
+       
+        if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
+    
+        $teses = $lattes['DADOS-GERAIS'];
+        
+        if(array_key_exists('FORMACAO-ACADEMICA-TITULACAO',$teses)){
+            
+            if(!isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO'][$tipo])) return false;
+            $teses = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO'][$tipo];
+            $nome_teses = [];
+            foreach($teses as $p){
+                
+                $palavras_chaves = '';
+                for ($i=1; $i <= 6; $i++) { 
+                    $key_i = 'PALAVRA-CHAVE-'. $i;
+                    if(isset($teses['PALAVRAS-CHAVE']['@attributes'][$key_i])){
+                        $palavras_chaves .= $teses['PALAVRAS-CHAVE']['@attributes'][$key_i].'; ';
+                    }
+                    else if(isset($p['PALAVRAS-CHAVE']['@attributes'][$key_i])){
+                        $palavras_chaves .= $p['PALAVRAS-CHAVE']['@attributes'][$key_i].'; ';
+                    }
+                }
+                $palavras_chaves = str_replace(' ; ', '', $palavras_chaves);
+                $palavras_chaves = str_replace(';;', '', $palavras_chaves);
+                if(isset($p['@attributes']['TITULO-DA-DISSERTACAO-TESE'])){
+                    $titulo = $p['@attributes']['TITULO-DA-DISSERTACAO-TESE'];
+                }else if(isset($p['TITULO-DA-DISSERTACAO-TESE'])){
+                    $titulo = $p['TITULO-DA-DISSERTACAO-TESE'];
+                }else{
+                    $titulo = '';
+                }
+                if(strlen($titulo) > 0){
+                    array_push($nome_teses, ['TITULO'=> $titulo, 'PALAVRAS-CHAVE' => $palavras_chaves]);
+                }
+                
+            }  
+        return count($nome_teses) > 0 ? $nome_teses : false ;
+            
+        }
+        else return false;
+    }
+
+
+    /**
+    * Recebe o número USP e retorna array com o título da tese de Livre-Docência, cadastrada no currículo Lattes.
+    * @param Integer $codpes = Número USP
+    * @return Array|Bool
+    */
+    public static function getLivreDocencia($codpes){
+        $lattes = self::getArray($codpes);
+   
+        
+        if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
+    
+        $teses = $lattes['DADOS-GERAIS'];
+        
+        if(array_key_exists('FORMACAO-ACADEMICA-TITULACAO',$teses)){
+            
+            if(!isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['LIVRE-DOCENCIA'])) return false;
+            $teses = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['LIVRE-DOCENCIA'];
+            $nome_teses = [];
+            foreach($teses as $p){
+                if(isset($p['@attributes']['TITULO-DO-TRABALHO'])){
+                    $titulo = $p['@attributes']['TITULO-DO-TRABALHO'];
+                }else if(isset($p['TITULO-DO-TRABALHO'])){
+                    $titulo = $p['TITULO-DO-TRABALHO'];
+                }else{
+                    $titulo = '';
+                }
+                if(strlen($titulo) > 0){
+                    array_push($nome_teses, $titulo);
+                }
+                
+            }  
+        return count($nome_teses) > 0 ? $nome_teses : false ;
+            
+        }
+        else return false;
+    }
+
+     /**
+    * Recebe o número USP e retorna array com os título das teses de Mestrado onde o docente particiou como integrante da banca avaliadora.
+    * @param Integer $codpes = Número USP
+    * @return Array|Bool
+    */
+    public static function getBancaMestrado($codpes){
+        $lattes = self::getArray($codpes);
+       
+        if(!$lattes && !isset($lattes['DADOS-COMPLEMENTARES'])) return false;
+        $bancas = $lattes['DADOS-COMPLEMENTARES'];
+
+        if(array_key_exists('PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO',$bancas)){
+            if(!isset($lattes['DADOS-COMPLEMENTARES']['PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO']['PARTICIPACAO-EM-BANCA-DE-MESTRADO'])) return false;
+            $bancas = $lattes['DADOS-COMPLEMENTARES']['PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO']['PARTICIPACAO-EM-BANCA-DE-MESTRADO'];
+            $nome_bancas = [];
+            foreach($bancas as $b){
+                if(!isset($b['DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-MESTRADO']['@attributes']['TITULO'])){
+                    return false;
+                } else
+                array_push($nome_bancas, $b['DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-MESTRADO']['@attributes']['TITULO']);
+            } 
+        return $nome_bancas;
+        }
+        else return false;
+    }
+
+      /**
+    * Recebe o número USP e retorna array com os título das teses de Doutorado onde o docente particiou como integrante da banca avaliadora.
+    * @param Integer $codpes = Número USP
+    * @return Array|Bool
+    */
+    public static function getBancaDoutorado($codpes){
+        $lattes = self::getArray($codpes);
+       
+        if(!$lattes && !isset($lattes['DADOS-COMPLEMENTARES'])) return false;
+        $bancas = $lattes['DADOS-COMPLEMENTARES'];
+
+        if(array_key_exists('PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO',$bancas)){
+            if(!isset($lattes['DADOS-COMPLEMENTARES']['PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO']['PARTICIPACAO-EM-BANCA-DE-DOUTORADO'])) return false;
+            $bancas = $lattes['DADOS-COMPLEMENTARES']['PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO']['PARTICIPACAO-EM-BANCA-DE-DOUTORADO'];
+            $nome_bancas = [];
+            foreach($bancas as $b){
+                if(!isset($b['DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-DOUTORADO']['@attributes']['TITULO'])){
+                    return false;
+                } else{
+                    $aux = $b['DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-DOUTORADO']['@attributes']['TITULO'] ?? '';
+                    if(isset($b['DETALHAMENTO-DA-PARTICIPACAO-EM-BANCA-DE-DOUTORADO']['@attributes']['NOME-DO-CANDIDATO'])){
+                        $aux .= "\n";
+                        $aux .= $b['DETALHAMENTO-DA-PARTICIPACAO-EM-BANCA-DE-DOUTORADO']['@attributes']['NOME-DO-CANDIDATO'] ?? '' ;
+                    }
+                    
+                    array_push($nome_bancas, $aux);
+                }
+            } 
+        return $nome_bancas;
+        }
+        else return false;
     }
 }
