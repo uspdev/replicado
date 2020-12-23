@@ -431,7 +431,7 @@ class Lattes
     
 
     /**
-    * Recebe o número USP e devolve array com a tese especificada (MESTRADO ou DOUTORADO), cadastrada no currículo Lattes.
+    * Recebe o número USP e devolve array com o título e ano da tese especificada (MESTRADO ou DOUTORADO), cadastrada no currículo Lattes.
     * Retorna o título da tese e as palavras-chaves.
     *  
     * @param Integer $codpes = Número USP
@@ -471,8 +471,15 @@ class Lattes
                 }else{
                     $titulo = '';
                 }
+                if(isset($p['@attributes']['ANO-DE-OBTENCAO-DO-TITULO'])){
+                    $ano = $p['@attributes']['ANO-DE-OBTENCAO-DO-TITULO'];
+                }else if(isset($p['ANO-DE-OBTENCAO-DO-TITULO'])){
+                    $ano = $p['ANO-DE-OBTENCAO-DO-TITULO'];
+                }else{
+                    $ano = '';
+                }
                 if(strlen($titulo) > 0){
-                    array_push($nome_teses, ['TITULO'=> $titulo, 'PALAVRAS-CHAVE' => $palavras_chaves]);
+                    array_push($nome_teses, ['TITULO'=> $titulo, 'PALAVRAS-CHAVE' => $palavras_chaves, 'ANO-DE-OBTENCAO-DO-TITULO' => $ano]);
                 }
                 
             }  
