@@ -67,6 +67,10 @@ class Lattes
         $content = self::getZip($codpes);
         if($content){
             $xml = Uteis::unzip($content);
+            // Evitar salvar XML com 0 bytes
+            if (!$xml) {
+                return false;
+            }
             $xmlFile = fopen("{$to}/{$codpes}.xml", "w");
             fwrite($xmlFile, $xml); 
             fclose($xmlFile);
