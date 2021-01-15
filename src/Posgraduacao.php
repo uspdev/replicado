@@ -60,10 +60,16 @@ class Posgraduacao
     */
     public static function programas($codundclgi, $codcur = null)
     {
-        $query = "SELECT C.codcur, NC.nomcur";
-        $query .= " FROM CURSO AS C";
-        $query .= " INNER JOIN NOMECURSO AS NC ON C.codcur = NC.codcur";
-        $query .= " WHERE (C.codclg = CONVERT(INT, :codundclgi)) AND (C.tipcur = 'POS') AND (C.dtainiccp IS NOT NULL) AND (NC.dtafimcur IS NULL)";
+        $query = "SELECT C.codcur, NC.nomcur, A.codare
+                  FROM CURSO AS C
+                  INNER JOIN NOMECURSO AS NC ON C.codcur = NC.codcur
+                  INNER JOIN AREA AS A ON C.codcur = A.codcur
+                  WHERE (C.codclg = CONVERT(INT, :codundclgi)) 
+                  AND (C.tipcur = 'POS') 
+                  AND (C.dtainiccp IS NOT NULL) 
+                  AND (NC.dtafimcur IS NULL)
+                  ";
+
         $param = ['codundclgi' => $codundclgi];
         if (!is_null($codcur)) {
             $param['codcur'] = $codcur;
