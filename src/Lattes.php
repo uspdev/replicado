@@ -344,8 +344,6 @@ class Lattes
                             ]);
                     }
                 }
-                
-               
 
                 $aux_livro = [
                     'TITULO-DO-LIVRO' => $val[$dados_basicos]['@attributes']['TITULO-DO-LIVRO'] ?? '',
@@ -433,7 +431,6 @@ class Lattes
         } else return false;
     }
     
-
     /**
     * Recebe o número USP e devolve array com o título e ano da tese especificada (MESTRADO ou DOUTORADO), cadastrada no currículo Lattes.
     * Retorna o título da tese e as palavras-chaves.
