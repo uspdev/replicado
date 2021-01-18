@@ -165,6 +165,21 @@ class Lattes
         return $resumo_cv;
     }
 
+    /**
+    * Recebe o número USP e devolve a última atualização do currículo do lattes
+    * 
+    * @param Integer $codpes
+    * @return String|Bool
+    * 
+    */
+    public static function getUltimaAtualizacao($codpes){
+        $lattes = self::getArray($codpes);
+
+        if(!$lattes) return false;
+        
+        return $lattes['@attributes']['DATA-ATUALIZACAO'];
+    }
+
      /**
     * Recebe o número USP e devolve array com os últimos artigos cadastrados no currículo Lattes,
     * com o respectivo título do artigo, nome da revista ou períodico, volume, número de páginas e ano de publicação
