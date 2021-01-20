@@ -124,8 +124,8 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function getPremios($codpes){
-        $lattes = self::getArray($codpes);
+    public static function getPremios($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
         if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
 
         $premios = $lattes['DADOS-GERAIS'];
@@ -151,8 +151,8 @@ class Lattes
     * @return String|Bool
     * 
     */
-    public static function getResumoCV($codpes, $idioma = 'pt'){
-        $lattes = self::getArray($codpes);
+    public static function getResumoCV($codpes, $idioma = 'pt', $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
 
         if(!$lattes) return false;
 
@@ -172,8 +172,8 @@ class Lattes
     * @return String|Bool
     * 
     */
-    public static function getUltimaAtualizacao($codpes){
-        $lattes = self::getArray($codpes);
+    public static function getUltimaAtualizacao($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
 
         if(!$lattes) return false;
         
@@ -189,8 +189,8 @@ class Lattes
     * @param String $tipo = Valores possíveis para determinar o limite: 'ano' e 'registro'. Default: últimos 5 anos. 
     * @return String|Bool
     */
-    public static function getArtigos($codpes, $limit = 5, $tipo = 'ano'){
-        $lattes = self::getArray($codpes);
+    public static function getArtigos($codpes, $limit = 5, $tipo = 'ano', $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
         if(!$lattes && !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) return false;
         $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA'];
         $limit_ano = date("Y") - $limit;
@@ -263,8 +263,8 @@ class Lattes
     * @return String|Bool
     * 
     */
-    public static function getLinhasPesquisa($codpes){
-        $lattes = self::getArray($codpes);
+    public static function getLinhasPesquisa($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
         $linhas_de_pesquisa = [];
         if(!$lattes) return false;
 
@@ -314,8 +314,8 @@ class Lattes
     * @param String $tipo = Valores possíveis para determinar o limite: 'ano' e 'registro'. Default: últimos 5 anos. 
     * @return String|Bool
     */
-    public static function getLivrosPublicados($codpes, $limit = 5, $tipo = 'ano'){
-        $lattes = self::getArray($codpes);
+    public static function getLivrosPublicados($codpes, $limit = 5, $tipo = 'ano', $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'])) return false;
         $limit_ano = date("Y") - $limit;
@@ -391,8 +391,8 @@ class Lattes
     * @param Integer $limit = Número de capítulos publicados a serem retornados, se não preenchido, o valor default é 5
     * @return String|Bool
     */
-    public static function getCapitulosLivros($codpes, $limit = 5){
-        $lattes = self::getArray($codpes);
+    public static function getCapitulosLivros($codpes, $limit = 5, $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'])) return false;
         $capitulos = $lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'];
@@ -454,8 +454,8 @@ class Lattes
     * @param String $tipo = Tipo da tese: DOUTORADO ou MESTRADO, o valor default é DOUTORADO
     * @return String|Bool
     */
-    public static function getTeses($codpes, $tipo = 'DOUTORADO'){
-        $lattes = self::getArray($codpes);
+    public static function getTeses($codpes, $tipo = 'DOUTORADO', $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
        
         if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
     
@@ -511,8 +511,8 @@ class Lattes
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
-    public static function getLivreDocencia($codpes){
-        $lattes = self::getArray($codpes);
+    public static function getLivreDocencia($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
    
         
         if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
@@ -548,8 +548,8 @@ class Lattes
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
-    public static function getBancaMestrado($codpes){
-        $lattes = self::getArray($codpes);
+    public static function getBancaMestrado($codpes, $lattes_array){
+        $lattes = $lattes_array ?? self::getArray($codpes);
        
         if(!$lattes && !isset($lattes['DADOS-COMPLEMENTARES'])) return false;
         $bancas = $lattes['DADOS-COMPLEMENTARES'];
@@ -574,8 +574,8 @@ class Lattes
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
-    public static function getBancaDoutorado($codpes){
-        $lattes = self::getArray($codpes);
+    public static function getBancaDoutorado($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
        
         if(!$lattes && !isset($lattes['DADOS-COMPLEMENTARES'])) return false;
         $bancas = $lattes['DADOS-COMPLEMENTARES'];
