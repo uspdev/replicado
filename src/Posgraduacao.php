@@ -58,7 +58,7 @@ class Posgraduacao
     *
     * @return array
     */
-    public static function programas($codundclgi, $codcur = null)
+    public static function programas($codundclgi, $codcur = null, $codare = null)
     {
         $query = "SELECT C.codcur, NC.nomcur, A.codare
                   FROM CURSO AS C
@@ -74,6 +74,10 @@ class Posgraduacao
         if (!is_null($codcur)) {
             $param['codcur'] = $codcur;
             $query .= " AND (C.codcur = CONVERT(INT, :codcur))";
+        }
+        if (!is_null($codare)) {
+            $param['codare'] = $codare;
+            $query .= " AND (A.codare = CONVERT(INT, :codare))";
         }
         $query .= " ORDER BY NC.nomcur ASC ";
         return DB::fetchAll($query, $param);
