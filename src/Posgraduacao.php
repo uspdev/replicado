@@ -562,4 +562,40 @@ class Posgraduacao
         ];
         return DB::fetchAll($query, $param);
     }
+
+    /*
+     * Listar defesas em um intervalo de tempo
+     * @param  array $intervalo = ['inicio'=> '2020-01-01', 'fim' => '2020-01-01']
+     *
+     * @return array
+     */
+    public static function listarDefesas($intervalo = [])
+    {
+        # Se não for passado o intervalo vamos listar as defesas do ano corrente
+        if(empty($intervalo)) {
+            $intervalo['inicio'] = Date('Y') . '-01-01';
+            $intervalo['fim'] = Date('Y') . '-12-31';
+        }
+
+        $query = DB::getQuery('Posgraduacao.listarDefesas.sql');
+        $param = [
+            'inicio' => $intervalo['inicio'],
+            'fim'    => $intervalo['fim'],
+        ];
+        return DB::fetchAll($query,$param);
+    }
+
+    /*
+     * @param  int $codpes: Número USP do aluno (orientador).
+     *
+     * @return array
+     */
+    public static function obterDefesas($codpes)
+    {
+        $query = DB::getQuery('Posgraduacao.obterDefesas.sql');
+        $param = [
+            'codpes' => $codpes,
+        ];
+        return DB::fetchAll($query,$param);
+    }
 }
