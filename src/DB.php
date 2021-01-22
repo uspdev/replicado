@@ -5,6 +5,7 @@ namespace Uspdev\Replicado;
 use PDO;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use SplFileInfo;
 
 class DB
 {
@@ -167,5 +168,21 @@ class DB
         }
 
         return [$str_where, $params];
+    }
+
+    /**
+     * Função auxiliar que ajuda carregar o arquivo sql
+     */
+    public static function getQuery($filename)
+    {
+        $path = new SplFileInfo(__DIR__); 
+        $queries = $path->getRealPath();
+        $queries .= DIRECTORY_SEPARATOR;
+        $queries .=  '..';
+        $queries .= DIRECTORY_SEPARATOR;
+        $queries .= 'resources';
+        $queries .= DIRECTORY_SEPARATOR;
+        $queries .= 'queries';
+        return file_get_contents($queries.DIRECTORY_SEPARATOR.$filename);
     }
 }

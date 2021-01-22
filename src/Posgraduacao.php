@@ -538,15 +538,7 @@ class Posgraduacao
      */
     public static function obterOrientandosAtivos($codpes)
     {
-        $query = " SELECT DISTINCT (r.codpespgm), (v.nompes), (v.nivpgm), (n.nomare)
-                    FROM R39PGMORIDOC r
-                    INNER JOIN VINCULOPESSOAUSP v  ON r.codpespgm = v.codpes
-                    INNER JOIN NOMEAREA n ON r.codare = n.codare
-                    WHERE r.codpes = convert(int,:codpes) 
-                    AND r.dtafimort = NULL  
-                    AND n.dtafimare = NULL 
-                    AND v.nivpgm IS NOT NULL
-                    ORDER BY v.nompes ";
+        $query = DB::getQuery('Posgraduacao.obterOrientandosAtivos.sql');
         $param = [
             'codpes' => $codpes,
         ];
@@ -563,18 +555,8 @@ class Posgraduacao
      * @return array
      */
     public static function obterOrientandosConcluidos($codpes)
-    {   
-        $query = " SELECT DISTINCT (r.codpespgm), (p.nompes), (a.nivpgm), (n.nomare), (a.dtadfapgm)
-                    FROM R39PGMORIDOC r
-                    INNER JOIN PESSOA p  ON r.codpespgm = p.codpes
-                    INNER JOIN NOMEAREA n ON r.codare = n.codare
-                    INNER JOIN AGPROGRAMA a ON a.codpes = r.codpespgm
-                    WHERE r.codpes = convert(int,:codpes) 
-                    AND r.dtafimort IS NOT NULL
-                    AND n.dtafimare IS NOT NULL  
-                    AND a.dtadfapgm IS NOT NULL
-                    AND a.nivpgm IS NOT NULL
-                    ORDER BY a.nivpgm ";
+    {
+        $query = DB::getQuery('Posgraduacao.obterOrientandosConcluidos.sql');
         $param = [
             'codpes' => $codpes,
         ];
