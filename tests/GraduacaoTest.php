@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Uspdev\Replicado\Pessoa;
 use Uspdev\Replicado\Graduacao;
 use Uspdev\Replicado\DB;
-use Faker\Factory;
 
 class GraduacaoTest extends TestCase
 {

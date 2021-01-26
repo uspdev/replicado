@@ -2,7 +2,6 @@
 
 namespace Uspdev\Replicado\Tests;
 
-use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use Uspdev\Replicado\DB;
 use Dotenv\Dotenv;
@@ -23,12 +22,6 @@ class DeploySchemaTest extends TestCase
         putenv('REPLICADO_SYBASE=1');
     }
 
-    private function getTables()
-    {
-        $tables = DB::fetchAll("select name from sysobjects where type = 'U' or type = 'P'");
-        return array_column($tables, 'name');
-    }
-
     public function test_deploy_schema()
     {
         # Drop all tables and do the assert
@@ -42,7 +35,7 @@ class DeploySchemaTest extends TestCase
         $schemas = array_diff( $schemas, ['.','..'] );
         foreach($schemas as $schema){
             if ($schema != 'database.sql') {
-                $sql = file_get_contents(__DIR__ . '/' . 'schemas/' . $schema);
+                $sql = file_get_contents(__DIR__ . '/schemas/' . $schema);
                 DB::getInstance()->exec($sql);
                 $table = explode('.',$schema)[0];
                 $this->assertContains($table, $this->getTables());
@@ -50,4 +43,10 @@ class DeploySchemaTest extends TestCase
         }
     }
 
+    /* Métodos Auxiliares */
+    private function getTables()
+    {
+        $tables = DB::fetchAll("select name from sysobjects where type = 'U' or type = 'P'");
+        return array_column($tables, 'name');
+    }
 }

@@ -6,44 +6,24 @@ use PHPUnit\Framework\TestCase;
 use Uspdev\Replicado\Pessoa;
 use Uspdev\Replicado\Uteis;
 use Uspdev\Replicado\DB;
-use Faker\Factory;
 
 class PessoaTest extends TestCase
 {
     public function test_nomeCompleto(){
         # Limpando Tabela
-        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
+        DB::getInstance()->exec('DELETE FROM PESSOA');
 
-        $sql = "INSERT INTO PESSOA (codpes, nompes, nompesttd, dtanas) 
-                VALUES (
-                    convert(int,:codpes),
-                    :nompes,
-                    :nompesttd,
-                    :dtanas
-                )";
-
-        $data = [
-            'codpes' => 123456,
-            'nompes' => 'Fulano da Silva',
-            'nompesttd' => 'Fulana da Silva',
-            'dtanas' => '2018-10-05 00:00:00'
-        ];
-        DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame('Fulana da Silva',Pessoa::nomeCompleto(123456));
+        $sql = file_get_contents(__DIR__ .'/data/'.'PessoaTest.test_nomeCompleto.sql');
+        
+        DB::getInstance()->exec($sql);
+        $this->assertSame('Fulano da Silva',Pessoa::nomeCompleto(123456));
     }
 
     public function test_obterCodpesPorEmail(){
-        DB::getInstance()->prepare('DELETE FROM EMAILPESSOA')->execute();
-
-        $sql = "INSERT INTO EMAILPESSOA (codpes, codema) 
-                    VALUES (convert(int,:codpes),:codema)";
-
-        $data = [
-            'codpes' => 123456,
-            'codema' => 'fulana@usp.br'
-        ];
-        DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame('123456',Pessoa::obterCodpesPorEmail('fulana@usp.br'));
+        DB::getInstance()->exec('DELETE FROM EMAILPESSOA');
+        $sql = file_get_contents(__DIR__ .'/data/'.'PessoaTest.test_obterCodpesPorEmail.sql');
+        DB::getInstance()->exec($sql);
+        $this->assertSame('123456',Pessoa::obterCodpesPorEmail('fulano@usp.br'));
     }
 
     public function test_verificarEstagioUSP(){

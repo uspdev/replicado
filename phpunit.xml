@@ -19,12 +19,7 @@
             <file>tests/BempatrimoniadoTest.php</file>
             <file>tests/EstruturaTest.php</file>
             <file>tests/LattesTest.php</file>
-            <!-- Estou deixando comentado, pois o contanier docker está "morrendo"
-                 quando chamamos BuildFakerDataTest.php. Como ele não testa nada em si,
-                 isto é, ele é rodado no final de tudo para construção de dados fakers 
-                 para desenvolvimento, temos que avaliar se ele deve mesmo estar aqui ou não. 
             <file>tests/BuildFakerDataTest.php</file>
-            -->
         </testsuite>
     </testsuites>
 </phpunit>

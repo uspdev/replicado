@@ -1,0 +1,1 @@
+INSERT INTO EMAILPESSOA (codpes, codema) VALUES (123456, 'fulano@usp.br')
