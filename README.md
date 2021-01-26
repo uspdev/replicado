@@ -26,8 +26,7 @@ seu código muito mais limpo, além de torna as consultas reutilizáveis:
 
 * É necessário pelo menos o PHP v7.3.
 * Esta biblioteca precisa da extensão `ext-sybase`. No ubuntu instale com `sudo apt install php-sybase`
-* Esta biblioteca usa opcionalmente `uspdev/cache`.
-No ubuntu instale com `sudo apt install memcached php-memcached`
+* Esta biblioteca usa opcionalmente `uspdev/cache`. Caso queira usar o cache consulte a documentação em: https://github.com/uspdev/cache
 
 ## Como usar
 
