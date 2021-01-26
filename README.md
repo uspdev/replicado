@@ -117,5 +117,3 @@ Ainda é necessário instalar:
 Gerando a documentação:
 
     phpdoc
-
-Consulte a documentação em: 
