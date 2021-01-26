@@ -1,5 +1,4 @@
-name: PHP Composer
-
+name: Publica a documentação automaticamente no github-pages
 on:
   push:
     branches: [ master ]
