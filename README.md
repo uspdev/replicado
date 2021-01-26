@@ -98,7 +98,13 @@ PR garanta que os testes estão passando:
 
 ## Documentação
 
-A documentação é auto-gerada com [phpDocumentor](https://www.phpdoc.org/), para instalá-lo:
+Consulte a documentação em:
+[https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.html](https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.html)
+
+A documentação é auto-gerada usando [phpDocumentor](https://www.phpdoc.org/) e não é necessário
+fazer nada, pois a cada push uma github action a atualiza.
+
+Mas se quiser testá-la localmente:
 
     wget http://phpdoc.org/phpDocumentor.phar
     sudo mv phpDocumentor.phar /usr/local/bin/phpdoc
@@ -113,5 +119,3 @@ Gerando a documentação:
     phpdoc
 
 Consulte a documentação em: 
-[https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.html](https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.html)
-
