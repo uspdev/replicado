@@ -99,7 +99,7 @@ PR garanta que os testes estão passando:
 ## Documentação
 
 Consulte a documentação em:
-[https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.html](https://uspdev.github.io/replicado/namespaces/Uspdev.Replicado.html)
+[https://uspdev.github.io/replicado/](https://uspdev.github.io/replicado/)
 
 A documentação é auto-gerada usando [phpDocumentor](https://www.phpdoc.org/) e não é necessário
 fazer nada, pois a cada push uma github action a atualiza.

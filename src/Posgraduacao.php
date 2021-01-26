@@ -527,7 +527,7 @@ class Posgraduacao
       return false;
     }
     
-    /*
+    /**
      * Retorna lista de orientandos ativos de um docente (orientador), 
      * com o número USP, nome, o respectivo nível de programa de pós graduação 
      * (Mestrado, Doutorado ou Doutorado Direto) e nome da área.
@@ -535,7 +535,7 @@ class Posgraduacao
      * @param  int $codpes: Número USP do docente (orientador).
      *
      * @return array
-     */
+     **/
     public static function obterOrientandosAtivos($codpes)
     {
         $query = DB::getQuery('Posgraduacao.obterOrientandosAtivos.sql');
@@ -545,15 +545,15 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
-    /*
-     * Retorna lista de orientandos que já concluíram seus programas (Mestrado, Doutorado ou Doutorado Direto), 
-     * a partir do número USP do orientador.
-     * Retorna o número USP, nome, o respectivo nível de programa de pós graduação, nome da área e data de defesa do programa.
-     *
-     * @param  int $codpes: Número USP do docente (orientador).
-     *
-     * @return array
-     */
+    /**
+      * Retorna lista de orientandos que já concluíram seus programas (Mestrado, Doutorado ou Doutorado Direto), 
+      * a partir do número USP do orientador.
+      * Retorna o número USP, nome, o respectivo nível de programa de pós graduação, nome da área e data de defesa do programa.
+      *
+      * @param  int $codpes: Número USP do docente (orientador).
+      *
+      * @return array
+      **/
     public static function obterOrientandosConcluidos($codpes)
     {
         $query = DB::getQuery('Posgraduacao.obterOrientandosConcluidos.sql');
@@ -563,12 +563,12 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
-    /*
-     * Listar defesas em um intervalo de tempo
-     * @param  array $intervalo = ['inicio'=> '2020-01-01', 'fim' => '2020-01-01']
-     *
-     * @return array
-     */
+    /**
+      * Listar defesas em um intervalo de tempo
+      * @param  array $intervalo = ['inicio'=> '2020-01-01', 'fim' => '2020-01-01']
+      *
+      * @return array
+      **/
     public static function listarDefesas($intervalo = [])
     {
         # Se não for passado o intervalo vamos listar as defesas do ano corrente
@@ -585,11 +585,12 @@ class Posgraduacao
         return DB::fetchAll($query,$param);
     }
 
-    /*
-     * @param  int $codpes: Número USP do aluno (orientador).
-     *
-     * @return array
-     */
+    /**
+      * Obter todas defesas concluídas de um indivíduo
+      * @param  int $codpes: Número USP do aluno.
+      *
+      * @return array
+      **/
     public static function obterDefesas($codpes)
     {
         $query = DB::getQuery('Posgraduacao.obterDefesas.sql');
