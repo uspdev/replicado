@@ -586,7 +586,7 @@ class Posgraduacao
     }
 
     /**
-      * Obter todas defesas concluídas de um indivíduo
+      * Obter todas defesas concluídas de uma pessoa
       * @param  int $codpes: Número USP do aluno.
       *
       * @return array
