@@ -474,14 +474,14 @@ class Lattes
                     'AUTORES' => $aux_autores
                 ]; 
                 if($tipo == 'anual'){
-                    if($limit_ini != -1 &&  (int)$aux_livro['ANO'] !=  $limit_ini ) return false;
+                    if($limit_ini != -1 &&  (int)$aux_capitulo['ANO'] !=  $limit_ini ) return false;
                 }else if($tipo == 'periodo'){
                     if($limit_ini != -1 && 
                         (
-                        (int)$aux_livro['ANO'] < $limit_ini ||
-                        (int)$aux_livro['ANO'] > $limit_fim 
+                        (int)$aux_capitulo['ANO'] < $limit_ini ||
+                        (int)$aux_capitulo['ANO'] > $limit_fim 
                         )
-                    )  return false;; 
+                    )  return false;
                 }
                 array_push($ultimos_capitulos, $aux_capitulo);
             }else{
