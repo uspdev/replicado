@@ -6,6 +6,7 @@ use PDO;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use SplFileInfo;
+use Uspdev\Cache\Cache;
 
 class DB
 {
@@ -60,7 +61,12 @@ class DB
             return false;
         }
 
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if(getenv('REPLICADO_USAR_CACHE')) {
+            $cache = new Cache($stmt);
+            $result = $cache->getCached('fetch',PDO::FETCH_ASSOC);
+        } else {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
 
         if (!empty($result) && self::sybase()) {
             $result = Uteis::utf8_converter($result);
@@ -88,7 +94,13 @@ class DB
             return false;
         }
 
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if(getenv('REPLICADO_USAR_CACHE')) {
+            $cache = new Cache($stmt);
+            $result = $cache->getCached('fetchAll',PDO::FETCH_ASSOC);
+        } else {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
         if (!empty($result) && self::sybase()) {
             $result = Uteis::utf8_converter($result);
             $result = Uteis::trim_recursivo($result); 

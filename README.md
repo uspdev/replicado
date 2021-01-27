@@ -26,6 +26,7 @@ seu código muito mais limpo, além de torna as consultas reutilizáveis:
 
 * É necessário pelo menos o PHP v7.3.
 * Esta biblioteca precisa da extensão `ext-sybase`. No ubuntu instale com `sudo apt install php-sybase`
+* Esta biblioteca usa opcionalmente `uspdev/cache`. Caso queira usar o cache consulte a documentação em: https://github.com/uspdev/cache
 
 ## Como usar
 
@@ -49,6 +50,7 @@ Exemplo de uso
     putenv('REPLICADO_PASSWORD=secret');
     putenv('REPLICADO_CODUNDCLG=8');
     putenv('REPLICADO_CODCUR=1,2,3');
+    putenv('REPLICADO_USAR_CACHE=0');
 
     # Opicionais
     putenv('REPLICADO_PATHLOG=path/to/your.log');
