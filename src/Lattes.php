@@ -185,15 +185,16 @@ class Lattes
     * com o respectivo título do artigo, nome da revista ou períodico, volume, número de páginas e ano de publicação
     *  
     * @param Integer $codpes = Número USP
-    * @param Integer $limit = Número de artigos a serem retornados, se não preenchido, o valor default é 5
-    * @param String $tipo = Valores possíveis para determinar o limite: 'ano' e 'registro'. Default: últimos 5 anos. 
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
     * @return String|Bool
     */
-    public static function getArtigos($codpes, $limit = 5, $tipo = 'ano', $lattes_array = null){
+
+    public static function getArtigos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
         $lattes = $lattes_array ?? self::getArray($codpes);
         if(!$lattes && !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) return false;
         $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA'];
-        $limit_ano = date("Y") - $limit;
 
 
         if(array_key_exists('ARTIGOS-PUBLICADOS',$artigos)){
@@ -214,6 +215,8 @@ class Lattes
             $i = 0;
             $ultimos_artigos = [];
             foreach($artigos as $val){
+                $i++;
+
                 $dados_basicos = (!isset($val['DADOS-BASICOS-DO-ARTIGO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-ARTIGO';
                 $detalhamento = (!isset($val['DETALHAMENTO-DO-ARTIGO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-ARTIGO';
                 $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
@@ -242,13 +245,26 @@ class Lattes
                     'ANO' => $val[$dados_basicos]['@attributes']['ANO-DO-ARTIGO'] ?? '',
                     'AUTORES' => $aux_autores
                 ];
-
+                /*
                 if($tipo == 'registro'){
-                    if($limit != -1 && $i > ($limit - 1) ) break;  //-1 retorna tudo
+                    if($limit != -1 && $i > ($limit - 1) ) continue;  //-1 retorna tudo
                 }else if($tipo == 'ano'){
-                    if($limit != -1 &&  $aux_artigo['ANO'] <  $limit_ano ) break;
+                    if($limit != -1 &&  $aux_artigo['ANO'] <  $limit_ano ) continue;
                 }
-                $i++;
+                */
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_artigo['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_artigo['ANO'] < $limit_ini ||
+                        (int)$aux_artigo['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
+                }
+
 
                 array_push($ultimos_artigos, $aux_artigo);
             }
@@ -306,19 +322,20 @@ class Lattes
     }
 
     /**
-    * Recebe o número USP e devolve array com os 5 últimos livros publicados cadastrados no currículo Lattes,
-    * com o respectivo título do livro, ano, número de páginas e nome da editora
+    * Recebe o número USP e devolve array com os livros publicados cadastrados no currículo Lattes,
+    * com o respectivo título do livro, ano, número de páginas, nome da editora e autores
     *  
     * @param Integer $codpes = Número USP
-    * @param Integer $limit = Número de livros a serem retornados, se não preenchido, o valor default é 5
-    * @param String $tipo = Valores possíveis para determinar o limite: 'ano' e 'registro'. Default: últimos 5 anos. 
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
     * @return String|Bool
     */
-    public static function getLivrosPublicados($codpes, $limit = 5, $tipo = 'ano', $lattes_array = null){
+    public static function getLivrosPublicados($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
         $lattes = $lattes_array ?? self::getArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'])) return false;
-        $limit_ano = date("Y") - $limit;
+        
 
         $livros = $lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'];
         if(array_key_exists('LIVROS-PUBLICADOS-OU-ORGANIZADOS',$livros)){
@@ -336,7 +353,7 @@ class Lattes
                 return (int)$b['@attributes']['SEQUENCIA-PRODUCAO'] - (int)$a['@attributes']['SEQUENCIA-PRODUCAO'];
             });
             foreach($livros as $val){
-                
+                $i++;
                 $dados_basicos = (!isset($val['DADOS-BASICOS-DO-LIVRO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-LIVRO';
                 $detalhamento = (!isset($val['DETALHAMENTO-DO-LIVRO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-LIVRO';
                 $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
@@ -369,29 +386,39 @@ class Lattes
                     'AUTORES' => $aux_autores
                 ];
                 
-
-                if($tipo == 'registro'){
-                    if($limit != -1 && $i > ($limit - 1) ) break;  //-1 retorna tudo
-                }else if($tipo == 'ano'){
-                    if($limit != -1 &&  $aux_livro['ANO'] <  $limit_ano ) break;
+                
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_livro['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_livro['ANO'] < $limit_ini ||
+                        (int)$aux_livro['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
                 }
-                $i++;
+                
                 array_push($ultimos_livros, $aux_livro);
             }
             
             return $ultimos_livros;
         } else return false;
     }
+   
 
-    /**
+      /**
     * Recebe o número USP e devolve array com os 5 últimos capítulos de livros publicados cadastrados no currículo Lattes,
     * com o respectivo título do capítulo, título do livro, número de volumes, página inicial e final do capítulo, ano e nome da editora.
     *  
     * @param Integer $codpes = Número USP
-    * @param Integer $limit = Número de capítulos publicados a serem retornados, se não preenchido, o valor default é 5
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
     * @return String|Bool
     */
-    public static function getCapitulosLivros($codpes, $limit = 5, $lattes_array = null){
+    public static function getCapitulosLivros($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
         $lattes = $lattes_array ?? self::getArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'])) return false;
@@ -399,19 +426,43 @@ class Lattes
         
         if(array_key_exists('CAPITULOS-DE-LIVROS-PUBLICADOS',$capitulos)){
             $capitulos = $lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS']['CAPITULOS-DE-LIVROS-PUBLICADOS']['CAPITULO-DE-LIVRO-PUBLICADO'];
-                if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS']['CAPITULOS-DE-LIVROS-PUBLICADOS']['CAPITULO-DE-LIVRO-PUBLICADO'])){
-                    return false;
-                } else
-            //ordena em ordem decrescente.
-            usort($capitulos, function ($a, $b) {
-                if(!isset($b['@attributes']['SEQUENCIA-PRODUCAO'])){
-                    return 0;
-                }
-                return (int)$b['@attributes']['SEQUENCIA-PRODUCAO'] - (int)$a['@attributes']['SEQUENCIA-PRODUCAO'];
-            });
+            if(!isset($capitulos)){
+                return false;
+            } else{
+                //ordena em ordem decrescente.
+                usort($capitulos, function ($a, $b) {
+                    if(!isset($b['@attributes']['SEQUENCIA-PRODUCAO'])){
+                        return 0;
+                    }
+                    return (int)$b['@attributes']['SEQUENCIA-PRODUCAO'] - (int)$a['@attributes']['SEQUENCIA-PRODUCAO'];
+                });
+            }
             $i = 0;
             $ultimos_capitulos = [];
-            if(isset($capitulos[1]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'])){
+            if(isset($capitulos[1]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'])){//quando tem apenas uma produção
+               
+                $autores = (!isset($capitulos['AUTORES']) && isset($capitulos[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($capitulos[$autores])){
+                    
+                    usort($capitulos[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($capitulos[$autores] as $autor){    
+                        array_push($aux_autores, [
+                            "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? $autor['NOME-COMPLETO-DO-AUTOR'],
+                            "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? $autor['NOME-PARA-CITACAO'],
+                            "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? $autor['ORDEM-DE-AUTORIA'],
+                            ]);
+                    }
+                    
+                }
+
                 $aux_capitulo = [
                     'TITULO-DO-CAPITULO-DO-LIVRO' => $capitulos[1]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'] ?? '',
                     'TITULO-DO-LIVRO' => $capitulos[2]['@attributes']['TITULO-DO-LIVRO'] ?? '',
@@ -420,14 +471,49 @@ class Lattes
                     'PAGINA-FINAL' => $capitulos[2]['@attributes']['PAGINA-FINAL'] ?? '',
                     'ANO' => $capitulos[1]['@attributes']['ANO'] ?? '',
                     'NOME-DA-EDITORA' => $capitulos[2]['@attributes']['NOME-DA-EDITORA'] ?? '',
-                ];
+                    'AUTORES' => $aux_autores
+                ]; 
+                if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_livro['ANO'] !=  $limit_ini ) return false;
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_livro['ANO'] < $limit_ini ||
+                        (int)$aux_livro['ANO'] > $limit_fim 
+                        )
+                    )  return false;; 
+                }
                 array_push($ultimos_capitulos, $aux_capitulo);
             }else{
+                $i = 0;
                 foreach($capitulos as $val){
-                    if($limit != -1 && $i > ($limit - 1) ) break; $i++; //-1 retorna tudo
+                    $i++;
                     $dados_basicos = (!isset($val['DADOS-BASICOS-DO-CAPITULO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-CAPITULO';
                     $detalhamento = (!isset($val['DETALHAMENTO-DO-CAPITULO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-CAPITULO';
+                    $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
                 
+                    $aux_autores = [];
+                    if(isset($val[$autores])){
+                        
+                        usort($val[$autores], function ($a, $b) {
+                            if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                                return 0;
+                            }
+                            return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                        });
+                        
+                        
+                        foreach($val[$autores] as $autor){
+                            
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? $autor['NOME-COMPLETO-DO-AUTOR'],
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? $autor['NOME-PARA-CITACAO'],
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? $autor['ORDEM-DE-AUTORIA'],
+                                ]);
+                        }
+                        
+                    }
+
                     if(isset($val[$dados_basicos]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'])){
                         $aux_capitulo = [
                             'TITULO-DO-CAPITULO-DO-LIVRO' => $val[$dados_basicos]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'] ?? '',
@@ -437,7 +523,22 @@ class Lattes
                             'PAGINA-FINAL' => $val[$detalhamento]['@attributes']['PAGINA-FINAL'] ?? '',
                             'ANO' => $val[$dados_basicos]['@attributes']['ANO'] ?? '',
                             'NOME-DA-EDITORA' => $val[$detalhamento]['@attributes']['NOME-DA-EDITORA'] ?? '',
+                            'AUTORES' => $aux_autores
                         ];
+
+                        if($tipo == 'registros'){
+                            if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                        }else if($tipo == 'anual'){
+                            if($limit_ini != -1 &&  (int)$aux_capitulo['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                        }else if($tipo == 'periodo'){
+                            if($limit_ini != -1 && 
+                                (
+                                (int)$aux_capitulo['ANO'] < $limit_ini ||
+                                (int)$aux_capitulo['ANO'] > $limit_fim 
+                                )
+                            ) continue; 
+                        }
+
                         array_push($ultimos_capitulos, $aux_capitulo);
                     }
                 }
