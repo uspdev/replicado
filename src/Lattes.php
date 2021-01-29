@@ -193,7 +193,7 @@ class Lattes
 
     public static function getArtigos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
         $lattes = $lattes_array ?? self::getArray($codpes);
-        if(!$lattes && !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) return false;
+        if(!$lattes || !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) return false;
         $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA'];
 
 
