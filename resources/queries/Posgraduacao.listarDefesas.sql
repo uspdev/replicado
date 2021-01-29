@@ -4,7 +4,7 @@ nompes = (SELECT nompes FROM PESSOA WHERE codpes=t1.codpes),
 t1.dtadfapgm, -- Data da Defesa
 t1.nivpgm,    -- ME/DO
 t3.codare,    -- Código da área
-t6.nomare,    -- Nome da área, na maiorias das vezes coincide com nomcur
+t6.nomare,    -- Nome da área, um curso pode ter muitas áreas
 t4.codcur,    -- Nome do programa de Pós-Graduação
 t4.nomcur,    -- Nome do programa de Pós-Graduação
 t5.tittrb     -- Título da Dissertação / Tese

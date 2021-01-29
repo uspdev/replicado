@@ -58,8 +58,10 @@ class Posgraduacao
     *
     * @return array
     */
-    public static function programas($codundclgi, $codcur = null, $codare = null)
+    public static function programas($codundclgi = null, $codcur = null, $codare = null)
     {
+        if($codundclgi == null) $codundclgi = getenv('REPLICADO_CODUNDCLG');
+
         $query = "SELECT C.codcur, NC.nomcur, A.codare
                   FROM CURSO AS C
                   INNER JOIN NOMECURSO AS NC ON C.codcur = NC.codcur
@@ -303,8 +305,10 @@ class Posgraduacao
  *
  * por Erickson Zanon - czanon@usp.br
  */
-    public static function areasProgramas(int $codundclgi, int $codcur = null)
+    public static function areasProgramas(int $codundclgi = null, int $codcur = null)
     {
+        if($codundclgi == null) $codundclgi = getenv('REPLICADO_CODUNDCLG');
+
         //obtém programas
         $programas = Posgraduacao::programas($codundclgi, $codcur);
         // loop sobre programas obtendos suas áreas
