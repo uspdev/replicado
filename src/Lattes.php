@@ -193,7 +193,7 @@ class Lattes
 
     public static function getArtigos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
         $lattes = $lattes_array ?? self::getArray($codpes);
-        if(!$lattes && !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) return false;
+        if(!$lattes || !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) return false;
         $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA'];
 
 
@@ -474,12 +474,12 @@ class Lattes
                     'AUTORES' => $aux_autores
                 ]; 
                 if($tipo == 'anual'){
-                    if($limit_ini != -1 &&  (int)$aux_livro['ANO'] !=  $limit_ini ) return false;
+                    if($limit_ini != -1 &&  (int)$aux_capitulo['ANO'] !=  $limit_ini ) return false;
                 }else if($tipo == 'periodo'){
                     if($limit_ini != -1 && 
                         (
-                        (int)$aux_livro['ANO'] < $limit_ini ||
-                        (int)$aux_livro['ANO'] > $limit_fim 
+                        (int)$aux_capitulo['ANO'] < $limit_ini ||
+                        (int)$aux_capitulo['ANO'] > $limit_fim 
                         )
                     )  return false;; 
                 }
