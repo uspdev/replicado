@@ -403,8 +403,102 @@ class Lattes
                 array_push($ultimos_livros, $aux_livro);
             }
             
+            
             return $ultimos_livros;
         } else return false;
+    }
+
+
+    /**
+    * Recebe o número USP e devolve array com os textos em revistas ou jornais publicados cadastrados no currículo Lattes
+    * 
+    *  
+    * @param Integer $codpes = Número USP
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
+    * @return String|Bool
+    */
+    public static function getTextosJornaisRevistas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['TEXTOS-EM-JORNAIS-OU-REVISTAS'])) return false;
+        $textos_jornais_revistas = [];
+
+        if(isset($lattes['PRODUCAO-BIBLIOGRAFICA']['TEXTOS-EM-JORNAIS-OU-REVISTAS']['TEXTO-EM-JORNAL-OU-REVISTA'])){
+            $i = 0;
+            foreach($lattes['PRODUCAO-BIBLIOGRAFICA']['TEXTOS-EM-JORNAIS-OU-REVISTAS']['TEXTO-EM-JORNAL-OU-REVISTA'] as $texto){
+                $i++;
+                $autores = (!isset($texto['AUTORES']) && isset($texto[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($texto[$autores])){
+                   
+                    usort($texto[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($texto[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+                
+
+                $aux_texto = [];
+                $aux_texto['TITULO'] = $texto["DADOS-BASICOS-DO-TEXTO"]['@attributes']['TITULO-DO-TEXTO'] ?? '';
+                $aux_texto['TIPO'] = $texto["DADOS-BASICOS-DO-TEXTO"]['@attributes']['NATUREZA'] ?? ''; //JORNAL OU REVISTA
+                $aux_texto['SEQUENCIA-PRODUCAO'] = $texto['@attributes']["SEQUENCIA-PRODUCAO"] ?? ''; //JORNAL OU REVISTA
+                $aux_texto['ANO'] = $texto["DADOS-BASICOS-DO-TEXTO"]['@attributes']['ANO-DO-TEXTO'] ?? ''; 
+                $aux_texto['TITULO-DO-JORNAL-OU-REVISTA'] =  $texto["DETALHAMENTO-DO-TEXTO"]['@attributes']["TITULO-DO-JORNAL-OU-REVISTA"] ?? '';
+                $aux_texto['DATA'] =  $texto["DETALHAMENTO-DO-TEXTO"]['@attributes']["DATA-DE-PUBLICACAO"] ?? '';
+                $aux_texto['LOCAL-DE-PUBLICACAO'] =  $texto["DETALHAMENTO-DO-TEXTO"]['@attributes']["LOCAL-DE-PUBLICACAO"] ?? '';
+                $aux_texto['VOLUME'] =  $texto["DETALHAMENTO-DO-TEXTO"]['@attributes']["VOLUME"] ?? '';
+                $aux_texto['AUTORES'] =   $aux_autores;
+                
+                
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_texto['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_texto['ANO'] < $limit_ini ||
+                        (int)$aux_texto['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
+                }
+
+                array_push($textos_jornais_revistas, $aux_texto);
+            }
+        }else{
+            return false;
+        }
+        usort($textos_jornais_revistas, function ($a, $b) {
+            if(!isset($b['SEQUENCIA-PRODUCAO'])){
+                return 0;
+            }
+            return (int)$b['SEQUENCIA-PRODUCAO'] - (int)$a['SEQUENCIA-PRODUCAO'];
+        });
+
+        return ($textos_jornais_revistas);
+       
     }
    
 
