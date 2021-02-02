@@ -518,6 +518,7 @@ class Lattes
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA'])) return false;
         $outras = [];
+
         if(isset($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA']['OUTRA-PRODUCAO-BIBLIOGRAFICA'])){
             $i = 0;
             foreach($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA']['OUTRA-PRODUCAO-BIBLIOGRAFICA'] as $outro){
@@ -579,8 +580,68 @@ class Lattes
 
                 array_push($outras, $aux_outros);
             }
-        }else{
-            return false;
+        }
+        if(isset($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA']['PREFACIO-POSFACIO'])){
+            $i = 0;
+            foreach($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA']['PREFACIO-POSFACIO'] as $prefacio_posfacio){
+                
+                $i++;
+
+                $autores = (!isset($prefacio_posfacio['AUTORES']) && isset($prefacio_posfacio[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($prefacio_posfacio[$autores])){
+                   
+                    usort($prefacio_posfacio[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($prefacio_posfacio[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+                
+                
+                $aux_prefacio_posfacio = [];
+                $aux_prefacio_posfacio['TITULO'] = $prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TITULO'] ?? '';
+                $aux_prefacio_posfacio['TIPO'] = $prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TIPO'] ? 'Prefácio, Pósfacio/' . ucfirst(strtolower($prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TIPO'])) : ''; 
+                $aux_prefacio_posfacio['SEQUENCIA-PRODUCAO'] = $prefacio_posfacio['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+                $aux_prefacio_posfacio['ANO'] = $prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['ANO'] ?? ''; 
+                $aux_prefacio_posfacio['CIDADE-DA-EDITORA'] =  $prefacio_posfacio["DETALHAMENTO-DO-PREFACIO-POSFACIO"]['@attributes']["CIDADE-DA-EDITORA"] ?? '';
+                $aux_prefacio_posfacio['AUTORES'] =   $aux_autores;
+                
+                
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_prefacio_posfacio['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_prefacio_posfacio['ANO'] < $limit_ini ||
+                        (int)$aux_prefacio_posfacio['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
+                }
+
+                array_push($outras, $aux_prefacio_posfacio);
+            }
         }
         usort($outras, function ($a, $b) {
             if(!isset($b['SEQUENCIA-PRODUCAO'])){
