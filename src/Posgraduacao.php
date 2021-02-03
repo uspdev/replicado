@@ -156,34 +156,44 @@ class Posgraduacao
     /**
      * Retorna a lista de disciplinas em oferecimento de uma determinada área de concentração.
      *
-     * Se $data não for informado pega a data corrente. Se for informado pegará as disciplinas oferecidas
-     * no semestre que contém a data.
+     * Se $data_ini não for informado, pega a data corrente. Se for informado pegará as disciplinas oferecidas
+     * no semestre que contém a data. O formato pode ser qualquer aceito por datetime().
+     * Se $data_ini for informado, o comportamento de $data_ini é alterado. $data_ini e $data_fim passam a ser
+     * as datas de início e data de fim do período de busca da disciplina, no formato aceito pelo BD (YYYYMMDD).
      *
      * @param int $codare Código da áreada PG.
-     * @param string $data (opcional) Data na qual vai buscar os limites do semestre.
+     * @param string $data_ini (opcional) Data na qual vai buscar os limites do semestre. 
+     *                         Caso seja fornecido $data_fim então será a data inicial do intervalo.
+     * @param string $data_fim (opcional) data final do intervalo de busca.
      *
-     * @return void
+     * @return array 
+     * 
+     * @author Masaki K Neto em 2020
+     * @author Masaki K Neto, modificado em 3/2/2021
      */
-    public static function disciplinasOferecimento(int $codare, string $data = null)
+    public static function disciplinasOferecimento(int $codare, string $data_ini = null, string $data_fim = null)
     {
-        $inifim = Uteis::semestre($data);
-
-        $query = "SELECT  e.sgldis, MAX(e.numseqdis) AS numseqdis, o.numofe, d.nomdis";
-        $query .= " FROM OFERECIMENTO AS o, R27DISMINCRE AS r, ESPACOTURMA AS e, DISCIPLINA AS d";
-        $query .= " WHERE e.sgldis = d.sgldis";
-        $query .= " AND e.sgldis = r.sgldis";
-        $query .= " AND o.sgldis = r.sgldis";
-        $query .= " AND o.numseqdis = d.numseqdis";
-        $query .= " AND o.dtainiofe > :dtainiofe";
-        $query .= " AND o.dtafimofe < :dtafimofe";
-        $query .= " AND r.codare = convert(int,:codare)";
-        $query .= " GROUP BY e.sgldis, d.nomdis, o.numofe";
-        $query .= " ORDER BY d.nomdis ASC";
+        // Se não for passado data_fim, então vamos construir data_ini e data_fim usando uteis
+        // se data_ini for null é tratado no uteis também
+        if (!$data_fim) {
+            list($data_ini,$data_fim) = Uteis::semestre($data_ini);
+        }
+        $query = "SELECT  e.sgldis, MAX(e.numseqdis) AS numseqdis, o.numofe, d.nomdis
+                    FROM OFERECIMENTO AS o, R27DISMINCRE AS r, ESPACOTURMA AS e, DISCIPLINA AS d
+                    WHERE e.sgldis = d.sgldis
+                        AND e.sgldis = r.sgldis
+                        AND o.sgldis = r.sgldis
+                        AND o.numseqdis = d.numseqdis
+                        AND o.dtainiofe > :dtainiofe
+                        AND o.dtafimofe < :dtafimofe
+                        AND r.codare = convert(int,:codare)
+                    GROUP BY e.sgldis, d.nomdis, o.numofe
+                    ORDER BY d.nomdis ASC";
 
         $param = [
             'codare' => $codare,
-            'dtainiofe' => $inifim[0],
-            'dtafimofe' => $inifim[1],
+            'dtainiofe' => $data_ini,
+            'dtafimofe' => $data_fim,
         ];
 
         return DB::fetchAll($query, $param);;
