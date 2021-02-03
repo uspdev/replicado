@@ -620,7 +620,7 @@ class Lattes
                 
                 $aux_prefacio_posfacio = [];
                 $aux_prefacio_posfacio['TITULO'] = $prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TITULO'] ?? '';
-                $aux_prefacio_posfacio['TIPO'] = $prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TIPO'] ? 'Prefácio, Pósfacio/' . ucfirst(strtolower($prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TIPO'])) : ''; 
+                $aux_prefacio_posfacio['TIPO'] = isset($prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TIPO']) ? 'Prefácio, Pósfacio/' . ucfirst(strtolower($prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TIPO'])) : ''; 
                 $aux_prefacio_posfacio['SEQUENCIA-PRODUCAO'] = $prefacio_posfacio['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
                 $aux_prefacio_posfacio['ANO'] = $prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['ANO'] ?? ''; 
                 $aux_prefacio_posfacio['CIDADE-DA-EDITORA'] =  $prefacio_posfacio["DETALHAMENTO-DO-PREFACIO-POSFACIO"]['@attributes']["CIDADE-DA-EDITORA"] ?? '';
