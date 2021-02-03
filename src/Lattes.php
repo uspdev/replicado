@@ -499,6 +499,160 @@ class Lattes
 
         return ($textos_jornais_revistas);
        
+    
+    }
+    
+    
+    /**
+    * Recebe o número USP e devolve array com as "outras" produções bibliográficas, uma subcategoria das produções, cadastrados no currículo Lattes
+    * 
+    *  
+    * @param Integer $codpes = Número USP
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
+    * @return String|Bool
+    */
+    public static function getOutrasProducoesBibliograficas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA'])) return false;
+        $outras = [];
+
+        if(isset($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA']['OUTRA-PRODUCAO-BIBLIOGRAFICA'])){
+            $i = 0;
+            foreach($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA']['OUTRA-PRODUCAO-BIBLIOGRAFICA'] as $outro){
+                
+                $i++;
+                $autores = (!isset($outro['AUTORES']) && isset($outro[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($outro[$autores])){
+                   
+                    usort($outro[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($outro[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+                
+                $aux_outros = [];
+                $aux_outros['TITULO'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO"]['@attributes']['TITULO'] ?? '';
+                $aux_outros['TIPO'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO"]['@attributes']['NATUREZA'] ?? ''; 
+                $aux_outros['SEQUENCIA-PRODUCAO'] = $outro['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+                $aux_outros['ANO'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO"]['@attributes']['ANO'] ?? ''; 
+                $aux_outros['EDITORA'] =  $outro["DETALHAMENTO-DE-OUTRA-PRODUCAO"]['@attributes']["EDITORA"] ?? '';
+                $aux_outros['CIDADE-DA-EDITORA'] =  $outro["DETALHAMENTO-DE-OUTRA-PRODUCAO"]['@attributes']["CIDADE-DA-EDITORA"] ?? '';
+                $aux_outros['AUTORES'] =   $aux_autores;
+                
+                
+                
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_outros['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_outros['ANO'] < $limit_ini ||
+                        (int)$aux_outros['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
+                }
+
+                array_push($outras, $aux_outros);
+            }
+        }
+        if(isset($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA']['PREFACIO-POSFACIO'])){
+            $i = 0;
+            foreach($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA']['PREFACIO-POSFACIO'] as $prefacio_posfacio){
+                
+                $i++;
+
+                $autores = (!isset($prefacio_posfacio['AUTORES']) && isset($prefacio_posfacio[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($prefacio_posfacio[$autores])){
+                   
+                    usort($prefacio_posfacio[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($prefacio_posfacio[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+                
+                
+                $aux_prefacio_posfacio = [];
+                $aux_prefacio_posfacio['TITULO'] = $prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TITULO'] ?? '';
+                $aux_prefacio_posfacio['TIPO'] = $prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TIPO'] ? 'Prefácio, Pósfacio/' . ucfirst(strtolower($prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['TIPO'])) : ''; 
+                $aux_prefacio_posfacio['SEQUENCIA-PRODUCAO'] = $prefacio_posfacio['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+                $aux_prefacio_posfacio['ANO'] = $prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]['@attributes']['ANO'] ?? ''; 
+                $aux_prefacio_posfacio['CIDADE-DA-EDITORA'] =  $prefacio_posfacio["DETALHAMENTO-DO-PREFACIO-POSFACIO"]['@attributes']["CIDADE-DA-EDITORA"] ?? '';
+                $aux_prefacio_posfacio['EDITORA'] =  $prefacio_posfacio["DETALHAMENTO-DO-PREFACIO-POSFACIO"]['@attributes']["EDITORA-DO-PREFACIO-POSFACIO"] ?? '';
+                $aux_prefacio_posfacio['AUTORES'] =   $aux_autores;
+                
+                
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_prefacio_posfacio['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_prefacio_posfacio['ANO'] < $limit_ini ||
+                        (int)$aux_prefacio_posfacio['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
+                }
+
+                array_push($outras, $aux_prefacio_posfacio);
+            }
+        }
+        usort($outras, function ($a, $b) {
+            if(!isset($b['SEQUENCIA-PRODUCAO'])){
+                return 0;
+            }
+            return (int)$b['SEQUENCIA-PRODUCAO'] - (int)$a['SEQUENCIA-PRODUCAO'];
+        });
+
+        return ($outras);
+       
     }
    
 
