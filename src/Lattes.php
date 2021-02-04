@@ -555,7 +555,6 @@ class Lattes
                 }
                 
                
-
                 $aux_anais = [];
                 $aux_anais['TITULO'] = $anais["DADOS-BASICOS-DO-TRABALHO"]['@attributes']['TITULO-DO-TRABALHO'] ?? '';
                 $aux_anais['TIPO'] = $anais["DADOS-BASICOS-DO-TRABALHO"]['@attributes']['NATUREZA'] ?? ''; //JORNAL OU REVISTA
@@ -564,6 +563,11 @@ class Lattes
                 $aux_anais['NOME-DO-EVENTO'] =  $anais["DETALHAMENTO-DO-TRABALHO"]['@attributes']["NOME-DO-EVENTO"] ?? '';
                 $aux_anais['TITULO-DOS-ANAIS-OU-PROCEEDINGS'] =  $anais["DETALHAMENTO-DO-TRABALHO"]['@attributes']["TITULO-DOS-ANAIS-OU-PROCEEDINGS"] ?? '';
                 $aux_anais['CIDADE-DO-EVENTO'] =  $anais["DETALHAMENTO-DO-TRABALHO"]['@attributes']["CIDADE-DO-EVENTO"] ?? '';
+                $aux_anais['CIDADE-DA-EDITORA'] =  $anais["DETALHAMENTO-DO-TRABALHO"]['@attributes']["CIDADE-DA-EDITORA"] ?? '';
+                $aux_anais['NOME-DA-EDITORA'] =  $anais["DETALHAMENTO-DO-TRABALHO"]['@attributes']["NOME-DA-EDITORA"] ?? '';
+                $aux_anais['ANO-DE-REALIZACAO'] =  $anais["DETALHAMENTO-DO-TRABALHO"]['@attributes']["ANO-DE-REALIZACAO"] ?? '';
+                $aux_anais['PAGINA-INICIAL'] =  $anais["DETALHAMENTO-DO-TRABALHO"]['@attributes']["PAGINA-INICIAL"] ?? '';
+                $aux_anais['PAGINA-FINAL'] =  $anais["DETALHAMENTO-DO-TRABALHO"]['@attributes']["PAGINA-FINAL"] ?? '';
                 $aux_anais['AUTORES'] =   $aux_autores;
                 
                 if($tipo == 'registros'){
@@ -578,6 +582,7 @@ class Lattes
                         )
                     ) continue; 
                 }
+
 
                 array_push($trabalhos_anais, $aux_anais);
             }
