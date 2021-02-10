@@ -430,7 +430,6 @@ class Posgraduacao
         }
     }
 
-
     /**
     * Retorna lista de alunos que defenderam pós-graduação em determinada área
     *
@@ -441,20 +440,54 @@ class Posgraduacao
     public static function egressosArea(int $codare)
     {
         // se não fizer join com TRABALHOPROG retornou um resultado menor que deveria (codare=18134)
-        $query = "SELECT p.nompesttd AS nompes, a.nivpgm, a.dtadfapgm --, t.tittrb
-            FROM HISTPROGRAMA AS h, PESSOA AS p, AGPROGRAMA AS a, TRABALHOPROG AS t
-            WHERE h.tiphstpgm = 'con' -- concluidos
-             AND t.codare = h.codare AND t.codpes = h.codpes AND t.numseqpgm = h.numseqpgm -- join trabalhoprog
-             AND p.codpes = h.codpes -- join pessoa
-             AND a.codpes = h.codpes AND a.codare = h.codare AND a.numseqpgm = h.numseqpgm -- join agprograma
-             AND h.codare = convert(int,:codare)
-            ORDER BY h.dtaocopgm DESC, h.codpes ASC
-        ";
-
+        $query = DB::getQuery('Posgraduacao.egressosArea.sql');
         $param = [
             'codare' => $codare
         ];
         return DB::fetchAll($query, $param);
+    }
+
+    /**
+    * Retorna lista de alunos que defenderam pós-graduação em determinada área
+    *
+    * @param  Int $codare - código da área do programa de pós graduação
+    *
+    * @return Array
+    */
+    public static function contarEgressosAreaAgrupadoPorAno(int $codare)
+    {
+        // se não fizer join com TRABALHOPROG retornou um resultado menor que deveria (codare=18134)
+        $query = DB::getQuery('Posgraduacao.contarEgressosArea.sql');
+        $param = [
+            'codare' => $codare
+        ];
+        $result = DB::fetchAll($query, $param);
+        if($result){
+            return array_column($result, 'quantidade', 'ano');
+        }
+        return $result;
+    }
+
+    /**
+     * Método para retornar quantidade alunos de pós-graduação em uma área (codare)
+     * 
+     * Se $codare não for informado irá retornar a quantidade de alunos de pós-graduação de todos os programas. 
+     * Se for informado, irá retornar a quantidade de alunos de pós-graduação somente da área
+     * 
+     * @param Integer $codare (optional) - código da área pertencente a um programa de pós.
+     * @return void
+     */
+    public static function contarAtivos($codare = null){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = DB::getQuery('Posgraduacao.contarAtivos.sql');
+        $query = str_replace('__unidades__',$unidades,$query);
+
+        $param = [];
+        if (!is_null($codare)) {
+            $param['codare'] = $codare;
+            $query .= " AND (h.codare = CONVERT(INT, :codare))";
+        }
+        return DB::fetch($query, $param)['computed'];
     }
 
     /**
