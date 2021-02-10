@@ -430,7 +430,6 @@ class Posgraduacao
         }
     }
 
-
     /**
     * Retorna lista de alunos que defenderam pós-graduação em determinada área
     *
@@ -613,4 +612,27 @@ class Posgraduacao
         ];
         return DB::fetchAll($query,$param);
     }
+
+        /**
+    * Retorna lista com nome dos alunos que conluíram a pós-graduação e a respectiva data da conclusão que concedeu o titulo.
+    *
+    * @param  Int $codcurpgr - código do curso de pós graduação
+    *
+    * @return Array
+    */
+    public static function egressosPos(int $codcurpgr)
+    {
+        $query = "SELECT DISTINCT p.nompes, t.dtafimtitpes
+            FROM TITULOPES AS t
+            INNER JOIN PESSOA AS p ON t.codpes = p.codpes
+            WHERE t.codorg = 8 AND t.codcurpgr = convert(int,:codcurpgr)
+            ORDER BY p.nompes 
+        ";
+
+        $param = [
+            'codcurpgr' => $codcurpgr
+        ];
+        return DB::fetchAll($query, $param);
+    }
+
 }
