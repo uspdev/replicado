@@ -50,20 +50,38 @@ Exemplo de uso
     putenv('REPLICADO_PASSWORD=secret');
     putenv('REPLICADO_CODUNDCLG=8');
     putenv('REPLICADO_CODCUR=1,2,3');
-    putenv('REPLICADO_USAR_CACHE=0');
 
-    # Opicionais
+
+    # Opcionais
     putenv('REPLICADO_PATHLOG=path/to/your.log');
+    putenv('REPLICADO_SYBASE=0');
+    putenv('REPLICADO_USAR_CACHE=0');
 
     $emails = Pessoa::emails('123456');
     print_r($emails);
 ```
 
-A variável *REPLICADO_CODUNDCLG* pode conter múltiplas unidades:
+### Explicações das variáveis
+
+A maioria das variáveis são autoexplicativas mas outras não.
+
+*REPLICADO_CODUNDCLG* -essa variável pode conter múltiplos valores pois representa a unidade ou o colegiado:
 
     REPLICADO_CODUNDCLG=8,27
 
 Atenção, NÃO usar aspas, como no neste exemplo: *REPLICADO_CODUNDCLG="8,27"*.
+
+REPLICADO_CODCUR - ??
+
+REPLICADO_SYBASE - serve para indicar se vc está usando SYBASE ou MSSQL. Implica:
+* na conversão para UTF-8 pela biblioteca ou pelo freetds
+* na remoção de espaços adicionais no final das strings
+
+Dependendo da configuração do MSSQL pode ser necessário ativar essa variável.
+
+REPLICADO_USAR_CACHE - o replicado pode usar memcached através da biblioteca (https://github.com/uspdev/cache). 
+
+Para usar é necessário seguir a documentação da biblioteca para levantar o servidor memcached e configurar ele. Se não quiser usar o valor padrão é (0) - desabilitado. Em produção vale a pena usar mas em testes mantenha desativado.
 
 ## Informações sobre tabelas
 
@@ -83,6 +101,17 @@ O replicado pode consultar tanto o MSSQL quanto o sybase-ase e em diversas vers�
 * Os argumentos dos métodos devem ser tipados, incluindo int, string etc
 * Deve-se dar preferência para aspas simples em strings pois o PHP não tenta parsear seu conteúdo
 
+Sugestão para nomear métodos:
+
+* listarXxx - retorna lista de arrays de Xxx
+* obterXxxx - retorna somente um registro (array) de Xxxx
+* contarXxxx - retorna uma contagem (count()) de registros de Xxxx
+* retornarXxxx - retorna um valor do registro (string, int, etc)
+* verificarXxxx - retorna true ou false em função da condição Xxxx
+
+Docblock
+
+Coloque o campo @author no docblock do método. Assim facilita consultar o autor sobre o método.
 ### phpunit
 
 Ao criar um método novo é necessário criar um método correspondente de teste, usando o phpunit. Para isso, você precisa de um banco de dados sybase ou mssql 
