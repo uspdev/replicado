@@ -450,8 +450,10 @@ class Posgraduacao
     /**
     * Retorna lista de alunos que defenderam pós-graduação em determinada área
     *
-    * @param  Int $codare - código da área do programa de pós graduação
+    * @author Thiago Gomes Veríssimo <thiago.verissimo@usp.br>
+    * @author Gabriela dos Reis Silva <gabrielareisg@usp.br>
     *
+    * @param  Int $codare - código da área do programa de pós graduação
     * @return Array
     */
     public static function contarEgressosAreaAgrupadoPorAno(int $codare)
