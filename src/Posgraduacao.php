@@ -652,8 +652,9 @@ class Posgraduacao
     /**
     * Retorna nome e número USP dos alunos ativos nos programas de pós-graduação na unidade
     * 
-    * @param int $codare Código da área do programa de pós-graduação
-    * @param int $codundclg Código da unidade
+    * @author gabrielareisg em 11/02/2021
+    * @param int $codare - código da área do programa de pós graduação
+    * @param int $codundclg - código da unidade
     *
     * @return array
     */
