@@ -648,4 +648,31 @@ class Posgraduacao
         ];
         return DB::fetchAll($query,$param);
     }
+
+    /**
+    * Retorna nome e número USP dos alunos ativos nos programas de pós-graduação na unidade
+    * 
+    * @author gabrielareisg em 11/02/2021
+    * @param int $codare - código da área do programa de pós graduação
+    * @param int $codundclg - código da unidade
+    *
+    * @return array
+    */
+    public static function obterAtivosPorArea($codare, $codundclg)
+    {
+        $query = " SELECT DISTINCT l.nompes, l.codpes FROM LOCALIZAPESSOA l
+                    JOIN VINCULOPESSOAUSP v ON (l.codpes = v.codpes)
+                    WHERE l.tipvin = 'ALUNOPOS' 
+                    AND l.codundclg = convert(int,:codundclg) 
+                    AND v.codare = convert(int,:codare)
+                    AND l.sitatl = 'A'
+                    ORDER BY v.nompes ASC ";
+        $param = [
+            'codare' => $codare,
+            'codundclg' => $codundclg
+        ];
+        $result = DB::fetchAll($query, $param);
+        if(!empty($result)) return $result;
+        return false;
+    }
 }
