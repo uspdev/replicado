@@ -243,6 +243,7 @@ class Lattes
                     'PAGINA-INICIAL' => $val[$detalhamento]['@attributes']['PAGINA-INICIAL'] ?? '',
                     'PAGINA-FINAL' => $val[$detalhamento]['@attributes']['PAGINA-FINAL'] ?? '',
                     'ANO' => $val[$dados_basicos]['@attributes']['ANO-DO-ARTIGO'] ?? '',
+                    'ISSN' =>$val[$detalhamento]['@attributes']['ISSN'] ?? '',
                     'AUTORES' => $aux_autores
                 ];
                 /*
@@ -383,6 +384,7 @@ class Lattes
                     'NUMERO-DE-PAGINAS' => $val[$detalhamento]['@attributes']['NUMERO-DE-PAGINAS'] ?? '',
                     'NOME-DA-EDITORA' => $val[$detalhamento]['@attributes']['NOME-DA-EDITORA'] ?? '',
                     'CIDADE-DA-EDITORA' => $val[$detalhamento]['@attributes']['CIDADE-DA-EDITORA'] ?? '',
+                    'ISBN' => $val[$detalhamento]['@attributes']['ISBN'] ?? '',
                     'AUTORES' => $aux_autores
                 ];
                 
