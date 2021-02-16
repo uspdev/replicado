@@ -1,4 +1,4 @@
-SELECT p.nompesttd AS nompes, a.nivpgm, a.dtadfapgm --, t.tittrb
+SELECT p.nompesttd AS nompes, p.codpes AS codpes, a.nivpgm, a.dtadfapgm --, t.tittrb
 FROM HISTPROGRAMA AS h, PESSOA AS p, AGPROGRAMA AS a, TRABALHOPROG AS t
 WHERE h.tiphstpgm = 'CON' -- concluidos
     AND t.codare = h.codare AND t.codpes = h.codpes AND t.numseqpgm = h.numseqpgm -- join trabalhoprog
