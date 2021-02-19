@@ -1105,7 +1105,7 @@ class Lattes
         else return false;
     }
 
-      /**
+    /**
     * Recebe o número USP e retorna array com os título das teses de Doutorado onde o docente particiou como integrante da banca avaliadora.
     * @param Integer $codpes = Número USP
     * @return Array|Bool
@@ -1138,6 +1138,11 @@ class Lattes
         else return false;
     }
 
+    /**
+    * Recebe o número USP e retorna array com o título do trabalho, nome da instituição e ano da formação acadêmica, sendo Gradução, Doutorado, etc.
+    * @param Integer $codpes = Número USP
+    * @return Array|Bool
+    */
     public static function getFormacaoAcademica($codpes, $lattes_array = null){
         $lattes = $lattes_array ?? self::getArray($codpes);
        
