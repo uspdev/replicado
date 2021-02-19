@@ -1137,4 +1137,69 @@ class Lattes
         }
         else return false;
     }
+
+    public static function getFormacaoAcademica($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
+       
+        if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
+        $vinculos = $lattes['DADOS-GERAIS'];
+        $formacao = []; //novo array 
+
+        if(array_key_exists('FORMACAO-ACADEMICA-TITULACAO',$vinculos)){
+            if(!isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO'])) return false;
+
+            if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['GRADUACAO'])){
+                $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['GRADUACAO'];
+                $formacao['GRADUACAO'] = [];
+                $formacao['GRADUACAO']['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] = $aux['@attributes']['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] ?? '';
+                $formacao['GRADUACAO']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                $formacao['GRADUACAO']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+            }
+
+            if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['MESTRADO'])){
+                $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['MESTRADO'];
+                $formacao['MESTRADO'] = [];
+                $formacao['MESTRADO']['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] = $aux['@attributes']['TITULO-DA-DISSERTACAO-TESE'] ?? '';
+                $formacao['MESTRADO']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                $formacao['MESTRADO']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+            }
+
+            if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['DOUTORADO'])){
+                $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['DOUTORADO'];
+                $formacao['DOUTORADO'] = [];
+                $formacao['DOUTORADO']['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] = $aux['@attributes']['TITULO-DA-DISSERTACAO-TESE'] ?? '';
+                $formacao['DOUTORADO']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                $formacao['DOUTORADO']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+            }
+
+            if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['POS-DOUTORADO'])){
+                $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['POS-DOUTORADO'];
+                $formacao['POS-DOUTORADO'] = [];
+                $formacao['POS-DOUTORADO']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                $formacao['POS-DOUTORADO']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+            }
+
+            if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['ESPECIALIZACAO'])){
+                $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['ESPECIALIZACAO'];
+                $formacao['ESPECIALIZACAO'] = [];
+                $formacao['ESPECIALIZACAO']['TITULO-DA-MONOGRAFIA'] = $aux['@attributes']['TITULO-DA-MONOGRAFIA'] ?? ''; 
+                $formacao['ESPECIALIZACAO']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                $formacao['ESPECIALIZACAO']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+            }
+            if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['LIVRE-DOCENCIA'])){
+                $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['LIVRE-DOCENCIA'];
+                $formacao['LIVRE-DOCENCIA'] = [];
+                $formacao['LIVRE-DOCENCIA']['TITULO-DO-TRABALHO'] = $aux['@attributes']['TITULO-DO-TRABALHO'] ?? ''; 
+                $formacao['LIVRE-DOCENCIA']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                $formacao['LIVRE-DOCENCIA']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-OBTENCAO-DO-TITULO"] ?? '';
+            }
+
+            uasort($formacao, function ($a, $b) {
+                return (int)$b['ANO-DE-CONCLUSAO'] - (int)$a['ANO-DE-CONCLUSAO'];
+            });
+
+            return $formacao;
+           
+        }
+    }
 }
