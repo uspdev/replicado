@@ -27,7 +27,7 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function verificarZip($codpes){
+    public static function obterZip($codpes){
         putenv('REPLICADO_SYBASE=0'); # hotfix -  o utf8_encode estraga o zip
         $query = "SELECT imgarqxml from DIM_PESSOA_XMLUSP WHERE codpes = convert(int,:codpes)";
         $param = [
@@ -47,7 +47,7 @@ class Lattes
      * @return Bool
      */
     public static function saveZip($codpes, $to = '/tmp'){
-        $content = self::verificarZip($codpes);
+        $content = self::obterZip($codpes);
         if($content){
             $zipFile = fopen("{$to}/{$codpes}.zip", "w");
             fwrite($zipFile, $content); 
@@ -64,7 +64,7 @@ class Lattes
      * @return String|Bool
      */
     public static function verificarXml($codpes, $to = '/tmp'){
-        $content = self::verificarZip($codpes);
+        $content = self::obterZip($codpes);
         if($content){
             $xml = Uteis::unzip($content);
             // Evitar salvar XML com 0 bytes
@@ -85,8 +85,8 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function retornarXml($codpes){
-        $zip = self::verificarZip($codpes);
+    public static function obterXml($codpes){
+        $zip = self::obterZip($codpes);
         if(!$zip) return false;
 
         return Uteis::unzip($zip);
@@ -98,8 +98,8 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function retornarJson($codpes){
-        $xml = self::retornarXml($codpes);
+    public static function obterJson($codpes){
+        $xml = self::obterXml($codpes);
         if(!$xml) return false;
 
         return json_encode(simplexml_load_string($xml));
@@ -111,8 +111,8 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function listarArray($codpes){
-        $json = self::retornarJson($codpes);
+    public static function obterArray($codpes){
+        $json = self::obterJson($codpes);
         if(!$json) return false;
         return json_decode($json,TRUE);
     }
@@ -123,8 +123,8 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function retornarPremios($codpes, $lattes_array = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+    public static function listarPremios($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
 
         $premios = $lattes['DADOS-GERAIS'];
@@ -151,7 +151,7 @@ class Lattes
     * 
     */
     public static function retornarResumoCV($codpes, $idioma = 'pt', $lattes_array = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
 
         if(!$lattes) return false;
 
@@ -170,7 +170,7 @@ class Lattes
     * @return Int|Bool
     */
     public static function retornarUltimaAtualizacao($codpes, $lattes_array = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
 
         if(!$lattes) return false;
         
@@ -187,7 +187,7 @@ class Lattes
     * @return Array|Bool
     */
     public static function listarArtigos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes || !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) return false;
         $artigos = $lattes['PRODUCAO-BIBLIOGRAFICA'];
 
@@ -271,8 +271,8 @@ class Lattes
     * @param Integer $codpes
     * @return String|Bool
     */
-    public static function retornarLinhasPesquisa($codpes, $lattes_array = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+    public static function listarLinhasPesquisa($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         $linhas_de_pesquisa = [];
         if(!$lattes) return false;
 
@@ -322,7 +322,7 @@ class Lattes
     * @return Array|Bool
     */
     public static function listarLivrosPublicados($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'])) return false;
         
@@ -406,7 +406,7 @@ class Lattes
     * @return Array|Bool
     */
     public static function listarTextosJornaisRevistas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['TEXTOS-EM-JORNAIS-OU-REVISTAS'])) return false;
         $textos_jornais_revistas = [];
@@ -496,7 +496,7 @@ class Lattes
     * @return Array|Bool
     */
     public static function listarTrabalhosAnais($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['TRABALHOS-EM-EVENTOS'])) return false;
         $trabalhos_anais = [];
@@ -591,7 +591,7 @@ class Lattes
     * @return Array|Bool
     */
     public static function listarTrabalhosTecnicos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-TECNICA']['TRABALHO-TECNICO'])) return false;
         $trabalhos_tecnicos = [];
@@ -670,7 +670,7 @@ class Lattes
     * @return Array|Bool
     */
     public static function listarOutrasProducoesBibliograficas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA'])) return false;
         $outras = [];
@@ -718,8 +718,6 @@ class Lattes
                 $aux_outros['EDITORA'] =  $outro["DETALHAMENTO-DE-OUTRA-PRODUCAO"]['@attributes']["EDITORA"] ?? '';
                 $aux_outros['CIDADE-DA-EDITORA'] =  $outro["DETALHAMENTO-DE-OUTRA-PRODUCAO"]['@attributes']["CIDADE-DA-EDITORA"] ?? '';
                 $aux_outros['AUTORES'] =   $aux_autores;
-                
-                
                 
                 if($tipo == 'registros'){
                     if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
@@ -818,7 +816,7 @@ class Lattes
     * @return Array|Bool
     */
     public static function listarCapitulosLivros($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'])) return false;
         $capitulos = $lattes['PRODUCAO-BIBLIOGRAFICA']['LIVROS-E-CAPITULOS'];
@@ -859,9 +857,7 @@ class Lattes
                             "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? $autor['ORDEM-DE-AUTORIA'],
                             ]);
                     }
-                    
                 }
-
                 $aux_capitulo = [
                     'TITULO-DO-CAPITULO-DO-LIVRO' => $capitulos[1]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'] ?? '',
                     'TITULO-DO-LIVRO' => $capitulos[2]['@attributes']['TITULO-DO-LIVRO'] ?? '',
@@ -899,9 +895,7 @@ class Lattes
                                 return 0;
                             }
                             return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
-                        });
-                        
-                        
+                        });                        
                         foreach($val[$autores] as $autor){
                             
                             array_push($aux_autores, [
@@ -910,7 +904,6 @@ class Lattes
                                 "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? $autor['ORDEM-DE-AUTORIA'],
                                 ]);
                         }
-                        
                     }
 
                     if(isset($val[$dados_basicos]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'])){
@@ -937,7 +930,6 @@ class Lattes
                                 )
                             ) continue; 
                         }
-
                         array_push($ultimos_capitulos, $aux_capitulo);
                     }
                 }
@@ -954,7 +946,7 @@ class Lattes
     * @return Array|Bool
     */
     public static function listarTeses($codpes, $tipo = 'DOUTORADO', $lattes_array = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
        
         if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
     
@@ -1009,7 +1001,7 @@ class Lattes
     * @return Array|Bool
     */
     public static function obterLivreDocencia($codpes, $lattes_array = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         
         if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
     
@@ -1044,8 +1036,8 @@ class Lattes
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
-    public static function listarBancaMestrado($codpes, $lattes_array = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+    public static function retornarBancaMestrado($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
        
         if(!$lattes && !isset($lattes['DADOS-COMPLEMENTARES'])) return false;
         $bancas = $lattes['DADOS-COMPLEMENTARES'];
@@ -1070,8 +1062,8 @@ class Lattes
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
-    public static function listarBancaDoutorado($codpes, $lattes_array = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+    public static function retornarBancaDoutorado($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
        
         if(!$lattes && !isset($lattes['DADOS-COMPLEMENTARES'])) return false;
         $bancas = $lattes['DADOS-COMPLEMENTARES'];
@@ -1103,8 +1095,8 @@ class Lattes
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
-    public static function listarFormacaoAcademica($codpes, $lattes_array = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+    public static function retornarFormacaoAcademica($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
        
         if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
         $vinculos = $lattes['DADOS-GERAIS'];
@@ -1162,9 +1154,7 @@ class Lattes
             uasort($formacao, function ($a, $b) {
                 return (int)$b['ANO-DE-CONCLUSAO'] - (int)$a['ANO-DE-CONCLUSAO'];
             });
-
             return $formacao;
-           
         }
     }
 
@@ -1174,7 +1164,7 @@ class Lattes
     * @return Array|Bool
     */
     public static function listarFormacaoProfissional($codpes, $lattes_array = null){
-        $lattes = $lattes_array ?? self::listarArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
        
         if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
 
@@ -1221,7 +1211,6 @@ class Lattes
 
             }        
             return $profissoes;
-   
         }
         else return false;
 
