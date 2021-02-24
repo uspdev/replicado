@@ -660,7 +660,257 @@ class Lattes
         });
         return ($trabalhos_tecnicos);
     }
+
+
+    /**
+    * Recebe o número USP e devolve array com as "outras" produções técnicas cadastradas no currículo Lattes, identidicadas como 'Demais tipos de produção técnica'
+    * 
+    *  
+    * @param Integer $codpes = Número USP
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
+    * @return String|Bool
+    */
+    public static function listarOrganizacaoEvento($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
+        $eventos = [];
+
+        if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['ORGANIZACAO-DE-EVENTO'])){
+            $i = 0;
+            foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['ORGANIZACAO-DE-EVENTO'] as $evento){
+                $i++;
+                $autores = (!isset($evento['AUTORES']) && isset($evento[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($evento[$autores])){
+                   
+                    usort($evento[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($evento[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+                $aux_evento = [];
+                $aux_evento['TITULO'] = $evento["DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO"]['@attributes']['TITULO'] ?? '';
+                $aux_evento['ANO'] = $evento["DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO"]['@attributes']['ANO'] ?? ''; 
+                $aux_evento['TIPO'] = $evento["DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO"]['@attributes']['TIPO'] ?? '';
+                $aux_evento['INSTITUICAO-PROMOTORA'] = $evento["DETALHAMENTO-DA-ORGANIZACAO-DE-EVENTO"]['@attributes']['INSTITUICAO-PROMOTORA'] ?? ''; 
+                $aux_evento['SEQUENCIA-PRODUCAO'] = $evento['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+                $aux_evento['AUTORES'] =   $aux_autores;
+                
+                
+                
+                
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_evento['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_evento['ANO'] < $limit_ini ||
+                        (int)$aux_evento['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
+                }
+                
+                array_push($eventos, $aux_evento);
+            }
+        }
+        
+        return ($eventos);
+       
+    }
     
+
+     /**
+    * Recebe o número USP e devolve array com as "outras" produções técnicas cadastradas no currículo Lattes, identidicadas como 'Demais tipos de produção técnica'
+    * 
+    *  
+    * @param Integer $codpes = Número USP
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
+    * @return String|Bool
+    */
+    public static function listarOutrasProducoesTecnicas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
+        $lattes = $lattes_array ?? self::getArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
+        $outras = [];
+
+        if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA'])){
+            $i = 0;
+            foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA'] as $outro){
+                $i++;
+                $autores = (!isset($outro['AUTORES']) && isset($outro[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($outro[$autores])){
+                   
+                    usort($outro[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($outro[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+               
+                $aux_outros = [];
+                $aux_outros['TITULO'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA"]['@attributes']['TITULO'] ?? '';
+                $aux_outros['NATUREZA'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA"]['@attributes']['NATUREZA'] ?? ''; 
+                $aux_outros['SEQUENCIA-PRODUCAO'] = $outro['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+                $aux_outros['ANO'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA"]['@attributes']['ANO'] ?? ''; 
+                $aux_outros['AUTORES'] =   $aux_autores;
+                
+                
+                
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_outros['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_outros['ANO'] < $limit_ini ||
+                        (int)$aux_outros['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
+                }
+                
+                array_push($outras, $aux_outros);
+            }
+        }
+        
+        return ($outras);
+       
+    }
+    
+     /**
+    * Recebe o número USP e devolve array os cursos de curta duração ministrados cadastrados no currículo Lattes
+    * 
+    *  
+    * @param Integer $codpes = Número USP
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
+    * @return String|Bool
+    */
+    public static function listarCursosCurtaDuracao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
+        $cursos = [];
+
+        if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['CURSO-DE-CURTA-DURACAO-MINISTRADO'])){
+            $i = 0;
+            foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['CURSO-DE-CURTA-DURACAO-MINISTRADO'] as $curso_curta_duracao){
+                
+                $i++;
+                $autores = (!isset($curso_curta_duracao['AUTORES']) && isset($curso_curta_duracao[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($curso_curta_duracao[$autores])){
+                   
+                    usort($curso_curta_duracao[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($curso_curta_duracao[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+               
+               
+
+                $aux_curso = [];
+                $aux_curso['SEQUENCIA-PRODUCAO'] = $curso_curta_duracao['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+                $aux_curso['TITULO'] = $curso_curta_duracao["DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO"]['@attributes']['TITULO'] ?? '';
+                $aux_curso['ANO'] = $curso_curta_duracao["DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO"]['@attributes']['ANO'] ?? ''; 
+                $aux_curso['NIVEL-DO-CURSO'] = $curso_curta_duracao["DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO"]['@attributes']['NIVEL-DO-CURSO'] ?? ''; 
+                $aux_curso['INSTITUICAO-PROMOTORA-DO-CURSO'] = $curso_curta_duracao["DETALHAMENTO-DE-CURSOS-CURTA-DURACAO-MINISTRADO"]['@attributes']['INSTITUICAO-PROMOTORA-DO-CURSO'] ?? ''; 
+                $aux_curso['AUTORES'] =   $aux_autores;
+                
+                
+                
+                
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_curso['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_curso['ANO'] < $limit_ini ||
+                        (int)$aux_curso['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
+                }
+                
+                array_push($cursos, $aux_curso);
+            }
+        }
+        
+        return ($cursos);
+       
+    }
+    
+
+
     /**
     * Recebe o número USP e devolve array com as "outras" produções bibliográficas, uma subcategoria das produções, cadastrados no currículo Lattes
     * @param Integer $codpes = Número USP
