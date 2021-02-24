@@ -114,7 +114,7 @@ class Lattes
     public static function obterArray($codpes){
         $json = self::obterJson($codpes);
         if(!$json) return false;
-        return json_decode($json,TRUE);
+        return Uteis::utf8_converter(json_decode($json,TRUE));
     }
 
     /**
