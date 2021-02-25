@@ -2,10 +2,10 @@ SELECT
 t1.dtadfapgm,
 
 t1.codpes AS discente,
-nome_discente = (SELECT nompes FROM PESSOA WHERE codpes=t1.codpes),
+nome_discente = (SELECT DISTINCT nompes FROM PESSOA WHERE codpes=t1.codpes),
 
 t2.codpes AS docente,
-nome_docente = (SELECT nompes FROM PESSOA WHERE codpes=t2.codpes),
+nome_docente = (SELECT DISTINCT nompes FROM PESSOA WHERE codpes=t2.codpes),
 
 t1.dtadfapgm, -- Data da Defesa
 t1.nivpgm,    -- ME/DO
