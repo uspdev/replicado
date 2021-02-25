@@ -1,6 +1,6 @@
 SELECT
 t1.codpes,
-nompes = (SELECT nompes FROM PESSOA WHERE codpes=t1.codpes),
+nompes = (SELECT DISTINCT nompes FROM PESSOA WHERE codpes=t1.codpes),
 t1.dtadfapgm, -- Data da Defesa
 t1.nivpgm,    -- ME/DO
 t3.codare,    -- Código da área
