@@ -673,7 +673,7 @@ class Lattes
     * @return String|Bool
     */
     public static function listarOrganizacaoEvento($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::getArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
         $eventos = [];
@@ -755,7 +755,7 @@ class Lattes
     * @return String|Bool
     */
     public static function listarOutrasProducoesTecnicas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::getArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
         $outras = [];
