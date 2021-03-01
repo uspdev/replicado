@@ -114,7 +114,7 @@ class Lattes
     public static function obterArray($codpes){
         $json = self::obterJson($codpes);
         if(!$json) return false;
-        return json_decode($json,TRUE);
+        return Uteis::utf8_converter(json_decode($json,TRUE));
     }
 
     /**
@@ -1645,42 +1645,48 @@ class Lattes
             $atuacoes = $lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'];
             $profissoes = [];
 
-            foreach ($atuacoes as $a){
+            if(isset($atuacoes['@attributes']['NOME-INSTITUICAO']) && $atuacoes['@attributes']['NOME-INSTITUICAO'] < 2){
                 $aux = [];
-                $aux['NOME-INSTITUICAO'] = $a['@attributes']['NOME-INSTITUICAO'];
-                $aux['VINCULOS'] = []; 
+                $aux['NOME-INSTITUICAO'] = $atuacoes['@attributes']['NOME-INSTITUICAO'];
+                $aux['VINCULOS']['ANO-INICIO'] = $atuacoes['VINCULOS']['@attributes']['ANO-INICIO'];
+                $aux['VINCULOS']['ANO-FIM'] = $atuacoes['VINCULOS']['@attributes']['ANO-FIM'];
+                $aux['VINCULOS']['TIPO-DE-VINCULO'] = $atuacoes['VINCULOS']['@attributes']['TIPO-DE-VINCULO'];
+                $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $atuacoes['VINCULOS']['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
+                return $aux;
+            } else {
+                foreach ($atuacoes as $a){
+                    $aux = [];
+                    $aux['NOME-INSTITUICAO'] = $a['@attributes']['NOME-INSTITUICAO'];
+                    $aux['VINCULOS'] = []; 
 
-                if(isset($a['VINCULOS']['@attributes'])){
-                    $aux['VINCULOS']['ANO-INICIO'] = $a['VINCULOS']['@attributes']['ANO-INICIO'];
-                    $aux['VINCULOS']['ANO-FIM'] = $a['VINCULOS']['@attributes']['ANO-FIM'];
-                    $aux['VINCULOS']['TIPO-DE-VINCULO'] = $a['VINCULOS']['@attributes']['TIPO-DE-VINCULO'];
-                    $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $a['VINCULOS']['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
-
-                } else {
-                    foreach($a['VINCULOS'] as $vinculo){
-                        $aux['VINCULOS']['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
-                        $aux['VINCULOS']['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
-                        $aux['VINCULOS']['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'];
-                        $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
+                    if(isset($a['VINCULOS']['@attributes'])){
+                        $aux['VINCULOS']['ANO-INICIO'] = $a['VINCULOS']['@attributes']['ANO-INICIO'];
+                        $aux['VINCULOS']['ANO-FIM'] = $a['VINCULOS']['@attributes']['ANO-FIM'];
+                        $aux['VINCULOS']['TIPO-DE-VINCULO'] = $a['VINCULOS']['@attributes']['TIPO-DE-VINCULO'];
+                        $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $a['VINCULOS']['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
+                    } else {
+                        foreach($a['VINCULOS'] as $vinculo){
+                            $aux['VINCULOS']['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
+                            $aux['VINCULOS']['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
+                            $aux['VINCULOS']['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'];
+                            $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
+                        }
                     }
-                }
+                    if(
+                        (isset($aux['VINCULOS']['ANO-INICIO']) && $aux['VINCULOS']['ANO-INICIO'] != null && $aux['VINCULOS']['ANO-INICIO'] != "" && $aux['VINCULOS']['ANO-INICIO'] !== true) 
+                        && 
+                        (!isset($aux['VINCULOS']['ANO-FIM']) || $aux['VINCULOS']['ANO-FIM'] == null || $aux['VINCULOS']['ANO-FIM'] == "")
+                        &&
+                        ($aux['VINCULOS']['TIPO-DE-VINCULO'] != "LIVRE")
+                    ) 
+                    {
+                        array_push($profissoes, $aux); //auxiliar dentro do array profissoes
 
-                if(
-                    (isset($aux['VINCULOS']['ANO-INICIO']) && $aux['VINCULOS']['ANO-INICIO'] != null && $aux['VINCULOS']['ANO-INICIO'] != "" && $aux['VINCULOS']['ANO-INICIO'] !== true) 
-                    && 
-                    (!isset($aux['VINCULOS']['ANO-FIM']) || $aux['VINCULOS']['ANO-FIM'] == null || $aux['VINCULOS']['ANO-FIM'] == "")
-                    &&
-                    ($aux['VINCULOS']['TIPO-DE-VINCULO'] != "LIVRE")
-                ) 
-                {
-                    array_push($profissoes, $aux); //auxiliar dentro do array profissoes
-
-                }
-
-            }        
+                    }
+                } 
+            }       
             return $profissoes;
         }
         else return false;
-
     }
 }
