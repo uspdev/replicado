@@ -193,7 +193,17 @@ class Pessoa
                     AND L.codpes = P.codpes
                     ORDER BY P.{$campo} ASC";
         } else {
-            $query = "SELECT P.* FROM PESSOA P
+            # adicionada a coluna L.codundclg (código da unidade) através do left outer join com LOCALIZAPESSOA
+            # o motivo é para trazer o vínculo junto do nome no sistema uspdev/pessoa, busca por nome
+            # Alessandro em 02/03/2021
+            /**
+             * código original
+             * $query = "SELECT P.* FROM PESSOA P
+             *       WHERE UPPER(P.{$campo}) LIKE :nome
+             *       ORDER BY P.{$campo} ASC";
+             */
+            $query = "SELECT L.codundclg, P.* FROM PESSOA P
+                    LEFT OUTER JOIN ECA.dbo.LOCALIZAPESSOA L ON P.codpes = L.codpes
                     WHERE UPPER(P.{$campo}) LIKE :nome
                     ORDER BY P.{$campo} ASC";
         }
