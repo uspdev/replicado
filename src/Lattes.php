@@ -673,7 +673,7 @@ class Lattes
     * @return String|Bool
     */
     public static function listarOrganizacaoEvento($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::getArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
         $eventos = [];
@@ -755,7 +755,7 @@ class Lattes
     * @return String|Bool
     */
     public static function listarOutrasProducoesTecnicas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
-        $lattes = $lattes_array ?? self::getArray($codpes);
+        $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
         $outras = [];
@@ -906,6 +906,224 @@ class Lattes
         }
         
         return ($cursos);
+       
+    }
+    
+     /**
+    * Recebe o número USP e devolve array os relatórios de pesquisa cadastrados no currículo Lattes
+    * 
+    *  
+    * @param Integer $codpes = Número USP
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
+    * @return String|Bool
+    */
+    public static function listarRelatoriopesquisa($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
+        $relatorios = [];
+
+        if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['RELATORIO-DE-PESQUISA'])){
+            $i = 0;
+            foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['RELATORIO-DE-PESQUISA'] as $relatorio){
+                
+                $i++;
+                $autores = (!isset($relatorio['AUTORES']) && isset($relatorio[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($relatorio[$autores])){
+                   
+                    usort($relatorio[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($relatorio[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+               
+               
+                
+
+                $aux_relatorio = [];
+                $aux_relatorio['SEQUENCIA-PRODUCAO'] = $relatorio['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+                $aux_relatorio['TITULO'] = $relatorio["DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA"]['@attributes']['TITULO'] ?? '';
+                $aux_relatorio['ANO'] = $relatorio["DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA"]['@attributes']['ANO'] ?? ''; 
+                $aux_relatorio['AUTORES'] =   $aux_autores;
+                
+                
+                
+                
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_relatorio['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_relatorio['ANO'] < $limit_ini ||
+                        (int)$aux_relatorio['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
+                }
+                
+                array_push($relatorios, $aux_relatorio);
+            }
+        }
+        
+        return ($relatorios);
+       
+    }
+   
+    
+     /**
+    * Recebe o número USP e devolve array com os materiais didáticos ou instrucionais do autor cadastrados no currículo Lattes
+    * 
+    *  
+    * @param Integer $codpes = Número USP
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
+    * @return String|Bool
+    */
+    public static function listarMaterialDidaticoInstrucional($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
+        $materiais = [];
+
+        if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['DESENVOLVIMENTO-DE-MATERIAL-DIDATICO-OU-INSTRUCIONAL']['@attributes']["SEQUENCIA-PRODUCAO"])){
+            $material = $lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['DESENVOLVIMENTO-DE-MATERIAL-DIDATICO-OU-INSTRUCIONAL'];
+            $autores = (!isset($material['AUTORES']) && isset($material[3])) ? 3 : 'AUTORES';    
+            $aux_autores = [];
+            if(isset($material[$autores])){
+                usort($material[$autores], function ($a, $b) {
+                    if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                        return 0;
+                    }
+                    return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                });
+                foreach($material[$autores] as $autor){
+                    if(isset($autor['@attributes'])){
+                        array_push($aux_autores, [
+                            "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                            "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                            "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                            ]);
+                    }else{
+                        array_push($aux_autores, [
+                            "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                            "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                            "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                            ]);
+                    }
+                }
+            }
+               
+            $aux_material = [];
+            $aux_material['SEQUENCIA-PRODUCAO'] = $material['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+            $aux_material['TITULO'] = $material["DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL"]['@attributes']['TITULO'] ?? '';
+            $aux_material['ANO'] = $material["DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL"]['@attributes']['ANO'] ?? ''; 
+            $aux_material['NATUREZA'] = $material["DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL"]['@attributes']['NATUREZA'] ?? ''; 
+            $aux_material['AUTORES'] =   $aux_autores;
+            
+            if($tipo == 'anual'){
+                if($limit_ini != -1 &&  (int)$aux_material['ANO'] !=  $limit_ini ) return false; //se for diferente do ano determinado, pula para o próximo
+            }else if($tipo == 'periodo'){
+                if($limit_ini != -1 && 
+                    (
+                    (int)$aux_material['ANO'] < $limit_ini ||
+                    (int)$aux_material['ANO'] > $limit_fim 
+                    )
+                ) return false; 
+            }
+            
+            array_push($materiais, $aux_material);
+
+        }else
+        if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['DESENVOLVIMENTO-DE-MATERIAL-DIDATICO-OU-INSTRUCIONAL'])){
+            $i = 0;
+            foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['DESENVOLVIMENTO-DE-MATERIAL-DIDATICO-OU-INSTRUCIONAL'] as $material){
+                return $material;
+                $i++;
+                $autores = (!isset($material['AUTORES']) && isset($material[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($material[$autores])){
+                   
+                    usort($material[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($material[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+               
+               
+
+                $aux_material = [];
+                $aux_material['SEQUENCIA-PRODUCAO'] = $material['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+                $aux_material['TITULO'] = $material["DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL"]['@attributes']['TITULO'] ?? '';
+                $aux_material['ANO'] = $material["DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL"]['@attributes']['ANO'] ?? ''; 
+                $aux_material['NATUREZA'] = $material["DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL"]['@attributes']['NATUREZA'] ?? ''; 
+                $aux_material['AUTORES'] =   $aux_autores;
+                
+                
+                
+                
+                if($tipo == 'registros'){
+                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                }else if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_material['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_material['ANO'] < $limit_ini ||
+                        (int)$aux_material['ANO'] > $limit_fim 
+                        )
+                    ) continue; 
+                }
+                
+                array_push($materiais, $aux_material);
+            }
+        }
+        
+        return ($materiais);
        
     }
     
