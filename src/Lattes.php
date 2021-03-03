@@ -1719,7 +1719,8 @@ class Lattes
     }
 
     /**
-    * Recebe o número USP e retorna array com os vínculos profissionais atuais: nome da instituição, ano de inicio e ano fim e o tipo de vínculo.
+    * Recebe o número USP e retorna array com os vínculos profissionais atuais: nome da instituição, ano de inicio e 
+    * ano fim, tipo de vínculo e outras informações.
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
@@ -1769,10 +1770,10 @@ class Lattes
                                 )
                             ) continue; 
                         }
-                        array_push($aux['VINCULOS'], $aux_vinculos); //auxiliar dentro do array profissoes
+                        array_push($aux['VINCULOS'], $aux_vinculos); 
                     }
                 }
-                array_push($profissoes, $aux); //auxiliar dentro do array profissoes
+                array_push($profissoes, $aux); 
             } else {
                 foreach ($atuacoes as $a){
                     $aux = [];
@@ -1806,7 +1807,7 @@ class Lattes
                                         )
                                     ) continue; 
                                 }
-                                array_push($aux['VINCULOS'], $aux_vinculos); //auxiliar dentro do array profissoes
+                                array_push($aux['VINCULOS'], $aux_vinculos); 
                             }
                         }
                     }
@@ -1814,12 +1815,106 @@ class Lattes
                         (isset($aux['VINCULOS']) && $aux['VINCULOS'] != null && $aux['VINCULOS'] != "" && $aux['VINCULOS'] !== true && sizeof ($aux['VINCULOS']) > 0) 
                     ) 
                     {
-                        array_push($profissoes, $aux); //auxiliar dentro do array profissoes
+                        array_push($profissoes, $aux); 
                     }
                 } 
             }       
             return $profissoes;
         }
         else return false;
+    }
+
+    /**
+    * Recebe o número USP e retorna array com as participações em rádio ou TV presente no currículo Lattes, com o título da entrevista, 
+    * emissora e nome para citação. 
+    * @param Integer $codpes = Número USP
+    * @return Array|Bool
+    */
+    public static function listarRadioTV($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-TECNICA'])) return false;
+        $producoes = $lattes['PRODUCAO-TECNICA'];
+
+        if(array_key_exists('DEMAIS-TIPOS-DE-PRODUCAO-TECNICA', $producoes)){
+
+            if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['PROGRAMA-DE-RADIO-OU-TV'])) return false;
+
+            $producoes = $lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['PROGRAMA-DE-RADIO-OU-TV'];
+
+            $nome_producoes = [];
+
+            if(isset($producoes['@attributes']['SEQUENCIA-PRODUCAO'])){
+                $dados_basicos = (!isset($producoes['DADOS-BASICOS-DO-PROGRAMA-DE-RADIO-OU-TV']) && isset($producoes[1])) ? 1 : 'DADOS-BASICOS-DO-PROGRAMA-DE-RADIO-OU-TV';
+                $detalhamento = (!isset($producoes['DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV']) && isset($producoes[2])) ? 2 : 'DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV';
+                $autores = (!isset($producoes['AUTORES']) && isset($producoes[3])) ? 3 : 'AUTORES';
+
+                $aux_autores = [];
+
+                foreach($producoes[$autores] as $autor){
+
+                    if(isset($autor['@attributes'])){
+                        array_push($aux_autores, [
+                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                        ]);
+                    }else {
+                        array_push($aux_autores, [
+                            "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                            ]);
+                    }
+                }
+
+                $aux_producao =[
+                'TITULO' => $producoes[$dados_basicos]['@attributes']['TITULO'] ?? '',
+                'EMISSORA' => $producoes[$detalhamento]['@attributes']['EMISSORA'] ?? '',
+                'AUTORES' => $aux_autores
+                ];
+
+                array_push($nome_producoes, $aux_producao);
+
+            } else  {
+
+            foreach($producoes as $val){
+
+                $dados_basicos = (!isset($val['DADOS-BASICOS-DO-PROGRAMA-DE-RADIO-OU-TV']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-PROGRAMA-DE-RADIO-OU-TV';
+                $detalhamento = (!isset($val['DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV';
+                $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
+
+                $aux_autores = [];
+                
+                foreach($val[$autores] as $autor){
+
+                    if(isset($autor['@attributes'])){
+                        array_push($aux_autores, [
+                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                        ]);
+                    }else {
+                        array_push($aux_autores, [
+                            "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                            ]);
+                    }
+                }
+
+                if(isset($val[$dados_basicos]['@attributes'])){
+                    $aux_producao = [
+                        'TITULO' => $val[$dados_basicos]['@attributes']['TITULO'] ?? '',
+                        'EMISSORA' => $val[$detalhamento]['@attributes']['EMISSORA'] ?? '',
+                        'AUTORES' => $aux_autores
+                    ];
+                    array_push($nome_producoes, $aux_producao);
+
+                } else{
+                    $aux_producao = [
+                        'TITULO' => $val[$dados_basicos]['TITULO'] ?? '',
+                        'EMISSORA' => $val[$detalhamento]['EMISSORA'] ?? '',
+                        'AUTORES' => $aux_autores
+                    ];
+                    array_push($nome_producoes, $aux_producao);
+                }
+            }                  
+        }      
+            return $nome_producoes;            
+        }
+        else return false;       
     }
 }
