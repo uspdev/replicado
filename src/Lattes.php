@@ -959,18 +959,13 @@ class Lattes
                         }
                     }
                 }
-               
-               
-                
+                             
 
                 $aux_relatorio = [];
                 $aux_relatorio['SEQUENCIA-PRODUCAO'] = $relatorio['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
                 $aux_relatorio['TITULO'] = $relatorio["DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA"]['@attributes']['TITULO'] ?? '';
                 $aux_relatorio['ANO'] = $relatorio["DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA"]['@attributes']['ANO'] ?? ''; 
                 $aux_relatorio['AUTORES'] =   $aux_autores;
-                
-                
-                
                 
                 if($tipo == 'registros'){
                     if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
@@ -990,9 +985,7 @@ class Lattes
         }
         
         return ($relatorios);
-       
     }
-   
     
      /**
     * Recebe o número USP e devolve array com os materiais didáticos ou instrucionais do autor cadastrados no currículo Lattes
@@ -1094,17 +1087,12 @@ class Lattes
                     }
                 }
                
-               
-
                 $aux_material = [];
                 $aux_material['SEQUENCIA-PRODUCAO'] = $material['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
                 $aux_material['TITULO'] = $material["DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL"]['@attributes']['TITULO'] ?? '';
                 $aux_material['ANO'] = $material["DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL"]['@attributes']['ANO'] ?? ''; 
                 $aux_material['NATUREZA'] = $material["DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL"]['@attributes']['NATUREZA'] ?? ''; 
                 $aux_material['AUTORES'] =   $aux_autores;
-                
-                
-                
                 
                 if($tipo == 'registros'){
                     if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
@@ -1122,13 +1110,9 @@ class Lattes
                 array_push($materiais, $aux_material);
             }
         }
-        
         return ($materiais);
-       
     }
     
-
-
     /**
     * Recebe o número USP e devolve array com as "outras" produções bibliográficas, uma subcategoria das produções, cadastrados no currículo Lattes
     * @param Integer $codpes = Número USP
@@ -1825,96 +1809,75 @@ class Lattes
     }
 
     /**
-    * Recebe o número USP e retorna array com as participações em rádio ou TV presente no currículo Lattes, com o título da entrevista, 
-    * emissora e nome para citação. 
+    * Recebe o número USP e retorna array com as atuações como Membro Editorial cadastradas no currículo Lattes;
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
-    public static function listarRadioTV($codpes, $lattes_array = null){
+    public static function listarMembroEditorial($codpes, $lattes_array = null){
         $lattes = $lattes_array ?? self::obterArray($codpes);
-        if(!$lattes) return false;
-        if(!isset($lattes['PRODUCAO-TECNICA'])) return false;
-        $producoes = $lattes['PRODUCAO-TECNICA'];
+        if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
 
-        if(array_key_exists('DEMAIS-TIPOS-DE-PRODUCAO-TECNICA', $producoes)){
+        if(isset($lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'])){
 
-            if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['PROGRAMA-DE-RADIO-OU-TV'])) return false;
+            $editoriais = $lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'];
+            $participacoes = [];
+            if(isset($editoriais['@attributes']['NOME-INSTITUICAO'])){
+                $aux = [];
+                $aux['NOME-INSTITUICAO'] = $editoriais['@attributes']['NOME-INSTITUICAO'];
+                $aux['VINCULOS'] = []; 
+                if(isset($editoriais['VINCULOS'])){
+                    foreach($editoriais['VINCULOS'] as $vinculo){
+                        $aux_vinculos = []; 
+                        if(isset($vinculo['@attributes']['ANO-INICIO'])){                        
+                            $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
+                            $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
+                            $aux_vinculos['OUTRO-VINCULO-INFORMADO'] = $vinculo['@attributes']['OUTRO-VINCULO-INFORMADO'];
+                        } else if(isset($vinculo['ANO-INICIO'])){                        
+                            $aux_vinculos['ANO-INICIO'] = $vinculo['ANO-INICIO'];
+                            $aux_vinculos['ANO-FIM'] = $vinculo['ANO-FIM'];
+                            $aux_vinculos['OUTRO-VINCULO-INFORMADO'] = $vinculo['OUTRO-VINCULO-INFORMADO'];
+                        }
+                        array_push($aux['VINCULOS'], $aux_vinculos); 
+                    }
+                }
+                array_push($participacoes, $aux); 
+            } else {
+                foreach ($editoriais as $a){
+                    $aux = [];
+                    $aux['NOME-INSTITUICAO'] = $a['@attributes']['NOME-INSTITUICAO'];
+                    $aux['VINCULOS'] = []; 
+                    if(isset($a['VINCULOS']['@attributes'])){
+                        if(isset($a['VINCULOS']['@attributes']['OUTRO-VINCULO-INFORMADO']) && $a['VINCULOS']['@attributes']['OUTRO-VINCULO-INFORMADO'] == "Membro de corpo editorial"){
+                            $aux['VINCULOS']['ANO-INICIO'] = $a['VINCULOS']['@attributes']['ANO-INICIO'];
+                            $aux['VINCULOS']['ANO-FIM'] = $a['VINCULOS']['@attributes']['ANO-FIM'];
+                            $aux['VINCULOS']['OUTRO-VINCULO-INFORMADO'] = $a['VINCULOS']['@attributes']['OUTRO-VINCULO-INFORMADO'];
+                        }
+                    } else {
+                        if(isset($a['VINCULOS'])){
+                            if(isset($a['VINCULOS']['@attributes']['OUTRO-VINCULO-INFORMADO']) && $a['VINCULOS']['@attributes']['OUTRO-VINCULO-INFORMADO'] == "Membro de corpo editorial"){
 
-            $producoes = $lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['PROGRAMA-DE-RADIO-OU-TV'];
+                                foreach($a['VINCULOS'] as $vinculo){
+                                    $aux_vinculos = []; 
+                                    $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
+                                    $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
+                                    $aux_vinculos['OUTRO-VINCULO-INFORMADO'] = $vinculo['@attributes']['OUTRO-VINCULO-INFORMADO'];
+                                    array_push($aux['VINCULOS'], $aux_vinculos); 
+                                }
+                            }
 
-            $nome_producoes = [];
-
-            if(isset($producoes['@attributes']['SEQUENCIA-PRODUCAO'])){
-                $dados_basicos = (!isset($producoes['DADOS-BASICOS-DO-PROGRAMA-DE-RADIO-OU-TV']) && isset($producoes[1])) ? 1 : 'DADOS-BASICOS-DO-PROGRAMA-DE-RADIO-OU-TV';
-                $detalhamento = (!isset($producoes['DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV']) && isset($producoes[2])) ? 2 : 'DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV';
-                $autores = (!isset($producoes['AUTORES']) && isset($producoes[3])) ? 3 : 'AUTORES';
-
-                $aux_autores = [];
-
-                foreach($producoes[$autores] as $autor){
-
-                    if(isset($autor['@attributes'])){
-                        array_push($aux_autores, [
-                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
-                        ]);
-                    }else {
-                        array_push($aux_autores, [
-                            "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
-                            ]);
+                        }
+                    }
+                    if(
+                        (isset($aux['VINCULOS']) && $aux['VINCULOS'] != null && $aux['VINCULOS'] != "" && $aux['VINCULOS'] !== true && sizeof ($aux['VINCULOS']) > 0) 
+                    ) 
+                    {
+                        array_push($participacoes, $aux); 
                     }
                 }
 
-                $aux_producao =[
-                'TITULO' => $producoes[$dados_basicos]['@attributes']['TITULO'] ?? '',
-                'EMISSORA' => $producoes[$detalhamento]['@attributes']['EMISSORA'] ?? '',
-                'AUTORES' => $aux_autores
-                ];
-
-                array_push($nome_producoes, $aux_producao);
-
-            } else  {
-
-            foreach($producoes as $val){
-
-                $dados_basicos = (!isset($val['DADOS-BASICOS-DO-PROGRAMA-DE-RADIO-OU-TV']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-PROGRAMA-DE-RADIO-OU-TV';
-                $detalhamento = (!isset($val['DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV';
-                $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
-
-                $aux_autores = [];
-                
-                foreach($val[$autores] as $autor){
-
-                    if(isset($autor['@attributes'])){
-                        array_push($aux_autores, [
-                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
-                        ]);
-                    }else {
-                        array_push($aux_autores, [
-                            "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
-                            ]);
-                    }
-                }
-
-                if(isset($val[$dados_basicos]['@attributes'])){
-                    $aux_producao = [
-                        'TITULO' => $val[$dados_basicos]['@attributes']['TITULO'] ?? '',
-                        'EMISSORA' => $val[$detalhamento]['@attributes']['EMISSORA'] ?? '',
-                        'AUTORES' => $aux_autores
-                    ];
-                    array_push($nome_producoes, $aux_producao);
-
-                } else{
-                    $aux_producao = [
-                        'TITULO' => $val[$dados_basicos]['TITULO'] ?? '',
-                        'EMISSORA' => $val[$detalhamento]['EMISSORA'] ?? '',
-                        'AUTORES' => $aux_autores
-                    ];
-                    array_push($nome_producoes, $aux_producao);
-                }
-            }                  
-        }      
-            return $nome_producoes;            
+            }
+            return $participacoes;
         }
-        else return false;       
+        return false;
     }
 }
