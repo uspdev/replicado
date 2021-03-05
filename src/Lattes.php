@@ -1576,52 +1576,144 @@ class Lattes
             if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['GRADUACAO'])){
                 $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['GRADUACAO'];
                 $formacao['GRADUACAO'] = [];
-                $formacao['GRADUACAO']['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] = $aux['@attributes']['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] ?? '';
-                $formacao['GRADUACAO']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
-                $formacao['GRADUACAO']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                if(isset($aux['@attributes'])){//só quando tiver uma graduação
+                    $aux_grad = [];
+                    $aux_grad['NOME-CURSO'] = $aux['@attributes']['NOME-CURSO'] ?? '';
+                    $aux_grad['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] = $aux['@attributes']['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] ?? '';
+                    $aux_grad['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                    $aux_grad['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                    array_push($formacao['GRADUACAO'], $aux_grad);
+                } else {
+                    foreach($aux as $graduacao){
+                        $aux_grad = [];
+                        $aux_grad['NOME-CURSO'] = $graduacao['@attributes']['NOME-CURSO'] ?? '';
+                        $aux_grad['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] = $graduacao['@attributes']['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] ?? '';
+                        $aux_grad['NOME-INSTITUICAO'] = $graduacao['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                        $aux_grad['ANO-DE-CONCLUSAO'] = $graduacao['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                        array_push($formacao['GRADUACAO'], $aux_grad);
+                    }
+                }
+                uasort($formacao['GRADUACAO'], function ($a, $b) {
+                    return (int)$b['ANO-DE-CONCLUSAO'] - (int)$a['ANO-DE-CONCLUSAO'];
+                });
             }
-
+            
             if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['MESTRADO'])){
                 $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['MESTRADO'];
                 $formacao['MESTRADO'] = [];
-                $formacao['MESTRADO']['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] = $aux['@attributes']['TITULO-DA-DISSERTACAO-TESE'] ?? '';
-                $formacao['MESTRADO']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
-                $formacao['MESTRADO']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                if(isset($aux['@attributes'])){//só quando tiver um mestrado
+                    $aux_mestrado = [];
+                    $aux_mestrado['NOME-CURSO'] = $aux['@attributes']['NOME-CURSO'] ?? '';
+                    $aux_mestrado['TITULO-DA-DISSERTACAO-TESE'] = $aux['@attributes']['TITULO-DA-DISSERTACAO-TESE'] ?? '';
+                    $aux_mestrado['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                    $aux_mestrado['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                    array_push($formacao['MESTRADO'], $aux_mestrado);
+                } else {
+                    foreach($aux as $mestrado){
+                        $aux_mestrado = [];
+                        $aux_mestrado['TITULO-DA-DISSERTACAO-TESE'] = $mestrado['@attributes']['TITULO-DA-DISSERTACAO-TESE'] ?? '';
+                        $aux_mestrado['NOME-INSTITUICAO'] = $mestrado['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                        $aux_mestrado['ANO-DE-CONCLUSAO'] = $mestrado['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+
+                        array_push($formacao['MESTRADO'], $aux_mestrado);
+                    }
+                }
+                uasort($formacao['MESTRADO'], function ($a, $b) {
+                    return (int)$b['ANO-DE-CONCLUSAO'] - (int)$a['ANO-DE-CONCLUSAO'];
+                });
             }
 
             if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['DOUTORADO'])){
                 $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['DOUTORADO'];
                 $formacao['DOUTORADO'] = [];
-                $formacao['DOUTORADO']['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] = $aux['@attributes']['TITULO-DA-DISSERTACAO-TESE'] ?? '';
-                $formacao['DOUTORADO']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
-                $formacao['DOUTORADO']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                if(isset($aux['@attributes'])){//só quando tiver um doutorado
+                    $aux_doutorado = [];
+                    $aux_doutorado['NOME-CURSO'] = $aux['@attributes']['NOME-CURSO'] ?? '';
+                    $aux_doutorado['TITULO-DA-DISSERTACAO-TESE'] = $aux['@attributes']['TITULO-DA-DISSERTACAO-TESE'] ?? '';
+                    $aux_doutorado['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                    $aux_doutorado['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                    array_push($formacao['DOUTORADO'], $aux_doutorado);
+                } else {
+                    foreach($aux as $doutorado){
+                        $aux_doutorado = [];
+                        $aux_doutorado['NOME-CURSO'] = $doutorado['@attributes']['NOME-CURSO'] ?? '';
+                        $aux_doutorado['TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO'] = $doutorado['@attributes']['TITULO-DA-DISSERTACAO-TESE'] ?? '';
+                        $aux_doutorado['NOME-INSTITUICAO'] = $doutorado['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                        $aux_doutorado['ANO-DE-CONCLUSAO'] = $doutorado['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                        array_push($formacao['DOUTORADO'], $aux_doutorado);
+                    }
+                }
+                uasort($formacao['DOUTORADO'], function ($a, $b) {
+                    return (int)$b['ANO-DE-CONCLUSAO'] - (int)$a['ANO-DE-CONCLUSAO'];
+                });
             }
 
             if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['POS-DOUTORADO'])){
                 $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['POS-DOUTORADO'];
                 $formacao['POS-DOUTORADO'] = [];
-                $formacao['POS-DOUTORADO']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
-                $formacao['POS-DOUTORADO']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                if(isset($aux['@attributes'])){//só quando tiver um pós doutorado
+                    $aux_posdoutorado = [];
+                    $aux_posdoutorado['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                    $aux_posdoutorado['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                    array_push($formacao['POS-DOUTORADO'], $aux_posdoutorado);
+                } else{
+                    foreach($aux as $posdoutorado){
+                        $aux_posdoutorado = [];
+                        $aux_posdoutorado['NOME-INSTITUICAO'] = $posdoutorado['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                        $aux_posdoutorado['ANO-DE-CONCLUSAO'] = $posdoutorado['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                        array_push($formacao['POS-DOUTORADO'], $aux_posdoutorado);
+                    }
+                }
+                uasort($formacao['POS-DOUTORADO'], function ($a, $b) {
+                    return (int)$b['ANO-DE-CONCLUSAO'] - (int)$a['ANO-DE-CONCLUSAO'];
+                });
             }
 
             if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['ESPECIALIZACAO'])){
                 $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['ESPECIALIZACAO'];
                 $formacao['ESPECIALIZACAO'] = [];
-                $formacao['ESPECIALIZACAO']['TITULO-DA-MONOGRAFIA'] = $aux['@attributes']['TITULO-DA-MONOGRAFIA'] ?? ''; 
-                $formacao['ESPECIALIZACAO']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
-                $formacao['ESPECIALIZACAO']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                if(isset($aux['@attributes'])){
+                    $aux_especializacao = [];
+                    $aux_especializacao['TITULO-DA-MONOGRAFIA'] = $aux['@attributes']['TITULO-DA-MONOGRAFIA'] ?? ''; 
+                    $aux_especializacao['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                    $aux_especializacao['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                    array_push($formacao['ESPECIALIZACAO'], $aux_especializacao);
+                } else{
+                    foreach($aux as $especializacao){
+                        $aux_especializacao = [];
+                        $aux_especializacao['TITULO-DA-MONOGRAFIA'] = $especializacao['@attributes']['TITULO-DA-MONOGRAFIA'] ?? ''; 
+                        $aux_especializacao['NOME-INSTITUICAO'] = $especializacao['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                        $aux_especializacao['ANO-DE-CONCLUSAO'] = $especializacao['@attributes']["ANO-DE-CONCLUSAO"] ?? '';
+                        array_push($formacao['ESPECIALIZACAO'], $aux_especializacao);
+                    }
+                }
+                uasort($formacao['ESPECIALIZACAO'], function ($a, $b) {
+                    return (int)$b['ANO-DE-CONCLUSAO'] - (int)$a['ANO-DE-CONCLUSAO'];
+                });
             }
+
             if(isset($lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['LIVRE-DOCENCIA'])){
                 $aux = $lattes['DADOS-GERAIS']['FORMACAO-ACADEMICA-TITULACAO']['LIVRE-DOCENCIA'];
                 $formacao['LIVRE-DOCENCIA'] = [];
-                $formacao['LIVRE-DOCENCIA']['TITULO-DO-TRABALHO'] = $aux['@attributes']['TITULO-DO-TRABALHO'] ?? ''; 
-                $formacao['LIVRE-DOCENCIA']['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
-                $formacao['LIVRE-DOCENCIA']['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-OBTENCAO-DO-TITULO"] ?? '';
+                if(isset($aux['@attributes'])){
+                    $aux_livredocencia = [];
+                    $aux_livredocencia['TITULO-DO-TRABALHO'] = $aux['@attributes']['TITULO-DO-TRABALHO'] ?? ''; 
+                    $aux_livredocencia['NOME-INSTITUICAO'] = $aux['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                    $aux_livredocencia['ANO-DE-CONCLUSAO'] = $aux['@attributes']["ANO-DE-OBTENCAO-DO-TITULO"] ?? '';
+                    array_push($formacao['LIVRE-DOCENCIA'], $aux_livredocencia);
+                } else {
+                    foreach ($aux as $livredocencia){
+                        $aux_livredocencia = [];
+                        $aux_livredocencia['TITULO-DO-TRABALHO'] = $livredocencia['@attributes']['TITULO-DO-TRABALHO'] ?? ''; 
+                        $aux_livredocencia['NOME-INSTITUICAO'] = $livredocencia['@attributes']['NOME-INSTITUICAO'] ?? ''; 
+                        $aux_livredocencia['ANO-DE-CONCLUSAO'] = $livredocencia['@attributes']["ANO-DE-OBTENCAO-DO-TITULO"] ?? '';
+                        array_push($formacao['LIVRE-DOCENCIA'], $aux_livredocencia);
+                    }
+                }
+                uasort($formacao['LIVRE-DOCENCIA'], function ($a, $b) {
+                    return (int)$b['ANO-DE-CONCLUSAO'] - (int)$a['ANO-DE-CONCLUSAO'];
+                });
             }
-
-            uasort($formacao, function ($a, $b) {
-                return (int)$b['ANO-DE-CONCLUSAO'] - (int)$a['ANO-DE-CONCLUSAO'];
-            });
             return $formacao;
         }
     }
@@ -1631,7 +1723,7 @@ class Lattes
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
-    public static function listarFormacaoProfissional($codpes, $lattes_array = null){
+    public static function listarFormacaoProfissional($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020){
         $lattes = $lattes_array ?? self::obterArray($codpes);
        
         if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
@@ -1645,43 +1737,84 @@ class Lattes
             $atuacoes = $lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'];
             $profissoes = [];
 
-            if(isset($atuacoes['@attributes']['NOME-INSTITUICAO']) && $atuacoes['@attributes']['NOME-INSTITUICAO'] < 2){
+            if(isset($atuacoes['@attributes']['NOME-INSTITUICAO'])){
                 $aux = [];
                 $aux['NOME-INSTITUICAO'] = $atuacoes['@attributes']['NOME-INSTITUICAO'];
-                $aux['VINCULOS']['ANO-INICIO'] = $atuacoes['VINCULOS']['@attributes']['ANO-INICIO'];
-                $aux['VINCULOS']['ANO-FIM'] = $atuacoes['VINCULOS']['@attributes']['ANO-FIM'];
-                $aux['VINCULOS']['TIPO-DE-VINCULO'] = $atuacoes['VINCULOS']['@attributes']['TIPO-DE-VINCULO'];
-                $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $atuacoes['VINCULOS']['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
-                return $aux;
+                $aux['VINCULOS'] = []; 
+                if(isset($atuacoes['VINCULOS'])){
+                    foreach($atuacoes['VINCULOS'] as $vinculo){
+                        $aux_vinculos = []; 
+                        if(isset($vinculo['@attributes']['ANO-INICIO'])){                        
+                            $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
+                            $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
+                            $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'];
+                            $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
+                            $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['@attributes']['OUTRAS-INFORMACOES'];
+                            $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                        } else if(isset($vinculo['ANO-INICIO'])){                        
+                            $aux_vinculos['ANO-INICIO'] = $vinculo['ANO-INICIO'];
+                            $aux_vinculos['ANO-FIM'] = $vinculo['ANO-FIM'];
+                            $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['TIPO-DE-VINCULO'];
+                            $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['FLAG-VINCULO-EMPREGATICIO'];
+                            $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['OUTRAS-INFORMACOES'];
+                            $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                        }
+                        if($tipo == 'anual'){
+                            if($limit_ini != -1 &&  (int)$aux_vinculos['ANO-INICIO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                        }else if($tipo == 'periodo'){
+                            if($limit_ini != -1 && 
+                                (
+                                (int)$aux_vinculos['ANO-INICIO'] < $limit_ini ||
+                                (int)$aux_vinculos['ANO-INICIO'] > $limit_fim 
+                                )
+                            ) continue; 
+                        }
+                        array_push($aux['VINCULOS'], $aux_vinculos); //auxiliar dentro do array profissoes
+                    }
+                }
+                array_push($profissoes, $aux); //auxiliar dentro do array profissoes
             } else {
                 foreach ($atuacoes as $a){
                     $aux = [];
                     $aux['NOME-INSTITUICAO'] = $a['@attributes']['NOME-INSTITUICAO'];
                     $aux['VINCULOS'] = []; 
-
+                    
                     if(isset($a['VINCULOS']['@attributes'])){
                         $aux['VINCULOS']['ANO-INICIO'] = $a['VINCULOS']['@attributes']['ANO-INICIO'];
                         $aux['VINCULOS']['ANO-FIM'] = $a['VINCULOS']['@attributes']['ANO-FIM'];
                         $aux['VINCULOS']['TIPO-DE-VINCULO'] = $a['VINCULOS']['@attributes']['TIPO-DE-VINCULO'];
                         $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $a['VINCULOS']['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
+                        $aux['VINCULOS']['OUTRAS-INFORMACOES'] = $a['VINCULOS']['@attributes']['OUTRAS-INFORMACOES'];
+                        $aux['VINCULOS']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $a['VINCULOS']['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
                     } else {
-                        foreach($a['VINCULOS'] as $vinculo){
-                            $aux['VINCULOS']['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
-                            $aux['VINCULOS']['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
-                            $aux['VINCULOS']['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'];
-                            $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
+                        if(isset($a['VINCULOS'])){
+                            foreach($a['VINCULOS'] as $vinculo){
+                                $aux_vinculos = []; 
+                                $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
+                                $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
+                                $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'];
+                                $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
+                                $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['@attributes']['OUTRAS-INFORMACOES'];
+                                $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                                if($tipo == 'anual'){
+                                    if($limit_ini != -1 &&  (int)$aux_vinculos['ANO-INICIO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                                }else if($tipo == 'periodo'){
+                                    if($limit_ini != -1 && 
+                                        (
+                                        (int)$aux_vinculos['ANO-INICIO'] < $limit_ini ||
+                                        (int)$aux_vinculos['ANO-INICIO'] > $limit_fim 
+                                        )
+                                    ) continue; 
+                                }
+                                array_push($aux['VINCULOS'], $aux_vinculos); //auxiliar dentro do array profissoes
+                            }
                         }
                     }
                     if(
-                        (isset($aux['VINCULOS']['ANO-INICIO']) && $aux['VINCULOS']['ANO-INICIO'] != null && $aux['VINCULOS']['ANO-INICIO'] != "" && $aux['VINCULOS']['ANO-INICIO'] !== true) 
-                        && 
-                        (!isset($aux['VINCULOS']['ANO-FIM']) || $aux['VINCULOS']['ANO-FIM'] == null || $aux['VINCULOS']['ANO-FIM'] == "")
-                        &&
-                        ($aux['VINCULOS']['TIPO-DE-VINCULO'] != "LIVRE")
+                        (isset($aux['VINCULOS']) && $aux['VINCULOS'] != null && $aux['VINCULOS'] != "" && $aux['VINCULOS'] !== true && sizeof ($aux['VINCULOS']) > 0) 
                     ) 
                     {
                         array_push($profissoes, $aux); //auxiliar dentro do array profissoes
-
                     }
                 } 
             }       
