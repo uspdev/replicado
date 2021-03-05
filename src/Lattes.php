@@ -1062,7 +1062,7 @@ class Lattes
         if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['DESENVOLVIMENTO-DE-MATERIAL-DIDATICO-OU-INSTRUCIONAL'])){
             $i = 0;
             foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['DESENVOLVIMENTO-DE-MATERIAL-DIDATICO-OU-INSTRUCIONAL'] as $material){
-                return $material;
+                
                 $i++;
                 $autores = (!isset($material['AUTORES']) && isset($material[3])) ? 3 : 'AUTORES';
                 
