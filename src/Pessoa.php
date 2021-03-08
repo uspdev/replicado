@@ -505,11 +505,10 @@ class Pessoa
         $query .= " AND tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH')";
         if ($codundclgi != 0) {
             $query .= " AND codundclg = CONVERT(INT, :codundclgi)";
+            $param['codundclgi'] = $codundclgi;
         }
-        $param = [
-            'codpes' => $codpes,
-            'codundclgi' => $codundclgi,
-        ];
+        $param['codpes'] = $codpes;
+        
         $result = DB::fetchAll($query, $param);
 
         // Inicializa o array de vínculos e setores
