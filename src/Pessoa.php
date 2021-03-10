@@ -754,4 +754,29 @@ class Pessoa
         return DB::fetchAll($query);
     }
 
+
+    /**
+     * Método para retornar as iniciações científicas vigentes 
+     * 
+     * @return array
+     */
+    public static function listarIniciaoCientificaAtiva($departamento = null){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = DB::getQuery('Pessoa.listarIniciaoCientificaAtiva.sql');
+        $query = str_replace('__unidades__',$unidades,$query);
+    
+        $param = [];
+
+        if($departamento != null){ 
+            $query = str_replace('__departamento__',"AND s.nomabvset = convert(varchar,:dep)", $query);
+            $param = [
+                'dep' => $departamento,
+            ];
+        }
+      
+        
+        
+        return DB::fetchAll($query, $param);
+    }
+
 }
