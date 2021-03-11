@@ -772,11 +772,81 @@ class Pessoa
             $param = [
                 'dep' => $departamento,
             ];
+        }else{
+            $query = str_replace('__departamento__',"", $query);
         }
       
         
         
         return DB::fetchAll($query, $param);
+    }
+    
+    /**
+     * Método para retornar os colaboradores ativos 
+     * 
+     * @return array
+     */
+    public static function listarPesquisadoresColaboradoresAtivos($departamento = null){
+        $query = DB::getQuery('Pessoa.listarPesquisadoresColaboradoresAtivos.sql');
+        
+        //TODO fazer o filtro por unidade
+        //$unidades = getenv('REPLICADO_CODUNDCLG');
+        //$query = str_replace('__unidades__',$unidades,$query);
+    
+        $param = [];
+
+        if($departamento != null){ 
+            $query = str_replace('__departamento__',"AND s.nomabvset = convert(varchar,:dep)", $query);
+            $param = [
+                'dep' => $departamento,
+            ];
+        }
+      
+        
+        
+        return DB::fetchAll($query, $param);
+    }
+    
+    /**
+     * Método para retornar os colaboradores ativos 
+     * 
+     * @return array
+     */
+    public static function listarPesquisaPosDoutorandos($departamento = null){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = DB::getQuery('Pessoa.listarPesquisaPosDoutorandos.sql');
+        
+        $query = str_replace('__unidades__',$unidades,$query);
+        
+        $param = [];
+        
+        if($departamento != null){ 
+            $query = str_replace('__departamento__',"AND s.nomabvset = convert(varchar,:dep)", $query);
+            $param = [
+                'dep' => $departamento,
+            ];
+        }
+        $pesquisas = DB::fetchAll($query, $param);
+        
+        
+
+        $pesquisas_pos_doutorando = [];
+        foreach($pesquisas as $p){
+            $query_nome_supervisor = DB::getQuery('Pessoa.retornarSupervisorPesquisaPosDoutorando.sql');
+            $query_nome_supervisor = str_replace(' __codprj__',"codprj = convert(int,:codprj)", $query_nome_supervisor);
+            $param_nome_supervisor = [
+                'codprj' => $p['codprj'],
+            ];
+            
+            $nome_supervisor =  DB::fetchAll($query_nome_supervisor, $param_nome_supervisor)[0]['nompes'];
+            $p['supervisor'] = $nome_supervisor;
+            array_push($pesquisas_pos_doutorando, $p); 
+        }
+        
+      
+        
+        
+        return $pesquisas_pos_doutorando;
     }
 
 }
