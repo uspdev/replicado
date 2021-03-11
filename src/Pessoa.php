@@ -486,29 +486,55 @@ class Pessoa
     } 
 
     /**
-     * Método para retornar *array* com todas as pessoas ativas por setor(es)
-     * Somente ATIVOS (também estagiários e aposentados) 
-     * Se o terceiro parâmetro *$contar* for igual a 1, retorna um *array* 
-     * com o índice *total* que corresponde ao número total de pessoas ativas por setor(es)
+     * Método para retornar *array* com a lista de servidores (docentes, funcionários e estagiários) por setor(es)
+     * Se aposentados = 1, lista também os docentes aposentados (stiatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
      * 
      * @param Array $codset
-     * @param Integer $contar Default 0
+     * @param Integer $aposentados Default 0
      * @return void
-     * @author Alessandro Costa de Oliveira, em 05/03/2021
+     * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
-    public static function servidoresAtivosSetor($codset, $contar = 0) 
+    public static function listarServidoresSetor(array $codset, int $aposentados = 1) 
     {
-        $filtro = "WHERE L.codset IN (" . implode(', ', $codset) . ") AND L.sitatl IN ('A', 'P') AND L.codfncetr = 0"; # retira os designados
-        if ($contar == 0) {
-            $colunas = "DISTINCT P.*";
-            $ordem = "ORDER BY P.nompes";
+        // $filtro = "WHERE (L.codset IN (:setor) AND L.codfncetr = 0)"; # retira os designados
+        $filtro = "WHERE (L.codset IN (" . implode(',', $codset) . ") AND L.codfncetr = 0)"; # retira os designados
+        if ($aposentados == 0) {
+            $filtro .= " AND (L.sitatl IN ('A'))";
         } else {
-            $colunas = "COUNT(*) total";
-            $ordem = "";
+            $filtro .= " AND (L.sitatl IN ('A', 'P') AND L.tipvinext NOT IN ('Servidor Aposentado'))";
         }
+        $colunas = "DISTINCT P.*";
+        $ordem = "ORDER BY P.nompes";
+        // $param['setor'] = implode(',', $codset); # retorna vazio para mais de um setor
         $query = "SELECT $colunas FROM PESSOA P INNER JOIN LOCALIZAPESSOA L ON (P.codpes = L.codpes) $filtro $ordem";      
+        // return DB::fetchAll($query, $param);
         return DB::fetchAll($query);
     } 
+
+    /**
+     * Método para retornar o total de servidores (docentes, funcionários e estagiários) por setor(es)
+     * Se aposentados = 1, conta também os docentes aposentados (stiatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
+     * 
+     * @param Array $codset
+     * @param Integer $aposentados Default 0
+     * @return void
+     * @author Alessandro Costa de Oliveira, em 10/03/2021
+     */
+    public static function contarServidoresSetor(array $codset, int $aposentados = 1) 
+    {
+        // $filtro = "WHERE (L.codset IN (:setor) AND L.codfncetr = 0)"; # retira os designados
+        $filtro = "WHERE (L.codset IN (" . implode(',', $codset) . ") AND L.codfncetr = 0)"; # retira os designados
+        if ($aposentados == 0) {
+            $filtro .= " AND (L.sitatl IN ('A'))";
+        } else {
+            $filtro .= " AND (L.sitatl IN ('A', 'P') AND L.tipvinext NOT IN ('Servidor Aposentado'))";
+        }
+        $colunas = "COUNT(*) total";
+        // $param['setor'] = implode(',', $codset); # retorna vazio para mais de um setor
+        $query = "SELECT $colunas FROM PESSOA P INNER JOIN LOCALIZAPESSOA L ON (P.codpes = L.codpes) $filtro";      
+        // return DB::fetch($query, $param);
+        return DB::fetch($query);
+    }
 
     /**
      * Método para retornar todas os vínculos e setores de uma pessoa
