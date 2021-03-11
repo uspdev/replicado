@@ -210,17 +210,18 @@ class Pessoa
      * @param Integer $codpes
      * @param Integer $codundclgi
      * @return array
+     * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      */
     public static function vinculos(int $codpes, int $codundclgi = 0)
     {
         $query = "SELECT * FROM LOCALIZAPESSOA
                     WHERE codpes = convert(int,:codpes)";
-        if($codundclgi != 0 ) {
+        if ($codundclgi != 0) {
             $query .= " AND codundclg = convert(int,:codundclgi)";
+            $param['codungclgi'] = $codundclgi;
         }
-        $param = [
-            'codpes' => $codpes,
-        ];
+        $param['codpes'] = $codpes;
+            
         $result = DB::fetchAll($query, $param);
 
         $vinculos = array();
@@ -236,7 +237,7 @@ class Pessoa
             if (!empty($row['sglclgund']))
                 $vinculo = $vinculo . " - " . $row['sglclgund'];
 
-            in_array($vinculo,$vinculos) ?:  array_push($vinculos,$vinculo);
+            in_array($vinculo,$vinculos) ?:  array_push($vinculos, trim($vinculo));
         }
         return $vinculos;
     }
@@ -247,18 +248,17 @@ class Pessoa
      * @param Integer $codpes
      * @param Integer $codundclgi
      * @return array
+     * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      */
     public static function vinculosSiglas(int $codpes, int $codundclgi = 0)
     {
         $query = "SELECT * FROM LOCALIZAPESSOA
                     WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
-        if($codundclgi != 0 ) {
+        if ($codundclgi != 0) {
             $query .= " AND codundclg = convert(int,:codundclgi)";
+            $param['codungclgi'] = $codundclgi;
         }
-        $param = [
-            'codpes' => $codpes,
-            'codundclgi' => $codundclgi,
-        ];
+        $param['codpes'] = $codpes;
         $result = DB::fetchAll($query, $param);
 
         $vinculos = array();
@@ -266,7 +266,7 @@ class Pessoa
         {
             if (!empty($row['tipvin']))
                 $vinculo = trim($row['tipvin']);
-                in_array($vinculo,$vinculos) ?:  array_push($vinculos,$vinculo);
+                in_array($vinculo,$vinculos) ?:  array_push($vinculos, trim($vinculo));
         }
         return $vinculos;
     }
@@ -277,18 +277,17 @@ class Pessoa
      * @param Integer $codpes
      * @param Integer $codundclgi
      * @return array
+     * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      */
     public static function setoresSiglas(int $codpes, int $codundclgi = 0)
     {
         $query = "SELECT * FROM LOCALIZAPESSOA
                     WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
-        if($codundclgi != 0 ) {
+        if ($codundclgi != 0) {
             $query .= " AND codundclg = convert(int,:codundclgi)";
+            $param['codungclgi'] = $codundclgi;
         }
-        $param = [
-            'codpes' => $codpes,
-            'codundclgi' => $codundclgi,
-        ];
+        $param['codpes'] = $codpes;
         $result = DB::fetchAll($query, $param);
 
         $setores = array();
@@ -296,7 +295,7 @@ class Pessoa
         {
             if (!empty(trim($row['nomabvset']))) {
                 $setor = trim($row['nomabvset']);
-                in_array($setor,$setores) ?: array_push($setores,$setor);
+                in_array($setor,$setores) ?: array_push($setores, trim($setor));
             }
         }
         return $setores;
@@ -484,6 +483,40 @@ class Pessoa
             'vinculo'       => $vinculo,
         ];
         return DB::fetchAll($query, $param);
+    } 
+
+    /**
+     * Método para retornar todas as pessoas ativas por setor(es)
+     * 
+     * Somente ATIVOS (também estagiários e aposentados)
+     * Não pega setores descendentes.
+     * Se o terceiro parâmetro *$contar* for igual a 1, retorna um *array* 
+     * com o índice *total* que corresponde ao número total de pessoas ativas por setor(es)
+     * 
+     * @param Array|Integer $codset
+     * @param Integer $contar Default 0
+     * @return Array
+     * @author Alessandro Costa de Oliveira, em 05/03/2021
+     */
+    public static function listarServidoresAtivosSetor($codset, $contar = 0) 
+    {
+        $setores = is_array($codset) ? implode(',', $codset) : $codset;
+        if ($contar == 0) {
+            $colunas = "DISTINCT P.*";
+            $ordem = "ORDER BY P.nompes";
+        } else {
+            $colunas = "COUNT(*) total";
+            $ordem = "";
+        }
+        $query = "SELECT $colunas 
+            FROM PESSOA P 
+            INNER JOIN LOCALIZAPESSOA L ON (P.codpes = L.codpes) 
+            WHERE L.codset IN ($setores) AND
+                L.sitatl IN ('A', 'P') AND
+                L.codfncetr = 0 --retira os designados
+            $ordem";     
+
+        return DB::fetchAll($query);
     } 
 
     /**
