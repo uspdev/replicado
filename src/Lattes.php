@@ -1917,4 +1917,24 @@ class Lattes
         }
         else return false;       
     }
+
+    /**
+    * Recebe o número USP e devolve OrcidID cadastrado no currículo lattes
+    * 
+    * @param Integer $codpes
+    * @return String|Bool
+    * 
+    */
+    public static function retornarOrcidID($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
+
+        if(!$lattes) return false;
+
+        $campo = 'ORCID-ID';
+        $orcid = isset($lattes['DADOS-GERAIS']['@attributes'][$campo]) 
+                    ? $lattes['DADOS-GERAIS']['@attributes'][$campo]
+                    : false;
+        
+        return $orcid;
+    }
 }
