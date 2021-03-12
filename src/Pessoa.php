@@ -486,6 +486,40 @@ class Pessoa
     } 
 
     /**
+     * Método para retornar todas as pessoas ativas por setor(es)
+     * 
+     * Somente ATIVOS (também estagiários e aposentados)
+     * Não pega setores descendentes.
+     * Se o terceiro parâmetro *$contar* for igual a 1, retorna um *array* 
+     * com o índice *total* que corresponde ao número total de pessoas ativas por setor(es)
+     * 
+     * @param Array|Integer $codset
+     * @param Integer $contar Default 0
+     * @return Array
+     * @author Alessandro Costa de Oliveira, em 05/03/2021
+     */
+    public static function listarServidoresAtivosSetor($codset, $contar = 0) 
+    {
+        $setores = is_array($codset) ? implode(',', $codset) : $codset;
+        if ($contar == 0) {
+            $colunas = "DISTINCT P.*";
+            $ordem = "ORDER BY P.nompes";
+        } else {
+            $colunas = "COUNT(*) total";
+            $ordem = "";
+        }
+        $query = "SELECT $colunas 
+            FROM PESSOA P 
+            INNER JOIN LOCALIZAPESSOA L ON (P.codpes = L.codpes) 
+            WHERE L.codset IN ($setores) AND
+                L.sitatl IN ('A', 'P') AND
+                L.codfncetr = 0 --retira os designados
+            $ordem";     
+
+        return DB::fetchAll($query);
+    } 
+
+    /**
      * Método para retornar todas os vínculos e setores de uma pessoa
      * Fundamental para o uspdev/web-ldap-admin
      * Somente ATIVOS
