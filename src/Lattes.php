@@ -1746,19 +1746,19 @@ class Lattes
                     foreach($atuacoes['VINCULOS'] as $vinculo){
                         $aux_vinculos = []; 
                         if(isset($vinculo['@attributes']['ANO-INICIO'])){                        
-                            $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
-                            $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
-                            $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'];
-                            $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
-                            $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['@attributes']['OUTRAS-INFORMACOES'];
-                            $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                            $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'] ?? '';
+                            $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'] ?? '';
+                            $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'] ?? '';
+                            $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'] ?? '';
+                            $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['@attributes']['OUTRAS-INFORMACOES'] ?? '';
+                            $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] ?? '';
                         } else if(isset($vinculo['ANO-INICIO'])){                        
-                            $aux_vinculos['ANO-INICIO'] = $vinculo['ANO-INICIO'];
-                            $aux_vinculos['ANO-FIM'] = $vinculo['ANO-FIM'];
-                            $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['TIPO-DE-VINCULO'];
-                            $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['FLAG-VINCULO-EMPREGATICIO'];
-                            $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['OUTRAS-INFORMACOES'];
-                            $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                            $aux_vinculos['ANO-INICIO'] = $vinculo['ANO-INICIO'] ?? '';
+                            $aux_vinculos['ANO-FIM'] = $vinculo['ANO-FIM'] ?? '';
+                            $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['TIPO-DE-VINCULO'] ?? '';
+                            $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['FLAG-VINCULO-EMPREGATICIO'] ?? '';
+                            $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['OUTRAS-INFORMACOES'] ?? '';
+                            $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] ?? '';
                         }
                         if($tipo == 'anual'){
                             if($limit_ini != -1 &&  (int)$aux_vinculos['ANO-INICIO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
@@ -1781,22 +1781,22 @@ class Lattes
                     $aux['VINCULOS'] = []; 
                     
                     if(isset($a['VINCULOS']['@attributes'])){
-                        $aux['VINCULOS']['ANO-INICIO'] = $a['VINCULOS']['@attributes']['ANO-INICIO'];
-                        $aux['VINCULOS']['ANO-FIM'] = $a['VINCULOS']['@attributes']['ANO-FIM'];
-                        $aux['VINCULOS']['TIPO-DE-VINCULO'] = $a['VINCULOS']['@attributes']['TIPO-DE-VINCULO'];
-                        $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $a['VINCULOS']['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
-                        $aux['VINCULOS']['OUTRAS-INFORMACOES'] = $a['VINCULOS']['@attributes']['OUTRAS-INFORMACOES'];
-                        $aux['VINCULOS']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $a['VINCULOS']['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                        $aux['VINCULOS']['ANO-INICIO'] = $a['VINCULOS']['@attributes']['ANO-INICIO'] ?? '';
+                        $aux['VINCULOS']['ANO-FIM'] = $a['VINCULOS']['@attributes']['ANO-FIM'] ?? '';
+                        $aux['VINCULOS']['TIPO-DE-VINCULO'] = $a['VINCULOS']['@attributes']['TIPO-DE-VINCULO'] ?? '';
+                        $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $a['VINCULOS']['@attributes']['FLAG-VINCULO-EMPREGATICIO'] ?? '';
+                        $aux['VINCULOS']['OUTRAS-INFORMACOES'] = $a['VINCULOS']['@attributes']['OUTRAS-INFORMACOES'] ?? '';
+                        $aux['VINCULOS']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $a['VINCULOS']['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] ?? '';
                     } else {
                         if(isset($a['VINCULOS'])){
                             foreach($a['VINCULOS'] as $vinculo){
                                 $aux_vinculos = []; 
-                                $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
-                                $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
-                                $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'];
-                                $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
-                                $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['@attributes']['OUTRAS-INFORMACOES'];
-                                $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                                $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'] ?? '';
+                                $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'] ?? '';
+                                $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'] ?? '';
+                                $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'] ?? '';
+                                $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['@attributes']['OUTRAS-INFORMACOES'] ?? '';
+                                $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] ?? '';
                                 if($tipo == 'anual'){
                                     if($limit_ini != -1 &&  (int)$aux_vinculos['ANO-INICIO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
                                 }else if($tipo == 'periodo'){
