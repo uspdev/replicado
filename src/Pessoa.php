@@ -803,4 +803,155 @@ class Pessoa
         return DB::fetchAll($query);
     }
 
+
+    /**
+     * Método para retornar as iniciações científicas vigentes 
+     * 
+     * @return array
+     */
+    public static function listarIniciaoCientificaAtiva($departamento = null){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = DB::getQuery('Pessoa.listarIniciaoCientificaAtiva.sql');
+        $query = str_replace('__unidades__',$unidades,$query);
+    
+        $param = [];
+
+        if($departamento != null){ 
+            $query = str_replace('__departamento__',"AND s.nomabvset = convert(varchar,:dep)", $query);
+            $param = [
+                'dep' => $departamento,
+            ];
+        }else{
+            $query = str_replace('__departamento__',"", $query);
+        }
+      
+        
+        
+        $result =  DB::fetchAll($query, $param);
+        
+        
+
+        $iniciacao_cientifica = [];
+        foreach($result as $ic){
+            $curso = Pessoa::retornarCursoPorCodpes($ic['aluno']);
+            $ic['codcur'] =  $curso == null ? null : $curso['codcurgrd'];
+            $ic['nome_curso'] =  $curso == null ? null : $curso['nomcur'];
+            
+            $programa = Pessoa::retornarProgramaPorCodpes($ic['aluno']);
+            $ic['codare'] =  $programa == null ? null : $programa['codare'];
+            $ic['nome_programa'] =  $programa == null ? null : $programa['nomare'];
+
+            $query_com_bolsa = DB::getQuery('Pessoa.buscarICcomBolsaPorCodpes.sql');            
+            $param_com_bolsa = [
+                'codpes' => $ic['aluno'],
+            ];
+            $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
+            if(count($result) == 0){
+                $ic['bolsa'] = 'false';
+            }else{
+                $ic['bolsa'] = 'true';
+            }
+            
+            array_push($iniciacao_cientifica, $ic); 
+        }
+        return $iniciacao_cientifica;
+    }
+    
+    /**
+     * Método para retornar os colaboradores ativos 
+     * 
+     * @return array
+     */
+    public static function listarPesquisadoresColaboradoresAtivos(){
+        $query = DB::getQuery('Pessoa.listarPesquisadoresColaboradoresAtivos.sql');
+        
+        //TODO fazer o filtro por unidade
+        //$unidades = getenv('REPLICADO_CODUNDCLG');
+        //$query = str_replace('__unidades__',$unidades,$query);
+      
+        
+        return DB::fetchAll($query);
+    }
+    
+    /**
+     * Método para retornar o codcur e o nome do curso da pessoa através do codpes 
+     * 
+     * @return array
+     */
+    public static function retornarCursoPorCodpes($codpes){
+        $query = DB::getQuery('Pessoa.retornarCursoPorCodpes.sql');
+        
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        $result = DB::fetchAll($query, $param);
+        return empty($result) ? null : $result[0];
+    }
+    
+    /**
+     * Método para retornar o codare e o nome do programa da pessoa através do codpes 
+     * 
+     * @return array
+     */
+    public static function retornarProgramaPorCodpes($codpes){
+        $query = DB::getQuery('Pessoa.retornarProgramaPorCodpes.sql');
+        
+        $param = [
+            'codpes' => $codpes,
+        ];
+        
+        $result = DB::fetchAll($query, $param);
+        return empty($result) ? null : $result[0];
+    }
+
+  
+    
+    /**
+     * Método para retornar os colaboradores ativos 
+     * 
+     * @return array
+     */
+    public static function listarPesquisaPosDoutorandos(){
+        $pesquisas_pos_doutorando = [];
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = DB::getQuery('Pessoa.listarPesquisaPosDoutorandos.sql');
+        
+        $query = str_replace('__unidades__',$unidades,$query);
+        
+       
+        $pesquisas = DB::fetchAll($query);
+        
+    
+        foreach($pesquisas as $p){
+            $query_nome_supervisor = DB::getQuery('Pessoa.retornarSupervisorPesquisaPosDoutorando.sql');
+            $query_nome_supervisor = str_replace(' __codprj__',"codprj = convert(int,:codprj)", $query_nome_supervisor);
+            $param_nome_supervisor = [
+                'codprj' => $p['codprj'],
+            ];
+            
+            $nome_supervisor =  DB::fetchAll($query_nome_supervisor, $param_nome_supervisor)[0]['nompes'];
+            $p['supervisor'] = $nome_supervisor;
+
+
+            $query_com_bolsa = DB::getQuery('Pessoa.buscarPDcomBolsaPorCodpes.sql');            
+            $param_com_bolsa = [
+                'codpes' => $p['codpes'],
+            ];
+            $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
+
+            if(count($result) == 0){
+                $p['bolsa'] = 'false';
+            }else{
+                $p['bolsa'] = 'true';
+            }
+
+
+            array_push($pesquisas_pos_doutorando, $p); 
+        }
+        
+      
+        return $pesquisas_pos_doutorando;
+    }
+
 }
