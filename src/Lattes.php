@@ -2093,7 +2093,7 @@ class Lattes
                                 array_push($aux_pesquisas, $aux_projeto);
                             }
                         } else{
-                        
+                            if(isset($c['PROJETO-DE-PESQUISA']['EQUIPE-DO-PROJETO']['INTEGRANTES-DO-PROJETO'])){
                             $integrantes = $c['PROJETO-DE-PESQUISA']['EQUIPE-DO-PROJETO']['INTEGRANTES-DO-PROJETO'];
                             
                             $aux_integrantes = [];
@@ -2122,7 +2122,17 @@ class Lattes
                                 'DESCRICAO-DO-PROJETO' => $c[$dados_basicos]['@attributes']['DESCRICAO-DO-PROJETO'] ?? '',
                                 'EQUIPE-DO-PROJETO' => $aux_integrantes
                             ];
-
+                        } else {
+                            $aux_projeto = [
+                                'NOME-DO-PROJETO' => $c[$dados_basicos]['@attributes']['NOME-DO-PROJETO'] ?? '',
+                                'ANO-INICIO' => $c[$dados_basicos]['@attributes']['ANO-INICIO'] ?? '',
+                                'ANO-FIM' => $c[$dados_basicos]['@attributes']['ANO-FIM'] ?? '',
+                                'SITUACAO' => $c[$dados_basicos]['@attributes']['SITUACAO'] ?? '',
+                                'NATUREZA' => $c[$dados_basicos]['@attributes']['NATUREZA'] ?? '',
+                                'DESCRICAO-DO-PROJETO' => $c[$dados_basicos]['@attributes']['DESCRICAO-DO-PROJETO'] ?? '',
+                            ];
+                        }
+                            
                             if($tipo == 'registros'){
                                 if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
                             }else if($tipo == 'anual'){
