@@ -261,29 +261,6 @@ class PessoaTest extends TestCase
         $this->assertSame("Estagiário - Estagiário - Diretoria Faculdade de Filosofia, Letras e Ciências Humanas - CG",Pessoa::vinculos(123456)[0]);
     }
 
-    public function test_vinculosSiglas(){
-        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
-
-        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, sitatl, codundclg, tipvin, codfncetr) 
-                VALUES (
-                    convert(int,:codpes),
-                    :sitatl,
-                    convert(int,:codundclg),
-                    :tipvin,
-                    convert(int,:codfncetr)
-                )";
-
-        $data = [
-            'codpes' => 123456,
-            'sitatl' => 'A',
-            'codundclg' => 8,
-            'tipvin' => 'ALUNOGR',
-            'codfncetr' => 0
-        ];
-        DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame('ALUNOGR',Pessoa::vinculosSiglas(123456,8)[0]);
-    }
-
     public function test_contarEstagiariosAtivosPorGenero(){
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
         DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
