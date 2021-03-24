@@ -62,12 +62,14 @@ class Posgraduacao
     {
         if($codundclgi == null) $codundclgi = getenv('REPLICADO_CODUNDCLG');
 
-        $query = "SELECT C.codcur, NC.nomcur, A.codare
+        $query = "SELECT C.codcur, NC.nomcur, A.codare, N.nomare
                   FROM CURSO AS C
                   INNER JOIN NOMECURSO AS NC ON C.codcur = NC.codcur
                   INNER JOIN AREA AS A ON C.codcur = A.codcur
+                  INNER JOIN NOMEAREA AS N ON A.codare = N.codare
                   WHERE (C.codclg = CONVERT(INT, :codundclgi)) 
                   AND (C.tipcur = 'POS') 
+                  AND (N.dtafimare IS NULL)
                   AND (C.dtainiccp IS NOT NULL) 
                   AND (NC.dtafimcur IS NULL)
                   ";
