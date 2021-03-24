@@ -660,6 +660,88 @@ class Lattes
         });
         return ($trabalhos_tecnicos);
     }
+    
+    
+    /**
+    * Recebe o número USP e devolve array com as apresentações de trabalhos técnicos cadastrados no currículo Lattes
+    *  
+    * @param Integer $codpes = Número USP
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
+    * @return Array|Bool
+    */
+    public static function listarApresentacaoTrabalho($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['APRESENTACAO-DE-TRABALHO'])) return false;
+        $apresentacao_trabalhos = [];
+        $i = 0;
+        foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['APRESENTACAO-DE-TRABALHO'] as $apresentacao){
+            
+            $i++;
+            $autores = (!isset($apresentacao['AUTORES']) && isset($apresentacao[3])) ? 3 : 'AUTORES';
+            
+            $aux_autores = [];
+            if(isset($apresentacao[$autores])){
+                
+                usort($apresentacao[$autores], function ($a, $b) {
+                    if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                        return 0;
+                    }
+                    return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                });
+                
+                foreach($apresentacao[$autores] as $autor){
+                    
+                    if(isset($autor['@attributes'])){
+                        array_push($aux_autores, [
+                            "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                            "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                            "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                            ]);
+                    }else{
+                        array_push($aux_autores, [
+                            "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                            "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                            "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                            ]);
+                    }
+                }
+            }
+            
+            $aux_apresentacao_trabalho = [];
+            $aux_apresentacao_trabalho['TITULO'] = $apresentacao["DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO"]['@attributes']['TITULO'] ?? '';
+            $aux_apresentacao_trabalho['TIPO'] = $apresentacao["DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO"]['@attributes']['NATUREZA'] ?? ''; 
+            $aux_apresentacao_trabalho['SEQUENCIA-PRODUCAO'] = $apresentacao['@attributes']["SEQUENCIA-PRODUCAO"] ?? ''; 
+            $aux_apresentacao_trabalho['ANO'] = $apresentacao["DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO"]['@attributes']['ANO'] ?? ''; 
+            $aux_apresentacao_trabalho['AUTORES'] =   $aux_autores;
+
+        
+            if($tipo == 'registros'){
+                if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+            }else if($tipo == 'anual'){
+                if($limit_ini != -1 &&  (int)$aux_apresentacao_trabalho['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+            }else if($tipo == 'periodo'){
+                if($limit_ini != -1 && 
+                    (
+                    (int)$aux_apresentacao_trabalho['ANO'] < $limit_ini ||
+                    (int)$aux_apresentacao_trabalho['ANO'] > $limit_fim 
+                    )
+                ) continue; 
+            }
+
+            array_push($apresentacao_trabalhos, $aux_apresentacao_trabalho);
+        }
+        
+        usort($apresentacao_trabalhos, function ($a, $b) {
+            if(!isset($b['SEQUENCIA-PRODUCAO'])){
+                return 0;
+            }
+            return (int)$b['SEQUENCIA-PRODUCAO'] - (int)$a['SEQUENCIA-PRODUCAO'];
+        });
+        return ($apresentacao_trabalhos);
+    }
 
 
     /**
@@ -760,7 +842,63 @@ class Lattes
         if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
         $outras = [];
 
-        if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA'])){
+        if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA']['@attributes'])){
+            $outro =  $lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA'];
+
+            $autores = (!isset($outro['AUTORES']) && isset($outro[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($outro[$autores])){
+                   
+                    usort($outro[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($outro[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+               
+                $aux_outros = [];
+                $aux_outros['TITULO'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA"]['@attributes']['TITULO'] ?? '';
+                $aux_outros['NATUREZA'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA"]['@attributes']['NATUREZA'] ?? ''; 
+                $aux_outros['SEQUENCIA-PRODUCAO'] = $outro['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+                $aux_outros['ANO'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA"]['@attributes']['ANO'] ?? ''; 
+                $aux_outros['AUTORES'] =   $aux_autores;
+                
+                
+                
+               if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_outros['ANO'] !=  $limit_ini ) return false; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_outros['ANO'] < $limit_ini ||
+                        (int)$aux_outros['ANO'] > $limit_fim 
+                        )
+                    ) return false; 
+                }
+                
+                array_push($outras, $aux_outros);
+
+        }
+        else if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA'])){
             $i = 0;
             foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA'] as $outro){
                 $i++;
@@ -1830,7 +1968,7 @@ class Lattes
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
-    public static function listarRadioTV($codpes, $lattes_array = null){
+    public static function listarRadioTV($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020){
         $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-TECNICA'])) return false;
@@ -1866,10 +2004,21 @@ class Lattes
 
                 $aux_producao =[
                 'TITULO' => $producoes[$dados_basicos]['@attributes']['TITULO'] ?? '',
+                'ANO' => $producoes[$dados_basicos]['@attributes']['ANO'] ?? '',
                 'EMISSORA' => $producoes[$detalhamento]['@attributes']['EMISSORA'] ?? '',
                 'AUTORES' => $aux_autores
                 ];
 
+                if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_producao['ANO'] !=  $limit_ini ) return false; 
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_producao['ANO'] < $limit_ini ||
+                        (int)$aux_producao['ANO'] > $limit_fim 
+                        )
+                    ) return false; 
+                }
                 array_push($nome_producoes, $aux_producao);
 
             } else  {
@@ -1898,17 +2047,39 @@ class Lattes
                 if(isset($val[$dados_basicos]['@attributes'])){
                     $aux_producao = [
                         'TITULO' => $val[$dados_basicos]['@attributes']['TITULO'] ?? '',
+                        'ANO' => $val[$dados_basicos]['@attributes']['ANO'] ?? '',
                         'EMISSORA' => $val[$detalhamento]['@attributes']['EMISSORA'] ?? '',
                         'AUTORES' => $aux_autores
                     ];
+                    if($tipo == 'anual'){
+                        if($limit_ini != -1 &&  (int)$aux_producao['ANO'] !=  $limit_ini ) continue; 
+                    }else if($tipo == 'periodo'){
+                        if($limit_ini != -1 && 
+                            (
+                            (int)$aux_producao['ANO'] < $limit_ini ||
+                            (int)$aux_producao['ANO'] > $limit_fim 
+                            )
+                        ) continue; 
+                    }
                     array_push($nome_producoes, $aux_producao);
 
                 } else{
                     $aux_producao = [
                         'TITULO' => $val[$dados_basicos]['TITULO'] ?? '',
+                        'ANO' => $val[$dados_basicos]['ANO'] ?? '',
                         'EMISSORA' => $val[$detalhamento]['EMISSORA'] ?? '',
                         'AUTORES' => $aux_autores
                     ];
+                    if($tipo == 'anual'){
+                        if($limit_ini != -1 &&  (int)$aux_producao['ANO'] !=  $limit_ini ) continue; 
+                    }else if($tipo == 'periodo'){
+                        if($limit_ini != -1 && 
+                            (
+                            (int)$aux_producao['ANO'] < $limit_ini ||
+                            (int)$aux_producao['ANO'] > $limit_fim 
+                            )
+                        ) continue; 
+                    }
                     array_push($nome_producoes, $aux_producao);
                 }
             }                  
