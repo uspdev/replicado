@@ -660,6 +660,88 @@ class Lattes
         });
         return ($trabalhos_tecnicos);
     }
+    
+    
+    /**
+    * Recebe o número USP e devolve array com as apresentações de trabalhos técnicos cadastrados no currículo Lattes
+    *  
+    * @param Integer $codpes = Número USP
+    * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
+    * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
+    * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
+    * @return Array|Bool
+    */
+    public static function listarApresentacaoTrabalho($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
+        if(!$lattes) return false;
+        if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['APRESENTACAO-DE-TRABALHO'])) return false;
+        $apresentacao_trabalhos = [];
+        $i = 0;
+        foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['APRESENTACAO-DE-TRABALHO'] as $apresentacao){
+            
+            $i++;
+            $autores = (!isset($apresentacao['AUTORES']) && isset($apresentacao[3])) ? 3 : 'AUTORES';
+            
+            $aux_autores = [];
+            if(isset($apresentacao[$autores])){
+                
+                usort($apresentacao[$autores], function ($a, $b) {
+                    if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                        return 0;
+                    }
+                    return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                });
+                
+                foreach($apresentacao[$autores] as $autor){
+                    
+                    if(isset($autor['@attributes'])){
+                        array_push($aux_autores, [
+                            "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                            "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                            "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                            ]);
+                    }else{
+                        array_push($aux_autores, [
+                            "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                            "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                            "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                            ]);
+                    }
+                }
+            }
+            
+            $aux_apresentacao_trabalho = [];
+            $aux_apresentacao_trabalho['TITULO'] = $apresentacao["DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO"]['@attributes']['TITULO'] ?? '';
+            $aux_apresentacao_trabalho['TIPO'] = $apresentacao["DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO"]['@attributes']['NATUREZA'] ?? ''; 
+            $aux_apresentacao_trabalho['SEQUENCIA-PRODUCAO'] = $apresentacao['@attributes']["SEQUENCIA-PRODUCAO"] ?? ''; 
+            $aux_apresentacao_trabalho['ANO'] = $apresentacao["DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO"]['@attributes']['ANO'] ?? ''; 
+            $aux_apresentacao_trabalho['AUTORES'] =   $aux_autores;
+
+        
+            if($tipo == 'registros'){
+                if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+            }else if($tipo == 'anual'){
+                if($limit_ini != -1 &&  (int)$aux_apresentacao_trabalho['ANO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+            }else if($tipo == 'periodo'){
+                if($limit_ini != -1 && 
+                    (
+                    (int)$aux_apresentacao_trabalho['ANO'] < $limit_ini ||
+                    (int)$aux_apresentacao_trabalho['ANO'] > $limit_fim 
+                    )
+                ) continue; 
+            }
+
+            array_push($apresentacao_trabalhos, $aux_apresentacao_trabalho);
+        }
+        
+        usort($apresentacao_trabalhos, function ($a, $b) {
+            if(!isset($b['SEQUENCIA-PRODUCAO'])){
+                return 0;
+            }
+            return (int)$b['SEQUENCIA-PRODUCAO'] - (int)$a['SEQUENCIA-PRODUCAO'];
+        });
+        return ($apresentacao_trabalhos);
+    }
 
 
     /**
@@ -760,7 +842,63 @@ class Lattes
         if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA'])) return false;
         $outras = [];
 
-        if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA'])){
+        if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA']['@attributes'])){
+            $outro =  $lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA'];
+
+            $autores = (!isset($outro['AUTORES']) && isset($outro[3])) ? 3 : 'AUTORES';
+                
+                $aux_autores = [];
+                if(isset($outro[$autores])){
+                   
+                    usort($outro[$autores], function ($a, $b) {
+                        if(!isset($b['@attributes']['ORDEM-DE-AUTORIA'])){
+                            return 0;
+                        }
+                        return (int)$a['@attributes']['ORDEM-DE-AUTORIA'] - (int)$b['@attributes']['ORDEM-DE-AUTORIA'];
+                    });
+                    
+                    foreach($outro[$autores] as $autor){
+                        
+                        if(isset($autor['@attributes'])){
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['@attributes']['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['@attributes']['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }else{
+                            array_push($aux_autores, [
+                                "NOME-COMPLETO-DO-AUTOR" => $autor['NOME-COMPLETO-DO-AUTOR'] ?? '',
+                                "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                "ORDEM-DE-AUTORIA" => $autor['ORDEM-DE-AUTORIA'] ?? '',
+                                ]);
+                        }
+                    }
+                }
+               
+                $aux_outros = [];
+                $aux_outros['TITULO'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA"]['@attributes']['TITULO'] ?? '';
+                $aux_outros['NATUREZA'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA"]['@attributes']['NATUREZA'] ?? ''; 
+                $aux_outros['SEQUENCIA-PRODUCAO'] = $outro['@attributes']["SEQUENCIA-PRODUCAO"] ?? '';
+                $aux_outros['ANO'] = $outro["DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA"]['@attributes']['ANO'] ?? ''; 
+                $aux_outros['AUTORES'] =   $aux_autores;
+                
+                
+                
+               if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_outros['ANO'] !=  $limit_ini ) return false; //se for diferente do ano determinado, pula para o próximo
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_outros['ANO'] < $limit_ini ||
+                        (int)$aux_outros['ANO'] > $limit_fim 
+                        )
+                    ) return false; 
+                }
+                
+                array_push($outras, $aux_outros);
+
+        }
+        else if(isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA'])){
             $i = 0;
             foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['OUTRA-PRODUCAO-TECNICA'] as $outro){
                 $i++;
@@ -1746,19 +1884,19 @@ class Lattes
                     foreach($atuacoes['VINCULOS'] as $vinculo){
                         $aux_vinculos = []; 
                         if(isset($vinculo['@attributes']['ANO-INICIO'])){                        
-                            $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
-                            $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
-                            $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'];
-                            $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
-                            $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['@attributes']['OUTRAS-INFORMACOES'];
-                            $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                            $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'] ?? '';
+                            $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'] ?? '';
+                            $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'] ?? '';
+                            $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'] ?? '';
+                            $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['@attributes']['OUTRAS-INFORMACOES'] ?? '';
+                            $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] ?? '';
                         } else if(isset($vinculo['ANO-INICIO'])){                        
-                            $aux_vinculos['ANO-INICIO'] = $vinculo['ANO-INICIO'];
-                            $aux_vinculos['ANO-FIM'] = $vinculo['ANO-FIM'];
-                            $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['TIPO-DE-VINCULO'];
-                            $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['FLAG-VINCULO-EMPREGATICIO'];
-                            $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['OUTRAS-INFORMACOES'];
-                            $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                            $aux_vinculos['ANO-INICIO'] = $vinculo['ANO-INICIO'] ?? '';
+                            $aux_vinculos['ANO-FIM'] = $vinculo['ANO-FIM'] ?? '';
+                            $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['TIPO-DE-VINCULO'] ?? '';
+                            $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['FLAG-VINCULO-EMPREGATICIO'] ?? '';
+                            $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['OUTRAS-INFORMACOES'] ?? '';
+                            $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] ?? '';
                         }
                         if($tipo == 'anual'){
                             if($limit_ini != -1 &&  (int)$aux_vinculos['ANO-INICIO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
@@ -1781,22 +1919,22 @@ class Lattes
                     $aux['VINCULOS'] = []; 
                     
                     if(isset($a['VINCULOS']['@attributes'])){
-                        $aux['VINCULOS']['ANO-INICIO'] = $a['VINCULOS']['@attributes']['ANO-INICIO'];
-                        $aux['VINCULOS']['ANO-FIM'] = $a['VINCULOS']['@attributes']['ANO-FIM'];
-                        $aux['VINCULOS']['TIPO-DE-VINCULO'] = $a['VINCULOS']['@attributes']['TIPO-DE-VINCULO'];
-                        $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $a['VINCULOS']['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
-                        $aux['VINCULOS']['OUTRAS-INFORMACOES'] = $a['VINCULOS']['@attributes']['OUTRAS-INFORMACOES'];
-                        $aux['VINCULOS']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $a['VINCULOS']['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                        $aux['VINCULOS']['ANO-INICIO'] = $a['VINCULOS']['@attributes']['ANO-INICIO'] ?? '';
+                        $aux['VINCULOS']['ANO-FIM'] = $a['VINCULOS']['@attributes']['ANO-FIM'] ?? '';
+                        $aux['VINCULOS']['TIPO-DE-VINCULO'] = $a['VINCULOS']['@attributes']['TIPO-DE-VINCULO'] ?? '';
+                        $aux['VINCULOS']['FLAG-VINCULO-EMPREGATICIO'] = $a['VINCULOS']['@attributes']['FLAG-VINCULO-EMPREGATICIO'] ?? '';
+                        $aux['VINCULOS']['OUTRAS-INFORMACOES'] = $a['VINCULOS']['@attributes']['OUTRAS-INFORMACOES'] ?? '';
+                        $aux['VINCULOS']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $a['VINCULOS']['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] ?? '';
                     } else {
                         if(isset($a['VINCULOS'])){
                             foreach($a['VINCULOS'] as $vinculo){
                                 $aux_vinculos = []; 
-                                $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'];
-                                $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'];
-                                $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'];
-                                $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'];
-                                $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['@attributes']['OUTRAS-INFORMACOES'];
-                                $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'];
+                                $aux_vinculos['ANO-INICIO'] = $vinculo['@attributes']['ANO-INICIO'] ?? '';
+                                $aux_vinculos['ANO-FIM'] = $vinculo['@attributes']['ANO-FIM'] ?? '';
+                                $aux_vinculos['TIPO-DE-VINCULO'] = $vinculo['@attributes']['TIPO-DE-VINCULO'] ?? '';
+                                $aux_vinculos['FLAG-VINCULO-EMPREGATICIO'] = $vinculo['@attributes']['FLAG-VINCULO-EMPREGATICIO'] ?? '';
+                                $aux_vinculos['OUTRAS-INFORMACOES'] = $vinculo['@attributes']['OUTRAS-INFORMACOES'] ?? '';
+                                $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = $vinculo['@attributes']['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] ?? '';
                                 if($tipo == 'anual'){
                                     if($limit_ini != -1 &&  (int)$aux_vinculos['ANO-INICIO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
                                 }else if($tipo == 'periodo'){
@@ -1830,7 +1968,7 @@ class Lattes
     * @param Integer $codpes = Número USP
     * @return Array|Bool
     */
-    public static function listarRadioTV($codpes, $lattes_array = null){
+    public static function listarRadioTV($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020){
         $lattes = $lattes_array ?? self::obterArray($codpes);
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-TECNICA'])) return false;
@@ -1866,10 +2004,21 @@ class Lattes
 
                 $aux_producao =[
                 'TITULO' => $producoes[$dados_basicos]['@attributes']['TITULO'] ?? '',
+                'ANO' => $producoes[$dados_basicos]['@attributes']['ANO'] ?? '',
                 'EMISSORA' => $producoes[$detalhamento]['@attributes']['EMISSORA'] ?? '',
                 'AUTORES' => $aux_autores
                 ];
 
+                if($tipo == 'anual'){
+                    if($limit_ini != -1 &&  (int)$aux_producao['ANO'] !=  $limit_ini ) return false; 
+                }else if($tipo == 'periodo'){
+                    if($limit_ini != -1 && 
+                        (
+                        (int)$aux_producao['ANO'] < $limit_ini ||
+                        (int)$aux_producao['ANO'] > $limit_fim 
+                        )
+                    ) return false; 
+                }
                 array_push($nome_producoes, $aux_producao);
 
             } else  {
@@ -1898,17 +2047,39 @@ class Lattes
                 if(isset($val[$dados_basicos]['@attributes'])){
                     $aux_producao = [
                         'TITULO' => $val[$dados_basicos]['@attributes']['TITULO'] ?? '',
+                        'ANO' => $val[$dados_basicos]['@attributes']['ANO'] ?? '',
                         'EMISSORA' => $val[$detalhamento]['@attributes']['EMISSORA'] ?? '',
                         'AUTORES' => $aux_autores
                     ];
+                    if($tipo == 'anual'){
+                        if($limit_ini != -1 &&  (int)$aux_producao['ANO'] !=  $limit_ini ) continue; 
+                    }else if($tipo == 'periodo'){
+                        if($limit_ini != -1 && 
+                            (
+                            (int)$aux_producao['ANO'] < $limit_ini ||
+                            (int)$aux_producao['ANO'] > $limit_fim 
+                            )
+                        ) continue; 
+                    }
                     array_push($nome_producoes, $aux_producao);
 
                 } else{
                     $aux_producao = [
                         'TITULO' => $val[$dados_basicos]['TITULO'] ?? '',
+                        'ANO' => $val[$dados_basicos]['ANO'] ?? '',
                         'EMISSORA' => $val[$detalhamento]['EMISSORA'] ?? '',
                         'AUTORES' => $aux_autores
                     ];
+                    if($tipo == 'anual'){
+                        if($limit_ini != -1 &&  (int)$aux_producao['ANO'] !=  $limit_ini ) continue; 
+                    }else if($tipo == 'periodo'){
+                        if($limit_ini != -1 && 
+                            (
+                            (int)$aux_producao['ANO'] < $limit_ini ||
+                            (int)$aux_producao['ANO'] > $limit_fim 
+                            )
+                        ) continue; 
+                    }
                     array_push($nome_producoes, $aux_producao);
                 }
             }                  
@@ -1916,5 +2087,242 @@ class Lattes
             return $nome_producoes;            
         }
         else return false;       
+    }
+
+    /**
+    * Recebe o número USP e devolve OrcidID cadastrado no currículo lattes
+    * 
+    * @param Integer $codpes
+    * @return String|Bool
+    * 
+    */
+    public static function retornarOrcidID($codpes, $lattes_array = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
+
+        if(!$lattes) return false;
+
+        $campo = 'ORCID-ID';
+        $orcid = isset($lattes['DADOS-GERAIS']['@attributes'][$campo]) 
+                    ? $lattes['DADOS-GERAIS']['@attributes'][$campo]
+                    : false;
+        
+        return $orcid;
+    }
+
+    /**
+    * Recebe o número USP e retorna projetos de pesquisa cadastrados no currículo Lattes.
+    * @param Integer $codpes = Número USP
+    * @return Array|Bool
+    */
+
+    public static function listarProjetosPesquisa($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null){
+        $lattes = $lattes_array ?? self::obterArray($codpes);
+        if(!$lattes && !isset($lattes['DADOS-GERAIS'])) return false;
+
+        if(isset($lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'])){
+            $atuacoes = $lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'];
+
+            $aux_pesquisas = [];
+            
+            foreach($atuacoes as $pp){
+                if(isset($pp['ATIVIDADES-DE-PARTICIPACAO-EM-PROJETO']['PARTICIPACAO-EM-PROJETO']['PROJETO-DE-PESQUISA'])){
+                    $projeto = $pp['ATIVIDADES-DE-PARTICIPACAO-EM-PROJETO']['PARTICIPACAO-EM-PROJETO']['PROJETO-DE-PESQUISA'];
+                    if(!isset($projeto['EQUIPE-DO-PROJETO'])){
+                        foreach($projeto as $pesquisa){
+                            $integrantes = $pesquisa['EQUIPE-DO-PROJETO']['INTEGRANTES-DO-PROJETO'];
+                            $aux_integrantes = [];
+                            
+                            foreach($integrantes as $autor){
+                                if(isset($autor['@attributes'])){
+                                    array_push($aux_integrantes, [
+                                        "NOME-COMPLETO" => $autor['@attributes']['NOME-COMPLETO'] ?? '',
+                                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                        "ORDEM-DE-INTEGRACAO" => $autor['@attributes']['ORDEM-DE-INTEGRACAO'] ?? '',
+                                        ]);
+                                }else{
+                                    array_push($aux_integrantes, [
+                                        "NOME-COMPLETO" => $autor['NOME-COMPLETO'] ?? '',
+                                        "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                        "ORDEM-DE-INTEGRACAO" => $autor['ORDEM-DE-INTEGRACAO'] ?? '',
+                                        ]);
+                                }
+                            }
+                                $aux_projeto = [
+                                    'NOME-DO-PROJETO' => $pesquisa['@attributes']['NOME-DO-PROJETO'] ?? '',
+                                    'ANO-INICIO' => $pesquisa['@attributes']['ANO-INICIO'] ?? '',
+                                    'ANO-FIM' => $pesquisa['@attributes']['ANO-FIM'] ?? '',
+                                    'SITUACAO' => $pesquisa['@attributes']['SITUACAO'] ?? '',
+                                    'NATUREZA' => $pesquisa['@attributes']['NATUREZA'] ?? '',
+                                    'DESCRICAO-DO-PROJETO' => $pesquisa['@attributes']['DESCRICAO-DO-PROJETO'] ?? '',
+                                    'EQUIPE-DO-PROJETO' => $aux_integrantes
+                                ];
+                               if($tipo == 'anual'){
+                                    if($limit_ini != -1 &&  (int)$aux_projeto['ANO-INICIO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                                }else if($tipo == 'periodo'){
+                                    if($limit_ini != -1 && 
+                                        (
+                                        (int)$aux_projeto['ANO-INICIO'] < $limit_ini ||
+                                        (int)$aux_projeto['ANO-INICIO'] > $limit_fim 
+                                        )
+                                    ) continue; 
+                                }
+                                array_push($aux_pesquisas, $aux_projeto);
+                            }
+                        } else{
+                            $integrantes = $projeto['EQUIPE-DO-PROJETO']['INTEGRANTES-DO-PROJETO'];
+                            $aux_integrantes = [];
+
+                        foreach($integrantes as $autor){
+                            if(isset($autor['@attributes'])){
+                                array_push($aux_integrantes, [
+                                    "NOME-COMPLETO" => $autor['@attributes']['NOME-COMPLETO'] ?? '',
+                                    "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                    "ORDEM-DE-INTEGRACAO" => $autor['@attributes']['ORDEM-DE-INTEGRACAO'] ?? '',
+                                    ]);
+                            }else{
+                                array_push($aux_integrantes, [
+                                    "NOME-COMPLETO" => $autor['NOME-COMPLETO'] ?? '',
+                                    "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                    "ORDEM-DE-INTEGRACAO" => $autor['ORDEM-DE-INTEGRACAO'] ?? '',
+                                    ]);
+                            }
+                        }
+
+                        $aux_projeto = [
+                            'NOME-DO-PROJETO' => $projeto['@attributes']['NOME-DO-PROJETO'] ?? '',
+                            'ANO-INICIO' => $projeto['@attributes']['ANO-INICIO'] ?? '',
+                            'ANO-FIM' => $projeto['@attributes']['ANO-FIM'] ?? '',
+                            'SITUACAO' => $projeto['@attributes']['SITUACAO'] ?? '',
+                            'NATUREZA' => $projeto['@attributes']['NATUREZA'] ?? '',
+                            'DESCRICAO-DO-PROJETO' => $projeto['@attributes']['DESCRICAO-DO-PROJETO'] ?? '',
+                            'EQUIPE-DO-PROJETO' => $aux_integrantes
+                        ];
+
+                        if($tipo == 'anual'){
+                            if($limit_ini != -1 &&  (int)$aux_projeto['ANO-INICIO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                        }else if($tipo == 'periodo'){
+                            if($limit_ini != -1 && 
+                                (
+                                (int)$aux_projeto['ANO-INICIO'] < $limit_ini ||
+                                (int)$aux_projeto['ANO-INICIO'] > $limit_fim 
+                                )
+                            ) continue; 
+                        }
+
+                        array_push($aux_pesquisas, $aux_projeto);
+                    }
+
+                } else if(isset($pp['ATIVIDADES-DE-PARTICIPACAO-EM-PROJETO']['PARTICIPACAO-EM-PROJETO'])){
+                    $projetos_pesquisas = $pp['ATIVIDADES-DE-PARTICIPACAO-EM-PROJETO']['PARTICIPACAO-EM-PROJETO'];
+                    $i = 0;
+                    foreach ($projetos_pesquisas as $c){
+                        if(!isset($c['PROJETO-DE-PESQUISA'])) continue;
+                        $dados_basicos = (!isset($c['PROJETO-DE-PESQUISA']) && isset($c[1])) ? 1 : 'PROJETO-DE-PESQUISA';
+                        if(!isset($c['PROJETO-DE-PESQUISA']['EQUIPE-DO-PROJETO'])){
+                            foreach($c['PROJETO-DE-PESQUISA'] as $pesquisa){
+                                $integrantes = $pesquisa['EQUIPE-DO-PROJETO']['INTEGRANTES-DO-PROJETO'];
+                                $aux_integrantes = [];
+                                
+                                foreach($integrantes as $autor){
+                                    if(isset($autor['@attributes'])){
+                                        array_push($aux_integrantes, [
+                                            "NOME-COMPLETO" => $autor['@attributes']['NOME-COMPLETO'] ?? '',
+                                            "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                            "ORDEM-DE-INTEGRACAO" => $autor['@attributes']['ORDEM-DE-INTEGRACAO'] ?? '',
+                                            ]);
+                                    }else{
+                                        array_push($aux_integrantes, [
+                                            "NOME-COMPLETO" => $autor['NOME-COMPLETO'] ?? '',
+                                            "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                            "ORDEM-DE-INTEGRACAO" => $autor['ORDEM-DE-INTEGRACAO'] ?? '',
+                                            ]);
+                                    }
+                                }
+                                
+                                $aux_projeto = [
+                                    'NOME-DO-PROJETO' => $pesquisa['@attributes']['NOME-DO-PROJETO'] ?? '',
+                                    'ANO-INICIO' => $pesquisa['@attributes']['ANO-INICIO'] ?? '',
+                                    'ANO-FIM' => $pesquisa['@attributes']['ANO-FIM'] ?? '',
+                                    'SITUACAO' => $pesquisa['@attributes']['SITUACAO'] ?? '',
+                                    'NATUREZA' => $pesquisa['@attributes']['NATUREZA'] ?? '',
+                                    'DESCRICAO-DO-PROJETO' => $pesquisa['@attributes']['DESCRICAO-DO-PROJETO'] ?? '',
+                                    'EQUIPE-DO-PROJETO' => $aux_integrantes
+                                ];
+                                $i++;
+                                if($tipo == 'registros'){
+                                    if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                                }else if($tipo == 'anual'){
+                                    if($limit_ini != -1 &&  (int)$aux_projeto['ANO-INICIO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                                }else if($tipo == 'periodo'){
+                                    if($limit_ini != -1 && 
+                                        (
+                                        (int)$aux_projeto['ANO-INICIO'] < $limit_ini ||
+                                        (int)$aux_projeto['ANO-INICIO'] > $limit_fim 
+                                        )
+                                    ) continue; 
+                                }
+                                array_push($aux_pesquisas, $aux_projeto);
+                            }
+                        } else{
+                            if(isset($c['PROJETO-DE-PESQUISA']['EQUIPE-DO-PROJETO']['INTEGRANTES-DO-PROJETO'])){
+                            $integrantes = $c['PROJETO-DE-PESQUISA']['EQUIPE-DO-PROJETO']['INTEGRANTES-DO-PROJETO'];
+                            
+                            $aux_integrantes = [];
+                            
+                            foreach($integrantes as $autor){
+                                if(isset($autor['@attributes'])){
+                                    array_push($aux_integrantes, [
+                                        "NOME-COMPLETO" => $autor['@attributes']['NOME-COMPLETO'] ?? '',
+                                        "NOME-PARA-CITACAO" => $autor['@attributes']['NOME-PARA-CITACAO'] ?? '',
+                                        "ORDEM-DE-INTEGRACAO" => $autor['@attributes']['ORDEM-DE-INTEGRACAO'] ?? '',
+                                        ]);
+                                }else{
+                                    array_push($aux_integrantes, [
+                                        "NOME-COMPLETO" => $autor['NOME-COMPLETO'] ?? '',
+                                        "NOME-PARA-CITACAO" => $autor['NOME-PARA-CITACAO'] ?? '',
+                                        "ORDEM-DE-INTEGRACAO" => $autor['ORDEM-DE-INTEGRACAO'] ?? '',
+                                        ]);
+                                }
+                            }
+                            $aux_projeto = [
+                                'NOME-DO-PROJETO' => $c[$dados_basicos]['@attributes']['NOME-DO-PROJETO'] ?? '',
+                                'ANO-INICIO' => $c[$dados_basicos]['@attributes']['ANO-INICIO'] ?? '',
+                                'ANO-FIM' => $c[$dados_basicos]['@attributes']['ANO-FIM'] ?? '',
+                                'SITUACAO' => $c[$dados_basicos]['@attributes']['SITUACAO'] ?? '',
+                                'NATUREZA' => $c[$dados_basicos]['@attributes']['NATUREZA'] ?? '',
+                                'DESCRICAO-DO-PROJETO' => $c[$dados_basicos]['@attributes']['DESCRICAO-DO-PROJETO'] ?? '',
+                                'EQUIPE-DO-PROJETO' => $aux_integrantes
+                            ];
+                        } else {
+                            $aux_projeto = [
+                                'NOME-DO-PROJETO' => $c[$dados_basicos]['@attributes']['NOME-DO-PROJETO'] ?? '',
+                                'ANO-INICIO' => $c[$dados_basicos]['@attributes']['ANO-INICIO'] ?? '',
+                                'ANO-FIM' => $c[$dados_basicos]['@attributes']['ANO-FIM'] ?? '',
+                                'SITUACAO' => $c[$dados_basicos]['@attributes']['SITUACAO'] ?? '',
+                                'NATUREZA' => $c[$dados_basicos]['@attributes']['NATUREZA'] ?? '',
+                                'DESCRICAO-DO-PROJETO' => $c[$dados_basicos]['@attributes']['DESCRICAO-DO-PROJETO'] ?? '',
+                            ];
+                        }
+                            
+                            if($tipo == 'registros'){
+                                if($limit_ini != -1 && $i > $limit_ini) continue;  //-1 retorna tudo
+                            }else if($tipo == 'anual'){
+                                if($limit_ini != -1 &&  (int)$aux_projeto['ANO-INICIO'] !=  $limit_ini ) continue; //se for diferente do ano determinado, pula para o próximo
+                            }else if($tipo == 'periodo'){
+                                if($limit_ini != -1 && 
+                                    (
+                                    (int)$aux_projeto['ANO-INICIO'] < $limit_ini ||
+                                    (int)$aux_projeto['ANO-INICIO'] > $limit_fim 
+                                    )
+                                ) continue; 
+                            }
+                            $i++;
+                            array_push($aux_pesquisas, $aux_projeto);
+                        }
+                    }
+                }
+            }
+            return $aux_pesquisas;
+        }else return false;
     }
 }
