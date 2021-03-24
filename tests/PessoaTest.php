@@ -284,44 +284,6 @@ class PessoaTest extends TestCase
         $this->assertSame('ALUNOGR',Pessoa::vinculosSiglas(123456,8)[0]);
     }
 
-    public function test_contarDocentesAtivosPorGenero(){
-        DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
-        DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
-
-        $sql = "INSERT INTO LOCALIZAPESSOA (codpes, tipvinext, codundclg, sitatl, codfncetr) 
-                VALUES (
-                    convert(int,:codpes),
-                    :tipvinext,
-                    convert(int,:codundclg),
-                    :sitatl,
-                    convert(int,:codfncetr)
-                )";
-
-        $data = [
-            'codpes' => 405117,
-            'tipvinext' => 'Docente',
-            'codundclg' => 8,
-            'sitatl' => 'A',
-            'codfncetr' => 0
-        ];
-        DB::getInstance()->prepare($sql)->execute($data);
-
-        $sql = "INSERT INTO PESSOA (codpes, sexpes, dtanas) 
-                VALUES (
-                    convert(int,:codpes),
-                    :sexpes,
-                    :dtanas
-                )";
-
-        $data = [
-            'codpes' => 405117,
-            'sexpes' => 'F',
-            'dtanas' => '2012-10-05 00:00:00'
-        ];
-        DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame('0',Pessoa::contarDocentesAtivosPorGenero('F'));        
-    }
-
     public function test_contarEstagiariosAtivosPorGenero(){
         DB::getInstance()->prepare('DELETE FROM LOCALIZAPESSOA')->execute();
         DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
