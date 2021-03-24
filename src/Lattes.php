@@ -22,6 +22,23 @@ class Lattes
     }
     
     /**
+     * Recebe o ID Lattes e retorna o número USP da pessoa.
+     * 
+     * @param Integer $codpes
+     * @return String|Bool
+     */
+    public static function retornarCodpesPorIDLattes($id)
+	{
+	    $query = "SELECT codpes from DIM_PESSOA_XMLUSP WHERE idfpescpq  = convert(varchar,:idfpescpq)";
+		$param = [
+            'idfpescpq' => $id,
+        ];
+        $result = DB::fetch($query, $param);
+        if($result) return $result['codpes'];
+        return false;
+    }
+    
+    /**
      * Recebe o número USP e retorna o binário zip do lattes
      * 
      * @param Integer $codpes
