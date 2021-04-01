@@ -2,6 +2,8 @@
 
 namespace Uspdev\Replicado;
 
+use Illuminate\Support\Arr;
+
 class Lattes
 {
     /**
@@ -173,12 +175,10 @@ class Lattes
         if(!$lattes) return false;
 
         $campo = 'TEXTO-RESUMO-CV-RH';
-        if(strtolower($idioma) == 'en') $campo .= '-EN'; 
-        $resumo_cv = isset($lattes['DADOS-GERAIS']['RESUMO-CV']['@attributes'][$campo]) 
-                    ? $lattes['DADOS-GERAIS']['RESUMO-CV']['@attributes'][$campo]
-                    : false;
-        
-        return $resumo_cv;
+        if(strtolower($idioma) == 'en') $campo .= '-EN';
+
+        $path = "DADOS-GERAIS.RESUMO-CV.@attributes.{$campo}";
+        return Arr::get($lattes, $path,'');
     }
 
     /**
