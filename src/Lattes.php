@@ -163,11 +163,16 @@ class Lattes
   
     /**
     * Recebe o número USP e devolve o resumo do currículo do lattes
+    *
+    * idioma: 'pt' -português (default) ou 'en' - inglês
+    * lattes_array: (default null) curriculo lattes convertido em array. Nesse caso $codpes será ignorado. 
     * 
     * @param Integer $codpes
-    * @param String $idioma = Valores aceitos para idioma: 'pt' (português) e 'en' (inglês)
-    * @return String|Bool
-    * 
+    * @param String $idioma (optional)
+    * @param Array $lattes_array (optional)
+    * @return String
+    * @author Autor original, quando
+    * @author Thiago Gomes Veríssimo, 1/4/2021, refatorado para usar Arr do illuminate
     */
     public static function retornarResumoCV($codpes, $idioma = 'pt', $lattes_array = null){
         $lattes = $lattes_array ?? self::obterArray($codpes);
@@ -178,7 +183,7 @@ class Lattes
         if(strtolower($idioma) == 'en') $campo .= '-EN';
 
         $path = "DADOS-GERAIS.RESUMO-CV.@attributes.{$campo}";
-        return Arr::get($lattes, $path,'');
+        return Arr::get($lattes, $path, '');
     }
 
     /**
