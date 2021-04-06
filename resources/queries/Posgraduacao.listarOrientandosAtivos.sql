@@ -1,5 +1,5 @@
 -- Orientando Ativos
-SELECT DISTINCT (r.codpespgm), (v.nompes), (v.nivpgm), (n.nomare)
+SELECT DISTINCT (r.codpespgm), (v.nompes), (v.nivpgm), (n.nomare), (v.dtainivin)
 FROM R39PGMORIDOC r
 INNER JOIN VINCULOPESSOAUSP v  ON r.codpespgm = v.codpes
 INNER JOIN NOMEAREA n ON r.codare = n.codare

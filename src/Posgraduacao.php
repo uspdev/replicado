@@ -5,13 +5,13 @@ namespace Uspdev\Replicado;
 class Posgraduacao
 {
     /**
-    * Verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
-    * 
-    * @param int $codpes Código da pessoa
-    * @param int $codundclgi Código da unidade
-    *
-    * @return bool
-    */
+     * Verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
+     *
+     * @param int $codpes Código da pessoa
+     * @param int $codundclgi Código da unidade
+     *
+     * @return bool
+     */
     public static function verifica($codpes, $codundclgi)
     {
         $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
@@ -20,7 +20,7 @@ class Posgraduacao
         ];
         $result = DB::fetchAll($query, $param);
 
-        if(!empty($result)) {
+        if (!empty($result)) {
             foreach ($result as $row) {
                 if (trim($row['tipvin']) == 'ALUNOPOS' && trim($row['sitatl']) == 'A' && trim($row['codundclg']) == $codundclgi) {
                     return true;
@@ -32,12 +32,12 @@ class Posgraduacao
     }
 
     /**
-    * Retorna *array* de todos alunos de pós-graduação ativos na unidade
-    * 
-    * @param int $codundclgi Código da unidade
-    *
-    * @return array
-    */
+     * Retorna *array* de todos alunos de pós-graduação ativos na unidade
+     *
+     * @param int $codundclgi Código da unidade
+     *
+     * @return array
+     */
     public static function ativos($codundclgi)
     {
         $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA";
@@ -49,32 +49,37 @@ class Posgraduacao
         ];
         return DB::fetchAll($query, $param);
     }
-    
+
     /**
-    * Retorna *array* dos programas de pós-graduação da unidade ou quando informado o código do curso/programa retorna somente os dados do programa solicitado
-    * 
-    * @param int $codundclgi Código da unidade
-    * @param int $codcur Código do curso
-    *
-    * @return array
-    */
+     * Retorna *array* dos programas de pós-graduação da unidade
+     * 
+     * Quando informado o código do curso/programa retorna somente os dados do programa solicitado
+     *
+     * @param int $codundclgi Código da unidade
+     * @param int $codcur Código do curso
+     *
+     * @return array
+     */
     public static function programas($codundclgi = null, $codcur = null, $codare = null)
     {
-        if($codundclgi == null) $codundclgi = getenv('REPLICADO_CODUNDCLG');
+        if (!$codundclgi) {
+            $codundclgi = getenv('REPLICADO_CODUNDCLG');
+        }
 
         $query = "SELECT C.codcur, NC.nomcur, A.codare, N.nomare
                   FROM CURSO AS C
                   INNER JOIN NOMECURSO AS NC ON C.codcur = NC.codcur
                   INNER JOIN AREA AS A ON C.codcur = A.codcur
                   INNER JOIN NOMEAREA AS N ON A.codare = N.codare
-                  WHERE (C.codclg = CONVERT(INT, :codundclgi)) 
-                  AND (C.tipcur = 'POS') 
+                  WHERE (C.codclg IN ({$codundclgi}))
+                  AND (C.tipcur = 'POS')
                   AND (N.dtafimare IS NULL)
-                  AND (C.dtainiccp IS NOT NULL) 
+                  AND (C.dtainiccp IS NOT NULL)
                   AND (NC.dtafimcur IS NULL)
                   ";
 
-        $param = ['codundclgi' => $codundclgi];
+        //$param = ['codundclgi' => $codundclgi];
+        $param = [];
         if (!is_null($codcur)) {
             $param['codcur'] = $codcur;
             $query .= " AND (C.codcur = CONVERT(INT, :codcur))";
@@ -89,7 +94,7 @@ class Posgraduacao
 
     /**
      * Retorna lista dos orientadores credenciados na área de concentração (codare) do programa de pós graduação correspondente.
-     * 
+     *
      * Foi desvinculado de VINCULOPESSOAUSP pois recém credenciados pode ainda não ter vinculo ???
      * Issue #137
      *
@@ -114,12 +119,12 @@ class Posgraduacao
     }
 
     /**
-    * Retorna *array* do catálogo das disciplinas pertencentes à área de concentração.
-    * 
-    * @param  int $codare Código da área de concentração pertencente a um programa de pós.
-    *
-    * @return array
-    */
+     * Retorna *array* do catálogo das disciplinas pertencentes à área de concentração.
+     *
+     * @param  int $codare Código da área de concentração pertencente a um programa de pós.
+     *
+     * @return array
+     */
     public static function catalogoDisciplinas($codare)
     {
         $query = "SELECT DISTINCT r.sgldis, d.nomdis, r.numseqdis, r.dtaatvdis";
@@ -138,12 +143,12 @@ class Posgraduacao
     }
 
     /**
-    * Retorna *array* contendo todos os dados da disciplina indentificada por sua sigla - sgldis.
-    * 
-    * @param  int $sgldis Código da área de concentração pertencente a um programa de pós.
-    *
-    * @return array
-    */
+     * Retorna *array* contendo todos os dados da disciplina indentificada por sua sigla - sgldis.
+     *
+     * @param  int $sgldis Código da área de concentração pertencente a um programa de pós.
+     *
+     * @return array
+     */
     public static function disciplina($sgldis)
     {
         $query = "SELECT TOP 1 * FROM DISCIPLINA";
@@ -164,12 +169,12 @@ class Posgraduacao
      * as datas de início e data de fim do período de busca da disciplina, no formato aceito pelo BD (YYYYMMDD).
      *
      * @param int $codare Código da áreada PG.
-     * @param string $data_ini (opcional) Data na qual vai buscar os limites do semestre. 
+     * @param string $data_ini (opcional) Data na qual vai buscar os limites do semestre.
      *                         Caso seja fornecido $data_fim então será a data inicial do intervalo.
      * @param string $data_fim (opcional) data final do intervalo de busca.
      *
-     * @return array 
-     * 
+     * @return array
+     *
      * @author Masaki K Neto em 2020
      * @author Masaki K Neto, modificado em 3/2/2021
      */
@@ -178,7 +183,7 @@ class Posgraduacao
         // Se não for passado data_fim, então vamos construir data_ini e data_fim usando uteis
         // se data_ini for null é tratado no uteis também
         if (!$data_fim) {
-            list($data_ini,$data_fim) = Uteis::semestre($data_ini);
+            list($data_ini, $data_fim) = Uteis::semestre($data_ini);
         }
         $query = "SELECT  e.sgldis, MAX(e.numseqdis) AS numseqdis, o.numofe, d.nomdis
                     FROM OFERECIMENTO AS o, R27DISMINCRE AS r, ESPACOTURMA AS e, DISCIPLINA AS d
@@ -198,7 +203,7 @@ class Posgraduacao
             'dtafimofe' => $data_fim,
         ];
 
-        return DB::fetchAll($query, $param);;
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -251,7 +256,7 @@ class Posgraduacao
      *
      * @param  string $sgldis Sigla da disciplina
      * @param  int $numseqdis Número de sequência
-     * @param  int $numofe Número do oferecimento   
+     * @param  int $numofe Número do oferecimento
      *
      * @return array
      */
@@ -319,7 +324,9 @@ class Posgraduacao
  */
     public static function areasProgramas(int $codundclgi = null, int $codcur = null)
     {
-        if($codundclgi == null) $codundclgi = getenv('REPLICADO_CODUNDCLG');
+        if ($codundclgi == null) {
+            $codundclgi = getenv('REPLICADO_CODUNDCLG');
+        }
 
         //obtém programas
         $programas = Posgraduacao::programas($codundclgi, $codcur);
@@ -361,50 +368,53 @@ class Posgraduacao
     }
 
 /**
- * Retorna os alunos de um programa (codcur) de pós 
- *  da unidade (codundclgi), 
+ * Retorna os alunos de um programa (codcur) de pós
+ *  da unidade (codundclgi),
  *  indexados pela área (codare).
  * Se codare não foi determinado, busca todas as áreas do programa.
- * 
+ *
  * @param Int $codundclgi - código da unidade
  * @param Int $codcur - código do curso/programa
  * @param Int $codare - código da área (opcional)
  * @return Array
- */    
-    public static function alunosPrograma(int $codundclgi, int $codcur, int $codare = null){
+ */
+    public static function alunosPrograma(int $codundclgi, int $codcur, int $codare = null)
+    {
         // se $codare é null, seleciona todas
-        if (!$codare){
+        if (!$codare) {
             // obtém áreas do programa
             $areasPrograma = Posgraduacao::areasProgramas($codundclgi, $codcur);
-            foreach ($areasPrograma[$codcur] as $area){
+            foreach ($areasPrograma[$codcur] as $area) {
                 $codares[] = $area['codare'];
             }
+        } else {
+            $codares[] = $codare;
         }
-        else $codares[] = $codare;
+
         $alunosPrograma = array();
         // loop sobre as áreas
-        foreach ($codares as $codare){
+        foreach ($codares as $codare) {
             $alunosArea = array();
             $query = "SELECT DISTINCT V.codare,V.codpes,L.nompes,V.nivpgm,L.codema, V.dtainivin
-                        FROM VINCULOPESSOAUSP as V 
+                        FROM VINCULOPESSOAUSP as V
                         INNER JOIN LOCALIZAPESSOA as L
                         ON (V.codpes = L.codpes)
-                        WHERE V.tipvin = 'ALUNOPOS' 
+                        WHERE V.tipvin = 'ALUNOPOS'
                          AND V.sitatl = 'A'
-                         AND L.codundclg = convert(int, :codundclgi) 
+                         AND L.codundclg = convert(int, :codundclgi)
                          AND V.codare = convert(int, :codare)
                         ORDER BY L.nompes ASC";
             $param = [
-                        'codundclgi' => $codundclgi,
-                        'codare' => $codare,
-                    ];       
+                'codundclgi' => $codundclgi,
+                'codare' => $codare,
+            ];
             $alunosArea = DB::fetchAll($query, $param);
-            $alunosPrograma = array_merge($alunosPrograma,$alunosArea);
+            $alunosPrograma = array_merge($alunosPrograma, $alunosArea);
         }
         return $alunosPrograma;
-    }  
+    }
 
-  /**
+    /**
      * Retorna nome completo do idioma da disciplina
      *
      * É usado no contexto do oferecimento.
@@ -433,40 +443,40 @@ class Posgraduacao
     }
 
     /**
-    * Retorna lista de alunos que defenderam pós-graduação em determinada área
-    *
-    * @param  Int $codare - código da área do programa de pós graduação
-    *
-    * @return Array
-    */
+     * Retorna lista de alunos que defenderam pós-graduação em determinada área
+     *
+     * @param  Int $codare - código da área do programa de pós graduação
+     *
+     * @return Array
+     */
     public static function egressosArea(int $codare)
     {
         // se não fizer join com TRABALHOPROG retornou um resultado menor que deveria (codare=18134)
         $query = DB::getQuery('Posgraduacao.egressosArea.sql');
         $param = [
-            'codare' => $codare
+            'codare' => $codare,
         ];
         return DB::fetchAll($query, $param);
     }
 
     /**
-    * Retorna lista de alunos que defenderam pós-graduação em determinada área
-    *
-    * @author Thiago Gomes Veríssimo <thiago.verissimo@usp.br>
-    * @author Gabriela dos Reis Silva <gabrielareisg@usp.br>
-    *
-    * @param  Int $codare - código da área do programa de pós graduação
-    * @return Array
-    */
+     * Retorna lista de alunos que defenderam pós-graduação em determinada área
+     *
+     * @author Thiago Gomes Veríssimo <thiago.verissimo@usp.br>
+     * @author Gabriela dos Reis Silva <gabrielareisg@usp.br>
+     *
+     * @param  Int $codare - código da área do programa de pós graduação
+     * @return Array
+     */
     public static function contarEgressosAreaAgrupadoPorAno(int $codare)
     {
         // se não fizer join com TRABALHOPROG retornou um resultado menor que deveria (codare=18134)
         $query = DB::getQuery('Posgraduacao.contarEgressosArea.sql');
         $param = [
-            'codare' => $codare
+            'codare' => $codare,
         ];
         $result = DB::fetchAll($query, $param);
-        if($result){
+        if ($result) {
             return array_column($result, 'quantidade', 'ano');
         }
         return $result;
@@ -474,17 +484,18 @@ class Posgraduacao
 
     /**
      * Método para retornar quantidade alunos de pós-graduação em uma área (codare)
-     * 
-     * Se $codare não for informado irá retornar a quantidade de alunos de pós-graduação de todos os programas. 
+     *
+     * Se $codare não for informado irá retornar a quantidade de alunos de pós-graduação de todos os programas.
      * Se for informado, irá retornar a quantidade de alunos de pós-graduação somente da área
-     * 
+     *
      * @param Integer $codare (optional) - código da área pertencente a um programa de pós.
      * @return void
      */
-    public static function contarAtivos($codare = null){
+    public static function contarAtivos($codare = null)
+    {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Posgraduacao.contarAtivos.sql');
-        $query = str_replace('__unidades__',$unidades,$query);
+        $query = str_replace('__unidades__', $unidades, $query);
 
         $param = [];
         if (!is_null($codare)) {
@@ -495,27 +506,28 @@ class Posgraduacao
     }
 
     /**
-     * Método para retornar quantidade alunos de pós-graduação do gênero 
-     * e programa (opcional) especificado 
-     * 
-     * Se $codare não for informado, irá retornar a quantidade de alunos de pós-graduação de todos os programas, do gênero especificado. 
+     * Método para retornar quantidade alunos de pós-graduação do gênero
+     * e programa (opcional) especificado
+     *
+     * Se $codare não for informado, irá retornar a quantidade de alunos de pós-graduação de todos os programas, do gênero especificado.
      * Se for informado, irá retornar a quantidade de alunos de pós-graduação somente do programa e do do gênero especificado.
-     * 
+     *
      * @param Char $sexpes
      * @param Integer $codare (optional) - código da área pertencente a um programa de pós.
      * @return void
      */
-    public static function contarAtivosPorGenero($sexpes, $codare = null){
+    public static function contarAtivosPorGenero($sexpes, $codare = null)
+    {
         $unidades = getenv('REPLICADO_CODUNDCLG');
 
         $query = " SELECT COUNT(DISTINCT l.codpes) FROM LOCALIZAPESSOA l
-                    JOIN PESSOA p ON p.codpes = l.codpes 
-                    JOIN HISTPROGRAMA h ON h.codpes = l.codpes 
-                    WHERE l.tipvin = 'ALUNOPOS' 
+                    JOIN PESSOA p ON p.codpes = l.codpes
+                    JOIN HISTPROGRAMA h ON h.codpes = l.codpes
+                    WHERE l.tipvin = 'ALUNOPOS'
                     AND l.codundclg IN ({$unidades})
                     AND p.sexpes = :sexpes";
         $param = [
-            'sexpes' => $sexpes
+            'sexpes' => $sexpes,
         ];
         if (!is_null($codare)) {
             $param['codare'] = $codare;
@@ -527,87 +539,114 @@ class Posgraduacao
     /*
      * Método que verifica através do número USP e código da unidade
      * se a pessoa é Ex-Aluna de Pós-Graduação ou não
-     * retorna true se a pessoa for Ex-Aluna de Pós-Graduação USP 
+     * retorna true se a pessoa for Ex-Aluna de Pós-Graduação USP
      * ou false, caso o contrário
-     *      
-     * @param Integer $codpes : Número USP 
+     *
+     * @param Integer $codpes : Número USP
      * @param Integer $codorg : Código da unidade
      * @return boolean
      */
-    public static function verificarExAlunoPos($codpes, $codorg){
-        $query = " SELECT codpes from TITULOPES 
+    public static function verificarExAlunoPos($codpes, $codorg)
+    {
+        $query = " SELECT codpes from TITULOPES
                     WHERE codpes = convert(int,:codpes)
                     AND codcurpgr IS NOT NULL
                     AND codorg = convert(int,:codorg) ";
         $param = [
             'codpes' => $codpes,
-            'codorg' => $codorg
+            'codorg' => $codorg,
         ];
         $result = DB::fetch($query, $param);
-        if(!empty($result)) return true;
+        if (!empty($result)) {
+            return true;
+        }
+
         return false;
     }
 
     /**
      * Retorna os membros da banca de um discente
      * Pode-se especificar ou não o programa ou o número sequencial
-     * @param Integer $codpes : Número USP 
+     * @param Integer $codpes : Número USP
      * @param Integer $codare : Código da programa de Pós
      * @param Integer $numseqpgm : Número sequencial em que o maior indica último vínculo
      * @return array|boolean
      **/
-    public function membrosBanca($codpes, $codare = null, $numseqpgm = null){
-      $query = " SELECT codpesdct from R48PGMTRBDOC r
+    public function membrosBanca($codpes, $codare = null, $numseqpgm = null)
+    {
+        $query = " SELECT codpesdct from R48PGMTRBDOC r
                    WHERE r.codpes = convert(int,:codpes)";
-      $param = [
-            'codpes'    => $codpes,
-          ];
+        $param = [
+            'codpes' => $codpes,
+        ];
 
-      if(!is_null($codare)){
-        $query .= " AND r.codare = convert(int,:codare)";
-        $param['codare'] = $codare;
-      }
-      if(!is_null($numseqpgm)){
-        $query .= " AND r.numseqpgm = convert(int,:numseqpgm)";
-        $param['numseqpgm'] = $numseqpgm;
+        if (!is_null($codare)) {
+            $query .= " AND r.codare = convert(int,:codare)";
+            $param['codare'] = $codare;
+        }
+        if (!is_null($numseqpgm)) {
+            $query .= " AND r.numseqpgm = convert(int,:numseqpgm)";
+            $param['numseqpgm'] = $numseqpgm;
 
-      }
+        }
 
-      $result = DB::fetchAll($query, $param);
-      if($result) return array_column($result, 'codpesdct');
-      return false;
+        $result = DB::fetchAll($query, $param);
+        if ($result) {
+            return array_column($result, 'codpesdct');
+        }
+
+        return false;
     }
-    
+
     /**
-     * Retorna lista de orientandos ativos de um docente (orientador), 
-     * com o número USP, nome, o respectivo nível de programa de pós graduação 
-     * (Mestrado, Doutorado ou Doutorado Direto) e nome da área.
+     * Deprecado. O método foi renomeado para listarOrientandosAtivos.
      *
-     * @param  int $codpes: Número USP do docente (orientador).
-     *
-     * @return array
-     **/
+     * @author Masaki K Neto, em 6/4/2021
+     */
     public static function obterOrientandosAtivos($codpes)
     {
-        $query = DB::getQuery('Posgraduacao.obterOrientandosAtivos.sql');
-        $param = [
-            'codpes' => $codpes,
-        ];
+        return SELF::listarOrientandosAtivos($codpes);
+    }
+
+    /**
+     * Retorna lista de orientandos ativos de um docente (orientador)
+     *
+     * retorna o número USP, nome, nível (ME-mestrado, DO-doutorado ou DD-doutorado direto),
+     * nome da área, data início do vínculo (não da orientação)
+     *
+     * @param  Int $codpes: Número USP do docente (orientador)
+     * @return Array
+     * @author Refatorado por Masaki K Neto em 6/4/2021
+     **/
+    public static function listarOrientandosAtivos($codpes)
+    {
+        $query = DB::getQuery('Posgraduacao.listarOrientandosAtivos.sql');
+        $param['codpes'] = $codpes;
         return DB::fetchAll($query, $param);
     }
 
     /**
-      * Retorna lista de orientandos que já concluíram seus programas (Mestrado, Doutorado ou Doutorado Direto), 
-      * a partir do número USP do orientador.
-      * Retorna o número USP, nome, o respectivo nível de programa de pós graduação, nome da área e data de defesa do programa.
-      *
-      * @param  int $codpes: Número USP do docente (orientador).
-      *
-      * @return array
-      **/
+     * Deprecado. O método foi renomeado para listarOrientandosAtivos.
+     *
+     * @author Masaki K Neto, em 6/4/2021
+     */
     public static function obterOrientandosConcluidos($codpes)
     {
-        $query = DB::getQuery('Posgraduacao.obterOrientandosConcluidos.sql');
+        return SELF::listarOrientandosConcluidos($codpes);
+    }
+
+    /**
+     * Retorna lista de orientandos que já concluíram seus programas a partir do número USP do orientador
+     *
+     * Retorna o número USP, nome, nível (ME, DO, DD), nome da área e data de defesa.
+     *
+     * @param Int $codpes: Número USP do docente (orientador).
+     * @return Array
+     * @author Refatorado por Masaki K Neto em 6/4/2021
+     **/
+    public static function listarOrientandosConcluidos($codpes)
+    {
+        $query = DB::getQuery('Posgraduacao.listarOrientandosConcluidos.sql');
         $param = [
             'codpes' => $codpes,
         ];
@@ -615,15 +654,17 @@ class Posgraduacao
     }
 
     /**
-      * Listar defesas em um intervalo de tempo
-      * @param  array $intervalo = ['inicio'=> '2020-01-01', 'fim' => '2020-01-01']
-      *
-      * @return array
-      **/
+     * Listar defesas em um intervalo de tempo
+     *
+     * Se não for informado o intervalo, mostrará o ano corrente
+     *
+     * @param Array $intervalo = ['inicio'=> '2020-01-01', 'fim' => '2021-01-01']
+     * @return Array
+     **/
     public static function listarDefesas($intervalo = [])
     {
         # Se não for passado o intervalo vamos listar as defesas do ano corrente
-        if(empty($intervalo)) {
+        if (empty($intervalo)) {
             $intervalo['inicio'] = Date('Y') . '-01-01';
             $intervalo['fim'] = Date('Y') . '-12-31';
         }
@@ -631,50 +672,53 @@ class Posgraduacao
         $query = DB::getQuery('Posgraduacao.listarDefesas.sql');
         $param = [
             'inicio' => $intervalo['inicio'],
-            'fim'    => $intervalo['fim'],
+            'fim' => $intervalo['fim'],
         ];
-        return DB::fetchAll($query,$param);
+        return DB::fetchAll($query, $param);
     }
 
     /**
-      * Obter todas defesas concluídas de uma pessoa
-      * @param  int $codpes: Número USP do aluno.
-      *
-      * @return array
-      **/
+     * Obter todas defesas concluídas de uma pessoa
+     * @param  int $codpes: Número USP do aluno.
+     *
+     * @return array
+     **/
     public static function obterDefesas($codpes)
     {
         $query = DB::getQuery('Posgraduacao.obterDefesas.sql');
         $param = [
             'codpes' => $codpes,
         ];
-        return DB::fetchAll($query,$param);
+        return DB::fetchAll($query, $param);
     }
 
     /**
-    * Retorna nome e número USP dos alunos ativos nos programas de pós-graduação na unidade
-    * 
-    * @author gabrielareisg em 11/02/2021
-    * @param int $codare - código da área do programa de pós graduação
-    * @param int $codundclg - código da unidade
-    *
-    * @return array
-    */
+     * Retorna nome e número USP dos alunos ativos nos programas de pós-graduação na unidade
+     *
+     * @author gabrielareisg em 11/02/2021
+     * @param int $codare - código da área do programa de pós graduação
+     * @param int $codundclg - código da unidade
+     *
+     * @return array
+     */
     public static function obterAtivosPorArea($codare, $codundclg)
     {
         $query = " SELECT DISTINCT l.nompes, l.codpes FROM LOCALIZAPESSOA l
                     JOIN VINCULOPESSOAUSP v ON (l.codpes = v.codpes)
-                    WHERE l.tipvin = 'ALUNOPOS' 
-                    AND l.codundclg = convert(int,:codundclg) 
+                    WHERE l.tipvin = 'ALUNOPOS'
+                    AND l.codundclg = convert(int,:codundclg)
                     AND v.codare = convert(int,:codare)
                     AND l.sitatl = 'A'
                     ORDER BY v.nompes ASC ";
         $param = [
             'codare' => $codare,
-            'codundclg' => $codundclg
+            'codundclg' => $codundclg,
         ];
         $result = DB::fetchAll($query, $param);
-        if(!empty($result)) return $result;
+        if (!empty($result)) {
+            return $result;
+        }
+
         return false;
     }
 }
