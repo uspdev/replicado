@@ -2,9 +2,9 @@
 
 namespace Uspdev\Replicado;
 
-use PDO;
-use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use PDO;
 use SplFileInfo;
 use Uspdev\Cache\Cache;
 
@@ -12,22 +12,25 @@ class DB
 {
     private static $instance;
     private static $sgbd;
-    private function __construct(){}
-    private function __clone(){}
+    private function __construct()
+    {}
+    private function __clone()
+    {}
     private static $logger;
 
-    public static function getInstance(){
+    public static function getInstance()
+    {
         $host = getenv('REPLICADO_HOST');
         $port = getenv('REPLICADO_PORT');
-        $db   = getenv('REPLICADO_DATABASE');
+        $db = getenv('REPLICADO_DATABASE');
         $user = getenv('REPLICADO_USERNAME');
         $pass = getenv('REPLICADO_PASSWORD');
-        
+
         if (!self::$instance) {
             try {
                 $dsn = "dblib:host={$host}:{$port};dbname={$db};charset=UTF-8";
-                self::$instance = new PDO($dsn,$user,$pass);
-                self::$instance->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+                self::$instance = new PDO($dsn, $user, $pass);
+                self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (\Throwable $t) {
                 echo "Erro na conexão com o database do replicado! Contate o suporte";
                 $log = self::getLogger('Conexão');
@@ -38,45 +41,31 @@ class DB
         return self::$instance;
     }
 
-    public static function sybase() {
+    public static function sybase()
+    {
         return getenv('REPLICADO_SYBASE') ?? 1;
     }
 
     // overhide fetch and fetchAll functions
     public static function fetch(string $query, array $param = null)
     {
-        try {
-            $stmt = self::getInstance()->prepare($query);
-            if (!is_null($param)) {
-                foreach ($param as $campo => $valor) {
-                    $valor = DB::sybase() ? utf8_decode($valor) : $valor;
-                    $stmt->bindValue(":$campo", $valor);
-                }
-            }
-            $stmt->execute();
-        } catch (\Throwable $t) {
-            echo "Erro Interno no replicado: contate o suporte!";
-            $log = self::getLogger('Consulta');
-            $log->error($t->getMessage());
-            return false;
-        }
-
-        if(getenv('REPLICADO_USAR_CACHE')) {
-            $cache = new Cache($stmt);
-            $result = $cache->getCached('fetch',PDO::FETCH_ASSOC);
-        } else {
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        }
-
-        if (!empty($result) && self::sybase()) {
-            $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result); 
-        }
-
-        return $result;
+        return SELF::overrideFetch('fetch', $query, $param);
     }
 
     public static function fetchAll(string $query, array $param = null)
+    {
+        return SELF::overrideFetch('fetchAll', $query, $param);
+    }
+
+    /**
+     * Códigos do fetch e fetchAll sobrescritos
+     * 
+     * @param String $fetchType - fetch ou fetchAll 
+     * @param String $query Query a ser executada
+     * @param Array $param Parâmetros de bind da query
+     * @return Mixed dados da query, pode ser coleção, dicionário, string, etc
+     */
+    protected static function overrideFetch(string $fetchType, string $query, array $param = null)
     {
         try {
             $stmt = self::getInstance()->prepare($query);
@@ -94,16 +83,16 @@ class DB
             return false;
         }
 
-        if(getenv('REPLICADO_USAR_CACHE')) {
+        if (getenv('REPLICADO_USAR_CACHE')) {
             $cache = new Cache($stmt);
-            $result = $cache->getCached('fetchAll',PDO::FETCH_ASSOC);
+            $result = $cache->getCached($fetchType, PDO::FETCH_ASSOC, $query . serialize($param));
         } else {
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->$fetchType(PDO::FETCH_ASSOC);
         }
 
         if (!empty($result) && self::sybase()) {
             $result = Uteis::utf8_converter($result);
-            $result = Uteis::trim_recursivo($result); 
+            $result = Uteis::trim_recursivo($result);
         }
         return $result;
     }
@@ -119,13 +108,13 @@ class DB
     }
 
     /**
-     * Retorna array contendo string formatada do WHERE com os filtros/buscas e 
+     * Retorna array contendo string formatada do WHERE com os filtros/buscas e
      * as colunas => valores no formato para 'bind'
-     *  
+     *
      * @param array $filtros (opcional) - campo_tabela => valor
      * @param array $buscas (opcional) - campo_tabela => valor
      * @param array $tipos (opcional) - campo_tabela => tipo (ex.: codpes => int)
-     * 
+     *
      * @return array posição [0] => string WHERE, posição [1] = 'colunas' => valores
      *
      */
@@ -187,14 +176,14 @@ class DB
      */
     public static function getQuery($filename)
     {
-        $path = new SplFileInfo(__DIR__); 
+        $path = new SplFileInfo(__DIR__);
         $queries = $path->getRealPath();
         $queries .= DIRECTORY_SEPARATOR;
-        $queries .=  '..';
+        $queries .= '..';
         $queries .= DIRECTORY_SEPARATOR;
         $queries .= 'resources';
         $queries .= DIRECTORY_SEPARATOR;
         $queries .= 'queries';
-        return file_get_contents($queries.DIRECTORY_SEPARATOR.$filename);
+        return file_get_contents($queries . DIRECTORY_SEPARATOR . $filename);
     }
 }

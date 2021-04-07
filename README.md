@@ -81,7 +81,17 @@ Dependendo da configuração do MSSQL pode ser necessário ativar essa variável
 
 REPLICADO_USAR_CACHE - o replicado pode usar memcached através da biblioteca (https://github.com/uspdev/cache). 
 
-Para usar é necessário seguir a documentação da biblioteca para levantar o servidor memcached e configurar ele. Se não quiser usar o valor padrão é (0) - desabilitado. Em produção vale a pena usar mas em testes mantenha desativado.
+Para usar é necessário instalar ele com 
+
+    composer require uspdev/Cache
+
+e seguir a documentação da biblioteca para levantar o servidor memcached e configurar ele. 
+
+Por fim ative o cache do replicado com do
+
+    putenv('REPLICADO_USAR_CACHE=1');
+
+Em produção vale a pena usar mas em testes mantenha desativado.
 
 ## Informações sobre tabelas
 
