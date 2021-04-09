@@ -62,9 +62,7 @@ class Posgraduacao
      */
     public static function programas($codundclgi = null, $codcur = null, $codare = null)
     {
-        if (!$codundclgi) {
-            $codundclgi = getenv('REPLICADO_CODUNDCLG');
-        }
+        if (!$codundclgi) $codundclgi = getenv('REPLICADO_CODUNDCLG');
 
         $query = "SELECT C.codcur, NC.nomcur, A.codare, N.nomare
                   FROM CURSO AS C
@@ -324,9 +322,7 @@ class Posgraduacao
  */
     public static function areasProgramas(int $codundclgi = null, int $codcur = null)
     {
-        if ($codundclgi == null) {
-            $codundclgi = getenv('REPLICADO_CODUNDCLG');
-        }
+        if (!$codundclgi) $codundclgi = getenv('REPLICADO_CODUNDCLG');
 
         //obtém programas
         $programas = Posgraduacao::programas($codundclgi, $codcur);
@@ -701,7 +697,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function obterAtivosPorArea($codare, $codundclg)
+    public static function listarAlunosAtivosPrograma($codare)
     {
         $query = " SELECT DISTINCT l.nompes, l.codpes FROM LOCALIZAPESSOA l
                     JOIN VINCULOPESSOAUSP v ON (l.codpes = v.codpes)
@@ -712,13 +708,9 @@ class Posgraduacao
                     ORDER BY v.nompes ASC ";
         $param = [
             'codare' => $codare,
-            'codundclg' => $codundclg,
+            'codundclg' => getenv('REPLICADO_CODUNDCLG'),
         ];
-        $result = DB::fetchAll($query, $param);
-        if (!empty($result)) {
-            return $result;
-        }
-
-        return false;
+        
+        return DB::fetchAll($query, $param);
     }
 }
