@@ -954,4 +954,25 @@ class Pessoa
         return $pesquisas_pos_doutorando;
     }
 
+    /**
+     * Método que recebe um período (dtaini, dtafim) para retornar falecidos. 
+     * Formato da data no formato americano AAAA-MM-DD
+     * @return array
+     */
+    public static function retornarFalecidosPorPeriodo($dtaini, $dtafim){
+        $query = DB::getQuery('Pessoa.retornarFalecidosPorPeriodo.sql');
+
+        $query = str_replace('__dtaini__',":dtaini", $query);
+        $query = str_replace('__dtafim__',":dtafim", $query);
+        
+        $param = [
+            'dtaini' => $dtaini,
+            'dtafim' => $dtafim
+        ];
+        
+        $result = DB::fetchAll($query, $param);
+        return empty($result) ? null : $result;
+
+    }
+
 }
