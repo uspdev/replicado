@@ -100,8 +100,8 @@ class GraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data2);
         DB::getInstance()->prepare($sql)->execute($data3);
 
-        $array = ['JOR0031','TLC0023','TLF0023'];
-        $this->assertSame('Disciplina 1',Graduacao::obterDisciplinas($array)[0]['nomdis']);
+        $array = ['JOR0031', 'TLC0023', 'TLF0023'];
+        $this->assertSame('Disciplina 1', Graduacao::obterDisciplinas($array)[0]['nomdis']);
         $this->assertIsArray(Graduacao::obterDisciplinas($array));
     }
 
@@ -403,9 +403,40 @@ class GraduacaoTest extends TestCase
         $this->assertIsArray(Graduacao::obterGradeHoraria(123467));
     }
 
+
+    public function test_obterCodigosCursos()
+    {
+        // CURSOGR
+        DB::getInstance()->prepare('DELETE FROM CURSOGR')->execute();
+
+        $sql = "INSERT INTO CURSOGR (codcur,nomcur,codclg,dtaatvcur) VALUES 
+                                   (convert(int,:codcur),:nomcur,convert(smallint,:codclg),convert(smalldatetime,:dtaatvcur))";
+
+        $data = [
+            'codcur' => 81003,
+            'nomcur' => 'Bacharelado em Administração',
+            'codclg' => '8',
+            'dtaatvcur' => '2011-01-01',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO CURSOGR (codcur,nomcur,codclg,dtaatvcur) VALUES 
+                                   (convert(int,:codcur),:nomcur,convert(smallint,:codclg),convert(smalldatetime,:dtaatvcur))";
+
+        $data = [
+            'codcur' => 81002,
+            'nomcur' => 'Bacharelado em Administração',
+            'codclg' => '8',
+            'dtaatvcur' => '2001-01-01',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $this->assertContains('81003', Graduacao::obterCodigosCursos());
+        $this->assertContains('81002', Graduacao::obterCodigosCursos());
+    }
+
     public function test_verificarPessoaGraduadaUnidade()
     {
-        putenv('REPLICADO_CODCUR=81003');
         // PROGRAMAGR
         DB::getInstance()->prepare('DELETE FROM PROGRAMAGR')->execute();
 

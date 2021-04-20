@@ -49,8 +49,6 @@ Exemplo de uso
     putenv('REPLICADO_USERNAME=dbmaint_read');
     putenv('REPLICADO_PASSWORD=secret');
     putenv('REPLICADO_CODUNDCLG=8');
-    putenv('REPLICADO_CODCUR=1,2,3');
-
 
     # Opcionais
     putenv('REPLICADO_PATHLOG=path/to/your.log');
@@ -70,8 +68,6 @@ A maioria das variáveis são autoexplicativas mas outras não.
     REPLICADO_CODUNDCLG=8,27
 
 Atenção, NÃO usar aspas, como no neste exemplo: *REPLICADO_CODUNDCLG="8,27"*.
-
-REPLICADO_CODCUR - ??
 
 REPLICADO_SYBASE - serve para indicar se vc está usando SYBASE ou MSSQL. Implica:
 * na conversão para UTF-8 pela biblioteca ou pelo freetds
