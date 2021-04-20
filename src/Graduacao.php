@@ -388,12 +388,14 @@ class Graduacao
      * Método para retornar se uma pessoa é graduada nos cursos da unidade
      * Retornará true caso tenha status Conclusão em um programa ou uma habilitação,
      * caso contrário, retornará false
+     
+     * @author Lucas Flóro 17/11/2020
      * @param Integer $codpes
      * @return boolean
      */
     public static function verificarPessoaGraduadaUnidade(int $codpes)
     {
-        $cursos = getenv('REPLICADO_CODCUR');
+        $cursos = implode(',', Graduacao::obterCodigosCursos());
 
         if (empty($cursos) || ($cursos == null)) {
             return false;
@@ -457,5 +459,28 @@ class Graduacao
             'codpes' => $codpes,
         ];
         return DB::fetchAll($query, $param);
+    }
+
+    /*
+     * Retornar apenas códigos de curso de Graduação da unidade
+     *      
+     * @author Lucas Flóro 20/04/2021
+     * @return array
+     */
+    public static function obterCodigosCursos()
+    {
+        $codigo_unidade = getenv('REPLICADO_CODUNDCLG');
+
+        $query = "SELECT codcur
+                  FROM CURSOGR
+                  WHERE codclg = convert(int,:codclg)";
+
+        $param = [
+            'codclg' => $codigo_unidade,
+        ];
+
+        $cursos = DB::fetchAll($query, $param);
+        $codcur = array_column($cursos, 'codcur');
+        return $codcur;
     }
 }
