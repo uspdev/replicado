@@ -955,12 +955,12 @@ class Pessoa
     }
 
     /**
-     * Método que recebe um período (dtaini, dtafim) para retornar falecidos. 
-     * Formato da data no formato americano AAAA-MM-DD
+     * Método que recebe um período (dtaini, dtafim) para listar falecidos. 
+     * Data no formato americano AAAA-MM-DD
      * @return array
      */
-    public static function retornarFalecidosPorPeriodo($dtaini, $dtafim){
-        $query = DB::getQuery('Pessoa.retornarFalecidosPorPeriodo.sql');
+    public static function listarFalecidosPorPeriodo($dtaini, $dtafim){
+        $query = DB::getQuery('Pessoa.listarFalecidosPorPeriodo.sql');
 
         $query = str_replace('__dtaini__',":dtaini", $query);
         $query = str_replace('__dtafim__',":dtafim", $query);
