@@ -972,7 +972,21 @@ class Pessoa
         
         $result = DB::fetchAll($query, $param);
         return empty($result) ? null : $result;
+    }
 
+    /**
+    * Método que lista todos os docentes de uma unidade, sendo eles Ativos ou Aposentados.
+    * @return array
+    */
+    public static function listarTodosDocentes(){
+        $query = DB::getQuery('Pessoa.listarTodosDocentes.sql');
+
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+
+        $query = str_replace('__unidades__',$unidades,$query);
+
+        $result = DB::fetchAll($query);
+        return empty($result) ? null : $result;
     }
 
 }
