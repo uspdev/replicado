@@ -49,23 +49,33 @@ class DB
     // overhide fetch and fetchAll functions
     public static function fetch(string $query, array $param = null)
     {
-        return SELF::overrideFetch('fetch', $query, $param);
+        if (getenv('REPLICADO_USAR_CACHE')) {
+            $cache = new Cache();
+            return $cache->getCached('Uspdev\Replicado\DB::overrideFetch', ['fetch', $query, $param]);
+        } else {
+            return SELF::overrideFetch('fetch', $query, $param);
+        }
     }
 
     public static function fetchAll(string $query, array $param = null)
     {
-        return SELF::overrideFetch('fetchAll', $query, $param);
+        if (getenv('REPLICADO_USAR_CACHE')) {
+            $cache = new Cache();
+            return $cache->getCached('Uspdev\Replicado\DB::overrideFetch', ['fetchAll', $query, $param]);
+        } else {
+            return SELF::overrideFetch('fetchAll', $query, $param);
+        }
     }
 
     /**
      * Códigos do fetch e fetchAll sobrescritos
-     * 
-     * @param String $fetchType - fetch ou fetchAll 
+     *
+     * @param String $fetchType - fetch ou fetchAll
      * @param String $query Query a ser executada
      * @param Array $param Parâmetros de bind da query
      * @return Mixed dados da query, pode ser coleção, dicionário, string, etc
      */
-    protected static function overrideFetch(string $fetchType, string $query, array $param = null)
+    public static function overrideFetch(string $fetchType, string $query, array $param = null)
     {
         try {
             $stmt = self::getInstance()->prepare($query);
@@ -83,12 +93,7 @@ class DB
             return false;
         }
 
-        if (getenv('REPLICADO_USAR_CACHE')) {
-            $cache = new Cache($stmt);
-            $result = $cache->getCached($fetchType, PDO::FETCH_ASSOC, $query . serialize($param));
-        } else {
-            $result = $stmt->$fetchType(PDO::FETCH_ASSOC);
-        }
+        $result = $stmt->$fetchType(PDO::FETCH_ASSOC);
 
         if (!empty($result) && self::sybase()) {
             $result = Uteis::utf8_converter($result);
@@ -97,7 +102,7 @@ class DB
         return $result;
     }
 
-    private static function getLogger($channel_name)
+    protected static function getLogger($channel_name)
     {
         if (!isset(self::$logger)) {
             $pathlog = getenv('REPLICADO_PATHLOG') ?: '/tmp/replicado.log';
