@@ -694,7 +694,7 @@ class Pessoa
      * @param Int $codset - Código do setor
      * @param String $sitatl - Situação atual: 'A' para ativos, 'P' para aposentados ou 'A,P' para todos.
      * @return Array
-     * @author Refatorado por @gabrielareisg - 30/04/2021 - issue # 
+     * @author Refatorado por @gabrielareisg - 30/04/2021 - issue #425 
      * 
      */
     public static function listarDocentes(int $codset = null, string $sitatl = 'A'){
@@ -708,7 +708,7 @@ class Pessoa
             WHERE (
                 L.tipvinext LIKE 'Docente%'
                 AND L.codundclg IN ({$unidades})
-                AND L.sitatl IN ({$sitatl})
+                AND L.sitatl IN ('{$sitatl}')
                 $addquery
                 )
             ORDER BY L.nompes";
