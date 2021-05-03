@@ -102,6 +102,28 @@ class Uteis
     }
 
     /**
+     * Retorna uma string csv com cada elemento delimitado por aspas
+     *
+     * Similar a fputcsv porém sempre delimita cada elemento.
+     * Uso inicial em Pessoa::listarDocentes
+     *
+     * @param Array $input - Array de dados a ser transformado em csv
+     * @param String $separador - Separador entre elementos
+     * @param String $delimitador - Delimitador de cada elemento
+     * @return String String de elementos separados por $separador e delimitados por $delimitador
+     * @author Masaki K Neto, em 3/5/2021, issue #425
+     */
+    public static function str_putcsv(array $input, string $separador = ',', string $delimitador = '"')
+    {
+        return implode(
+            $separador,
+            array_map(function ($value) use ($delimitador) {
+                return $delimitador . $value . $delimitador;
+            }, $input)
+        );
+    }
+
+    /**
      * Determina a data de início e a data de fim do semestre que contém $data_string.
      *
      * Se $date não for informado, utilizará a data corrente do sistema.
