@@ -686,31 +686,30 @@ class Pessoa
     }
     
     /**
-     * Método que lista os docentes de uma Unidade agrupando por setor (departamento)
-     * 
-     * $codset pode ser um número (para um único setor) ou
-     * pode ser uma string com números separados por vírgula (para um ou mais de um setores)
-     * 
-     * @param Int $codset - Código do setor
-     * @param String $sitatl - Situação atual: 'A' para ativos, 'P' para aposentados ou 'A,P' para todos.
-     * @return Array
-     * @author Refatorado por @gabrielareisg - 30/04/2021 - issue # 
-     * 
+     * Método que lista docentes ativos e/ou inativos da Unidade agrupando por setor (departamento)
+     *
+     * Se $codset = 0 ou não for informado, buscará todos os docentes da unidade.
+     * Se $sitatl = 0 ou não informado, buscará docentes ativos ($sitatl = A)
+     *
+     * @param $codset - lista de 'código do setor' separados por vírgula
+     * @param String $sitatl - lista de 'situação atual' separados por vírgula: 'A' para ativos, 'P' para inativos ou 'A,P' para todos
+     * @return Array lista de docentes com dados da tabela LOCALIZAPESSOA
+     * @author Refatorado por @gabrielareisg - 30/04/2021 - issue #425
+     *
      */
-    public static function listarDocentes(int $codset = null, string $sitatl = 'A'){
+    public static function listarDocentes(string $codset_list = null, string $sitatl_list = 'A')
+    {
         $unidades = getenv('REPLICADO_CODUNDCLG');
-        $addquery = '';
-        if ($codset){
-            $addquery = "AND L.codset IN ({$codset})";
-        }
+        $where_setores = $codset_list ? "AND L.codset IN ({$codset_list})" : '';
+
+        # como sitatl_list contém letras, temos de acrescentar aspas em cada elemento da lista
+        $sitatl_list = Uteis::str_putcsv(explode(',', $sitatl_list), ',', "'");
+
         $query = "SELECT * FROM LOCALIZAPESSOA L
-            INNER JOIN PESSOA P ON (L.codpes = P.codpes)
-            WHERE (
-                L.tipvinext LIKE 'Docente%'
+            WHERE (L.tipvinext = 'Docente' OR L.tipvinext = 'Docente Aposentado')
                 AND L.codundclg IN ({$unidades})
-                AND L.sitatl IN ({$sitatl})
-                $addquery
-                )
+                AND L.sitatl IN ($sitatl_list)
+                $where_setores
             ORDER BY L.nompes";
 
         return DB::fetchAll($query);
