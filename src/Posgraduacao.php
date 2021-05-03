@@ -613,12 +613,42 @@ class Posgraduacao
      * @param  Int $codpes: Número USP do docente (orientador)
      * @return Array
      * @author Refatorado por Masaki K Neto em 6/4/2021
+     * @author Refatorado por @gabrielareisg em 30/4/2021 - issue #424
      **/
-    public static function listarOrientandosAtivos($codpes)
+    public static function listarOrientandosAtivos(int $codpes)
     {
+        # O foreach foi utilizado para evitar o uso de vários inner joins, 
+        # o que deixaria a performance do método lenta.
         $query = DB::getQuery('Posgraduacao.listarOrientandosAtivos.sql');
         $param['codpes'] = $codpes;
-        return DB::fetchAll($query, $param);
+        $orientandos = DB::fetchAll($query, $param);
+        foreach($orientandos as &$orientando){
+            $orientando = array_merge($orientando, SELF::obterVinculoAtivo($orientando['codpes']));
+        }
+        # Ordenação por nome
+        usort($orientandos, function ($a, $b) { return $b['nompes'] < $a['nompes'] ? 1 : -1; });
+
+        return $orientandos;        
+    }
+
+    /**
+     * Retornar o vínculo ativo do aluno de Aluno de Pós Graduação
+     * 
+     * @param Int $codpes: Número USP do aluno
+     * @return Array
+     * @author @gabrielareisg em 30/04/2021 - #issue424
+     */
+    public static function obterVinculoAtivo(int $codpes){
+        $query = "SELECT DISTINCT (v.nompes), (v.nivpgm), (v.dtainivin), (n.nomare)
+                    FROM VINCULOPESSOAUSP v
+                    INNER JOIN NOMEAREA n 
+                        ON v.codare = n.codare
+                    WHERE codpes = convert(int, :codpes)
+                    AND v.nivpgm IS NOT NULL
+                    AND v.tipvin = 'ALUNOPOS'";
+
+            $param['codpes'] = $codpes;
+            return DB::fetch($query, $param);
     }
 
     /**
