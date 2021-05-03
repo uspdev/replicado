@@ -687,15 +687,17 @@ class Pessoa
     
     /**
      * Método que lista os docentes de uma Unidade agrupando por setor (departamento)
-     * @param type $codset - Código do setor
-     * @return array
      * 
-     * $codset pode ser um número (para um único setor)
-     *         ou
-     *         pode ser uma string com números separados por vírgula (para um ou mais de um setores)
+     * $codset pode ser um número (para um único setor) ou
+     * pode ser uma string com números separados por vírgula (para um ou mais de um setores)
+     * 
+     * @param Int $codset - Código do setor
+     * @param String $sitatl - Situação atual: 'A' para ativos, 'P' para aposentados ou 'A,P' para todos.
+     * @return Array
+     * @author Refatorado por @gabrielareisg - 30/04/2021 - issue # 
      * 
      */
-    public static function listarDocentes($codset = FALSE){
+    public static function listarDocentes(int $codset = null, string $sitatl = 'A'){
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $addquery = '';
         if ($codset){
@@ -706,7 +708,7 @@ class Pessoa
             WHERE (
                 L.tipvinext LIKE 'Docente%'
                 AND L.codundclg IN ({$unidades})
-                AND L.sitatl = 'A'
+                AND L.sitatl IN ({$sitatl})
                 $addquery
                 )
             ORDER BY L.nompes";
