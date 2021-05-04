@@ -204,7 +204,7 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
-    /**
+    /**~
      * Retorna dados de um oferecimento de disciplina incluindo local e ministrante.
      *
      * Local e minsitrante podem ser mais de um então são retornados na forma de array.
@@ -623,10 +623,7 @@ class Posgraduacao
         $param['codpes'] = $codpes;
         $orientandos = DB::fetchAll($query, $param);
         foreach($orientandos as &$orientando){
-            $vinculo = SELF::obterVinculoAtivo($orientando['codpes']);
-            if(is_array($vinculo) & count($vinculo) > 0){
-                $orientando = array_merge($orientando, $vinculo);
-            }
+            $orientando = array_merge($orientando, SELF::obterVinculoAtivo($orientando['codpes']));
         }
         # Ordenação por nome
         usort($orientandos, function ($a, $b) { return $b['nompes'] < $a['nompes'] ? 1 : -1; });
