@@ -204,7 +204,7 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
-    /**~
+    /**
      * Retorna dados de um oferecimento de disciplina incluindo local e ministrante.
      *
      * Local e minsitrante podem ser mais de um então são retornados na forma de array.
