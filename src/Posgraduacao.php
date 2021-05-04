@@ -623,7 +623,10 @@ class Posgraduacao
         $param['codpes'] = $codpes;
         $orientandos = DB::fetchAll($query, $param);
         foreach($orientandos as &$orientando){
-            $orientando = array_merge($orientando, SELF::obterVinculoAtivo($orientando['codpes']));
+            $vinculo = SELF::obterVinculoAtivo($orientando['codpes']);
+            if(is_array($vinculo) & count($vinculo) > 0){
+                $orientando = array_merge($orientando, $vinculo);
+            }
         }
         # Ordenação por nome
         usort($orientandos, function ($a, $b) { return $b['nompes'] < $a['nompes'] ? 1 : -1; });
