@@ -485,49 +485,7 @@ class PosgraduacaoTest extends TestCase
         DB::getInstance()->prepare($sql)->execute($data);
         $this->assertTrue(true, Posgraduacao::verificarExAlunoPos(13131313, 7));
     }
-
-    public function test_obterOrientandosAtivos(){
-        DB::getInstance()->prepare('DELETE FROM R39PGMORIDOC')->execute();
-        DB::getInstance()->prepare('DELETE FROM VINCULOPESSOAUSP')->execute();
-        DB::getInstance()->prepare('DELETE FROM NOMEAREA')->execute();
-
-        $sql = "INSERT INTO R39PGMORIDOC (codpes, codpespgm, codare, dtafimort) 
-                    VALUES (convert(int,:codpes),convert(int,:codpespgm),convert(int,:codare),:dtafimort)";
-
-        $data = [
-            'codpes' => 19639477, #Número USP do docente, a ser passado no parâmetro.
-            'codpespgm' => 36363639, #Número USP do orientando, a ser retornado.
-            'codare' => 7,
-            'dtafimort' => NULL,
-        ];
-        DB::getInstance()->prepare($sql)->execute($data);
-
-        $sql = "INSERT INTO VINCULOPESSOAUSP (codpes, codare, codhab, nompes, nivpgm, dtainivin) 
-                    VALUES (convert(int,:codpes),convert(int,:codare),convert(int,:codhab),:nompes,:nivpgm,:dtainivin)";
-
-        $data = [
-            'codpes' => 36363639,
-            'codare' => 7,
-            'codhab' => 3,
-            'nompes' => 'Nina',
-            'nivpgm' => 'MB',
-            'dtainivin' => '2019-01-01 00:00:00'
-        ];
-        DB::getInstance()->prepare($sql)->execute($data);
-
-        $sql = "INSERT INTO NOMEAREA (codare, nomare, codcur, dtafimare) 
-                    VALUES (convert(int,:codare),:nomare,convert(int,:codcur),:dtafimare)";
-
-        $data = [
-            'codare' => 7,
-            'nomare' => 'Língua',
-            'codcur' => 1234,
-            'dtafimare' => NULL            
-        ];
-        DB::getInstance()->prepare($sql)->execute($data);
-        $this->assertSame('Nina', Posgraduacao::obterOrientandosAtivos(19639477)[0]['nompes']);
-    }
-
+    
     public function test_membrosBanca(){
         DB::getInstance()->prepare('DELETE FROM R48PGMTRBDOC')->execute();
 
