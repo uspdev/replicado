@@ -562,36 +562,35 @@ class Posgraduacao
 
     /**
      * Retorna os membros da banca de um discente
+     * 
      * Pode-se especificar ou não o programa ou o número sequencial
      * @param Integer $codpes : Número USP
      * @param Integer $codare : Código da programa de Pós
      * @param Integer $numseqpgm : Número sequencial em que o maior indica último vínculo
      * @return array|boolean
+     * @author refatorado por masakik, 5/5/2021, issue #431
      **/
-    public function membrosBanca($codpes, $codare = null, $numseqpgm = null)
+    public static function listarMembrosBanca($codpes, $codare = null, $numseqpgm = null)
     {
-        $query = " SELECT codpesdct from R48PGMTRBDOC r
-                   WHERE r.codpes = convert(int,:codpes)";
-        $param = [
-            'codpes' => $codpes,
-        ];
 
-        if (!is_null($codare)) {
-            $query .= " AND r.codare = convert(int,:codare)";
+        $query = "SELECT nompesttd = (SELECT nompesttd FROM PESSOA p WHERE p.codpes = r.codpesdct)
+                  , r.*
+                  FROM R48PGMTRBDOC r
+                  WHERE r.codpes = convert(int, :codpes)";
+
+        $param['codpes'] = $codpes;
+
+        if ($codare) {
+            $query .= " AND r.codare = convert(int, :codare)";
             $param['codare'] = $codare;
         }
-        if (!is_null($numseqpgm)) {
-            $query .= " AND r.numseqpgm = convert(int,:numseqpgm)";
+
+        if ($numseqpgm) {
+            $query .= " AND r.numseqpgm = convert(int, :numseqpgm)";
             $param['numseqpgm'] = $numseqpgm;
-
         }
 
-        $result = DB::fetchAll($query, $param);
-        if ($result) {
-            return array_column($result, 'codpesdct');
-        }
-
-        return false;
+        return DB::fetchAll($query, $param);
     }
 
     /**
