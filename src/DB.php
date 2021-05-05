@@ -28,7 +28,7 @@ class DB
 
         if (!self::$instance) {
             try {
-                $dsn = "dblib:host={$host}:{$port};dbname={$db};charset=UTF-8";
+                $dsn = "dblib:host={$host}:{$port};dbname={$db}";
                 self::$instance = new PDO($dsn, $user, $pass);
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (\Throwable $t) {
