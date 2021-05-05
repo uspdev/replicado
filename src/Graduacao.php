@@ -483,4 +483,24 @@ class Graduacao
         $codcur = array_column($cursos, 'codcur');
         return $codcur;
     }
+
+    /**
+     * Retorna lista das disciplinas de uma grade curricular
+     *
+     * @param Int $codcur: código do curso
+     * @param Int $codhab: código da habilitação
+     * @param Char $tipobg: tipo, exemplo: O-Obrigatória
+     * @return Array
+     * @author @thiagogomesverissimo 05/05/2021
+     **/
+    public static function listarDisciplinasGradeCurricular($codcur, $codhab, $tipobg = 'O')
+    {
+        $query = DB::getQuery('Graduacao.listarDisciplinasGradeCurricular.sql');
+        $param = [
+            'codcur' => $codcur,
+            'codhab' => $codhab,
+            'tipobg' => $tipobg
+        ];
+        return DB::fetchAll($query, $param);
+    }
 }
