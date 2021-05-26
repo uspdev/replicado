@@ -808,7 +808,7 @@ class Pessoa
     /**
      * Método para retornar as iniciações científicas 
      * Permite filtrar por departamento e por periodo.
-     * @param string $departamento - Sigla do departamento
+     * @param string $departamento - Recebe a sigla do departamento, ou um array com as siglas. Se for igual a null, a consulta trazerá todos os departamentos.
      * @param int $ano_ini - ano inicial do período. Se for igual a 1, vai retornar as iniciações científicas ativas, e se for igual a -1 retorna todas as iniciações científicas.
      * @param int $ano_fim - ano final do período, deve ser null se ano_ini for igual a 1 ou -1
      * @return array
@@ -821,10 +821,12 @@ class Pessoa
         $param = [];
 
         if($departamento != null){ 
-            $query = str_replace('__departamento__',"AND s.nomabvset = convert(varchar,:dep)", $query);
-            $param = [
-                'dep' => $departamento,
-            ];
+            if(is_array($departamento)){
+                $departamento = "'". implode("','", $departamento)."'";
+                
+            }
+            $query = str_replace('__departamento__',"AND s.nomabvset in ($departamento)", $query);
+           
         }else{
             $query = str_replace('__departamento__',"", $query);
         }
@@ -839,7 +841,7 @@ class Pessoa
         
         
         $result =  DB::fetchAll($query, $param);
-        
+        return $result;
         
 
         $iniciacao_cientifica = [];
