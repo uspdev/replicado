@@ -825,13 +825,9 @@ class Pessoa
         }else{
             $query = str_replace('__departamento__',"", $query);
         }
-      
-        
         
         $result =  DB::fetchAll($query, $param);
         
-        
-
         $iniciacao_cientifica = [];
         foreach($result as $ic){
             $curso = Pessoa::retornarCursoPorCodpes($ic['aluno']);
@@ -844,7 +840,8 @@ class Pessoa
 
             $query_com_bolsa = DB::getQuery('Pessoa.buscarICcomBolsaPorCodpes.sql');            
             $param_com_bolsa = [
-                'codpes' => $ic['aluno'],
+                'codpes'    => $ic['aluno'],
+                'codundprj' => $unidades # Não está legal, por só funciona para uma unidade - corrigir
             ];
             $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
             if(count($result) == 0){
@@ -938,6 +935,7 @@ class Pessoa
             $query_com_bolsa = DB::getQuery('Pessoa.buscarPDcomBolsaPorCodpes.sql');            
             $param_com_bolsa = [
                 'codpes' => $p['codpes'],
+                'codund' => $unidades # Não está legal, por só funciona para uma unidade - corrigir
             ];
             $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
 
@@ -962,18 +960,14 @@ class Pessoa
      */
     public static function listarFalecidosPorPeriodo($dtaini, $dtafim){
         $query = DB::getQuery('Pessoa.listarFalecidosPorPeriodo.sql');
-
-        $query = str_replace('__dtaini__',":dtaini", $query);
-        $query = str_replace('__dtafim__',":dtafim", $query);
         
         $param = [
             'dtaini' => $dtaini,
-            'dtafim' => $dtafim
+            'dtafim' => $dtafim,
+            'codclg' => getenv('REPLICADO_CODUNDCLG')
         ];
         
-        $result = DB::fetchAll($query, $param);
-        return empty($result) ? null : $result;
-
+        return DB::fetchAll($query, $param);
     }
 
 }
