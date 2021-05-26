@@ -43,7 +43,7 @@ class DB
 
     public static function sybase()
     {
-        return true;
+        return getenv('REPLICADO_SYBASE') ?? 1;
     }
 
     // overhide fetch and fetchAll functions
