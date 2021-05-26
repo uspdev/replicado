@@ -808,36 +808,44 @@ class Pessoa
     /**
      * Método para retornar as iniciações científicas 
      * Permite filtrar por departamento e por periodo.
-     * @param string $departamento - Recebe a sigla do departamento, ou um array com as siglas. Se for igual a null, a consulta trazerá todos os departamentos.
-     * @param int $ano_ini - ano inicial do período. Se for igual a 1, vai retornar as iniciações científicas ativas, e se for igual a -1 retorna todas as iniciações científicas.
-     * @param int $ano_fim - ano final do período, deve ser null se ano_ini for igual a 1 ou -1
+     * @param array $departamento - Recebe um array com as siglas dos departamentos desejados. Se for igual a null, a consulta trazerá todos os departamentos.
+     * @param int $ano_ini - ano inicial do período. Se for igual a null retorna todas as iniciações científicas.
+     * @param int $ano_fim - ano final do período
+     * @param bool $somenteAtivos - Se for igual a true retornará as iniciações científicas ativas
      * @return array
      */
-    public static function listarIniciacaoCientifica($departamento = null, $ano_ini = 1, $ano_fim = null){
+    public static function listarIniciacaoCientifica($departamento = null, $ano_ini = null, $ano_fim = null, $somenteAtivos = false){
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.listarIniciacaoCientifica.sql');
         $query = str_replace('__unidades__',$unidades,$query);
     
         $param = [];
 
-        if($departamento != null){ 
-            if(is_array($departamento)){
+        if($departamento != null && sizeof($departamento) > 0){ 
+            if(is_array($departamento) && sizeof($departamento) > 1){
                 $departamento = "'". implode("','", $departamento)."'";
-                
+            }else if(sizeof($departamento) == 1){
+                $departamento = "'". $departamento[0] ."'";
             }
+            
             $query = str_replace('__departamento__',"AND s.nomabvset in ($departamento)", $query);
            
         }else{
             $query = str_replace('__departamento__',"", $query);
         }
-        if($ano_ini != 1 && $ano_ini != null && $ano_fim != null && !empty($ano_ini) && !empty($ano_fim)){
-            $aux = "AND ic.dtafimprj BETWEEN '".$ano_ini."-01-01' AND '".$ano_fim."-12-31'";
+        if($ano_ini != -1 && $ano_ini != null && $ano_fim != null && !empty($ano_ini) && !empty($ano_fim)){
+            $aux = " AND (ic.dtafimprj BETWEEN '".$ano_ini."-01-01' AND '".$ano_fim."-12-31' OR
+                        ic.dtainiprj BETWEEN '".$ano_ini."-01-01' AND '".$ano_fim."-12-31') ";
+            if($somenteAtivos){
+                $aux .= " AND (ic.dtafimprj > GETDATE() or ic.dtafimprj IS NULL)"; 
+            }
             $query = str_replace('__data__',$aux, $query);
-        }else if($ano_ini == -1){
+        }else if($ano_ini == null && !$somenteAtivos){
             $query = str_replace('__data__','', $query);
-        }else{//$ano_ini == 1 retorna IC ativas
+        }else if($somenteAtivos){   
             $query = str_replace('__data__',"AND (ic.dtafimprj > GETDATE() or ic.dtafimprj IS NULL)", $query); 
         }
+        
         
         
         $result =  DB::fetchAll($query, $param);
