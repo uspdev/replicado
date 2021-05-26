@@ -964,6 +964,7 @@ class Pessoa
 
             $param_com_bolsa = [
                 'codpes' => $p['codpes'],
+                'codund' => $unidades # Não está legal, por só funciona para uma unidade - corrigir
             ];
             $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
 
@@ -987,22 +988,17 @@ class Pessoa
      * @return array
      */
     public static function listarFalecidosPorPeriodo($dtaini, $dtafim){
-        $unidades = getenv('REPLICADO_CODUNDCLG');
-        
+        $unidades = getenv('REPLICADO_CODUNDCLG');    
         $query = DB::getQuery('Pessoa.listarFalecidosPorPeriodo.sql');
     
         $query = str_replace('__unidades__',$unidades,$query);
-        $query = str_replace('__dtaini__',":dtaini", $query);
-        $query = str_replace('__dtafim__',":dtafim", $query);
-        
+
         $param = [
             'dtaini' => $dtaini,
-            'dtafim' => $dtafim
+            'dtafim' => $dtafim,
         ];
         
-        $result = DB::fetchAll($query, $param);
-        return empty($result) ? null : $result;
-
+        return DB::fetchAll($query, $param);
     }
 
 }
