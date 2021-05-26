@@ -22,7 +22,7 @@ from
 	inner join 
 		SETOR s ON s.codset = ic.codsetprj 
 where 
-	ic.codundprj = __unidades__ 
+	ic.codundprj in (__unidades__) 
 	__data__
 	__departamento__ 
 	ORDER BY p1.nompes

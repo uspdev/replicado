@@ -4,6 +4,6 @@ inner join VINCULOPESSOAUSP v on p.codpes_pd = v.codpes
 where v.tipvin = 'ALUNOPD'
 and (p.staatlprj = 'Ativo' OR p.staatlprj = 'Inscrito')
 	and
-	p.codund = 8 --fflch 
+	p.codund in (__unidades__) 
 	AND (p.dtafimprj > GETDATE() or p.dtafimprj IS NULL)
 and v.codpes  = convert(int,:codpes)

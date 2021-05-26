@@ -7,5 +7,5 @@ SELECT DISTINCT c.codpes, p.nompes, p.dtanas, dtaflc, p.sexpes
   JOIN PESSOA p ON c.codpes = p.codpes 
   JOIN VINCULOPESSOAUSP v on c.codpes = v.codpes
     WHERE c.dtaflc BETWEEN __dtaini__ AND __dtafim__
-    AND v.codclg = 8
+    AND v.codclg = __unidades__
     ORDER BY c.dtaflc

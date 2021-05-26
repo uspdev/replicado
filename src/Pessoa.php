@@ -854,7 +854,9 @@ class Pessoa
             $ic['codare'] =  $programa == null ? null : $programa['codare'];
             $ic['nome_programa'] =  $programa == null ? null : $programa['nomare'];
 
-            $query_com_bolsa = DB::getQuery('Pessoa.buscarICcomBolsaPorCodpes.sql');            
+            $query_com_bolsa = DB::getQuery('Pessoa.buscarICcomBolsaPorCodpes.sql');     
+            $query_com_bolsa = str_replace('__unidades__',$unidades,$query_com_bolsa);   
+
             $param_com_bolsa = [
                 'codpes' => $ic['aluno'],
                 'codprj' => $ic['cod_projeto'],
@@ -948,7 +950,10 @@ class Pessoa
             $p['supervisor'] = $nome_supervisor;
 
 
-            $query_com_bolsa = DB::getQuery('Pessoa.buscarPDcomBolsaPorCodpes.sql');            
+            $query_com_bolsa = DB::getQuery('Pessoa.buscarPDcomBolsaPorCodpes.sql'); 
+    
+            $query_com_bolsa = str_replace('__unidades__',$unidades,$query_com_bolsa);
+
             $param_com_bolsa = [
                 'codpes' => $p['codpes'],
             ];
@@ -974,8 +979,11 @@ class Pessoa
      * @return array
      */
     public static function listarFalecidosPorPeriodo($dtaini, $dtafim){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        
         $query = DB::getQuery('Pessoa.listarFalecidosPorPeriodo.sql');
-
+    
+        $query = str_replace('__unidades__',$unidades,$query);
         $query = str_replace('__dtaini__',":dtaini", $query);
         $query = str_replace('__dtafim__',":dtafim", $query);
         
