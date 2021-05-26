@@ -9,7 +9,8 @@ SELECT
 	ic.dtafimprj as data_fim, 
 	ic.anoprj as ano_projeto,
 	s.nomset as departamento,
-	s.nomabvset as sigla_departamento
+	s.nomabvset as sigla_departamento,
+	ic.staprj as status_projeto
 from 
 	fflch.dbo.ICTPROJETO ic
 	inner join 
@@ -21,9 +22,7 @@ from
 	inner join 
 		fflch.dbo.SETOR s ON s.codset = ic.codsetprj 
 where 
-	(ic.staprj = 'Ativo' OR ic.staprj = 'Inscrito')
-	and
 	ic.codundprj = __unidades__ 
-	AND (ic.dtafimprj > GETDATE() or ic.dtafimprj IS NULL)
+	__data__
 	__departamento__ 
 	ORDER BY p1.nompes

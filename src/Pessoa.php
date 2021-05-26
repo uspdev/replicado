@@ -806,13 +806,16 @@ class Pessoa
 
 
     /**
-     * Método para retornar as iniciações científicas vigentes 
-     * 
+     * Método para retornar as iniciações científicas 
+     * Permite filtrar por departamento e por periodo.
+     * @param string $departamento - Sigla do departamento
+     * @param int $ano_ini - ano inicial do período. Se for igual a 1, vai retornar as iniciações científicas ativas, e se for igual a -1 retorna todas as iniciações científicas.
+     * @param int $ano_fim - ano final do período, deve ser null se ano_ini for igual a 1 ou -1
      * @return array
      */
-    public static function listarIniciaoCientificaAtiva($departamento = null){
+    public static function listarIniciacaoCientifica($departamento = null, $ano_ini = 1, $ano_fim = null){
         $unidades = getenv('REPLICADO_CODUNDCLG');
-        $query = DB::getQuery('Pessoa.listarIniciaoCientificaAtiva.sql');
+        $query = DB::getQuery('Pessoa.listarIniciacaoCientifica.sql');
         $query = str_replace('__unidades__',$unidades,$query);
     
         $param = [];
@@ -825,7 +828,14 @@ class Pessoa
         }else{
             $query = str_replace('__departamento__',"", $query);
         }
-      
+        if($ano_ini != 1 && $ano_ini != null && $ano_fim != null && !empty($ano_ini) && !empty($ano_fim)){
+            $aux = "AND ic.dtafimprj BETWEEN '".$ano_ini."-01-01' AND '".$ano_fim."-12-31'";
+            $query = str_replace('__data__',$aux, $query);
+        }else if($ano_ini == -1){
+            $query = str_replace('__data__','', $query);
+        }else{//$ano_ini == 1 retorna IC ativas
+            $query = str_replace('__data__',"AND (ic.dtafimprj > GETDATE() or ic.dtafimprj IS NULL)", $query); 
+        }
         
         
         $result =  DB::fetchAll($query, $param);
@@ -845,6 +855,7 @@ class Pessoa
             $query_com_bolsa = DB::getQuery('Pessoa.buscarICcomBolsaPorCodpes.sql');            
             $param_com_bolsa = [
                 'codpes' => $ic['aluno'],
+                'codprj' => $ic['cod_projeto'],
             ];
             $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
             if(count($result) == 0){
