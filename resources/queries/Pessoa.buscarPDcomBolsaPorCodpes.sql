@@ -1,6 +1,6 @@
-SELECT DISTINCT v.codpes, v.nompes from fflch.dbo.ICTPROJEDITALBOLSA i
-inner join fflch.dbo.PDPROJETO p on i.codprj = p.codprj  
-inner join fflch.dbo.VINCULOPESSOAUSP v on p.codpes_pd = v.codpes 
+SELECT DISTINCT v.codpes, v.nompes from ICTPROJEDITALBOLSA i
+inner join PDPROJETO p on i.codprj = p.codprj  
+inner join VINCULOPESSOAUSP v on p.codpes_pd = v.codpes 
 where v.tipvin = 'ALUNOPD'
 and (p.staatlprj = 'Ativo' OR p.staatlprj = 'Inscrito')
 	and

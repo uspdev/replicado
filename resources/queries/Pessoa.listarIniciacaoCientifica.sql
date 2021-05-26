@@ -12,15 +12,15 @@ SELECT
 	s.nomabvset as sigla_departamento,
 	ic.staprj as status_projeto
 from 
-	fflch.dbo.ICTPROJETO ic
+	ICTPROJETO ic
 	inner join 
-		fflch.dbo.PESSOA p1
+		PESSOA p1
 		on p1.codpes = ic.codpesalu
 	inner join 
-		fflch.dbo.PESSOA p2
+		PESSOA p2
 		on p2.codpes = ic.codpesrsp
 	inner join 
-		fflch.dbo.SETOR s ON s.codset = ic.codsetprj 
+		SETOR s ON s.codset = ic.codsetprj 
 where 
 	ic.codundprj = __unidades__ 
 	__data__

@@ -6,9 +6,9 @@ SELECT DISTINCT l.codpes,
 	p.dtafimprj,
 	s.nomset as departamento,
 	s.nomabvset as sigla_departamento
-from fflch.dbo.LOCALIZAPESSOA l 
-	INNER JOIN fflch.dbo.PDPROJETO p ON l.codpes = p.codpes_pd 
-	inner join fflch.dbo.SETOR s on s.codset = p.codsetprj 
+from LOCALIZAPESSOA l 
+	INNER JOIN PDPROJETO p ON l.codpes = p.codpes_pd 
+	inner join SETOR s on s.codset = p.codsetprj 
 WHERE l.tipvin = 'ALUNOPD' 
 	AND (p.staatlprj = 'Ativo' or p.staatlprj = 'Aprovado')
 	AND l.sitatl = 'A' 
