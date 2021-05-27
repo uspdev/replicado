@@ -12,7 +12,7 @@ from LOCALIZAPESSOA l
 WHERE l.tipvin = 'ALUNOPD' 
 	AND (p.staatlprj = 'Ativo' or p.staatlprj = 'Aprovado')
 	AND l.sitatl = 'A' 
-	AND p.codund = __unidades__
+	AND p.codund in (__unidades__)
 	AND p.codmdl = 2
 	and (p.dtafimprj > GETDATE() or p.dtafimprj = null) 
 ORDER BY l.nompes
