@@ -849,7 +849,7 @@ class Pessoa
         
         
         $result =  DB::fetchAll($query, $param);
-        return $result;
+ 
         
 
         $iniciacao_cientifica = [];
