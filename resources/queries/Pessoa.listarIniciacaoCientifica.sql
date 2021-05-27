@@ -9,7 +9,8 @@ SELECT
 	ic.dtafimprj as data_fim, 
 	ic.anoprj as ano_projeto,
 	s.nomset as departamento,
-	s.nomabvset as sigla_departamento
+	s.nomabvset as sigla_departamento,
+	ic.staprj as status_projeto
 from 
 	ICTPROJETO ic
 	inner join 
@@ -21,9 +22,7 @@ from
 	inner join 
 		SETOR s ON s.codset = ic.codsetprj 
 where 
-	(ic.staprj = 'Ativo' OR ic.staprj = 'Inscrito')
-	and
-	ic.codundprj = __unidades__ 
-	AND (ic.dtafimprj > GETDATE() or ic.dtafimprj IS NULL)
+	ic.codundprj in (__unidades__) 
+	__data__
 	__departamento__ 
 	ORDER BY p1.nompes

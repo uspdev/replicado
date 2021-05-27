@@ -6,5 +6,5 @@ SELECT DISTINCT c.codpes, p.nompes, p.dtanas, dtaflc, p.sexpes
   JOIN PESSOA p ON c.codpes = p.codpes 
   JOIN VINCULOPESSOAUSP v on c.codpes = v.codpes
     WHERE c.dtaflc BETWEEN :dtaini AND :dtafim
-    AND v.codclg = convert(int,:codclg)
+    AND v.codclg in (__unidades__)
     ORDER BY c.dtaflc

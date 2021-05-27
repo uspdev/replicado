@@ -806,28 +806,52 @@ class Pessoa
 
 
     /**
-     * Método para retornar as iniciações científicas vigentes 
-     * 
+     * Método para retornar as iniciações científicas 
+     * Permite filtrar por departamento e por periodo.
+     * @param array $departamento - Recebe um array com as siglas dos departamentos desejados. Se for igual a null, a consulta trazerá todos os departamentos.
+     * @param int $ano_ini - ano inicial do período. Se for igual a null retorna todas as iniciações científicas.
+     * @param int $ano_fim - ano final do período
+     * @param bool $somenteAtivos - Se for igual a true retornará as iniciações científicas ativas
      * @return array
      */
-    public static function listarIniciaoCientificaAtiva($departamento = null){
+    public static function listarIniciacaoCientifica($departamento = null, $ano_ini = null, $ano_fim = null, $somenteAtivos = false){
         $unidades = getenv('REPLICADO_CODUNDCLG');
-        $query = DB::getQuery('Pessoa.listarIniciaoCientificaAtiva.sql');
+        $query = DB::getQuery('Pessoa.listarIniciacaoCientifica.sql');
         $query = str_replace('__unidades__',$unidades,$query);
     
         $param = [];
 
-        if($departamento != null){ 
-            $query = str_replace('__departamento__',"AND s.nomabvset = convert(varchar,:dep)", $query);
-            $param = [
-                'dep' => $departamento,
-            ];
+        if($departamento != null && sizeof($departamento) > 0){ 
+            if(is_array($departamento) && sizeof($departamento) > 1){
+                $departamento = "'". implode("','", $departamento)."'";
+            }else if(sizeof($departamento) == 1){
+                $departamento = "'". $departamento[0] ."'";
+            }
+            
+            $query = str_replace('__departamento__',"AND s.nomabvset in ($departamento)", $query);
+           
         }else{
             $query = str_replace('__departamento__',"", $query);
         }
+        if($ano_ini != -1 && $ano_ini != null && $ano_fim != null && !empty($ano_ini) && !empty($ano_fim)){
+            $aux = " AND (ic.dtafimprj BETWEEN '".$ano_ini."-01-01' AND '".$ano_fim."-12-31' OR
+                        ic.dtainiprj BETWEEN '".$ano_ini."-01-01' AND '".$ano_fim."-12-31') ";
+            if($somenteAtivos){
+                $aux .= " AND (ic.dtafimprj > GETDATE() or ic.dtafimprj IS NULL)"; 
+            }
+            $query = str_replace('__data__',$aux, $query);
+        }else if($ano_ini == null && !$somenteAtivos){
+            $query = str_replace('__data__','', $query);
+        }else if($somenteAtivos){   
+            $query = str_replace('__data__',"AND (ic.dtafimprj > GETDATE() or ic.dtafimprj IS NULL)", $query); 
+        }
+        
+        
         
         $result =  DB::fetchAll($query, $param);
+        return $result;
         
+
         $iniciacao_cientifica = [];
         foreach($result as $ic){
             $curso = Pessoa::retornarCursoPorCodpes($ic['aluno']);
@@ -838,10 +862,12 @@ class Pessoa
             $ic['codare'] =  $programa == null ? null : $programa['codare'];
             $ic['nome_programa'] =  $programa == null ? null : $programa['nomare'];
 
-            $query_com_bolsa = DB::getQuery('Pessoa.buscarICcomBolsaPorCodpes.sql');            
+            $query_com_bolsa = DB::getQuery('Pessoa.buscarICcomBolsaPorCodpes.sql');     
+            $query_com_bolsa = str_replace('__unidades__',$unidades,$query_com_bolsa);   
+
             $param_com_bolsa = [
-                'codpes'    => $ic['aluno'],
-                'codundprj' => $unidades # Não está legal, por só funciona para uma unidade - corrigir
+                'codpes' => $ic['aluno'],
+                'codprj' => $ic['cod_projeto'],
             ];
             $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
             if(count($result) == 0){
@@ -932,7 +958,10 @@ class Pessoa
             $p['supervisor'] = $nome_supervisor;
 
 
-            $query_com_bolsa = DB::getQuery('Pessoa.buscarPDcomBolsaPorCodpes.sql');            
+            $query_com_bolsa = DB::getQuery('Pessoa.buscarPDcomBolsaPorCodpes.sql'); 
+    
+            $query_com_bolsa = str_replace('__unidades__',$unidades,$query_com_bolsa);
+
             $param_com_bolsa = [
                 'codpes' => $p['codpes'],
                 'codund' => $unidades # Não está legal, por só funciona para uma unidade - corrigir
@@ -959,12 +988,14 @@ class Pessoa
      * @return array
      */
     public static function listarFalecidosPorPeriodo($dtaini, $dtafim){
+        $unidades = getenv('REPLICADO_CODUNDCLG');    
         $query = DB::getQuery('Pessoa.listarFalecidosPorPeriodo.sql');
-        
+    
+        $query = str_replace('__unidades__',$unidades,$query);
+
         $param = [
             'dtaini' => $dtaini,
             'dtafim' => $dtafim,
-            'codclg' => getenv('REPLICADO_CODUNDCLG')
         ];
         
         return DB::fetchAll($query, $param);
