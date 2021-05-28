@@ -964,7 +964,6 @@ class Pessoa
 
             $param_com_bolsa = [
                 'codpes' => $p['codpes'],
-                'codund' => $unidades # Não está legal, por só funciona para uma unidade - corrigir
             ];
             $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
 
