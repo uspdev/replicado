@@ -503,4 +503,30 @@ class Graduacao
         ];
         return DB::fetchAll($query, $param);
     }
+
+
+    /**
+     * Retorna lista com os intercâmbios internacionais ativos de alunos da Graduação, 
+     * com número USP do aluno, nome da Universidade e nome do país da Universidade
+     *
+     * @param Int $codundclgi: código da unidade
+     * @return Array
+     * @author @gabrielareisg 28/05/2021
+     **/
+    public static function listarIntercambios($codundclgi)
+    {
+        $query = " SELECT DISTINCT I.codpes, O.nomorgpnt, P.nompas from INTERCAMBIOUSPORGAO I
+                INNER JOIN LOCALIZAPESSOA L ON I.codpes = L.codpes 
+                INNER JOIN ORGAOPRETENDENTE O ON I.codorg = O.codorg
+                INNER JOIN PAIS P ON O.codpas = P.codpas
+                WHERE L.tipvin = 'ALUNOGR'
+                AND I.dtafimitb > GETDATE() 
+                AND L.codundclg = convert(int,:codundclgi) ";
+
+        $param = [
+            'codundclgi' => $codundclgi,
+        ];
+
+        return DB::fetchAll($query, $param);
+    }
 }
