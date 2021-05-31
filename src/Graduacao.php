@@ -522,4 +522,28 @@ class Graduacao
 
         return DB::fetchAll($query);
     }
+
+    /**
+     * Dado um número USP de um aluno de Graduação retorna os dados sobre o intercâmbio do aluno, 
+     * como o nome da Universidade, nome do país da Universidade, data de início e data de término.
+     *
+     * @param Integer $codpes : Número USP 
+     * @return Array
+     * @author @gabrielareisg 31/05/2021
+     **/
+    public static function obterIntercambioPorCodpes(int $codpes)
+    {
+        $codundclgi = getenv('REPLICADO_CODUNDCLG');    
+
+        $query = DB::getQuery('Graduacao.obterIntercambioPorCodpes.sql');
+
+        $query = str_replace('__codundclgi__',$codundclgi,$query);
+
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        $result = DB::fetchAll($query, $param);
+        return empty($result) ? '' : $result;
+    }
 }
