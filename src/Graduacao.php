@@ -503,4 +503,23 @@ class Graduacao
         ];
         return DB::fetchAll($query, $param);
     }
+
+
+    /**
+     * Retorna lista com os intercâmbios internacionais ativos de alunos da Graduação, 
+     * com número USP do aluno, nome da Universidade e nome do país da Universidade
+     *
+     * @return Array
+     * @author @gabrielareisg 28/05/2021
+     **/
+    public static function listarIntercambios()
+    {
+        $codundclgi = getenv('REPLICADO_CODUNDCLG');    
+
+        $query = DB::getQuery('Graduacao.listarIntercambios.sql');
+
+        $query = str_replace('__codundclgi__',$codundclgi,$query);
+
+        return DB::fetchAll($query);
+    }
 }
