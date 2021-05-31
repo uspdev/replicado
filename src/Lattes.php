@@ -420,13 +420,12 @@ class Lattes
                 
                 $aux_autores = self::listarAutores(Arr::get($val, "{$autores}", []));
 
-
                 $aux_livro = [
                     'TITULO-DO-LIVRO' => Arr::get($val, "{$dados_basicos}.@attributes.TITULO-DO-LIVRO", ''),
-                    'ANO' => Arr::get($val, "{$dados_basicos}.@attributes.'ANO", ''),
-                    'NUMERO-DE-PAGINAS' => Arr::get($val, "{$detalhamento}.@attributes.'NUMERO-DE-PAGINAS", ''),
-                    'NOME-DA-EDITORA' => Arr::get($val, "{$detalhamento}.@attributes.'NOME-DA-EDITORA", ''),
-                    'CIDADE-DA-EDITORA' => Arr::get($val, "{$detalhamento}.@attributes.'CIDADE-DA-EDITORA", ''),
+                    'ANO' => Arr::get($val, "{$dados_basicos}.@attributes.ANO", ''),
+                    'NUMERO-DE-PAGINAS' => Arr::get($val, "{$detalhamento}.@attributes.NUMERO-DE-PAGINAS", ''),
+                    'NOME-DA-EDITORA' => Arr::get($val, "{$detalhamento}.@attributes.NOME-DA-EDITORA", ''),
+                    'CIDADE-DA-EDITORA' => Arr::get($val, "{$detalhamento}.@attributes.CIDADE-DA-EDITORA", ''),
                     'ISBN' => Arr::get($val, "{$detalhamento}.@attributes.ISBN", ''),
                     'AUTORES' => $aux_autores
                 ];
@@ -434,6 +433,8 @@ class Lattes
                 if(!self::verificarFiltro($tipo, $aux_livro['ANO'], $limit_ini, $limit_fim, $i)){
                     continue;
                 }
+
+                
                 
                 
                 array_push($ultimos_livros, $aux_livro);
@@ -571,28 +572,45 @@ class Lattes
         if(!isset($lattes['PRODUCAO-TECNICA']['TRABALHO-TECNICO'])) return false;
         $trabalhos_tecnicos = [];
         $i = 0;
-
-        foreach($lattes['PRODUCAO-TECNICA']['TRABALHO-TECNICO'] as $trabalho_tec){
-            $i++;
-
-            $autores = (!isset($trabalho_tec['AUTORES']) && isset($trabalho_tec[3])) ? 3 : 'AUTORES';
-            $aux_autores = self::listarAutores(Arr::get($trabalho_tec, "{$autores}", []));           
+         
+        $trabalho = $lattes['PRODUCAO-TECNICA']['TRABALHO-TECNICO'];
+        if(isset($trabalho['AUTORES'])){
+            $autores = (!isset($trabalho['AUTORES']) && isset($trabalho[3])) ? 3 : 'AUTORES';
+            $aux_autores = self::listarAutores(Arr::get($trabalho, "{$autores}", []));           
 
             $aux_trabalho_tec = [];
-            $aux_trabalho_tec['TITULO'] = Arr::get($trabalho_tec, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.TITULO-DO-TRABALHO-TECNICO", "");
-            $aux_trabalho_tec['TIPO'] = Arr::get($trabalho_tec, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.NATUREZA", ""); 
-            $aux_trabalho_tec['SEQUENCIA-PRODUCAO'] = Arr::get($trabalho_tec, "@attributes.SEQUENCIA-PRODUCAO", ""); 
-            $aux_trabalho_tec['ANO'] = Arr::get($trabalho_tec, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.ANO", ""); 
-            $aux_trabalho_tec['INSTITUICAO-FINANCIADORA'] =  Arr::get($trabalho_tec, "DETALHAMENTO-DO-TRABALHO-TECNICO.@attributes.INSTITUICAO-FINANCIADORA", "");
+            $aux_trabalho_tec['TITULO'] = Arr::get($trabalho, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.TITULO-DO-TRABALHO-TECNICO", "");
+            $aux_trabalho_tec['TIPO'] = Arr::get($trabalho, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.NATUREZA", ""); 
+            $aux_trabalho_tec['SEQUENCIA-PRODUCAO'] = Arr::get($trabalho, "@attributes.SEQUENCIA-PRODUCAO", ""); 
+            $aux_trabalho_tec['ANO'] = Arr::get($trabalho, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.ANO", ""); 
+            $aux_trabalho_tec['INSTITUICAO-FINANCIADORA'] =  Arr::get($trabalho, "DETALHAMENTO-DO-TRABALHO-TECNICO.@attributes.INSTITUICAO-FINANCIADORA", "");
             $aux_trabalho_tec['AUTORES'] =   $aux_autores;
             
-
-            if(!self::verificarFiltro($tipo, $aux_trabalho_tec['ANO'], $limit_ini, $limit_fim, $i)){
-                continue;
+            if(!self::verificarFiltro($tipo, $aux_trabalho_tec['ANO'], $limit_ini, $limit_fim, 1)){
+                return;
             }
-
-
             array_push($trabalhos_tecnicos, $aux_trabalho_tec);
+        } else{
+            foreach($trabalho as $trabalho_tec){
+                $i++;
+
+                $autores = (!isset($trabalho_tec['AUTORES']) && isset($trabalho_tec[3])) ? 3 : 'AUTORES';
+                $aux_autores = self::listarAutores(Arr::get($trabalho_tec, "{$autores}", []));           
+
+                $aux_trabalho_tec = [];
+                $aux_trabalho_tec['TITULO'] = Arr::get($trabalho_tec, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.TITULO-DO-TRABALHO-TECNICO", "");
+                $aux_trabalho_tec['TIPO'] = Arr::get($trabalho_tec, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.NATUREZA", ""); 
+                $aux_trabalho_tec['SEQUENCIA-PRODUCAO'] = Arr::get($trabalho_tec, "@attributes.SEQUENCIA-PRODUCAO", ""); 
+                $aux_trabalho_tec['ANO'] = Arr::get($trabalho_tec, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.ANO", ""); 
+                $aux_trabalho_tec['INSTITUICAO-FINANCIADORA'] =  Arr::get($trabalho_tec, "DETALHAMENTO-DO-TRABALHO-TECNICO.@attributes.INSTITUICAO-FINANCIADORA", "");
+                $aux_trabalho_tec['AUTORES'] =   $aux_autores;
+                
+                if(!self::verificarFiltro($tipo, $aux_trabalho_tec['ANO'], $limit_ini, $limit_fim, $i)){
+                    continue;
+                }
+
+                array_push($trabalhos_tecnicos, $aux_trabalho_tec);
+            }
         }
         
         usort($trabalhos_tecnicos, function ($a, $b) {
@@ -967,31 +985,64 @@ class Lattes
                 array_push($outras, $aux_outros);
             }
         }
-        if(isset($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA']['PREFACIO-POSFACIO'])){
-            $i = 0;
-            foreach($lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA']['PREFACIO-POSFACIO'] as $prefacio_posfacio){
-                
-                $i++;
 
-                $autores = (!isset($prefacio_posfacio['AUTORES']) && isset($prefacio_posfacio[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($prefacio_posfacio, "{$autores}", []));
+        $tipo_outras_bibliografias = [
+            
+            ['nome do caminho' => 'DA-TRADUCAO', 'nome' => 'TRADUCAO', 'nome extenso' => 'Tradução'],
+            ['nome do caminho' => 'DO-PREFACIO-POSFACIO', 'nome' => 'PREFACIO-POSFACIO', 'nome extenso' => 'Prefácio, Pósfacio']
+        ];
 
-                
-                $aux_prefacio_posfacio = [];
-                $aux_prefacio_posfacio['TITULO'] = Arr::get($prefacio_posfacio, "DADOS-BASICOS-DO-PREFACIO-POSFACIO.@attributes.TITULO", "");
-                $aux_prefacio_posfacio['TIPO'] = isset($prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]["@attributes"]["TIPO"]) ? 'Prefácio, Pósfacio/' . ucfirst(strtolower($prefacio_posfacio["DADOS-BASICOS-DO-PREFACIO-POSFACIO"]["@attributes"]["TIPO"])) : ''; 
-                $aux_prefacio_posfacio['SEQUENCIA-PRODUCAO'] = Arr::get($prefacio_posfacio, "@attributes.SEQUENCIA-PRODUCAO", "");
-                $aux_prefacio_posfacio['ANO'] = Arr::get($prefacio_posfacio, "DADOS-BASICOS-DO-PREFACIO-POSFACIO.@attributes.ANO", ""); 
-                $aux_prefacio_posfacio['CIDADE-DA-EDITORA'] =  Arr::get($prefacio_posfacio, "DETALHAMENTO-DO-PREFACIO-POSFACIO.@attributes.CIDADE-DA-EDITORA", "");
-                $aux_prefacio_posfacio['EDITORA'] =  Arr::get($prefacio_posfacio, "DETALHAMENTO-DO-PREFACIO-POSFACIO.@attributes.EDITORA-DO-PREFACIO-POSFACIO", "");
-                $aux_prefacio_posfacio['AUTORES'] =   $aux_autores;
-                
-                
-                if(!self::verificarFiltro($tipo, $aux_prefacio_posfacio['ANO'], $limit_ini, $limit_fim, $i)){
-                    continue; 
-                } 
+        foreach($tipo_outras_bibliografias as $tipo){
+            $aux = $lattes['PRODUCAO-BIBLIOGRAFICA']['DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA'];
+            if(isset($aux[$tipo['nome']])){
 
-                array_push($outras, $aux_prefacio_posfacio);
+                $i = 0;
+                if(isset($aux['AUTORES'])){
+                    $i++;
+
+                        $autores = (!isset($aux['AUTORES']) && isset($aux[3])) ? 3 : 'AUTORES';
+                        $aux_autores = self::listarAutores(Arr::get($aux, "{$autores}", []));
+                        
+                        $aux_tipo = [];
+                        $aux_tipo['TITULO'] = Arr::get($aux, "DADOS-BASICOS-".$tipo['nome do caminho'].".@attributes.TITULO", "");
+                        $aux_tipo['TIPO'] = isset($aux["DADOS-BASICOS-".$tipo['nome do caminho'].""]["@attributes"]["TIPO"]) ? $tipo['nome extenso'] .'/'. ucfirst(strtolower($aux["DADOS-BASICOS-".$tipo['nome do caminho'].""]["@attributes"]["TIPO"])) : $tipo['nome extenso']; 
+                        $aux_tipo['SEQUENCIA-PRODUCAO'] = Arr::get($aux, "@attributes.SEQUENCIA-PRODUCAO", "");
+                        $aux_tipo['ANO'] = Arr::get($aux, "DADOS-BASICOS-".$tipo['nome do caminho'].".@attributes.ANO", ""); 
+                        $aux_tipo['CIDADE-DA-EDITORA'] =  Arr::get($aux, "DETALHAMENTO-".$tipo['nome do caminho'].".@attributes.CIDADE-DA-EDITORA", "");
+                        $aux_tipo['EDITORA'] =  Arr::get($aux, "DETALHAMENTO-".$tipo['nome do caminho'].".@attributes.EDITORA-".$tipo['nome do caminho']."", "");
+                        $aux_tipo['AUTORES'] =   $aux_autores;
+                        
+                        if(!self::verificarFiltro($tipo, $aux_tipo['ANO'], $limit_ini, $limit_fim, $i)){
+                            return; 
+                        } 
+
+                        array_push($outras, $aux_tipo);
+                } else{
+
+                    foreach($aux as $prefacio_posfacio){
+                        
+                        $i++;
+
+                        $autores = (!isset($prefacio_posfacio['AUTORES']) && isset($prefacio_posfacio[3])) ? 3 : 'AUTORES';
+                        $aux_autores = self::listarAutores(Arr::get($prefacio_posfacio, "{$autores}", []));
+
+                        $aux_tipo = [];
+                        $aux_tipo['TITULO'] = Arr::get($prefacio_posfacio, "DADOS-BASICOS-".$tipo['nome do caminho'].".@attributes.TITULO", "");
+                        $aux_tipo['TIPO'] = isset($aux["DADOS-BASICOS-".$tipo['nome do caminho'].""]["@attributes"]["TIPO"]) ? $tipo['nome extenso'] .'/'. ucfirst(strtolower($aux["DADOS-BASICOS-".$tipo['nome do caminho'].""]["@attributes"]["TIPO"])) : $tipo['nome extenso']; 
+                        $aux_tipo['SEQUENCIA-PRODUCAO'] = Arr::get($prefacio_posfacio, "@attributes.SEQUENCIA-PRODUCAO", "");
+                        $aux_tipo['ANO'] = Arr::get($prefacio_posfacio, "DADOS-BASICOS-".$tipo['nome do caminho'].".@attributes.ANO", ""); 
+                        $aux_tipo['CIDADE-DA-EDITORA'] =  Arr::get($prefacio_posfacio, "DETALHAMENTO-".$tipo['nome do caminho'].".@attributes.CIDADE-DA-EDITORA", "");
+                        $aux_tipo['EDITORA'] =  Arr::get($prefacio_posfacio, "DETALHAMENTO-".$tipo['nome do caminho'].".@attributes.EDITORA-".$tipo['nome do caminho']."", "");
+                        $aux_tipo['AUTORES'] =   $aux_autores;
+                        
+                        
+                        if(!self::verificarFiltro($tipo, $aux_tipo['ANO'], $limit_ini, $limit_fim, $i)){
+                            continue; 
+                        } 
+
+                        array_push($outras, $aux_tipo);
+                    }
+                }
             }
         }
         usort($outras, function ($a, $b) {

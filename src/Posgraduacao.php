@@ -652,7 +652,7 @@ class Posgraduacao
                         ON v.codare = n.codare
                     WHERE codpes = convert(int, :codpes)
                     AND v.nivpgm IS NOT NULL
-                    AND v.tipvin = 'ALUNOPOS'";
+                    AND v.tipvin IN ('ALUNOPOS', 'INSCRITOPOS')";
 
             $param['codpes'] = $codpes;
             return DB::fetch($query, $param);
