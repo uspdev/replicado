@@ -1,0 +1,215 @@
+<?php
+
+namespace Uspdev\Replicado;
+
+class Pesquisa
+{
+
+
+
+    /**
+     * Método para retornar as iniciações científicas 
+     * Permite filtrar por departamento e por periodo.
+     * @param array $departamento - Recebe um array com as siglas dos departamentos desejados. Se for igual a null, a consulta trazerá todos os departamentos.
+     * @param int $ano_ini - ano inicial do período. Se for igual a null retorna todas as iniciações científicas.
+     * @param int $ano_fim - ano final do período
+     * @param bool $somenteAtivos - Se for igual a true retornará as iniciações científicas ativas
+     * @return array
+     */
+    public static function listarIniciacaoCientifica($departamento = null, $ano_ini = null, $ano_fim = null, $somenteAtivos = false){
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = DB::getQuery('Pesquisa.listarIniciacaoCientifica.sql');
+        $query = str_replace('__unidades__',$unidades,$query);
+    
+        $param = [];
+
+        if($departamento != null && sizeof($departamento) > 0){ 
+            if(is_array($departamento) && sizeof($departamento) > 1){
+                $departamento = "'". implode("','", $departamento)."'";
+            }else if(sizeof($departamento) == 1){
+                $departamento = "'". $departamento[0] ."'";
+            }
+            
+            $query = str_replace('__departamento__',"AND s.nomabvset in ($departamento)", $query);
+           
+        }else{
+            $query = str_replace('__departamento__',"", $query);
+        }
+        if($ano_ini != -1 && $ano_ini != null && $ano_fim != null && !empty($ano_ini) && !empty($ano_fim)){
+            $aux = " AND (ic.dtafimprj BETWEEN '".$ano_ini."-01-01' AND '".$ano_fim."-12-31' OR
+                        ic.dtainiprj BETWEEN '".$ano_ini."-01-01' AND '".$ano_fim."-12-31') ";
+            if($somenteAtivos){
+                $aux .= " AND (ic.dtafimprj > GETDATE() or ic.dtafimprj IS NULL)"; 
+            }
+            $query = str_replace('__data__',$aux, $query);
+        }else if($ano_ini == null && !$somenteAtivos){
+            $query = str_replace('__data__','', $query);
+        }else if($somenteAtivos){   
+            $query = str_replace('__data__',"AND (ic.dtafimprj > GETDATE() or ic.dtafimprj IS NULL)", $query); 
+        }
+        
+        
+        
+        $result =  DB::fetchAll($query, $param);
+ 
+        
+
+        $iniciacao_cientifica = [];
+        foreach($result as $ic){
+            $curso = Pessoa::retornarCursoPorCodpes($ic['aluno']);
+            $ic['codcur'] =  $curso == null ? null : $curso['codcurgrd'];
+            $ic['nome_curso'] =  $curso == null ? null : $curso['nomcur'];
+            
+            $programa = Pessoa::retornarProgramaPorCodpes($ic['aluno']);
+            $ic['codare'] =  $programa == null ? null : $programa['codare'];
+            $ic['nome_programa'] =  $programa == null ? null : $programa['nomare'];
+
+            $query_com_bolsa = DB::getQuery('Pesquisa.buscarICcomBolsaPorCodpes.sql');     
+            $query_com_bolsa = str_replace('__unidades__',$unidades,$query_com_bolsa);   
+
+            $param_com_bolsa = [
+                'codpes' => $ic['aluno'],
+                'codprj' => $ic['cod_projeto'],
+            ];
+            $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
+            if(count($result) == 0){
+                $ic['bolsa'] = 'false';
+            }else{
+                $ic['bolsa'] = 'true';
+            }
+            
+            array_push($iniciacao_cientifica, $ic); 
+        }
+        return $iniciacao_cientifica;
+    }
+
+    
+   
+    /**
+     * Método para retornar os colaboradores ativos 
+     * 
+     * @return array
+     */
+    public static function listarPesquisadoresColaboradoresAtivos(){
+        $query = DB::getQuery('Pesquisa.listarPesquisadoresColaboradoresAtivos.sql');
+        
+        //TODO fazer o filtro por unidade
+        //$unidades = getenv('REPLICADO_CODUNDCLG');
+        //$query = str_replace('__unidades__',$unidades,$query);
+      
+        
+        return DB::fetchAll($query);
+    }
+
+     
+    /**
+     * Método para retornar os colaboradores ativos 
+     * 
+     * @return array
+     */
+    public static function listarPesquisaPosDoutorandos(){
+        $pesquisas_pos_doutorando = [];
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = DB::getQuery('Pesquisa.listarPesquisaPosDoutorandos.sql');
+        
+        $query = str_replace('__unidades__',$unidades,$query);
+        
+       
+        $pesquisas = DB::fetchAll($query);
+        
+    
+        foreach($pesquisas as $p){
+            $query_nome_supervisor = DB::getQuery('Pessoa.retornarSupervisorPesquisaPosDoutorando.sql');
+            $query_nome_supervisor = str_replace(' __codprj__',"codprj = convert(int,:codprj)", $query_nome_supervisor);
+            $param_nome_supervisor = [
+                'codprj' => $p['codprj'],
+            ];
+            
+            $nome_supervisor =  DB::fetchAll($query_nome_supervisor, $param_nome_supervisor)[0]['nompes'];
+            $p['supervisor'] = $nome_supervisor;
+
+
+            $query_com_bolsa = DB::getQuery('Pesquisa.buscarPDcomBolsaPorCodpes.sql'); 
+    
+            $query_com_bolsa = str_replace('__unidades__',$unidades,$query_com_bolsa);
+
+            $param_com_bolsa = [
+                'codpes' => $p['codpes'],
+            ];
+            $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
+
+            if(count($result) == 0){
+                $p['bolsa'] = 'false';
+            }else{
+                $p['bolsa'] = 'true';
+            }
+
+
+            array_push($pesquisas_pos_doutorando, $p); 
+        }
+        
+      
+        return $pesquisas_pos_doutorando;
+    }
+
+    /**
+     * Método para retornar os cursos de cultura e extensão de um período, permite filtrar por departamentos também 
+     * @param array $departamento - Recebe um array com os códigos dos departamentos desejados. Se for igual a null, a consulta trazerá todos os departamentos.
+     * @param int $ano_ini - ano inicial do período
+     * @param int $ano_fim - ano final do período
+     * @return array
+     */
+    public static function listarCursosCEU($ano_inicio, $ano_fim, $departamento = null)
+    {
+        $unidades = getenv('REPLICADO_CODUNDCLG');    
+            
+        $query = DB::getQuery('Pesquisa.listarCursosCEU.sql');
+        $query = str_replace('__unidades__',$unidades,$query);
+
+        if($departamento != null && sizeof($departamento) > 0){ 
+            if(is_array($departamento) && sizeof($departamento) > 1){
+                $departamento = implode(",", $departamento);
+            }else if(sizeof($departamento) == 1){
+                $departamento = $departamento[0];
+            } 
+            $query = str_replace('__departamento__',"AND C.codsetdep IN ($departamento)", $query);
+           
+        }else{
+            $query = str_replace('__departamento__',"", $query);
+        }
+               
+
+        if($ano_inicio == $ano_fim){
+            $query = str_replace('__ano__'," AND C.dtainc LIKE '%".$ano_fim."%'", $query);
+        } else{
+            $query = str_replace('__ano__'," AND C.dtainc BETWEEN '".$ano_inicio."-01-01' AND '".$ano_fim."-12-31'", $query);
+        }
+        
+        $result = DB::fetchAll($query);
+
+        $cursos = [];
+        foreach($result as $curso){
+            $query = DB::getQuery('Pesquisa.listarMinistrantesPorCursoCEU.sql');
+            $param = [
+                'codofeatvceu' => $curso['codofeatvceu']
+            ];
+            $result_ministrantes = DB::fetchAll($query, $param);
+            if(count($result_ministrantes) == 0){
+                $curso['ministrantes'] = '-';
+            }else{
+                $ministrantes = [];
+                foreach($result_ministrantes as $m){
+                    array_push($ministrantes, $m['nompes']);
+                }
+                $curso['ministrantes'] = implode(", ", $ministrantes);
+            }
+            unset($curso['codofeatvceu']);
+            
+            array_push($cursos, $curso);
+        }
+        return $cursos;
+
+    }
+    
+
+}
