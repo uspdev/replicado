@@ -1000,4 +1000,42 @@ class Pessoa
         return DB::fetchAll($query, $param);
     }
 
+    /**
+     * Método que recebe um  
+     * 
+     * @return array
+     */
+    public static function obterMediaPonderadaLimpa(){
+        $query = " SELECT t2.creaul, t1.notfim, t1.notfim2
+                    FROM HISTESCOLARGR t1
+                    INNER JOIN DISCIPLINAGR t2 ON t1.coddis = t2.coddis
+                    AND t1.verdis = t2.verdis
+                    WHERE t1.rstfim = 'A' AND t1.codpes = 11284280";
+
+        $result = DB::fetchAll($query);
+
+        $query2 = " SELECT SUM(t2.creaul)
+                    FROM HISTESCOLARGR t1
+                    INNER JOIN DISCIPLINAGR t2 ON t1.coddis = t2.coddis
+                    AND t1.verdis = t2.verdis
+                    WHERE t1.rstfim = 'A'AND t1.codpes = 11284280";
+
+        $result2 = DB::fetch($query2);
+
+        $creditos = intval($result2["computed"]);
+
+        //array com todas as multiplicações
+        $multiplicacoes = [];
+        foreach($result as $row){
+            if(isset($row['notfim2']) && $row['notfim2'] != ""){
+                $nota = $row['notfim2'];
+            } else {
+                $nota = $row['notfim'];
+            }
+
+            $mult = intval($row['creaul']) * floatval($nota);
+            array_push($multiplicacoes, floatval($mult));             
+        } 
+    }                
+
 }
