@@ -74,8 +74,10 @@ class Pesquisa
             $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
             if(count($result) == 0){
                 $ic['bolsa'] = 'false';
+                $ic['codctgedi'] = '';
             }else{
                 $ic['bolsa'] = 'true';
+                $ic['codctgedi'] = $result[0]['codctgedi'] == '1' ? 'PIBIC' : 'PIBITI';
             }
             
             array_push($iniciacao_cientifica, $ic); 
