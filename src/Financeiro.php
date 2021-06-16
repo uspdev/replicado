@@ -15,21 +15,29 @@ class Financeiro
     public static function listarCentrosDespesas($codund = null)
     {
         $query = "SELECT etrhie FROM CENTRODESPHIERARQUIA
-                    WHERE dtadtv IS NULL
-                    AND codunddsp = convert(int,:codund)";
+                    WHERE dtadtv IS NULL";
         
         if ($codund) {
+            $query .= " AND codunddsp = convert(int,:codund)";
             $param = [
                 'codund' => $codund,
             ];
+            $result = DB::fetchAll($query, $param);
         }else{
-            $unidades = getenv('REPLICADO_CODUNDCLG');
-            $param = [
-                'codund' => $unidades,
-            ];
-        } 
-        
-        return DB::fetchAll($query, $param);
+            $unidades = explode(",",getenv('REPLICADO_CODUNDCLG'));
+            $i = 0;
+            foreach($unidades as $unidade){
+                if($i == 0){
+                    $query .= " AND codunddsp = $unidade";
+                }
+                else{
+                    $query .= " OR codunddsp = $unidade";
+                }
+                $i++;
+            }
+            $result = DB::fetchAll($query);
+        }      
+        return $result;
     }
 
 }
