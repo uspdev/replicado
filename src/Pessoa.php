@@ -1001,41 +1001,33 @@ class Pessoa
     }
 
     /**
-     * Método que recebe um  
+     * Método que recebe um número USP de um aluno e retorna a sua média ponderada limpa.
      * 
-     * @return array
+     * @author gabrielareisg em 14/06/2021
+     * @param Integer $codpes
+     * @return int|bool
      */
-    public static function obterMediaPonderadaLimpa(){
-        $query = " SELECT t2.creaul, t1.notfim, t1.notfim2
-                    FROM HISTESCOLARGR t1
-                    INNER JOIN DISCIPLINAGR t2 ON t1.coddis = t2.coddis
-                    AND t1.verdis = t2.verdis
-                    WHERE t1.rstfim = 'A' AND t1.codpes = 11284280";
+    public static function obterMediaPonderadaLimpa(int $codpes){
+        $query = DB::getQuery('Pessoa.obterMediaPonderadaLimpa.sql');
 
-        $result = DB::fetchAll($query);
-
-        $query2 = " SELECT SUM(t2.creaul)
-                    FROM HISTESCOLARGR t1
-                    INNER JOIN DISCIPLINAGR t2 ON t1.coddis = t2.coddis
-                    AND t1.verdis = t2.verdis
-                    WHERE t1.rstfim = 'A'AND t1.codpes = 11284280";
-
-        $result2 = DB::fetch($query2);
-
-        $creditos = intval($result2["computed"]);
-
-        //array com todas as multiplicações
+        $param = [
+            'codpes' => $codpes,
+        ];
+        $result = DB::fetchAll($query, $param);
+        
         $multiplicacoes = [];
+        $creditos = 0;
         foreach($result as $row){
-            if(isset($row['notfim2']) && $row['notfim2'] != ""){
-                $nota = $row['notfim2'];
-            } else {
-                $nota = $row['notfim'];
-            }
-
+            $creditos+= $row['creaul'];
+            $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
+            
             $mult = intval($row['creaul']) * floatval($nota);
-            array_push($multiplicacoes, floatval($mult));             
+
+            array_push($multiplicacoes, floatval($mult));     
         } 
+        $soma = array_sum($multiplicacoes);
+
+        return empty($soma) ? false : $soma/$creditos;
     }                
 
 }
