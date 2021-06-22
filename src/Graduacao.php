@@ -546,4 +546,34 @@ class Graduacao
         $result = DB::fetchAll($query, $param);
         return empty($result) ? '' : $result;
     }
+
+    /**
+     * Método que recebe um número USP de um aluno e retorna a sua média ponderada limpa.
+     * 
+     * @author gabrielareisg em 14/06/2021
+     * @param Integer $codpes
+     * @return int|bool
+     */
+    public static function obterMediaPonderadaLimpa(int $codpes){
+        $query = DB::getQuery('Pessoa.obterMediaPonderadaLimpa.sql');
+
+        $param = [
+            'codpes' => $codpes,
+        ];
+        $result = DB::fetchAll($query, $param);
+        
+        $multiplicacoes = [];
+        $creditos = 0;
+        foreach($result as $row){
+            $creditos+= $row['creaul'];
+            $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
+            
+            $mult = intval($row['creaul']) * floatval($nota);
+
+            array_push($multiplicacoes, floatval($mult));     
+        } 
+        $soma = array_sum($multiplicacoes);
+
+        return empty($soma) ? false : $soma/$creditos;
+    }
 }
