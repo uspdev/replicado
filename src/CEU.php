@@ -15,7 +15,7 @@ class CEU
      */
     public static function listarCursos($ano_inicio, $ano_fim, $departamento = null)
     {
-        $unidades = getenv('REPLICADO_CODUNDCLG');    
+        $unidades = getenv('REPLICADO_CODUNDCLG');   
             
         $query = DB::getQuery('CEU.listarCursos.sql');
         $query = str_replace('__unidades__',$unidades,$query);
