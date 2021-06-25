@@ -8,4 +8,5 @@ AND r.dtafimort IS NOT NULL
 AND n.dtafimare IS NOT NULL  
 AND a.dtadfapgm IS NOT NULL
 AND a.nivpgm IS NOT NULL
+AND a.starmtpgm IS NULL
 ORDER BY a.nivpgm
