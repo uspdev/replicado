@@ -272,6 +272,34 @@ class Pessoa
         ];
         return DB::fetchAll($query, $param);
     }
+    
+    /**
+     * Método para retornar os chefes administrativos ativos segunda a unidade
+     *
+     * @return array
+     */
+    public static function listarChefesAdministrativos()
+    {
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+
+        $query  =   "SELECT LOCALIZAPESSOA.codpes , 
+                    LOCALIZAPESSOA.nompes, 
+                    LOCALIZAPESSOA.codset , 
+                    LOCALIZAPESSOA.nomset , 
+                    LOCALIZAPESSOA.codema 
+                    from LOCALIZAPESSOA 
+                    WHERE LOCALIZAPESSOA.tipvinext = 'Servidor Designado' 
+                    AND LOCALIZAPESSOA.codpes 
+                    IN (Select codpes from LOCALIZAPESSOA 
+                        where LOCALIZAPESSOA.tipvinext = 'Servidor' 
+                        and LOCALIZAPESSOA.codundclg in (convert(int,:codundclg))
+                        and LOCALIZAPESSOA.sitatl = 'A') 
+                    ORDER BY LOCALIZAPESSOA.nompes";
+        $param = [
+            'codundclg' => $unidades,
+        ];
+        return DB::fetchAll($query, $param);
+    }
 
     /**
      * Método para retornar o total dos vinculos ativos na unidade
