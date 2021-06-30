@@ -257,10 +257,11 @@ class Pessoa
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
 
-        $query  =   "SELECT LOCALIZAPESSOA.codpes as 'codpes', 
-                    LOCALIZAPESSOA.nompes as 'Nome', 
-                    LOCALIZAPESSOA.nomset as 'Setor' , 
-                    LOCALIZAPESSOA.codema as EMAIL
+        $query  =   "SELECT LOCALIZAPESSOA.codpes, 
+                    LOCALIZAPESSOA.nompes , 
+                    LOCALIZAPESSOA.codset , 
+                    LOCALIZAPESSOA.nomset , 
+                    LOCALIZAPESSOA.codema
                     from LOCALIZAPESSOA
                     where  LOCALIZAPESSOA.tipvinext LIKE 'Servidor' 
                     and LOCALIZAPESSOA.sitatl = 'A' 
