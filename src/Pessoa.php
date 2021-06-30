@@ -247,6 +247,30 @@ class Pessoa
         ];
         return DB::fetchAll($query, $param);
     }
+    
+    /**
+     * Método para retornar os funcionários ativos segunda a unidade
+     *
+     * @return array
+     */
+    public static function listarServidores()
+    {
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+
+        $query  =   "SELECT LOCALIZAPESSOA.codpes as 'codpes', 
+                    LOCALIZAPESSOA.nompes as 'Nome', 
+                    LOCALIZAPESSOA.nomset as 'Setor' , 
+                    LOCALIZAPESSOA.codema as EMAIL
+                    from LOCALIZAPESSOA
+                    where  LOCALIZAPESSOA.tipvinext LIKE 'Servidor' 
+                    and LOCALIZAPESSOA.sitatl = 'A' 
+                    and LOCALIZAPESSOA.codundclg in (convert(int,:codundclg))
+                    ORDER BY LOCALIZAPESSOA.nompes";
+        $param = [
+            'codundclg' => $unidades,
+        ];
+        return DB::fetchAll($query, $param);
+    }
 
     /**
      * Método para retornar o total dos vinculos ativos na unidade
