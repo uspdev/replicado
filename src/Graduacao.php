@@ -555,7 +555,7 @@ class Graduacao
      * @return int|bool
      */
     public static function obterMediaPonderadaLimpa(int $codpes){
-        $query = DB::getQuery('Pessoa.obterMediaPonderadaLimpa.sql');
+        $query = DB::getQuery('Graduacao.obterMediaPonderadaLimpa.sql');
 
         $param = [
             'codpes' => $codpes,
