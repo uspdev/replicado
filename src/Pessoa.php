@@ -236,11 +236,13 @@ class Pessoa
      */
     public static function estagiarios($codundclgi)
     {
-        $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
+        $query  = "SELECT DISTINCT LOCALIZAPESSOA.*, PESSOA.*, EMAILPESSOA.* FROM LOCALIZAPESSOA
                     INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
+                    INNER JOIN EMAILPESSOA ON (EMAILPESSOA.codpes = LOCALIZAPESSOA.codpes)
                     WHERE ( LOCALIZAPESSOA.tipvin LIKE 'ESTAGIARIORH'
                         AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
-                        AND LOCALIZAPESSOA.sitatl = 'A')
+                        AND LOCALIZAPESSOA.sitatl = 'A'
+                        AND EMAILPESSOA.codema LIKE '%@usp.br%')
                     ORDER BY LOCALIZAPESSOA.nompes";
         $param = [
             'codundclgi' => $codundclgi,
