@@ -232,16 +232,28 @@ class Pessoa
      * Método para retornar estagiários ativos na unidade
      *
      * @param Integer $codundclgi
+     * @return Boolean $email_usp Se true retorna informações com email USP, se false retorna informações com email cadastrado na LOCALIZAPESSOA
      * @return array
      */
-    public static function estagiarios($codundclgi)
+    public static function estagiarios($codundclgi, bool $email_usp = false)
     {
+        if($email_usp) {
+            $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.*, EMAILPESSOA.* FROM LOCALIZAPESSOA
+                    INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
+                    INNER JOIN EMAILPESSOA ON (EMAILPESSOA.codpes = LOCALIZAPESSOA.codpes)
+                    WHERE ( LOCALIZAPESSOA.tipvin LIKE 'ESTAGIARIORH'
+                        AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
+                        AND LOCALIZAPESSOA.sitatl = 'A'
+                        AND EMAILPESSOA.codema LIKE '%@usp.br%')
+                    ORDER BY LOCALIZAPESSOA.nompes";
+        } else {
         $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
                     INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
                     WHERE ( LOCALIZAPESSOA.tipvin LIKE 'ESTAGIARIORH'
                         AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
                         AND LOCALIZAPESSOA.sitatl = 'A')
                     ORDER BY LOCALIZAPESSOA.nompes";
+        }
         $param = [
             'codundclgi' => $codundclgi,
         ];
