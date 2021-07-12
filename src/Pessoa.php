@@ -231,33 +231,26 @@ class Pessoa
     /**
      * Método para retornar estagiários ativos na unidade
      *
-     * @param Integer $codundclgi
      * @return Boolean $email_usp Se true retorna informações com email USP, se false retorna informações com email cadastrado na LOCALIZAPESSOA
      * @return array
      */
-    public static function estagiarios($codundclgi, bool $email_usp = false)
+    public static function estagiarios(bool $email_usp = false)
     {
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = DB::getQuery('Pessoa.estagiarios.sql');
+        $query = str_replace('__unidades__', $unidades, $query); 
+                
         if($email_usp) {
-            $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.*, EMAILPESSOA.* FROM LOCALIZAPESSOA
-                    INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
-                    INNER JOIN EMAILPESSOA ON (EMAILPESSOA.codpes = LOCALIZAPESSOA.codpes)
-                    WHERE ( LOCALIZAPESSOA.tipvin LIKE 'ESTAGIARIORH'
-                        AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
-                        AND LOCALIZAPESSOA.sitatl = 'A'
-                        AND EMAILPESSOA.codema LIKE '%@usp.br%')
-                    ORDER BY LOCALIZAPESSOA.nompes";
+            $query = str_replace('__select__', ', EMAILPESSOA.*', $query);
+            $query = str_replace('__emailpessoa__', ' INNER JOIN EMAILPESSOA ON (EMAILPESSOA.codpes = LOCALIZAPESSOA.codpes)', $query);    
+            $query_email = str_replace('__codema__', "AND EMAILPESSOA.codema LIKE '%@usp.br%'", $query);      
         } else {
-        $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
-                    INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
-                    WHERE ( LOCALIZAPESSOA.tipvin LIKE 'ESTAGIARIORH'
-                        AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
-                        AND LOCALIZAPESSOA.sitatl = 'A')
-                    ORDER BY LOCALIZAPESSOA.nompes";
+            $query = str_replace('__select__', "", $query);
+            $query = str_replace('__emailpessoa__', "", $query);
+            $query_email = str_replace('__codema__', "", $query);
         }
-        $param = [
-            'codundclgi' => $codundclgi,
-        ];
-        return DB::fetchAll($query, $param);
+        return DB::fetchAll($query_email);
+        
     }
 
     /**
