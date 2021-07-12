@@ -1639,6 +1639,7 @@ class Lattes
     * Recebe o número USP e devolve OrcidID cadastrado no currículo lattes
     * 
     * @param Integer $codpes
+    * @param Array $lattes_array (opt) Currículo lattes, convertido para array
     * @return String|Bool
     * 
     */
