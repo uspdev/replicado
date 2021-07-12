@@ -92,6 +92,23 @@ class Graduacao
         return DB::fetch($query, $param);
     }
 
+     /**
+     * Método para retornar o codcur e o nome do curso da pessoa através do codpes 
+     * 
+     * @return array
+     */
+    public static function retornarCursoPorCodpes($codpes){
+        $query = DB::getQuery('Graduacao.retornarCursoPorCodpes.sql');
+        
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        $result = DB::fetchAll($query, $param);
+        return empty($result) ? null : $result[0];
+    }
+
+
     /**
      * Retorna o nome do curso 
      * 

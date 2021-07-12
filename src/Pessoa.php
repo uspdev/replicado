@@ -737,22 +737,6 @@ class Pessoa
 
         return DB::fetchAll($query);
     }
-
-    /**
-     * Método para retornar o codcur e o nome do curso da pessoa através do codpes 
-     * 
-     * @return array
-     */
-    public static function retornarCursoPorCodpes($codpes){
-        $query = DB::getQuery('Pessoa.retornarCursoPorCodpes.sql');
-        
-        $param = [
-            'codpes' => $codpes,
-        ];
-
-        $result = DB::fetchAll($query, $param);
-        return empty($result) ? null : $result[0];
-    }
    
 
     /**
