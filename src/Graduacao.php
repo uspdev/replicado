@@ -552,13 +552,17 @@ class Graduacao
      * 
      * @author gabrielareisg em 14/06/2021
      * @param Integer $codpes
+     * @param Integer $codpgm Código que identifica cada programa do aluno. Logo, se o aluno possuir mais de uma graduação
+     * deve passar por parametro o número: sendo 1 referente a primeira graduação, 2 para a segunda, e assim sucessivamente.
+     * Para aqueles que só possuem uma graduação, o campo é preenchido por padrão com o número 1.
      * @return int|bool
      */
-    public static function obterMediaPonderadaLimpa(int $codpes){
+    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = 1){
         $query = DB::getQuery('Graduacao.obterMediaPonderadaLimpa.sql');
 
         $param = [
             'codpes' => $codpes,
+            'codpgm' => $codpgm
         ];
         $result = DB::fetchAll($query, $param);
         
