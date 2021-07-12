@@ -151,10 +151,10 @@ class Pessoa
     }
 
     /**
-     * Método para retornar vínculos de uma pessoa
+     * Método para listar vínculos de uma pessoa
      *
      * @param Integer $codpes
-     * @param Integer $codundclgi
+     * @param Integer $codundclgi (opt)
      * @return array
      * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      */
@@ -285,10 +285,10 @@ class Pessoa
     
 
     /**
-     * Método para retornar o total dos vinculos ativos na unidade
+     * Método para retornar o total dos vinculos ativos na unidade por tipo de vínculo extenso
      *
+     * @param String $vinculo Tipo do vinculo por extenso (tipvinext)
      * @param Integer $codundclg
-     * @param String $vinculo
      * @return Integer
      */
     public static function totalVinculo($vinculo, $codundclg)
@@ -308,7 +308,8 @@ class Pessoa
      * Método para retornar o total de alunos de Pós Graduação matriculados, de acordo com o nível do programa, na unidade
      *
      * @param Integer $codundclg
-     * @param String $nivpgm
+     * @param String $nivpgm Pode ser ME, DO ou DD
+     * @param Integer $codundclg (opt)
      * @return Integer
      */
     public static function totalPosNivelPrograma($nivpgm, $codundclg)
@@ -329,9 +330,9 @@ class Pessoa
     }
 
     /**
-     * Método para retornar todos os vínculos por extenso
+     * Método para retornar todos os tipos de vínculos por extenso (tipvinext)
      *
-     * @return void
+     * @return Array
      */
     public static function todosVinculosExtenso()
     {
@@ -351,13 +352,14 @@ class Pessoa
     }
 
     /**
-     * Método para retornar todos os tipos de vínculos possíveis, com base na unidade
+     * Método para retornar os tipos de vínculos por extenso (tipvinext) de ativos, com base na unidade
+     * 
      * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT'),
      * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH') 
      * Incluido também os Docente Aposentado 
      *
      * @param Integer $codundclgi
-     * @return void
+     * @return Array
      */
     public static function tiposVinculos($codundclgi)
     {
@@ -410,10 +412,11 @@ class Pessoa
 
     /**
      * Método para retornar *array* com a lista de servidores (docentes, funcionários e estagiários) por setor(es)
+     * 
      * Se aposentados = 1, lista também os docentes aposentados (stiatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
      * 
      * @param Array $codset
-     * @param Integer $aposentados Default 0
+     * @param Integer $aposentados (opt) Default 1
      * @return void
      * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
@@ -439,7 +442,7 @@ class Pessoa
      * Se aposentados = 1, conta também os docentes aposentados (stiatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
      * 
      * @param Array $codset
-     * @param Integer $aposentados Default 0
+     * @param Integer $aposentados (opt) Default 1
      * @return void
      * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
@@ -460,13 +463,14 @@ class Pessoa
     }
 
     /**
-     * Método para retornar todas os vínculos e setores de uma pessoa
+     * Método para listar todos os vínculos e setores de uma pessoa
+     * 
      * Fundamental para o uspdev/web-ldap-admin
      * Somente ATIVOS
      * Também Docente Aposentado 
      *
      * @param Integer $codpes
-     * @param Integer $codundclgi
+     * @param Integer (opt) $codundclgi
      * @return array
      */
     public static function vinculosSetores(int $codpes, int $codundclgi = 0)
@@ -704,17 +708,16 @@ class Pessoa
     }
 
     /**
-     * Método que lista docentes aposentados Sênior (em atividade) 
-     * de uma unidade por setor (departamento) solicitado 
-     * @param type $codset - Código do setor
+     * Método que lista docentes aposentados Sênior (em atividade) de uma unidade por setor (departamento) solicitado 
+     *
+     * $codset pode ser um número (para um único setor) ou pode ser
+     * uma lista de setores separados por vírgula (para um ou mais de um setores)
+     * Se não informado, listará de todos os setores.
+     * 
+     * @param List $codset (opt) - Código do setor
      * @return array
-     * 
-     * $codset pode ser um número (para um único setor)
-     *         ou
-     *         pode ser uma string com números separados por vírgula (para um ou mais de um setores)
-     * 
      */
-    public static function listarDocentesAposentadosSenior($codset = FALSE){
+    public static function listarDocentesAposentadosSenior($codset = false){
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $current = date("Y-m-d H:i:s");
         $addquery = '';
@@ -735,10 +738,6 @@ class Pessoa
         return DB::fetchAll($query);
     }
 
-
-    
-   
-    
     /**
      * Método para retornar o codcur e o nome do curso da pessoa através do codpes 
      * 
@@ -885,10 +884,10 @@ class Pessoa
     }
 
     /**
-     * Método que retorna siglas dos vínculos ativos de uma pessoa, em uma dada unidade
+     * Método que lista siglas dos vínculos ativos de uma pessoa, em uma dada unidade
      *
      * @param Integer $codpes
-     * @param Integer $codundclgi
+     * @param Integer (opt) $codundclgi
      * @return array
      * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      * @deprecated em favor de obterSiglasVinculosAtivos, em 25/06/2021 - @thiagogomesverissimo
@@ -913,7 +912,7 @@ class Pessoa
     }
 
     /**
-     * Método que recebe número USP para retornar email USP da pessoa
+     * (deprecated) Método que recebe número USP para retornar email USP da pessoa
      *
      * @param Integer $codpes
      * @return String

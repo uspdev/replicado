@@ -63,6 +63,7 @@ class Lattes
      * Recebe o número USP e salva o zip do lattes
      * 
      * @param Integer $codpes
+     * @param $to (opt) Pasta onde o zip será salvo
      * @return Bool
      */
     public static function saveZip($codpes, $to = '/tmp'){
@@ -80,6 +81,7 @@ class Lattes
      * Recebe o número USP e salva o xml do lattes
      * 
      * @param Integer $codpes
+     * @param $to (opt) Pasta onde o xml será salvo
      * @return String|Bool
      */
     public static function verificarXml($codpes, $to = '/tmp'){
@@ -189,6 +191,7 @@ class Lattes
     /**
     * Recebe o número USP e devolve a última atualização do currículo do lattes
     * @param Integer $codpes
+    * @param Array $lattes_array (opt) Lattes convertido para array
     * @return Int|Bool
     */
     public static function retornarUltimaAtualizacao($codpes, $lattes_array = null){
@@ -201,7 +204,7 @@ class Lattes
 
     /**
     * Recebe um array com os autores no padrão do currícula lattes e retorna o nome dos autores formatado com apenas o nome e ordem de autoria
-    * @param Aarray $array
+    * @param Array $array
     * @return Array
     */
     private static function listarAutores($array){
@@ -627,6 +630,7 @@ class Lattes
     * Recebe o número USP e devolve array com as apresentações de trabalhos técnicos cadastrados no currículo Lattes
     *  
     * @param Integer $codpes = Número USP
+    * @param Array $lattes_array Lattes convertido para array
     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros. 
     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim 
