@@ -8,4 +8,4 @@ SELECT C.codcurceu,  O.codofeatvceu, C.codsetdep, S.nomset, C.nomcurceu, O.qtdva
         WHERE C.codclg in (__unidades__) 
         __ano__
         __departamento__ 
-	ORDER BY C.dtainc ASC
+	ORDER BY C.dtainc ASC 

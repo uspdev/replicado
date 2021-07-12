@@ -87,36 +87,6 @@ class Pessoa
     }
 
     /**
-     * Método que recebe número USP para retornar email USP da pessoa
-     *
-     * @param Integer $codpes
-     * @return String
-     */
-    public static function emailusp($codpes)
-    {
-        $query = "SELECT * FROM EMAILPESSOA
-                    WHERE codpes = convert(int,:codpes)";
-        $param = [
-            'codpes' => $codpes,
-        ];
-        $result = DB::fetchAll($query, $param);
-        foreach($result as $row)
-        {
-            if (trim($row['stausp'])=='S') {
-                return $row['codema'];
-            }
-            # adicionado o codigo abaixo, porque têm
-            # e-mail usp que o campo 'stausp' não está marcado
-            if (!is_null(trim($row['codema']))) {
-                $emailusp = strpos($row['codema'],'usp.br');
-                if ($emailusp != false)
-                    return $row['codema'];
-            }
-        }
-        return false;
-    }
-
-    /**
      * Método que recebe o número USP e retorna array com telefones da pessoa
      *
      * @param Integer $codpes
@@ -138,30 +108,6 @@ class Pessoa
             in_array($telefone,$telefones) ?: array_push($telefones,$telefone);
         }
         return $telefones;
-    }
-
-    /**
-     * Método para buscar pessoas por nome ou parte do nome, recebe uma string nome e retorna os resultados para a tabela Pessoa
-     *
-     * @param string $nome
-     * @return array
-     * @deprecated em favor de procurarPorNome, em 10/11/2020
-     */
-    public static function nome($nome)
-    {
-        return SELF::procurarPorNome($nome, false, false);
-    }
-
-    /**
-     * Método para buscar pessoas por nomes fonéticos
-     *
-     * @param string $nome
-     * @return void
-     * @deprecated em favor de procurarPorNome, em 10/11/2020
-     */
-    public static function nomeFonetico($nome)
-    {
-        return SELF::procurarPorNome($nome, true, false);
     }
 
     /**
@@ -205,10 +151,10 @@ class Pessoa
     }
 
     /**
-     * Método para retornar vínculos de uma pessoa
+     * Método para listar vínculos de uma pessoa
      *
      * @param Integer $codpes
-     * @param Integer $codundclgi
+     * @param Integer $codundclgi (opt)
      * @return array
      * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      */
@@ -240,65 +186,6 @@ class Pessoa
             in_array($vinculo,$vinculos) ?:  array_push($vinculos, trim($vinculo));
         }
         return $vinculos;
-    }
-
-    /**
-     * Método que retorna siglas dos vínculos ativos de uma pessoa, em uma dada unidade
-     *
-     * @param Integer $codpes
-     * @param Integer $codundclgi
-     * @return array
-     * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
-     */
-    public static function vinculosSiglas(int $codpes, int $codundclgi = 0)
-    {
-        $query = "SELECT * FROM LOCALIZAPESSOA
-                    WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
-        if ($codundclgi != 0) {
-            $query .= " AND codundclg = convert(int,:codundclgi)";
-            $param['codungclgi'] = $codundclgi;
-        }
-        $param['codpes'] = $codpes;
-        $result = DB::fetchAll($query, $param);
-
-        $vinculos = array();
-        foreach ($result as $row)
-        {
-            if (!empty($row['tipvin']))
-                $vinculo = trim($row['tipvin']);
-                in_array($vinculo,$vinculos) ?:  array_push($vinculos, trim($vinculo));
-        }
-        return $vinculos;
-    }
-
-    /**
-     * Método para retornar siglas dos setores que uma pessoa tem vínculo
-     *
-     * @param Integer $codpes
-     * @param Integer $codundclgi
-     * @return array
-     * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
-     */
-    public static function setoresSiglas(int $codpes, int $codundclgi = 0)
-    {
-        $query = "SELECT * FROM LOCALIZAPESSOA
-                    WHERE codpes = convert(int,:codpes) AND sitatl = 'A'";
-        if ($codundclgi != 0) {
-            $query .= " AND codundclg = convert(int,:codundclgi)";
-            $param['codungclgi'] = $codundclgi;
-        }
-        $param['codpes'] = $codpes;
-        $result = DB::fetchAll($query, $param);
-
-        $setores = array();
-        foreach ($result as $row)
-        {
-            if (!empty(trim($row['nomabvset']))) {
-                $setor = trim($row['nomabvset']);
-                in_array($setor,$setores) ?: array_push($setores, trim($setor));
-            }
-        }
-        return $setores;
     }
     
    /**
@@ -362,10 +249,10 @@ class Pessoa
     }
 
     /**
-     * Método para retornar o total dos vinculos ativos na unidade
+     * Método para retornar o total dos vinculos ativos na unidade por tipo de vínculo extenso
      *
+     * @param String $vinculo Tipo do vinculo por extenso (tipvinext)
      * @param Integer $codundclg
-     * @param String $vinculo
      * @return Integer
      */
     public static function totalVinculo($vinculo, $codundclg)
@@ -385,7 +272,8 @@ class Pessoa
      * Método para retornar o total de alunos de Pós Graduação matriculados, de acordo com o nível do programa, na unidade
      *
      * @param Integer $codundclg
-     * @param String $nivpgm
+     * @param String $nivpgm Pode ser ME, DO ou DD
+     * @param Integer $codundclg (opt)
      * @return Integer
      */
     public static function totalPosNivelPrograma($nivpgm, $codundclg)
@@ -406,9 +294,9 @@ class Pessoa
     }
 
     /**
-     * Método para retornar todos os vínculos por extenso
+     * Método para retornar todos os tipos de vínculos por extenso (tipvinext)
      *
-     * @return void
+     * @return Array
      */
     public static function todosVinculosExtenso()
     {
@@ -428,13 +316,14 @@ class Pessoa
     }
 
     /**
-     * Método para retornar todos os tipos de vínculos possíveis, com base na unidade
+     * Método para retornar os tipos de vínculos por extenso (tipvinext) de ativos, com base na unidade
+     * 
      * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT'),
      * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH') 
      * Incluido também os Docente Aposentado 
      *
      * @param Integer $codundclgi
-     * @return void
+     * @return Array
      */
     public static function tiposVinculos($codundclgi)
     {
@@ -487,10 +376,11 @@ class Pessoa
 
     /**
      * Método para retornar *array* com a lista de servidores (docentes, funcionários e estagiários) por setor(es)
+     * 
      * Se aposentados = 1, lista também os docentes aposentados (stiatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
      * 
      * @param Array $codset
-     * @param Integer $aposentados Default 0
+     * @param Integer $aposentados (opt) Default 1
      * @return void
      * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
@@ -516,7 +406,7 @@ class Pessoa
      * Se aposentados = 1, conta também os docentes aposentados (stiatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
      * 
      * @param Array $codset
-     * @param Integer $aposentados Default 0
+     * @param Integer $aposentados (opt) Default 1
      * @return void
      * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
@@ -537,13 +427,14 @@ class Pessoa
     }
 
     /**
-     * Método para retornar todas os vínculos e setores de uma pessoa
+     * Método para listar todos os vínculos e setores de uma pessoa
+     * 
      * Fundamental para o uspdev/web-ldap-admin
      * Somente ATIVOS
      * Também Docente Aposentado 
      *
      * @param Integer $codpes
-     * @param Integer $codundclgi
+     * @param Integer (opt) $codundclgi
      * @return array
      */
     public static function vinculosSetores(int $codpes, int $codundclgi = 0)
@@ -773,17 +664,16 @@ class Pessoa
     }
 
     /**
-     * Método que lista docentes aposentados Sênior (em atividade) 
-     * de uma unidade por setor (departamento) solicitado 
-     * @param type $codset - Código do setor
+     * Método que lista docentes aposentados Sênior (em atividade) de uma unidade por setor (departamento) solicitado 
+     *
+     * $codset pode ser um número (para um único setor) ou pode ser
+     * uma lista de setores separados por vírgula (para um ou mais de um setores)
+     * Se não informado, listará de todos os setores.
+     * 
+     * @param List $codset (opt) - Código do setor
      * @return array
-     * 
-     * $codset pode ser um número (para um único setor)
-     *         ou
-     *         pode ser uma string com números separados por vírgula (para um ou mais de um setores)
-     * 
      */
-    public static function listarDocentesAposentadosSenior($codset = FALSE){
+    public static function listarDocentesAposentadosSenior($codset = false){
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $current = date("Y-m-d H:i:s");
         $addquery = '';
@@ -804,10 +694,6 @@ class Pessoa
         return DB::fetchAll($query);
     }
 
-
-    
-   
-    
     /**
      * Método para retornar o codcur e o nome do curso da pessoa através do codpes 
      * 
@@ -862,4 +748,134 @@ class Pessoa
         return DB::fetchAll($query, $param);
     }               
 
+    /**
+     * Método que retorna siglas dos vínculos ativos de uma pessoa
+     *
+     * @param Integer $codpes
+     * @return array
+     * @author @thiagogomesverissimo em 25/06/2021
+     */
+    public static function obterSiglasVinculosAtivos(int $codpes)
+    {
+        $unidades = getenv('REPLICADO_CODUNDCLG');    
+        $query = DB::getQuery('Pessoa.obterSiglasVinculosAtivos.sql');
+        $query = str_replace('__unidades__',$unidades,$query);
+
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        $return = DB::fetch($query, $param);
+        if($return) return array_values($return);
+        return null;
+    }
+
+    /**
+     * Método que retorna siglas dos setores ativos de uma pessoa
+     *
+     * @param Integer $codpes
+     * @return array
+     * @author @thiagogomesverissimo em 25/06/2021
+     */
+    public static function obterSiglasSetoresAtivos(int $codpes)
+    {
+        $unidades = getenv('REPLICADO_CODUNDCLG');    
+        $query = DB::getQuery('Pessoa.obterSiglasSetoresAtivos.sql');
+        $query = str_replace('__unidades__',$unidades,$query);
+
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        $return = DB::fetch($query, $param);
+        if($return) return array_values($return);
+        return null;
+    }
+
+    /**
+     * Método que retorna email usp
+     *
+     * @param Integer $codpes
+     * @return String
+     * @author @thiagogomesverissimo em 25/06/2021
+     */
+    public static function retornarEmailUsp(int $codpes)
+    {
+        $unidades = getenv('REPLICADO_CODUNDCLG');    
+        $query = DB::getQuery('Pessoa.retornarEmailUsp.sql');
+
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        $return = DB::fetch($query, $param);
+        if($return) return $return['codema'];
+        return null;
+    }
+
+    /********** Métodos deprecados que devem ser eliminados numa futura major release ***********/
+
+    /**
+     * Método para buscar pessoas por nome ou parte do nome, recebe uma string nome e retorna os resultados para a tabela Pessoa
+     *
+     * @param string $nome
+     * @return array
+     * @deprecated em favor de procurarPorNome, em 10/11/2020
+     */
+    public static function nome($nome)
+    {
+        return SELF::procurarPorNome($nome, false, false);
+    }
+
+    /**
+     * Método para buscar pessoas por nomes fonéticos
+     *
+     * @param string $nome
+     * @return void
+     * @deprecated em favor de procurarPorNome, em 10/11/2020
+     */
+    public static function nomeFonetico($nome)
+    {
+        return SELF::procurarPorNome($nome, true, false);
+    }
+
+    /**
+     * Método que lista siglas dos vínculos ativos de uma pessoa, em uma dada unidade
+     *
+     * @param Integer $codpes
+     * @param Integer (opt) $codundclgi
+     * @return array
+     * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
+     * @deprecated em favor de obterSiglasVinculosAtivos, em 25/06/2021 - @thiagogomesverissimo
+     */
+    public static function vinculosSiglas(int $codpes, int $codundclgi = 0)
+    {
+        return SELF::obterSiglasVinculosAtivos($codpes);
+    }
+
+    /**
+     * Método para retornar siglas dos setores que uma pessoa tem vínculo
+     *
+     * @param Integer $codpes
+     * @param Integer $codundclgi
+     * @return array
+     * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
+     * @deprecated em favor de obterSiglasSetoresAtivos, em 25/06/2021 - @thiagogomesverissimo
+     */
+    public static function setoresSiglas(int $codpes, int $codundclgi = 0)
+    {
+        return SELF::obterSiglasSetoresAtivos($codpes);
+    }
+
+    /**
+     * (deprecated) Método que recebe número USP para retornar email USP da pessoa
+     *
+     * @param Integer $codpes
+     * @return String
+     * @deprecated em favor de retornarEmailUsp, em 25/06/2021 - @thiagogomesverissimo
+     */
+    public static function emailusp($codpes)
+    {
+        return SELF::retornarEmailUsp($codpes);
+    }
 }

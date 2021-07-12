@@ -1,4 +1,4 @@
-SELECT DISTINCT i.codpesalu FROM ICTPROJEDITALBOLSA b
+SELECT b.codctgedi FROM ICTPROJEDITALBOLSA b
 inner join ICTPROJETO i on i.codprj = b.codprj 
 where codundprj in (__unidades__)
 and codmdl = 1
