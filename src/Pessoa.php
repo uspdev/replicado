@@ -192,27 +192,19 @@ class Pessoa
      * Método para retornar servidores ativos na unidade
      *
      * @param Integer $codundclgi
-     * @return Boolean $email_usp Se true retorna informações com email USP, se false retorna informações com email cadastrado na LOCALIZAPESSOA
      * @return array
      */
-    public static function servidores($codundclgi, bool $email_usp = false)
+    public static function servidores($codundclgi)
     {
-        $emailusp_selection = $email_usp ? ', EMAILPESSOA.codema as emailusp ' : '';
-        $emailusp_table = $email_usp ? 'INNER JOIN EMAILPESSOA EMAILPESSOA ON (EMAILPESSOA.codpes = LOCALIZAPESSOA.codpes)' : '';
-        $emailusp_condition = $email_usp ?  "AND (EMAILPESSOA.stausp = 'S' OR EMAILPESSOA.codema LIKE '%usp.br%')" : '';
-
-        $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* $emailusp_selection FROM LOCALIZAPESSOA
+        $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
                     INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
-                    $emailusp_table
                     WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor'
                         AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
                         AND LOCALIZAPESSOA.sitatl = 'A')
-                        $emailusp_condition
                     ORDER BY LOCALIZAPESSOA.nompes";
         $param = [
             'codundclgi' => $codundclgi,
         ];
-        
         return DB::fetchAll($query, $param);
     }
 
@@ -220,25 +212,17 @@ class Pessoa
      * Método para retornar servidores designados ativos na unidade
      * @param Integer $codundclgi
      * @param Array $tipvinext define o tipo de vinculo da pessoa designada. Por exemplo, pode ser um 'Servidor' designado ou 'Docente' designado. Se for igual a um array vazio, retornará todos os designados independente do vínculo.
-     * @return Boolean $email_usp Se true retorna informações com email USP, se false retorna informações com email cadastrado na LOCALIZAPESSOA
      * @return void
      */
-    public static function designados($codundclgi, bool $email_usp = false, array $tipvinext = [])
+    public static function designados($codundclgi, array $tipvinext = [])
     {
 
-        $emailusp_selection = $email_usp ? ', E.codema as emailusp ' : '';
-        $emailusp_table = $email_usp ? 'INNER JOIN EMAILPESSOA E ON (E.codpes = L.codpes)' : '';
-        $emailusp_condition = $email_usp ?  "AND (E.stausp = 'S' OR E.codema LIKE '%usp.br%')" : '';
-
-
-        $query  = "SELECT L.*, P.* $emailusp_selection FROM LOCALIZAPESSOA L
+        $query  = "SELECT L.*, P.* FROM LOCALIZAPESSOA L
                     INNER JOIN PESSOA P ON (L.codpes = P.codpes)
-                    $emailusp_table
                     WHERE (L.tipvinext LIKE 'Servidor Designado'
                         AND L.codundclg = convert(int,:codundclgi)
                         AND L.sitatl = 'A')
                         __tipvinext__
-                        $emailusp_condition
                     ORDER BY L.nompes";
 
         if(sizeof($tipvinext) > 0){
@@ -612,7 +596,7 @@ class Pessoa
         return DB::fetch($query, $param);
     }
     
-    /**
+   /**
      * Método que lista docentes ativos e/ou inativos da Unidade agrupando por setor (departamento)
      *
      * Se $codset = 0 ou não for informado, buscará todos os docentes da unidade.
@@ -621,31 +605,23 @@ class Pessoa
      * @param $codset - lista de 'código do setor' separados por vírgula
      * @param String $sitatl - lista de 'situação atual' separados por vírgula: 'A' para ativos, 'P' para inativos ou 'A,P' para todos
      * @return Array lista de docentes com dados da tabela LOCALIZAPESSOA
-     * @return Boolean $email_usp Se true retorna o email USP, se false retorna informações com o email cadastrado na LOCALIZAPESSOA
      * @author Refatorado por @gabrielareisg - 30/04/2021 - issue #425
      *
      */
-    public static function listarDocentes(string $codset_list = null, string $sitatl_list = 'A', bool $email_usp = false)
+    public static function listarDocentes(string $codset_list = null, string $sitatl_list = 'A')
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $where_setores = $codset_list ? "AND L.codset IN ({$codset_list})" : '';
-        
-        $emailusp_selection = $email_usp ? ', E.codema as emailusp ' : '';
-        $emailusp_table = $email_usp ? 'INNER JOIN EMAILPESSOA E ON (E.codpes = L.codpes)' : '';
-        $emailusp_condition = $email_usp ?  "AND (E.stausp = 'S' OR E.codema LIKE '%usp.br%')" : '';
 
         # como sitatl_list contém letras, temos de acrescentar aspas em cada elemento da lista
         $sitatl_list = Uteis::str_putcsv(explode(',', $sitatl_list), ',', "'");
 
-        $query = "SELECT *  $emailusp_selection FROM LOCALIZAPESSOA L
-            $emailusp_table
+        $query = "SELECT * FROM LOCALIZAPESSOA L
             WHERE (L.tipvinext = 'Docente' OR L.tipvinext = 'Docente Aposentado')
                 AND L.codundclg IN ({$unidades})
                 AND L.sitatl IN ($sitatl_list)
                 $where_setores
-                $emailusp_condition
             ORDER BY L.nompes";
-        
 
         return DB::fetchAll($query);
     }
