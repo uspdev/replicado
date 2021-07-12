@@ -243,7 +243,7 @@ class Pessoa
         if($email_usp) {
             $query = str_replace('__select__', ', EMAILPESSOA.*', $query);
             $query = str_replace('__emailpessoa__', ' INNER JOIN EMAILPESSOA ON (EMAILPESSOA.codpes = LOCALIZAPESSOA.codpes)', $query);    
-            $query_email = str_replace('__codema__', "AND EMAILPESSOA.codema LIKE '%@usp.br%'", $query);      
+            $query_email = str_replace('__codema__', "AND EMAILPESSOA.codema LIKE '%usp.br%'", $query);      
         } else {
             $query = str_replace('__select__', "", $query);
             $query = str_replace('__emailpessoa__', "", $query);
