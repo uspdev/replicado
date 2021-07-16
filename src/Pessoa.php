@@ -709,23 +709,6 @@ class Pessoa
         $result = DB::fetchAll($query, $param);
         return empty($result) ? null : $result[0];
     }
-    
-    /**
-     * Método para retornar o codare e o nome do programa da pessoa através do codpes 
-     * 
-     * @return array
-     */
-    public static function retornarProgramaPorCodpes($codpes){
-        $query = DB::getQuery('Pessoa.retornarProgramaPorCodpes.sql');
-        
-        $param = [
-            'codpes' => $codpes,
-        ];
-        
-        $result = DB::fetchAll($query, $param);
-        return empty($result) ? null : $result[0];
-    }
-
   
    
 
