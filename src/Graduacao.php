@@ -568,13 +568,15 @@ class Graduacao
         
         $multiplicacoes = [];
         $creditos = 0;
+        //$soma = 0;
         foreach($result as $row){
+            
             $creditos+= $row['creaul'];
             $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
             
             $mult = intval($row['creaul']) * floatval($nota);
 
-            array_push($multiplicacoes, floatval($mult));     
+            array_push($multiplicacoes, floatval($mult));   //fazer a soma aqui dentro  
         } 
         $soma = array_sum($multiplicacoes);
 
