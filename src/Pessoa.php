@@ -210,23 +210,43 @@ class Pessoa
 
    /**
      * Método para retornar servidores designados ativos na unidade
-     *
-     * @param Integer $codundclgi
+     * @param Array $tipvinext define o tipo de vinculo da pessoa designada. Por exemplo, pode ser um 'Servidor' designado ou 'Docente' designado. Se for igual a um array vazio, retornará todos os designados independente do vínculo.
      * @return void
      */
-    public static function designados($codundclgi)
+    public static function listarDesignados(array $tipvinext = [])
     {
-        $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
-                    INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
-                    WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor Designado'
-                        AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
-                        AND LOCALIZAPESSOA.sitatl = 'A')
-                    ORDER BY LOCALIZAPESSOA.nompes";
+        $codundclgi = getenv('REPLICADO_CODUNDCLG');
+
+        $query  = "SELECT L.*, P.* FROM LOCALIZAPESSOA L
+                    INNER JOIN PESSOA P ON (L.codpes = P.codpes)
+                    WHERE (L.tipvinext LIKE 'Servidor Designado'
+                        AND L.codundclg = convert(int,:codundclgi)
+                        AND L.sitatl = 'A')
+                        __tipvinext__
+                    ORDER BY L.nompes";
+
+        if(sizeof($tipvinext) > 0){
+            $tipvinext = "'".implode("','", $tipvinext) ."'";
+            
+            $query_tipvinext = "AND L.codpes IN 
+                        (Select codpes 
+                        from LOCALIZAPESSOA L
+                        where L.tipvinext in ($tipvinext) 
+                        and L.codundclg in (convert(int,:codundclgi)) 
+                        and L.sitatl = 'A')";
+            
+            $query = str_replace('__tipvinext__', $query_tipvinext, $query);
+        }else{
+            $query = str_replace('__tipvinext__', '', $query);
+        }
+       
+       
         $param = [
             'codundclgi' => $codundclgi,
         ];
         return DB::fetchAll($query, $param);
     }
+    
     
     /**
      * Método para retornar estagiários ativos na unidade
