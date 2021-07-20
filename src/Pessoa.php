@@ -746,7 +746,7 @@ class Pessoa
         ];
         
         return DB::fetchAll($query, $param);
-    }
+    }               
 
     /**
      * Método que retorna siglas dos vínculos ativos de uma pessoa

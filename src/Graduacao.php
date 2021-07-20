@@ -546,4 +546,39 @@ class Graduacao
         $result = DB::fetchAll($query, $param);
         return empty($result) ? '' : $result;
     }
+
+    /**
+     * Método que recebe um número USP de um aluno e retorna a sua média ponderada limpa.
+     * 
+     * @author gabrielareisg em 14/06/2021
+     * @param Integer $codpes
+     * @param Integer $codpgm Código que identifica cada programa do aluno. Logo, se o aluno possuir mais de uma graduação
+     * deve passar por parametro o número: sendo 1 referente a primeira graduação, 2 para a segunda, e assim sucessivamente.
+     * Para aqueles que só possuem uma graduação, o campo é preenchido por padrão com o número 1.
+     * @return string
+     */
+    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = 1){
+        $query = DB::getQuery('Graduacao.obterMediaPonderadaLimpa.sql');
+
+        $param = [
+            'codpes' => $codpes,
+            'codpgm' => $codpgm
+        ];
+        $result = DB::fetchAll($query, $param);
+        
+        $creditos = 0;
+        $soma = 0;
+
+        foreach($result as $row){
+            
+            $creditos+= $row['creaul'] + $row['cretrb'];
+
+            $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
+            
+            $mult = floatval($nota) * (intval($row['creaul']) + intval($row['cretrb']));
+
+            $soma+= floatval($mult);   
+        } 
+        return empty($soma) ? false : number_format($soma/$creditos, 1);
+    }
 }
