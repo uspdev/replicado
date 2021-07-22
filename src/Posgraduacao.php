@@ -52,7 +52,7 @@ class Posgraduacao
 
     /**
      * Retorna *array* dos programas de pós-graduação da unidade
-     * 
+     *
      * Quando informado o código do curso/programa retorna somente os dados do programa solicitado
      *
      * @param int $codundclgi Código da unidade
@@ -62,7 +62,9 @@ class Posgraduacao
      */
     public static function programas($codundclgi = null, $codcur = null, $codare = null)
     {
-        if (!$codundclgi) $codundclgi = getenv('REPLICADO_CODUNDCLG');
+        if (!$codundclgi) {
+            $codundclgi = getenv('REPLICADO_CODUNDCLG');
+        }
 
         $query = "SELECT C.codcur, NC.nomcur, A.codare, N.nomare
                   FROM CURSO AS C
@@ -322,7 +324,9 @@ class Posgraduacao
  */
     public static function areasProgramas(int $codundclgi = null, int $codcur = null)
     {
-        if (!$codundclgi) $codundclgi = getenv('REPLICADO_CODUNDCLG');
+        if (!$codundclgi) {
+            $codundclgi = getenv('REPLICADO_CODUNDCLG');
+        }
 
         //obtém programas
         $programas = Posgraduacao::programas($codundclgi, $codcur);
@@ -562,7 +566,7 @@ class Posgraduacao
 
     /**
      * Retorna os membros da banca de um discente
-     * 
+     *
      * Pode-se especificar ou não o programa ou o número sequencial
      * @param Integer $codpes : Número USP
      * @param Integer $codare : Código da programa de Pós
@@ -608,7 +612,7 @@ class Posgraduacao
      *
      * retorna o número USP, nome, nível (ME-mestrado, DO-doutorado ou DD-doutorado direto),
      * nome da área, data início do vínculo (não da orientação)
-     * 
+     *
      * Refatorado em 22/7/2021 para adequar à alteração do método obterVinculoAtivo()
      *
      * @param  Int $codpes: Número USP do docente (orientador)
@@ -623,40 +627,44 @@ class Posgraduacao
         $param['codpes'] = $codpes;
         $orientandos = DB::fetchAll($query, $param);
 
-        # O foreach foi utilizado para evitar o uso de vários inner joins, 
+        # O foreach foi utilizado para evitar o uso de vários inner joins,
         # o que deixaria a performance do método lenta.
-        foreach($orientandos as &$orientando){
+        foreach ($orientandos as &$orientando) {
             $vinculo = SELF::obterVinculoAtivo($orientando['codpes']);
 
             // vamos mergear somente alguns campos de $vinculo
-            if(is_array($vinculo) && count($vinculo)){
+            if (is_array($vinculo) && count($vinculo)) {
                 foreach (['nompes', 'nivpgm', 'dtainivin', 'nomare'] as $key) {
                     $orientando[$key] = $vinculo[$key];
                 }
             }
         }
-        
+
         # Ordenação por nome
         usort($orientandos, function ($a, $b) {
-            if(isset($b['nompes']) && isset($a['nompes']))
-                return $b['nompes'] < $a['nompes'] ? 1 : -1; 
-            else return 1;
+            if (isset($b['nompes']) && isset($a['nompes'])) {
+                return $b['nompes'] < $a['nompes'] ? 1 : -1;
+            } else {
+                return 1;
+            }
+
         });
 
-        return $orientandos;        
+        return $orientandos;
     }
 
     /**
      * Retornar dados do vínculo ativo do aluno de Aluno de Pós Graduação
-     * 
+     *
      * Modificado em 22/7/2021 para retornar mais informações incluindo o orientador
-     * 
+     *
      * @param Int $codpes: Número USP do aluno
      * @return Array
      * @author @gabrielareisg em 30/04/2021 - #issue424
      * @author @masakik, modificado em 22/7/2021
      */
-    public static function obterVinculoAtivo(int $codpes){
+    public static function obterVinculoAtivo(int $codpes)
+    {
         $query = DB::getQuery('Posgraduacao.obterVinculoAtivo.sql');
         $param['codpes'] = $codpes;
         return DB::fetch($query, $param);
@@ -751,7 +759,7 @@ class Posgraduacao
             'codare' => $codare,
             'codundclg' => getenv('REPLICADO_CODUNDCLG'),
         ];
-        
+
         return DB::fetchAll($query, $param);
     }
 }
