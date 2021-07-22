@@ -639,23 +639,19 @@ class Posgraduacao
     }
 
     /**
-     * Retornar o vínculo ativo do aluno de Aluno de Pós Graduação
+     * Retornar dados do vínculo ativo do aluno de Aluno de Pós Graduação
+     * 
+     * Modificado em 22/7/2021 para retornar mais informações incluindo o orientador
      * 
      * @param Int $codpes: Número USP do aluno
      * @return Array
      * @author @gabrielareisg em 30/04/2021 - #issue424
+     * @author @masakik, modificado em 22/7/2021
      */
     public static function obterVinculoAtivo(int $codpes){
-        $query = "SELECT DISTINCT (v.nompes), (v.nivpgm), (v.dtainivin), (n.nomare)
-                    FROM VINCULOPESSOAUSP v
-                    INNER JOIN NOMEAREA n 
-                        ON v.codare = n.codare
-                    WHERE codpes = convert(int, :codpes)
-                    AND v.nivpgm IS NOT NULL
-                    AND v.tipvin IN ('ALUNOPOS', 'INSCRITOPOS')";
-
-            $param['codpes'] = $codpes;
-            return DB::fetch($query, $param);
+        $query = DB::getQuery('Posgraduacao.obterVinculoAtivo.sql');
+        $param['codpes'] = $codpes;
+        return DB::fetch($query, $param);
     }
 
     /**
