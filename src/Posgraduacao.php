@@ -762,4 +762,20 @@ class Posgraduacao
 
         return DB::fetchAll($query, $param);
     }
+
+    /**
+     * Lista os programas de Pós-graduação da unidade
+     * 
+     * Inicialmente em uso no uspdev/pessoas
+     * 
+     * @return Array - lista contendo código e nome do programa
+     * @author masakik, em 22/7/2021
+     */
+    public static function listarProgramas()
+    {
+        $query = DB::getQuery('Posgraduacao.listarProgramas.sql');
+        $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
+
+        return \Uspdev\Replicado\DB::fetchAll($query);
+    }
 }
