@@ -608,26 +608,34 @@ class Posgraduacao
      *
      * retorna o número USP, nome, nível (ME-mestrado, DO-doutorado ou DD-doutorado direto),
      * nome da área, data início do vínculo (não da orientação)
+     * 
+     * Refatorado em 22/7/2021 para adequar à alteração do método obterVinculoAtivo()
      *
      * @param  Int $codpes: Número USP do docente (orientador)
      * @return Array
      * @author Refatorado por Masaki K Neto em 6/4/2021
      * @author Refatorado por @gabrielareisg em 30/4/2021 - issue #424
+     * @author refatorado por masakik, em 22/7/2021
      **/
     public static function listarOrientandosAtivos(int $codpes)
     {
-        # O foreach foi utilizado para evitar o uso de vários inner joins, 
-        # o que deixaria a performance do método lenta.
         $query = DB::getQuery('Posgraduacao.listarOrientandosAtivos.sql');
         $param['codpes'] = $codpes;
         $orientandos = DB::fetchAll($query, $param);
+
+        # O foreach foi utilizado para evitar o uso de vários inner joins, 
+        # o que deixaria a performance do método lenta.
         foreach($orientandos as &$orientando){
             $vinculo = SELF::obterVinculoAtivo($orientando['codpes']);
 
+            // vamos mergear somente alguns campos de $vinculo
             if(is_array($vinculo) && count($vinculo)){
-                $orientando = array_merge($orientando, $vinculo);
+                foreach (['nompes', 'nivpgm', 'dtainivin', 'nomare'] as $key) {
+                    $orientando[$key] = $vinculo[$key];
+                }
             }
         }
+        
         # Ordenação por nome
         usort($orientandos, function ($a, $b) {
             if(isset($b['nompes']) && isset($a['nompes']))
