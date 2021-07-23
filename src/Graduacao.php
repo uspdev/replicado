@@ -568,17 +568,17 @@ class Graduacao
         
         $creditos = 0;
         $soma = 0;
-
+        
         foreach($result as $row){
             
             $creditos+= $row['creaul'] + $row['cretrb'];
 
             $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
             
-            $mult = floatval($nota) * (intval($row['creaul']) + intval($row['cretrb']));
+            $mult = $nota * ($row['creaul'] + $row['cretrb']);
 
-            $soma+= floatval($mult);   
+            $soma+= $mult;   
         } 
-        return empty($soma) ? false : number_format($soma/$creditos, 1);
+        return empty($soma) ? false : round($soma/$creditos, 1);
     }
 }
