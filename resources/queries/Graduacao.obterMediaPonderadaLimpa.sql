@@ -4,4 +4,4 @@ SELECT D.creaul, H.notfim, H.notfim2, D.cretrb
     AND H.verdis = D.verdis
     WHERE H.rstfim = 'A' --Aluno aprovado na disciplina
     AND H.codpes = convert(int,:codpes)
-    AND H.codpgm = convert(int,:codpgm)
+    __codpgm__ 

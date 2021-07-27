@@ -553,26 +553,33 @@ class Graduacao
      * @author gabrielareisg em 14/06/2021
      * @param Integer $codpes
      * @param Integer $codpgm Código que identifica cada programa do aluno. Logo, se o aluno possuir mais de uma graduação
-     * deve passar por parametro o número: sendo 1 referente a primeira graduação, 2 para a segunda, e assim sucessivamente.
-     * Para aqueles que só possuem uma graduação, o campo é preenchido por padrão com o número 1.
+     * deve passar por parametro o número: sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
+     * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
      * @return string
      */
-    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = 1){
+    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null){
         $query = DB::getQuery('Graduacao.obterMediaPonderadaLimpa.sql');
+        
+        if($codpgm == null){
+            $query_codpgm = str_replace('__codpgm__', " AND H.codpgm = (SELECT MAX(H2.codpgm) FROM HISTESCOLARGR H2 WHERE H2.codpes = convert(int,:codpes))", $query);
+        } else {
+            $query_codpgm = str_replace('__codpgm__', " AND H.codpgm = convert(int,:codpgm)", $query);
+        }
 
         $param = [
             'codpes' => $codpes,
             'codpgm' => $codpgm
         ];
-        $result = DB::fetchAll($query, $param);
-        
+
+        $result = DB::fetchAll($query_codpgm, $param);
+
         $creditos = 0;
         $soma = 0;
         
         foreach($result as $row){
             
             $creditos+= $row['creaul'] + $row['cretrb'];
-
+            
             $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
             
             $mult = $nota * ($row['creaul'] + $row['cretrb']);
