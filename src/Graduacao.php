@@ -54,40 +54,40 @@ class Graduacao
      *
      * @param Int $codpes
      * @param Int $codundclgi
+     * @param Bool $somenteAtivos Se for true, retornará apenas os cursos de graduação em andamento, caso contrário, retornará tanto os ativos quanto os já concluídos.
      * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
      */
-    public static function curso($codpes, $codundclgi)
+    public static function curso($codpes, $codundclgi, bool $somenteAtivos = true)
     {
-        $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
-        $query .= " FROM LOCALIZAPESSOA L";
-        $query .= " INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes)";
-        $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
-        $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
-        $query .= " WHERE (L.codpes = convert(int,:codpes))";
-        $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg = convert(int,:codundclgi))";
-        $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
+        $query = "SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin AS dtaing
+            FROM LOCALIZAPESSOA L
+            INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes)
+            INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)
+            INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)
+            WHERE (L.codpes = convert(int,:codpes))
+            AND (L.tipvin = 'ALUNOGR' AND L.codundclg = convert(int,:codundclgi))
+            AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab) ";
+        if(!$somenteAtivos){
+            $query .= "UNION
+            SELECT P.codpes, P.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, T.dtaingtitpes AS dtaing
+            FROM VINCULOPESSOAUSP P
+            INNER JOIN TITULOPES T  ON (P.codpes = T.codpes)
+            INNER JOIN CURSOGR C ON (T.codcur = C.codcur)
+            LEFT JOIN HABILITACAOGR H ON (H.codhab = T.codhab)
+            WHERE (P.codpes = convert(int,:codpes))
+            AND (P.tipvin = 'ALUNOGR')
+            AND (T.codcur = H.codcur AND T.codhab = H.codhab)
+            AND T.idcoricad  = 'grd'";
+        }
+        
+
         $param = [
             'codpes' => $codpes,
             'codundclgi' => $codundclgi,
         ];
-        return DB::fetch($query, $param);
+        return DB::fetchAll($query, $param);
     }
 
-    /**
-     * Método para retornar o codcur e o nome do curso da pessoa através do codpes 
-     * 
-     * @return array
-     */
-    public static function retornarCursoPorCodpes($codpes){
-        $query = DB::getQuery('Graduacao.retornarCursoPorCodpes.sql');
-        
-        $param = [
-            'codpes' => $codpes,
-        ];
-
-        $result = DB::fetchAll($query, $param);
-        return empty($result) ? null : $result[0];
-    }
 
 
     /**
