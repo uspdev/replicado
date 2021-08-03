@@ -90,23 +90,6 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
-    /**
-     * Método para retornar o codare e o nome do programa da pessoa através do codpes 
-     * 
-     * @return array
-     */
-    public static function retornarProgramaPorCodpes($codpes){
-        $query = DB::getQuery('Posgraduacao.retornarProgramaPorCodpes.sql');
-        
-        $param = [
-            'codpes' => $codpes,
-        ];
-        
-        $result = DB::fetchAll($query, $param);
-        return empty($result) ? null : $result[0];
-    }
-
-
 
     /**
      * Retorna lista dos orientadores credenciados na área de concentração (codare) do programa de pós graduação correspondente.
