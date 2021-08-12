@@ -16,10 +16,12 @@ class Graduacao
             foreach ($result as $row) {
                 if (
                     trim($row['tipvin']) == 'ALUNOGR' &&
-                    trim($row['sitatl']) == 'A'  &&
+                    trim($row['sitatl']) == 'A' &&
                     trim($row['codundclg']) == $codundclgi
-                )
+                ) {
                     return true;
+                }
+
             }
         }
         return false;
@@ -75,7 +77,7 @@ class Graduacao
 
     /**
      * Recebe o nº USP do aluno *int* e retorna *int* com o código do programa
-     * 
+     *
      * @param Int $codpes
      * @return Int
      */
@@ -93,8 +95,8 @@ class Graduacao
     }
 
     /**
-     * Retorna o nome do curso 
-     * 
+     * Retorna o nome do curso
+     *
      * @param Int $codcur
      * @return String
      */
@@ -107,13 +109,16 @@ class Graduacao
             'codcur' => $codcur,
         ];
         $result = DB::fetch($query, $param);
-        if ($result) return $result['nomcur'];
+        if ($result) {
+            return $result['nomcur'];
+        }
+
         return $result;
     }
 
     /**
      * Retorna o nome da habilitação
-     * 
+     *
      * @param Int $codcur
      * @param SmallInt $codhab
      * @return String
@@ -128,7 +133,10 @@ class Graduacao
             'codcur' => $codcur,
         ];
         $result = DB::fetch($query, $param);
-        if ($result) return $result['nomhab'];
+        if ($result) {
+            return $result['nomhab'];
+        }
+
         return $result;
     }
 
@@ -155,7 +163,7 @@ class Graduacao
     {
         $query = " SELECT D1.* FROM DISCIPLINAGR AS D1";
         $query .= " WHERE (D1.verdis = (
-            SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis) 
+            SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis)
         )) AND ( ";
         foreach ($arrCoddis as $sgldis) {
             $query .= " (D1.coddis LIKE '$sgldis%') OR ";
@@ -182,7 +190,10 @@ class Graduacao
             'coddis' => $coddis,
         ];
         $result = DB::fetch($query, $param);
-        if ($result) return $result['nomdis'];
+        if ($result) {
+            return $result['nomdis'];
+        }
+
         return $result;
     }
 
@@ -198,7 +209,7 @@ class Graduacao
         $programa = $programa['codpgm'];
         $ingresso = self::curso($codpes, $codundclgi);
         $ingresso = substr($ingresso['dtainivin'], 0, 4);
-        $query  = "SELECT DISTINCT H.coddis, H.rstfim, D.creaul, D.cretrb FROM HISTESCOLARGR AS H, DISCIPLINAGR AS D 
+        $query = "SELECT DISTINCT H.coddis, H.rstfim, D.creaul, D.cretrb FROM HISTESCOLARGR AS H, DISCIPLINAGR AS D
             WHERE H.coddis = D.coddis AND H.verdis = D.verdis AND H.codpes = convert(int, :codpes) AND H.codpgm = convert(int, :programa)
             AND	(H.codtur = '0' OR CONVERT(INT, CONVERT(CHAR(4), H.codtur)) >= YEAR(:ingresso))
             AND (H.rstfim = 'A' OR H.rstfim = 'D' OR (H.rstfim = NULL AND H.stamtr = 'M' AND H.codtur LIKE ':ingresso' + '1%'))
@@ -228,15 +239,18 @@ class Graduacao
             'coddis' => $coddis,
         ];
         $result = DB::fetch($query, $param);
-        if ($result) return $result['creaul'];
+        if ($result) {
+            return $result['creaul'];
+        }
+
         return $result;
     }
 
     /**
      * Créditos atribuídos por Aproveitamento de Estudos no exterior
-     * Documentação da replicação: * credito-aula-atribuido 
+     * Documentação da replicação: * credito-aula-atribuido
      *                             * creaulatb
-     *                             * Número de Créditos aula, atribuído pelo órgão responsável, 
+     *                             * Número de Créditos aula, atribuído pelo órgão responsável,
      *                               a uma disciplina livre cursada no exterior por aluno da USP.
      * @param Int $codpes
      * @param Int $codundclgi
@@ -248,7 +262,7 @@ class Graduacao
         $programa = $programa['codpgm'];
         $ingresso = self::curso($codpes, $codundclgi);
         $ingresso = substr($ingresso['dtainivin'], 0, 4);
-        $query  = "SELECT DISTINCT H.coddis, R.creaulatb ";
+        $query = "SELECT DISTINCT H.coddis, R.creaulatb ";
         $query .= "FROM HISTESCOLARGR AS H, DISCIPLINAGR AS D, REQUERHISTESC AS R ";
         $query .= "WHERE H.coddis = D.coddis AND H.verdis = D.verdis AND H.codpes = convert(int, :codpes) AND H.codpgm = convert(int, :programa) ";
         $query .= "AND H.coddis = R.coddis AND H.verdis = R.verdis AND H.codtur = R.codtur AND H.codpes = R.codpes ";
@@ -264,7 +278,7 @@ class Graduacao
     /**
      * Disciplinas (grade curricular) para um currículo atual no JúpiterWeb
      * a partir do código do curso e da habilitação
-     * 
+     *
      * @param String $codcur
      * @param Int $codhab
      * @return Array(coddis, nomdis, verdis, numsemidl, tipobg)
@@ -287,7 +301,7 @@ class Graduacao
     /**
      * Disciplinas equivalentes de um currículo atual no JúpiterWeb
      * a partir do código do curso e da habilitação
-     * 
+     *
      * @param String $codcur
      * @param Int $codhab
      * @return Array(coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente)
@@ -310,7 +324,7 @@ class Graduacao
 
     /**
      * Departamento de Ensino do Aluno de Graduação
-     * 
+     *
      * @param Int $codpes
      * @param Int $codundclgi
      * @return Array(nomabvset)
@@ -319,7 +333,7 @@ class Graduacao
     {
         $codcur = self::curso($codpes, $codundclgi)['codcur'];
         $codhab = self::curso($codpes, $codundclgi)['codhab'];
-        $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C 
+        $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
                     INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
                     WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
         $param = [
@@ -330,15 +344,15 @@ class Graduacao
         // Nota: Situação a se tratar com log de ocorrências
         // Se o departamento de ensino do alguno de graduação não foi encontrado
         if ($result == false) {
-            // Será retornado 'DEPARTAMENTO NÃO ENCONTRADO' a fim de se detectar as situações ATÍPICAS em que isso ocorre 
+            // Será retornado 'DEPARTAMENTO NÃO ENCONTRADO' a fim de se detectar as situações ATÍPICAS em que isso ocorre
             $result = ['nomabvset' => 'DEPARTAMENTO NÃO ENCONTRADO'];
         }
         return $result;
     }
 
     /**
-     * Método para retornar o total de alunos de graduação do gênero 
-     * e curso (opcional) especificado 
+     * Método para retornar o total de alunos de graduação do gênero
+     * e curso (opcional) especificado
      * @param Char $sexpes
      * @param Integer $codcur (optional)
      * @return void
@@ -347,10 +361,10 @@ class Graduacao
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
 
-        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
-                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
-                    JOIN SITALUNOATIVOGR ON SITALUNOATIVOGR.codpes = LOCALIZAPESSOA.codpes 
-                    WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' 
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes
+                    JOIN SITALUNOATIVOGR ON SITALUNOATIVOGR.codpes = LOCALIZAPESSOA.codpes
+                    WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR'
                     AND LOCALIZAPESSOA.codundclg IN ({$unidades})
                     AND PESSOA.sexpes = :sexpes AND SITALUNOATIVOGR.codcur = convert(int,:codcur) ";
         $param = [
@@ -388,7 +402,7 @@ class Graduacao
      * Método para retornar se uma pessoa é graduada nos cursos da unidade
      * Retornará true caso tenha status Conclusão em um programa ou uma habilitação,
      * caso contrário, retornará false
-     
+
      * @author Lucas Flóro 17/11/2020
      * @param Integer $codpes
      * @return boolean
@@ -410,7 +424,7 @@ class Graduacao
         $param = [
             'codpes' => $codpes,
             'tipencpgm' => 'Conclus_o',
-            'tipenchab' => 'Conclus_o'
+            'tipenchab' => 'Conclus_o',
         ];
 
         $result = DB::fetch($query, $param);
@@ -425,25 +439,28 @@ class Graduacao
     /*
      * Método que verifica através do número USP e código da unidade
      * se a pessoa é Ex-Aluna de Graduação ou não
-     * retorna true se a pessoa for Ex-Aluna de Graduação USP 
+     * retorna true se a pessoa for Ex-Aluna de Graduação USP
      * ou false, caso o contrário
-     *      
-     * @param Integer $codpes : Número USP 
+     *
+     * @param Integer $codpes : Número USP
      * @param Integer $codorg : Código da unidade
      * @return boolean
      */
     public static function verificarExAlunoGrad($codpes, $codorg)
     {
-        $query = " SELECT codpes from TITULOPES 
+        $query = " SELECT codpes from TITULOPES
                     WHERE codpes = convert(int,:codpes)
                     AND codcur IS NOT NULL
                     AND codorg = convert(int,:codorg) ";
         $param = [
             'codpes' => $codpes,
-            'codorg' => $codorg
+            'codorg' => $codorg,
         ];
         $result = DB::fetch($query, $param);
-        if (!empty($result)) return true;
+        if (!empty($result)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -451,7 +468,7 @@ class Graduacao
     {
         $current = date("Y") . (date("m") > 6 ? 2 : 1);
 
-        $query =  "SELECT h.coddis, h.codtur, o.diasmnocp, p.horent, p.horsai FROM HISTESCOLARGR h 
+        $query = "SELECT h.coddis, h.codtur, o.diasmnocp, p.horent, p.horsai FROM HISTESCOLARGR h
                     INNER JOIN OCUPTURMA o ON (h.coddis = o.coddis AND h.codtur = o.codtur)
                     INNER JOIN PERIODOHORARIO p ON (o.codperhor = p.codperhor)
                     WHERE h.codpes = convert(int,:codpes) AND h.codtur LIKE '%{$current}%'";
@@ -463,7 +480,7 @@ class Graduacao
 
     /*
      * Retornar apenas códigos de curso de Graduação da unidade
-     *      
+     *
      * @author Lucas Flóro 20/04/2021
      * @return array
      */
@@ -499,14 +516,13 @@ class Graduacao
         $param = [
             'codcur' => $codcur,
             'codhab' => $codhab,
-            'tipobg' => $tipobg
+            'tipobg' => $tipobg,
         ];
         return DB::fetchAll($query, $param);
     }
 
-
     /**
-     * Retorna lista com os intercâmbios internacionais ativos de alunos da Graduação, 
+     * Retorna lista com os intercâmbios internacionais ativos de alunos da Graduação,
      * com número USP do aluno, nome da Universidade e nome do país da Universidade
      *
      * @return Array
@@ -514,30 +530,30 @@ class Graduacao
      **/
     public static function listarIntercambios()
     {
-        $codundclgi = getenv('REPLICADO_CODUNDCLG');    
+        $codundclgi = getenv('REPLICADO_CODUNDCLG');
 
         $query = DB::getQuery('Graduacao.listarIntercambios.sql');
 
-        $query = str_replace('__codundclgi__',$codundclgi,$query);
+        $query = str_replace('__codundclgi__', $codundclgi, $query);
 
         return DB::fetchAll($query);
     }
 
     /**
-     * Dado um número USP de um aluno de Graduação retorna os dados sobre o intercâmbio do aluno, 
+     * Dado um número USP de um aluno de Graduação retorna os dados sobre o intercâmbio do aluno,
      * como o nome da Universidade, nome do país da Universidade, data de início e data de término.
      *
-     * @param Integer $codpes : Número USP 
+     * @param Integer $codpes : Número USP
      * @return Array
      * @author @gabrielareisg 31/05/2021
      **/
     public static function obterIntercambioPorCodpes(int $codpes)
     {
-        $codundclgi = getenv('REPLICADO_CODUNDCLG');    
+        $codundclgi = getenv('REPLICADO_CODUNDCLG');
 
         $query = DB::getQuery('Graduacao.obterIntercambioPorCodpes.sql');
 
-        $query = str_replace('__codundclgi__',$codundclgi,$query);
+        $query = str_replace('__codundclgi__', $codundclgi, $query);
 
         $param = [
             'codpes' => $codpes,
@@ -549,21 +565,21 @@ class Graduacao
 
     /**
      * Método que recebe o número USP de um aluno e retorna a sua média ponderada limpa.
-     * 
+     *
      * Se o aluno possuir mais de uma graduação deve passar por parametro o número:
      * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
      * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
-     * 
+     *
      * @param Integer $codpes
-     * @param Integer $codpgm Código que identifica cada programa do aluno. 
+     * @param Integer $codpgm Código que identifica cada programa do aluno.
      * @return string
      * @author gabrielareisg em 14/06/2021
      */
     public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null)
     {
         $query = DB::getQuery('Graduacao.obterMediaPonderadaLimpa.sql');
-        
-        if($codpgm === null){
+
+        if ($codpgm === null) {
             $query_codpgm = "(SELECT MAX(H2.codpgm) FROM HISTESCOLARGR H2 WHERE H2.codpes = convert(int,:codpes))";
         } else {
             $query_codpgm = "convert(int,:codpgm)";
@@ -573,7 +589,7 @@ class Graduacao
 
         $param = [
             'codpes' => $codpes,
-            'codpgm' => $codpgm
+            'codpgm' => $codpgm,
         ];
 
         // recuperando as disciplina cursadas
@@ -582,12 +598,12 @@ class Graduacao
         // calculando a media ponderada
         $creditos = 0;
         $soma = 0;
-        foreach($result as $row){
-            $creditos+= $row['creaul'] + $row['cretrb'];
+        foreach ($result as $row) {
+            $creditos += $row['creaul'] + $row['cretrb'];
             $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
             $mult = $nota * ($row['creaul'] + $row['cretrb']);
-            $soma+= $mult;   
+            $soma += $mult;
         }
-        return empty($soma) ? 0 : round($soma/$creditos, 1);
+        return empty($soma) ? 0 : round($soma / $creditos, 1);
     }
 }
