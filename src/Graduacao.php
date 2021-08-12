@@ -548,44 +548,46 @@ class Graduacao
     }
 
     /**
-     * Método que recebe um número USP de um aluno e retorna a sua média ponderada limpa.
+     * Método que recebe o número USP de um aluno e retorna a sua média ponderada limpa.
      * 
-     * @author gabrielareisg em 14/06/2021
-     * @param Integer $codpes
-     * @param Integer $codpgm Código que identifica cada programa do aluno. Logo, se o aluno possuir mais de uma graduação
-     * deve passar por parametro o número: sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
+     * Se o aluno possuir mais de uma graduação deve passar por parametro o número:
+     * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
      * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
+     * 
+     * @param Integer $codpes
+     * @param Integer $codpgm Código que identifica cada programa do aluno. 
      * @return string
+     * @author gabrielareisg em 14/06/2021
      */
-    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null){
+    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null)
+    {
         $query = DB::getQuery('Graduacao.obterMediaPonderadaLimpa.sql');
         
-        if($codpgm == null){
-            $query_codpgm = str_replace('__codpgm__', " AND H.codpgm = (SELECT MAX(H2.codpgm) FROM HISTESCOLARGR H2 WHERE H2.codpes = convert(int,:codpes))", $query);
+        if($codpgm === null){
+            $query_codpgm = "(SELECT MAX(H2.codpgm) FROM HISTESCOLARGR H2 WHERE H2.codpes = convert(int,:codpes))";
         } else {
-            $query_codpgm = str_replace('__codpgm__', " AND H.codpgm = convert(int,:codpgm)", $query);
+            $query_codpgm = "convert(int,:codpgm)";
         }
+
+        $query = str_replace('__codpgm__', $query_codpgm, $query);
 
         $param = [
             'codpes' => $codpes,
             'codpgm' => $codpgm
         ];
 
-        $result = DB::fetchAll($query_codpgm, $param);
+        // recuperando as disciplina cursadas
+        $result = DB::fetchAll($query, $param);
 
+        // calculando a media ponderada
         $creditos = 0;
         $soma = 0;
-        
         foreach($result as $row){
-            
             $creditos+= $row['creaul'] + $row['cretrb'];
-            
             $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
-            
             $mult = $nota * ($row['creaul'] + $row['cretrb']);
-
             $soma+= $mult;   
-        } 
-        return empty($soma) ? false : round($soma/$creditos, 1);
+        }
+        return empty($soma) ? 0 : round($soma/$creditos, 1);
     }
 }
