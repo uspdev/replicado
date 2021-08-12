@@ -59,7 +59,7 @@ class Graduacao
      */
     public static function curso($codpes, $codundclgi, bool $somenteAtivos = true)
     {
-        $query = "SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin AS dtaing
+        $query = "SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin AS dtaing, V.codcurgrd
             FROM LOCALIZAPESSOA L
             INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes)
             INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)
@@ -69,7 +69,7 @@ class Graduacao
             AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab) ";
         if(!$somenteAtivos){
             $query .= "UNION
-            SELECT P.codpes, P.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, T.dtaingtitpes AS dtaing
+            SELECT P.codpes, P.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, T.dtaingtitpes AS dtaing, P.codcurgrd
             FROM VINCULOPESSOAUSP P
             INNER JOIN TITULOPES T  ON (P.codpes = T.codpes)
             INNER JOIN CURSOGR C ON (T.codcur = C.codcur)
@@ -85,7 +85,11 @@ class Graduacao
             'codpes' => $codpes,
             'codundclgi' => $codundclgi,
         ];
-        return DB::fetchAll($query, $param);
+        if($somenteAtivos){
+            return DB::fetch($query, $param);
+        }else{
+            return DB::fetchAll($query, $param);
+        }
     }
 
 
