@@ -222,7 +222,7 @@ class Pessoa
         $query  = "SELECT L.*, P.* FROM LOCALIZAPESSOA L
                     INNER JOIN PESSOA P ON (L.codpes = P.codpes)
                     WHERE (L.tipvinext = 'Servidor Designado'
-                        AND L.codundclg IN (convert(int,:codundclg))
+                        AND L.codundclg IN ({$codundclg})
                         AND L.sitatl = 'A')
                         __tipvinext__
                     ORDER BY L.nompes";
@@ -234,19 +234,15 @@ class Pessoa
                         (SELECT codpes 
                         FROM LOCALIZAPESSOA L
                         WHERE L.tipvinext = $categoria 
-                        AND L.codundclg IN (convert(int,:codundclg)) 
+                        AND L.codundclg IN ({$codundclg}) 
                         AND L.sitatl = 'A')";
             
             $query = str_replace('__tipvinext__', $query_tipvinext, $query);
         }else{
             $query = str_replace('__tipvinext__', '', $query);
         }
-            
-        $param = [
-            'codundclg' => $codundclg,
-        ];
         
-        return DB::fetchAll($query, $param);
+        return DB::fetchAll($query);
     }
     
     
