@@ -208,42 +208,44 @@ class Pessoa
         return DB::fetchAll($query, $param);
     }
 
+
+
    /**
      * Método para retornar servidores designados ativos na unidade
-     * @param Array $tipvinext define o tipo de vinculo da pessoa designada. Por exemplo, pode ser um 'Servidor' designado ou 'Docente' designado. Se for igual a um array vazio, retornará todos os designados independente do vínculo.
+     * @param int $categoria define o tipo de vinculo da pessoa designada. Valores possíveis: 1 para Servidor ou 2 para Docente. Se for qualquer outro valor retornará todos os designados, independente do vínculo.
      * @return void
      */
-    public static function listarDesignados(array $tipvinext = [])
+    public static function listarDesignados(int $categoria = 0)
     {
-        $codundclgi = getenv('REPLICADO_CODUNDCLG');
+        $codundclg = getenv('REPLICADO_CODUNDCLG');
 
         $query  = "SELECT L.*, P.* FROM LOCALIZAPESSOA L
                     INNER JOIN PESSOA P ON (L.codpes = P.codpes)
-                    WHERE (L.tipvinext LIKE 'Servidor Designado'
-                        AND L.codundclg = convert(int,:codundclgi)
+                    WHERE (L.tipvinext = 'Servidor Designado'
+                        AND L.codundclg IN (convert(int,:codundclg))
                         AND L.sitatl = 'A')
                         __tipvinext__
                     ORDER BY L.nompes";
 
-        if(sizeof($tipvinext) > 0){
-            $tipvinext = "'".implode("','", $tipvinext) ."'";
+        if($categoria == 1 || $categoria == 2 ){
+            $categoria = $categoria == 1 ? "'Servidor'" : "'Docente'";
             
             $query_tipvinext = "AND L.codpes IN 
-                        (Select codpes 
-                        from LOCALIZAPESSOA L
-                        where L.tipvinext in ($tipvinext) 
-                        and L.codundclg in (convert(int,:codundclgi)) 
-                        and L.sitatl = 'A')";
+                        (SELECT codpes 
+                        FROM LOCALIZAPESSOA L
+                        WHERE L.tipvinext = $categoria 
+                        AND L.codundclg IN (convert(int,:codundclg)) 
+                        AND L.sitatl = 'A')";
             
             $query = str_replace('__tipvinext__', $query_tipvinext, $query);
         }else{
             $query = str_replace('__tipvinext__', '', $query);
         }
-       
-       
+            
         $param = [
-            'codundclgi' => $codundclgi,
+            'codundclg' => $codundclg,
         ];
+        
         return DB::fetchAll($query, $param);
     }
     
@@ -898,4 +900,18 @@ class Pessoa
     {
         return SELF::retornarEmailUsp($codpes);
     }
+
+
+    /**
+     * (deprecated) Método para retornar servidores designados ativos na unidade
+     *
+     * @param Integer $codundclgi. O valor deste parâmetro não está mais sendo utilizado, o código da unidade agora é obtido através da configuração no .env
+     * @return Array
+     * @deprecated em favor de listarDesignados, em 22/07/2021 - @st-ricardof.
+     */
+    public static function designados($codundclgi)
+    {
+        return self::listarDesignados();
+    }
+
 }
