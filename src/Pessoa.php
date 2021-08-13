@@ -210,16 +210,22 @@ class Pessoa
 
 
 
-   /**
+    /**
      * Método para retornar servidores designados ativos na unidade
-     * @param int $categoria define o tipo de vinculo da pessoa designada. Valores possíveis: 1 para Servidor ou 2 para Docente. Se for qualquer outro valor retornará todos os designados, independente do vínculo.
+     * 
+     *  Valores possíveis para categoria: 1 para Servidor ou 2 para Docente. 
+     *  Se for qualquer outro valor retornará todos os designados, independente do vínculo.
+     *  Substitui o método designados
+     * 
+     * @param int $categoria define o tipo de vinculo da pessoa designada.
      * @return void
+     * @author @st-ricardof, em 8/2022
      */
     public static function listarDesignados(int $categoria = 0)
     {
         $codundclg = getenv('REPLICADO_CODUNDCLG');
 
-        $query  = "SELECT L.*, P.* FROM LOCALIZAPESSOA L
+        $query = "SELECT L.*, P.* FROM LOCALIZAPESSOA L
                     INNER JOIN PESSOA P ON (L.codpes = P.codpes)
                     WHERE (L.tipvinext = 'Servidor Designado'
                         AND L.codundclg IN ({$codundclg})
@@ -227,21 +233,21 @@ class Pessoa
                         __tipvinext__
                     ORDER BY L.nompes";
 
-        if($categoria == 1 || $categoria == 2 ){
-            $categoria = $categoria == 1 ? "'Servidor'" : "'Docente'";
-            
-            $query_tipvinext = "AND L.codpes IN 
-                        (SELECT codpes 
+        if ($categoria == 1 || $categoria == 2) {
+            $categoria = $categoria == 1 ? 'Servidor' : 'Docente';
+
+            $query_tipvinext = "AND L.codpes IN
+                        (SELECT codpes
                         FROM LOCALIZAPESSOA L
-                        WHERE L.tipvinext = $categoria 
-                        AND L.codundclg IN ({$codundclg}) 
+                        WHERE L.tipvinext = '$categoria'
+                        AND L.codundclg IN ({$codundclg})
                         AND L.sitatl = 'A')";
-            
+
             $query = str_replace('__tipvinext__', $query_tipvinext, $query);
-        }else{
+        } else {
             $query = str_replace('__tipvinext__', '', $query);
         }
-        
+
         return DB::fetchAll($query);
     }
     
