@@ -756,23 +756,6 @@ class Pessoa
     }
 
     /**
-     * Método para retornar o codare e o nome do programa da pessoa através do codpes
-     *
-     * @return array
-     */
-    public static function retornarProgramaPorCodpes($codpes)
-    {
-        $query = DB::getQuery('Pessoa.retornarProgramaPorCodpes.sql');
-
-        $param = [
-            'codpes' => $codpes,
-        ];
-
-        $result = DB::fetchAll($query, $param);
-        return empty($result) ? null : $result[0];
-    }
-
-    /**
      * Método que recebe um período (dtaini, dtafim) para listar falecidos.
      * Data no formato americano AAAA-MM-DD
      * @return array
@@ -790,7 +773,7 @@ class Pessoa
         ];
 
         return DB::fetchAll($query, $param);
-    }               
+    }
 
     /**
      * Método que retorna siglas dos vínculos ativos de uma pessoa
