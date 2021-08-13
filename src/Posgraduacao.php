@@ -92,6 +92,7 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
+
     /**
      * Retorna lista dos orientadores credenciados na área de concentração (codare) do programa de pós graduação correspondente.
      *
