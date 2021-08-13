@@ -5,8 +5,8 @@ namespace Uspdev\Replicado;
 class Pessoa
 {
 
-     /**
-     * Método que recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão. 
+    /**
+     * Método que recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão.
      * O campos $fields é opcional.
      *
      * @param Integer $codpes
@@ -15,7 +15,7 @@ class Pessoa
      */
     public static function dump(int $codpes, array $fields = ['*'])
     {
-        $columns = implode(",",$fields);
+        $columns = implode(",", $fields);
         $query = "SELECT {$columns} FROM PESSOA
                     WHERE codpes = convert(int,:codpes)";
         $param = [
@@ -25,7 +25,7 @@ class Pessoa
     }
 
     /**
-     * Método que recebe codpes para retornar todos os campos da tabela cracha para o codpes em questão 
+     * Método que recebe codpes para retornar todos os campos da tabela cracha para o codpes em questão
      *
      * @param Integer $codpes
      * @return array
@@ -54,17 +54,16 @@ class Pessoa
             'codpes' => $codpes,
         ];
         $result = DB::fetchAll($query, $param);
-        $emails= [];
-        foreach ($result as $row)
-        {
+        $emails = [];
+        foreach ($result as $row) {
             $email = trim($row['codema']);
-            in_array($email,$emails) ?: array_push($emails,$email);
+            in_array($email, $emails) ?: array_push($emails, $email);
         }
         return $emails;
     }
 
     /**
-     * Método que recebe o número USP para retornar email de correspondência da pessoa, 
+     * Método que recebe o número USP para retornar email de correspondência da pessoa,
      * cujo campo 'stamtr' é igual a 'S'
      *
      * @param Integer $codpes
@@ -78,10 +77,11 @@ class Pessoa
             'codpes' => $codpes,
         ];
         $result = DB::fetchAll($query, $param);
-        foreach ($result as $row)
-        {
-            if (trim($row['stamtr'])=='S')
+        foreach ($result as $row) {
+            if (trim($row['stamtr']) == 'S') {
                 return $row['codema'];
+            }
+
         }
         return false;
     }
@@ -102,10 +102,9 @@ class Pessoa
         $result = DB::fetchAll($query, $param);
 
         $telefones = array();
-        foreach ($result as $row)
-        {
+        foreach ($result as $row) {
             $telefone = '(' . trim($row['codddd']) . ') ' . trim($row['numtel']);
-            in_array($telefone,$telefones) ?: array_push($telefones,$telefone);
+            in_array($telefone, $telefones) ?: array_push($telefones, $telefone);
         }
         return $telefones;
     }
@@ -113,7 +112,7 @@ class Pessoa
     /**
      * Método para buscar pessoas por nome ou parte do nome
      * A busca pode ser fonética ou normal, somente ativos ou todos
-     * 
+     *
      * @param String $nome Nome a ser buscado
      * @param Bool $fonetico Se true faz busca no campo nompesfon, se false faz em nompesttd
      * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a base
@@ -167,28 +166,34 @@ class Pessoa
             $param['codungclgi'] = $codundclgi;
         }
         $param['codpes'] = $codpes;
-            
+
         $result = DB::fetchAll($query, $param);
 
         $vinculos = array();
-        foreach ($result as $row)
-        {
+        foreach ($result as $row) {
             $vinculo = "";
-            if (!empty($row['tipvinext']))
-                $vinculo = $vinculo  .  $row['tipvinext'];
-            if (!empty($row['nomfnc']))
-                $vinculo = $vinculo . " - " . $row['nomfnc'];
-            if (!empty($row['nomset']))
-                $vinculo = $vinculo . " - " . $row['nomset'];
-            if (!empty($row['sglclgund']))
-                $vinculo = $vinculo . " - " . $row['sglclgund'];
+            if (!empty($row['tipvinext'])) {
+                $vinculo = $vinculo . $row['tipvinext'];
+            }
 
-            in_array($vinculo,$vinculos) ?:  array_push($vinculos, trim($vinculo));
+            if (!empty($row['nomfnc'])) {
+                $vinculo = $vinculo . " - " . $row['nomfnc'];
+            }
+
+            if (!empty($row['nomset'])) {
+                $vinculo = $vinculo . " - " . $row['nomset'];
+            }
+
+            if (!empty($row['sglclgund'])) {
+                $vinculo = $vinculo . " - " . $row['sglclgund'];
+            }
+
+            in_array($vinculo, $vinculos) ?: array_push($vinculos, trim($vinculo));
         }
         return $vinculos;
     }
-    
-   /**
+
+    /**
      * Método para retornar servidores ativos na unidade
      *
      * @param Integer $codundclgi
@@ -196,7 +201,7 @@ class Pessoa
      */
     public static function servidores($codundclgi)
     {
-        $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
+        $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
                     INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
                     WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor'
                         AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
@@ -208,15 +213,13 @@ class Pessoa
         return DB::fetchAll($query, $param);
     }
 
-
-
     /**
      * Método para retornar servidores designados ativos na unidade
-     * 
-     *  Valores possíveis para categoria: 1 para Servidor ou 2 para Docente. 
+     *
+     *  Valores possíveis para categoria: 1 para Servidor ou 2 para Docente.
      *  Se for qualquer outro valor retornará todos os designados, independente do vínculo.
      *  Substitui o método designados
-     * 
+     *
      * @param int $categoria define o tipo de vinculo da pessoa designada.
      * @return void
      * @author @st-ricardof, em 8/2022
@@ -250,8 +253,7 @@ class Pessoa
 
         return DB::fetchAll($query);
     }
-    
-    
+
     /**
      * Método para retornar estagiários ativos na unidade
      *
@@ -260,7 +262,7 @@ class Pessoa
      */
     public static function estagiarios($codundclgi)
     {
-        $query  = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
+        $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
                     INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
                     WHERE ( LOCALIZAPESSOA.tipvin LIKE 'ESTAGIARIORH'
                         AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
@@ -283,7 +285,7 @@ class Pessoa
     {
         $query = "SELECT COUNT(codpes) FROM LOCALIZAPESSOA
                     WHERE tipvinext = :vinculo
-                        AND sitatl = 'A' 
+                        AND sitatl = 'A'
                         AND codundclg = convert(int,:codundclg)";
         $param = [
             'vinculo' => $vinculo,
@@ -305,7 +307,7 @@ class Pessoa
         $query = "SELECT COUNT(lp.codpes) FROM LOCALIZAPESSOA AS lp
                     INNER JOIN VINCULOPESSOAUSP AS vpu
                     ON(lp.codpes = vpu.codpes AND lp.tipvin = vpu.tipvin)
-                    WHERE lp.tipvin='ALUNOPOS' 
+                    WHERE lp.tipvin='ALUNOPOS'
                         AND lp.codundclg= convert(int,:codundclg)
                         AND lp.sitatl='A'
                         AND vpu.nivpgm=:nivpgm";
@@ -327,33 +329,37 @@ class Pessoa
         $query = "SELECT DISTINCT(tipvinext) FROM LOCALIZAPESSOA";
         return DB::fetchAll($query);
     }
-    
+
     /**
      * Retorna o nome completo (nome social) a partir do codpes
      * @param type $codpes
      * @return boolean
      */
-    public static function nomeCompleto($codpes){
+    public static function nomeCompleto($codpes)
+    {
         $result = Pessoa::dump($codpes, ['nompesttd']);
-        if(!empty($result)) return $result['nompesttd'];
+        if (!empty($result)) {
+            return $result['nompesttd'];
+        }
+
         return $result;
     }
 
     /**
      * Método para retornar os tipos de vínculos por extenso (tipvinext) de ativos, com base na unidade
-     * 
+     *
      * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT'),
-     * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH') 
-     * Incluido também os Docente Aposentado 
+     * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH')
+     * Incluido também os Docente Aposentado
      *
      * @param Integer $codundclgi
      * @return Array
      */
     public static function tiposVinculos($codundclgi)
     {
-        $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA 
-                    WHERE sitatl IN ('A', 'P') 
-                        AND codundclg = convert(int, :codundclgi) 
+        $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA
+                    WHERE sitatl IN ('A', 'P')
+                        AND codundclg = convert(int, :codundclgi)
                         AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'))
                         AND (tipvinext NOT IN ('Servidor Designado', 'Servidor Aposentado'))
                     ORDER BY tipvinext";
@@ -365,16 +371,16 @@ class Pessoa
 
     /**
      * Método para retornar *array* com todas as pessoas ativas por vínculo
-     * Somente ATIVOS (também Docente Aposentado) 
-     * Se o terceiro parâmetro *$contar* for igual a 1, retorna um *array* 
+     * Somente ATIVOS (também Docente Aposentado)
+     * Se o terceiro parâmetro *$contar* for igual a 1, retorna um *array*
      * com o índice *total* que corresponde ao número total de pessoas do tipo de vínculo
-     * 
+     *
      * @param String $vinculo
      * @param Integer $codundclgi
      * @param Integer $contar Default 0
      * @return void
      */
-    public static function ativosVinculo($vinculo, $codundclgi, $contar = 0) 
+    public static function ativosVinculo($vinculo, $codundclgi, $contar = 0)
     {
         if ($contar == 0) {
             $colunas = "L.*, P.*";
@@ -383,32 +389,32 @@ class Pessoa
             $colunas = "COUNT(*) total";
             $ordem = "";
         }
-        
-        $query = "SELECT $colunas FROM LOCALIZAPESSOA L 
-                    INNER JOIN PESSOA P ON (L.codpes = P.codpes) 
-                    WHERE (L.tipvinext = :vinculo 
-                        AND L.codundclg = CONVERT(INT, :codundclgi) 
-                        AND L.sitatl IN ('A', 'P')) 
+
+        $query = "SELECT $colunas FROM LOCALIZAPESSOA L
+                    INNER JOIN PESSOA P ON (L.codpes = P.codpes)
+                    WHERE (L.tipvinext = :vinculo
+                        AND L.codundclg = CONVERT(INT, :codundclgi)
+                        AND L.sitatl IN ('A', 'P'))
                     $ordem";
 
         $param = [
-            'codundclgi'    => $codundclgi,
-            'vinculo'       => $vinculo,
+            'codundclgi' => $codundclgi,
+            'vinculo' => $vinculo,
         ];
         return DB::fetchAll($query, $param);
-    } 
+    }
 
     /**
      * Método para retornar *array* com a lista de servidores (docentes, funcionários e estagiários) por setor(es)
-     * 
+     *
      * Se aposentados = 1, lista também os docentes aposentados (stiatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
-     * 
+     *
      * @param Array $codset
      * @param Integer $aposentados (opt) Default 1
      * @return void
      * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
-    public static function listarServidoresSetor(array $codset, int $aposentados = 1) 
+    public static function listarServidoresSetor(array $codset, int $aposentados = 1)
     {
         // $filtro = "WHERE (L.codset IN (:setor) AND L.codfncetr = 0)"; # retira os designados
         $filtro = "WHERE (L.codset IN (" . implode(',', $codset) . ") AND L.codfncetr = 0)"; # retira os designados
@@ -420,21 +426,21 @@ class Pessoa
         $colunas = "DISTINCT P.*";
         $ordem = "ORDER BY P.nompes";
         // $param['setor'] = implode(',', $codset); # retorna vazio para mais de um setor
-        $query = "SELECT $colunas FROM PESSOA P INNER JOIN LOCALIZAPESSOA L ON (P.codpes = L.codpes) $filtro $ordem";      
+        $query = "SELECT $colunas FROM PESSOA P INNER JOIN LOCALIZAPESSOA L ON (P.codpes = L.codpes) $filtro $ordem";
         // return DB::fetchAll($query, $param);
         return DB::fetchAll($query);
-    } 
+    }
 
     /**
      * Método para retornar o total de servidores (docentes, funcionários e estagiários) por setor(es)
      * Se aposentados = 1, conta também os docentes aposentados (stiatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
-     * 
+     *
      * @param Array $codset
      * @param Integer $aposentados (opt) Default 1
      * @return void
      * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
-    public static function contarServidoresSetor(array $codset, int $aposentados = 1) 
+    public static function contarServidoresSetor(array $codset, int $aposentados = 1)
     {
         // $filtro = "WHERE (L.codset IN (:setor) AND L.codfncetr = 0)"; # retira os designados
         $filtro = "WHERE (L.codset IN (" . implode(',', $codset) . ") AND L.codfncetr = 0)"; # retira os designados
@@ -445,17 +451,17 @@ class Pessoa
         }
         $colunas = "COUNT(*) total";
         // $param['setor'] = implode(',', $codset); # retorna vazio para mais de um setor
-        $query = "SELECT $colunas FROM PESSOA P INNER JOIN LOCALIZAPESSOA L ON (P.codpes = L.codpes) $filtro";      
+        $query = "SELECT $colunas FROM PESSOA P INNER JOIN LOCALIZAPESSOA L ON (P.codpes = L.codpes) $filtro";
         // return DB::fetch($query, $param);
         return DB::fetch($query);
     }
 
     /**
      * Método para listar todos os vínculos e setores de uma pessoa
-     * 
+     *
      * Fundamental para o uspdev/web-ldap-admin
      * Somente ATIVOS
-     * Também Docente Aposentado 
+     * Também Docente Aposentado
      *
      * @param Integer $codpes
      * @param Integer (opt) $codundclgi
@@ -474,13 +480,12 @@ class Pessoa
             $param['codundclgi'] = $codundclgi;
         }
         $param['codpes'] = $codpes;
-        
+
         $result = DB::fetchAll($query, $param);
 
         // Inicializa o array de vínculos e setores
         $vinculosSetores = array();
-        foreach ($result as $row)
-        {
+        foreach ($result as $row) {
             if (!empty($row['tipvinext'])) {
                 $vinculo = trim($row['tipvinext']);
                 // Adiciona os vínculos por extenso
@@ -488,12 +493,12 @@ class Pessoa
                 // Adiciona o departamento quando também for Aluno de Graduação
                 if (trim($row['tipvinext']) == 'Aluno de Graduação') {
                     $setorGraduacao = Graduacao::setorAluno($row['codpes'], $codundclgi)['nomabvset'];
-                    array_push($vinculosSetores, $row['tipvinext'] . ' ' . $setorGraduacao);   
-                }             
-            }    
+                    array_push($vinculosSetores, $row['tipvinext'] . ' ' . $setorGraduacao);
+                }
+            }
             if (!empty(trim($row['nomabvset']))) {
                 $setor = trim($row['nomabvset']);
-                // Remove o código da unidade da sigla do setor 
+                // Remove o código da unidade da sigla do setor
                 $setor = str_replace('-' . $codundclgi, '', $setor);
                 // Adiciona as siglas dos setores
                 array_push($vinculosSetores, $setor);
@@ -505,7 +510,7 @@ class Pessoa
         sort($vinculosSetores);
 
         return $vinculosSetores;
-    }      
+    }
 
     /**
      * Método para retornar data de nascimento de uma pessoa, com base no seu número USP ($codpes)
@@ -513,32 +518,37 @@ class Pessoa
      * @param Integer $codpes
      * @return void
      */
-    public static function nascimento($codpes){
+    public static function nascimento($codpes)
+    {
         $result = self::dump($codpes);
         if (!empty($result)) {
             return Uteis::data_mes($result['dtanas']);
         }
         return $result;
     }
-    
+
     /**
      * Método que verifica através do número USP se a pessoa tem estágio USP ou não
-     * retorna true se a pessoa tiver um estágio na USP 
+     * retorna true se a pessoa tiver um estágio na USP
      * ou false caso o contrário
      * Somente ATIVOS
      *
      * @param Integer $codpes
      * @return boolean
      */
-    public static function verificarEstagioUSP($codpes){
-        $query = " SELECT codpes from LOCALIZAPESSOA 
+    public static function verificarEstagioUSP($codpes)
+    {
+        $query = " SELECT codpes from LOCALIZAPESSOA
                     WHERE codpes = convert(int,:codpes)
                     AND tipvin LIKE 'ESTAGIARIORH' ";
         $param = [
             'codpes' => $codpes,
         ];
         $result = DB::fetch($query, $param);
-        if(!empty($result)) return true;
+        if (!empty($result)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -547,12 +557,13 @@ class Pessoa
      * @param Char $sexpes
      * @return Integer
      */
-    public static function contarDocentesAtivosPorGenero($sexpes){
+    public static function contarDocentesAtivosPorGenero($sexpes)
+    {
         $unidades = getenv('REPLICADO_CODUNDCLG');
 
-        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
-                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
-                    WHERE LOCALIZAPESSOA.tipvinext = 'Docente' 
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes
+                    WHERE LOCALIZAPESSOA.tipvinext = 'Docente'
                     AND LOCALIZAPESSOA.codundclg IN ({$unidades})
                     AND PESSOA.sexpes = :sexpes AND LOCALIZAPESSOA.sitatl = 'A' ";
         $param = [
@@ -566,12 +577,13 @@ class Pessoa
      * @param Char $sexpes
      * @return Integer
      */
-    public static function contarEstagiariosAtivosPorGenero($sexpes){
+    public static function contarEstagiariosAtivosPorGenero($sexpes)
+    {
         $unidades = getenv('REPLICADO_CODUNDCLG');
 
-        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
-                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
-                    WHERE LOCALIZAPESSOA.tipvin = 'ESTAGIARIORH' 
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes
+                    WHERE LOCALIZAPESSOA.tipvin = 'ESTAGIARIORH'
                     AND LOCALIZAPESSOA.codundclg IN ({$unidades})
                     AND PESSOA.sexpes = :sexpes ";
         $param = [
@@ -581,25 +593,26 @@ class Pessoa
     }
 
     /**
-     * Método que recebe o codpes e retorna os campos para o endereço completo: 
-     * rua/avenida, número, complemento, bairro, cidade e UF. 
+     * Método que recebe o codpes e retorna os campos para o endereço completo:
+     * rua/avenida, número, complemento, bairro, cidade e UF.
      * @param Integer $codpes
      * @return array
-    */
-    public static function obterEndereco($codpes){
-        $query = "SELECT TL.nomtiplgr, EP.epflgr, EP.numlgr, EP.cpllgr, EP.nombro, L.cidloc, L.sglest, EP.codendptl 
+     */
+    public static function obterEndereco($codpes)
+    {
+        $query = "SELECT TL.nomtiplgr, EP.epflgr, EP.numlgr, EP.cpllgr, EP.nombro, L.cidloc, L.sglest, EP.codendptl
                     FROM ENDPESSOA AS EP
                     JOIN LOCALIDADE AS L
-                    ON EP.codloc = L.codloc 
+                    ON EP.codloc = L.codloc
                     JOIN TIPOLOGRADOURO AS TL
-                    ON EP.codtiplgr = TL.codtiplgr 
+                    ON EP.codtiplgr = TL.codtiplgr
                     WHERE EP.codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
         return DB::fetch($query, $param);
     }
-    
+
     /**
      * Método que lista docentes ativos e/ou inativos da Unidade agrupando por setor (departamento)
      *
@@ -629,16 +642,17 @@ class Pessoa
 
         return DB::fetchAll($query);
     }
-    
+
     /**
      * Método para retornar o total de servidores ativos na unidade do gênero especificado
      * @param Integer $codpes
      * @return int|bool
      */
-    public static function contarServidoresAtivosPorGenero($sexpes){
+    public static function contarServidoresAtivosPorGenero($sexpes)
+    {
         $unidades = getenv('REPLICADO_CODUNDCLG');
-        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA 
-                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes 
+        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA
+                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes
                     WHERE LOCALIZAPESSOA.tipvinext LIKE 'Servidor'
                     AND LOCALIZAPESSOA.codundclg IN ({$unidades})
                     AND PESSOA.sexpes = :sexpes ";
@@ -654,14 +668,18 @@ class Pessoa
      * @param String
      * @return boolean
      */
-    public static function obterCodpesPorEmail($codema){
+    public static function obterCodpesPorEmail($codema)
+    {
         $query = " SELECT codpes FROM EMAILPESSOA
                     WHERE EMAILPESSOA.codema = :codema";
         $param = [
             'codema' => $codema,
         ];
         $result = DB::fetch($query, $param);
-        if($result) return $result['codpes'];
+        if ($result) {
+            return $result['codpes'];
+        }
+
         return '';
     }
 
@@ -670,7 +688,8 @@ class Pessoa
      * @param integer $codpes
      * @return string
      */
-    public static function obterRamalUsp(int $codpes) {
+    public static function obterRamalUsp(int $codpes)
+    {
         $query = " SELECT numtelfmt
                     FROM LOCALIZAPESSOA
                     WHERE LOCALIZAPESSOA.codpes = convert(int, :codpes)";
@@ -680,7 +699,7 @@ class Pessoa
 
         $result = DB::fetch($query, $param);
 
-        if(!empty($result)){
+        if (!empty($result)) {
             return $result['numtelfmt'];
         }
 
@@ -688,20 +707,21 @@ class Pessoa
     }
 
     /**
-     * Método que lista docentes aposentados Sênior (em atividade) de uma unidade por setor (departamento) solicitado 
+     * Método que lista docentes aposentados Sênior (em atividade) de uma unidade por setor (departamento) solicitado
      *
      * $codset pode ser um número (para um único setor) ou pode ser
      * uma lista de setores separados por vírgula (para um ou mais de um setores)
      * Se não informado, listará de todos os setores.
-     * 
+     *
      * @param List $codset (opt) - Código do setor
      * @return array
      */
-    public static function listarDocentesAposentadosSenior($codset = false){
+    public static function listarDocentesAposentadosSenior($codset = false)
+    {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $current = date("Y-m-d H:i:s");
         $addquery = '';
-        if ($codset){
+        if ($codset) {
             $addquery = "AND L.codset IN ({$codset})";
         }
         $query = "SELECT * FROM LOCALIZAPESSOA L
@@ -719,13 +739,14 @@ class Pessoa
     }
 
     /**
-     * Método para retornar o codcur e o nome do curso da pessoa através do codpes 
-     * 
+     * Método para retornar o codcur e o nome do curso da pessoa através do codpes
+     *
      * @return array
      */
-    public static function retornarCursoPorCodpes($codpes){
+    public static function retornarCursoPorCodpes($codpes)
+    {
         $query = DB::getQuery('Pessoa.retornarCursoPorCodpes.sql');
-        
+
         $param = [
             'codpes' => $codpes,
         ];
@@ -733,42 +754,41 @@ class Pessoa
         $result = DB::fetchAll($query, $param);
         return empty($result) ? null : $result[0];
     }
-    
+
     /**
-     * Método para retornar o codare e o nome do programa da pessoa através do codpes 
-     * 
+     * Método para retornar o codare e o nome do programa da pessoa através do codpes
+     *
      * @return array
      */
-    public static function retornarProgramaPorCodpes($codpes){
+    public static function retornarProgramaPorCodpes($codpes)
+    {
         $query = DB::getQuery('Pessoa.retornarProgramaPorCodpes.sql');
-        
+
         $param = [
             'codpes' => $codpes,
         ];
-        
+
         $result = DB::fetchAll($query, $param);
         return empty($result) ? null : $result[0];
     }
 
-  
-   
-
     /**
-     * Método que recebe um período (dtaini, dtafim) para listar falecidos. 
+     * Método que recebe um período (dtaini, dtafim) para listar falecidos.
      * Data no formato americano AAAA-MM-DD
      * @return array
      */
-    public static function listarFalecidosPorPeriodo($dtaini, $dtafim){
-        $unidades = getenv('REPLICADO_CODUNDCLG');    
+    public static function listarFalecidosPorPeriodo($dtaini, $dtafim)
+    {
+        $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.listarFalecidosPorPeriodo.sql');
-    
-        $query = str_replace('__unidades__',$unidades,$query);
+
+        $query = str_replace('__unidades__', $unidades, $query);
 
         $param = [
             'dtaini' => $dtaini,
             'dtafim' => $dtafim,
         ];
-        
+
         return DB::fetchAll($query, $param);
     }
 
@@ -781,16 +801,19 @@ class Pessoa
      */
     public static function obterSiglasVinculosAtivos(int $codpes)
     {
-        $unidades = getenv('REPLICADO_CODUNDCLG');    
+        $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.obterSiglasVinculosAtivos.sql');
-        $query = str_replace('__unidades__',$unidades,$query);
+        $query = str_replace('__unidades__', $unidades, $query);
 
         $param = [
             'codpes' => $codpes,
         ];
 
         $return = DB::fetch($query, $param);
-        if($return) return array_values($return);
+        if ($return) {
+            return array_values($return);
+        }
+
         return null;
     }
 
@@ -803,16 +826,19 @@ class Pessoa
      */
     public static function obterSiglasSetoresAtivos(int $codpes)
     {
-        $unidades = getenv('REPLICADO_CODUNDCLG');    
+        $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.obterSiglasSetoresAtivos.sql');
-        $query = str_replace('__unidades__',$unidades,$query);
+        $query = str_replace('__unidades__', $unidades, $query);
 
         $param = [
             'codpes' => $codpes,
         ];
 
         $return = DB::fetch($query, $param);
-        if($return) return array_values($return);
+        if ($return) {
+            return array_values($return);
+        }
+
         return null;
     }
 
@@ -825,7 +851,7 @@ class Pessoa
      */
     public static function retornarEmailUsp(int $codpes)
     {
-        $unidades = getenv('REPLICADO_CODUNDCLG');    
+        $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.retornarEmailUsp.sql');
 
         $param = [
@@ -833,7 +859,10 @@ class Pessoa
         ];
 
         $return = DB::fetch($query, $param);
-        if($return) return $return['codema'];
+        if ($return) {
+            return $return['codema'];
+        }
+
         return null;
     }
 
@@ -902,7 +931,6 @@ class Pessoa
     {
         return SELF::retornarEmailUsp($codpes);
     }
-
 
     /**
      * (deprecated) Método para retornar servidores designados ativos na unidade
