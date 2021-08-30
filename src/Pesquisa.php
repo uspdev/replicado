@@ -60,9 +60,9 @@ class Pesquisa
             $ic['codcur'] =  $curso == null ? null : $curso['codcurgrd'];
             $ic['nome_curso'] =  $curso == null ? null : $curso['nomcur'];
             
-            $programa = Pessoa::retornarProgramaPorCodpes($ic['aluno']);
-            $ic['codare'] =  $programa == null ? null : $programa['codare'];
-            $ic['nome_programa'] =  $programa == null ? null : $programa['nomare'];
+            $setor = Pesquisa::retornarSetorICPorCodpes($ic['aluno']);
+            $ic['codset'] =  $setor == null ? null : $setor['codset'];
+            $ic['nome_setor'] =  $setor == null ? null : $setor['nomset'];
 
             $query_com_bolsa = DB::getQuery('Pesquisa.buscarICcomBolsaPorCodpes.sql');     
             $query_com_bolsa = str_replace('__unidades__',$unidades,$query_com_bolsa);   
@@ -152,6 +152,22 @@ class Pesquisa
         
       
         return $pesquisas_pos_doutorando;
+    }
+
+    /**
+     * Método para retornar o código e nome do setor, referente a pesquisa de Iniciação Científica do aluno, através do codpes 
+     * 
+     * @return array
+     */
+    public static function retornarSetorICPorCodpes($codpesalu){
+        $query = DB::getQuery('Pesquisa.retornarSetorICPorCodpes.sql');
+
+        $param = [
+            'codpesalu' => $codpesalu,
+        ];
+
+        $result = DB::fetchAll($query, $param);
+        return empty($result) ? null : $result[0];
     }
 
 }
