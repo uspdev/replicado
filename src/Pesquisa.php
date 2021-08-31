@@ -51,8 +51,6 @@ class Pesquisa
         
         
         $result =  DB::fetchAll($query, $param);
- 
-        
 
         $iniciacao_cientifica = [];
         foreach($result as $ic){
@@ -60,10 +58,6 @@ class Pesquisa
             $ic['codcur'] =  $curso == null ? null : $curso['codcurgrd'];
             $ic['nome_curso'] =  $curso == null ? null : $curso['nomcur'];
             
-            $programa = Pessoa::retornarProgramaPorCodpes($ic['aluno']);
-            $ic['codare'] =  $programa == null ? null : $programa['codare'];
-            $ic['nome_programa'] =  $programa == null ? null : $programa['nomare'];
-
             $query_com_bolsa = DB::getQuery('Pesquisa.buscarICcomBolsaPorCodpes.sql');     
             $query_com_bolsa = str_replace('__unidades__',$unidades,$query_com_bolsa);   
 
