@@ -666,27 +666,43 @@ class Lattes
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['APRESENTACAO-DE-TRABALHO'])) return false;
         $apresentacao_trabalhos = [];
-        $i = 0;
-        foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['APRESENTACAO-DE-TRABALHO'] as $apresentacao){
-            
-            $i++;
-            $autores = (!isset($apresentacao['AUTORES']) && isset($apresentacao[3])) ? 3 : 'AUTORES';
-            $aux_autores = self::listarAutores(Arr::get($apresentacao, "{$autores}", []));  
 
-            
-            $aux_apresentacao_trabalho = [];
-            $aux_apresentacao_trabalho['TITULO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.TITULO", "");
-            $aux_apresentacao_trabalho['TIPO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.NATUREZA", ""); 
-            $aux_apresentacao_trabalho['SEQUENCIA-PRODUCAO'] = Arr::get($apresentacao, "@attributes.SEQUENCIA-PRODUCAO", ""); 
-            $aux_apresentacao_trabalho['ANO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.ANO", ""); 
-            $aux_apresentacao_trabalho['AUTORES'] =   $aux_autores;
+        $aux_apresentacao = Arr::get($lattes, 'PRODUCAO-TECNICA.DEMAIS-TIPOS-DE-PRODUCAO-TECNICA.APRESENTACAO-DE-TRABALHO', false);
 
+        if($aux_apresentacao){
+            $i = 0;
+            if(isset($aux_apresentacao['@attributes'])){//para só uma apresentação
+                $autores = (!isset($aux_apresentacao['AUTORES']) && isset($aux_apresentacao[3])) ? 3 : 'AUTORES';
+                $aux_autores = self::listarAutores(Arr::get($aux_apresentacao, "{$autores}", []));  
+                               
+                $aux_apresentacao_trabalho = [];
+                $aux_apresentacao_trabalho['TITULO'] = Arr::get($aux_apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.TITULO", "");
+                $aux_apresentacao_trabalho['TIPO'] = Arr::get($aux_apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.NATUREZA", ""); 
+                $aux_apresentacao_trabalho['SEQUENCIA-PRODUCAO'] = Arr::get($aux_apresentacao, "@attributes.SEQUENCIA-PRODUCAO", ""); 
+                $aux_apresentacao_trabalho['ANO'] = Arr::get($aux_apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.ANO", ""); 
+                $aux_apresentacao_trabalho['AUTORES'] =   $aux_autores;
+                array_push($apresentacao_trabalhos, $aux_apresentacao_trabalho);
+            } else{
+                foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['APRESENTACAO-DE-TRABALHO'] as $apresentacao){
+                    
+                    $i++;
+                    $autores = (!isset($apresentacao['AUTORES']) && isset($apresentacao[3])) ? 3 : 'AUTORES';
+                    $aux_autores = self::listarAutores(Arr::get($apresentacao, "{$autores}", []));  
         
-            if(!self::verificarFiltro($tipo, $aux_apresentacao_trabalho['ANO'], $limit_ini, $limit_fim, $i)){
-                continue;
+                    $aux_apresentacao_trabalho = [];
+                    $aux_apresentacao_trabalho['TITULO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.TITULO", "");
+                    $aux_apresentacao_trabalho['TIPO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.NATUREZA", ""); 
+                    $aux_apresentacao_trabalho['SEQUENCIA-PRODUCAO'] = Arr::get($apresentacao, "@attributes.SEQUENCIA-PRODUCAO", ""); 
+                    $aux_apresentacao_trabalho['ANO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.ANO", ""); 
+                    $aux_apresentacao_trabalho['AUTORES'] =   $aux_autores;
+        
+                    if(!self::verificarFiltro($tipo, $aux_apresentacao_trabalho['ANO'], $limit_ini, $limit_fim, $i)){
+                        continue;
+                    }
+        
+                    array_push($apresentacao_trabalhos, $aux_apresentacao_trabalho);
+                }
             }
-
-            array_push($apresentacao_trabalhos, $aux_apresentacao_trabalho);
         }
         
         usort($apresentacao_trabalhos, function ($a, $b) {
