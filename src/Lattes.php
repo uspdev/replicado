@@ -666,27 +666,43 @@ class Lattes
         if(!$lattes) return false;
         if(!isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['APRESENTACAO-DE-TRABALHO'])) return false;
         $apresentacao_trabalhos = [];
-        $i = 0;
-        foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['APRESENTACAO-DE-TRABALHO'] as $apresentacao){
-            
-            $i++;
-            $autores = (!isset($apresentacao['AUTORES']) && isset($apresentacao[3])) ? 3 : 'AUTORES';
-            $aux_autores = self::listarAutores(Arr::get($apresentacao, "{$autores}", []));  
 
-            
-            $aux_apresentacao_trabalho = [];
-            $aux_apresentacao_trabalho['TITULO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.TITULO", "");
-            $aux_apresentacao_trabalho['TIPO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.NATUREZA", ""); 
-            $aux_apresentacao_trabalho['SEQUENCIA-PRODUCAO'] = Arr::get($apresentacao, "@attributes.SEQUENCIA-PRODUCAO", ""); 
-            $aux_apresentacao_trabalho['ANO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.ANO", ""); 
-            $aux_apresentacao_trabalho['AUTORES'] =   $aux_autores;
+        $aux_apresentacao = Arr::get($lattes, 'PRODUCAO-TECNICA.DEMAIS-TIPOS-DE-PRODUCAO-TECNICA.APRESENTACAO-DE-TRABALHO', false);
 
+        if($aux_apresentacao){
+            $i = 0;
+            if(isset($aux_apresentacao['@attributes'])){//para só uma apresentação
+                $autores = (!isset($aux_apresentacao['AUTORES']) && isset($aux_apresentacao[3])) ? 3 : 'AUTORES';
+                $aux_autores = self::listarAutores(Arr::get($aux_apresentacao, "{$autores}", []));  
+                               
+                $aux_apresentacao_trabalho = [];
+                $aux_apresentacao_trabalho['TITULO'] = Arr::get($aux_apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.TITULO", "");
+                $aux_apresentacao_trabalho['TIPO'] = Arr::get($aux_apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.NATUREZA", ""); 
+                $aux_apresentacao_trabalho['SEQUENCIA-PRODUCAO'] = Arr::get($aux_apresentacao, "@attributes.SEQUENCIA-PRODUCAO", ""); 
+                $aux_apresentacao_trabalho['ANO'] = Arr::get($aux_apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.ANO", ""); 
+                $aux_apresentacao_trabalho['AUTORES'] =   $aux_autores;
+                array_push($apresentacao_trabalhos, $aux_apresentacao_trabalho);
+            } else{
+                foreach($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['APRESENTACAO-DE-TRABALHO'] as $apresentacao){
+                    
+                    $i++;
+                    $autores = (!isset($apresentacao['AUTORES']) && isset($apresentacao[3])) ? 3 : 'AUTORES';
+                    $aux_autores = self::listarAutores(Arr::get($apresentacao, "{$autores}", []));  
         
-            if(!self::verificarFiltro($tipo, $aux_apresentacao_trabalho['ANO'], $limit_ini, $limit_fim, $i)){
-                continue;
+                    $aux_apresentacao_trabalho = [];
+                    $aux_apresentacao_trabalho['TITULO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.TITULO", "");
+                    $aux_apresentacao_trabalho['TIPO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.NATUREZA", ""); 
+                    $aux_apresentacao_trabalho['SEQUENCIA-PRODUCAO'] = Arr::get($apresentacao, "@attributes.SEQUENCIA-PRODUCAO", ""); 
+                    $aux_apresentacao_trabalho['ANO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.ANO", ""); 
+                    $aux_apresentacao_trabalho['AUTORES'] =   $aux_autores;
+        
+                    if(!self::verificarFiltro($tipo, $aux_apresentacao_trabalho['ANO'], $limit_ini, $limit_fim, $i)){
+                        continue;
+                    }
+        
+                    array_push($apresentacao_trabalhos, $aux_apresentacao_trabalho);
+                }
             }
-
-            array_push($apresentacao_trabalhos, $aux_apresentacao_trabalho);
         }
         
         usort($apresentacao_trabalhos, function ($a, $b) {
@@ -810,9 +826,7 @@ class Lattes
         }
         
         return ($outras);
-       
     }
-
     
      /**
     * Recebe o número USP e devolve array os cursos de curta duração ministrados cadastrados no currículo Lattes
@@ -833,33 +847,45 @@ class Lattes
         $aux_cursos = Arr::get($lattes, 'PRODUCAO-TECNICA.DEMAIS-TIPOS-DE-PRODUCAO-TECNICA.CURSO-DE-CURTA-DURACAO-MINISTRADO', false);
         if($aux_cursos){
             $i = 0;
-            foreach($aux_cursos as $curso_curta_duracao){
-                
-                $i++;
-                $autores = (!isset($curso_curta_duracao['AUTORES']) && isset($curso_curta_duracao[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($curso_curta_duracao, "{$autores}", [])); 
+
+            if(isset($aux_cursos['@attributes'])){//para quando só tiver um curso
+                $autores = (!isset($aux_cursos['AUTORES']) && isset($aux_cursos[3])) ? 3 : 'AUTORES';
+                $aux_autores = self::listarAutores(Arr::get($aux_cursos, "{$autores}", [])); 
                
                 $aux_curso = [];
-                $aux_curso['SEQUENCIA-PRODUCAO'] = Arr::get($curso_curta_duracao, "@attributes.SEQUENCIA-PRODUCAO", "");
-                $aux_curso['TITULO'] = Arr::get($curso_curta_duracao, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.TITULO", "");
-                $aux_curso['ANO'] = Arr::get($curso_curta_duracao, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.ANO", ""); 
-                $aux_curso['NIVEL-DO-CURSO'] = Arr::get($curso_curta_duracao, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.NIVEL-DO-CURSO", ""); 
-                $aux_curso['INSTITUICAO-PROMOTORA-DO-CURSO'] = Arr::get($curso_curta_duracao, "DETALHAMENTO-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.INSTITUICAO-PROMOTORA-DO-CURSO", ""); 
+                $aux_curso['SEQUENCIA-PRODUCAO'] = Arr::get($aux_cursos, "@attributes.SEQUENCIA-PRODUCAO", "");
+                $aux_curso['TITULO'] = Arr::get($aux_cursos, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.TITULO", "");
+                $aux_curso['ANO'] = Arr::get($aux_cursos, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.ANO", ""); 
+                $aux_curso['NIVEL-DO-CURSO'] = Arr::get($aux_cursos, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.NIVEL-DO-CURSO", ""); 
+                $aux_curso['INSTITUICAO-PROMOTORA-DO-CURSO'] = Arr::get($aux_cursos, "DETALHAMENTO-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.INSTITUICAO-PROMOTORA-DO-CURSO", ""); 
                 $aux_curso['AUTORES'] =   $aux_autores;
-                
-                
-                if(!self::verificarFiltro($tipo, $aux_curso['ANO'], $limit_ini, $limit_fim, $i)){
-                    continue; 
-                } 
-                
                 array_push($cursos, $aux_curso);
+            } else{
+                foreach($aux_cursos as $curso_curta_duracao){
+                    
+                    $i++;
+                    $autores = (!isset($curso_curta_duracao['AUTORES']) && isset($curso_curta_duracao[3])) ? 3 : 'AUTORES';
+                    $aux_autores = self::listarAutores(Arr::get($curso_curta_duracao, "{$autores}", [])); 
+                   
+                    $aux_curso = [];
+                    $aux_curso['SEQUENCIA-PRODUCAO'] = Arr::get($curso_curta_duracao, "@attributes.SEQUENCIA-PRODUCAO", "");
+                    $aux_curso['TITULO'] = Arr::get($curso_curta_duracao, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.TITULO", "");
+                    $aux_curso['ANO'] = Arr::get($curso_curta_duracao, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.ANO", ""); 
+                    $aux_curso['NIVEL-DO-CURSO'] = Arr::get($curso_curta_duracao, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.NIVEL-DO-CURSO", ""); 
+                    $aux_curso['INSTITUICAO-PROMOTORA-DO-CURSO'] = Arr::get($curso_curta_duracao, "DETALHAMENTO-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.INSTITUICAO-PROMOTORA-DO-CURSO", ""); 
+                    $aux_curso['AUTORES'] =   $aux_autores;
+                    
+                    
+                    if(!self::verificarFiltro($tipo, $aux_curso['ANO'], $limit_ini, $limit_fim, $i)){
+                        continue; 
+                    } 
+                    
+                    array_push($cursos, $aux_curso);
+                }
             }
         }
-        
         return ($cursos);
     }
-    
-
 
      /**
     * Recebe o número USP e devolve array os relatórios de pesquisa cadastrados no currículo Lattes
