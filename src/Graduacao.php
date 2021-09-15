@@ -62,7 +62,7 @@ class Graduacao
     {
         $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
         $query .= " FROM LOCALIZAPESSOA L";
-        $query .= " INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes)";
+        $query .= " INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes) AND (L.codundclg = V.codclg)";
         $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
         $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
         $query .= " WHERE (L.codpes = convert(int,:codpes))";
