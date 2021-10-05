@@ -57,15 +57,18 @@ class Graduacao
      * @param Bool $somenteAtivos Se for true, retornará apenas os cursos de graduação em andamento, caso contrário, retornará tanto os ativos quanto os já concluídos.
      * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
      */
-    public static function curso($codpes, $codundclgi, bool $somenteAtivos = true)
+    public static function curso($codpes, $codundclgi = null, bool $somenteAtivos = true)
     {
+        if($codundclgi == null){
+            $codundclgi = getenv('REPLICADO_CODUNDCLG');
+        }
         $query = "SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin AS dtaing, V.codcurgrd
             FROM LOCALIZAPESSOA L
             INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes)
             INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)
             INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)
             WHERE (L.codpes = convert(int,:codpes))
-            AND (L.tipvin = 'ALUNOGR' AND L.codundclg = convert(int,:codundclgi))
+            AND (L.tipvin = 'ALUNOGR' AND L.codundclg IN (".$codundclgi."))
             AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab) ";
         if(!$somenteAtivos){
             $query .= "UNION
@@ -76,15 +79,16 @@ class Graduacao
             LEFT JOIN HABILITACAOGR H ON (H.codhab = T.codhab)
             WHERE (P.codpes = convert(int,:codpes))
             AND (P.tipvin = 'ALUNOGR')
+            AND C.codclg IN (".$codundclgi.")
             AND (T.codcur = H.codcur AND T.codhab = H.codhab)
             AND T.idcoricad  = 'grd'";
         }
         
 
         $param = [
-            'codpes' => $codpes,
-            'codundclgi' => $codundclgi,
+            'codpes' => $codpes
         ];
+
         if($somenteAtivos){
             return DB::fetch($query, $param);
         }else{
