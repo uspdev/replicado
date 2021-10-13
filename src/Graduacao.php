@@ -53,42 +53,59 @@ class Graduacao
     }
 
     /**
-     * Lista alunos ativos na unidade
-     * 
+     * Lista alunos de graduação ativos na unidade, podendo filtrar por codcur, anoIngresso ou parteNome
+     *
      * Para as unidades que possuem mais de um CODUNDCLG, todos devem estar listados no ENV
      * Se informado parteNome, será usado para fazer uma busca fonética no nome.
      * Substitui o método ativos()
      *
-     * @param String $parteNome (optional)
-     * @return Array (campos tabela LOCALIZAPESSOA)
+     * @param Int $codCur (opcional)
+     * @param Int $anoIngresso (opcional)
+     * @param String $parteNome (opcional)
+     * @return Array codpes, nompes, codema, codcur, nomcur, codhab, nomhab, dtainivin
      * @author Masaki K Neto, em 13/10/2021, #475
      */
-    public static function listarAtivos($parteNome = null)
+    public static function listarAtivos($codCur = null, $anoIngresso = null, $parteNome = null)
     {
         $codundclg = getenv('REPLICADO_CODUNDCLG');
-        if (!is_null($parteNome)) {
+
+        $queryFilter = "";
+        $params = [];
+        if ($parteNome) {
             $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
             $parteNome = strtoupper(str_replace(' ', '%', $parteNome));
-            $queryParteNome = " AND nompesfon LIKE :parteNome";
-            $param['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
-        } else {
-            $queryParteNome = "";
-            $param = [];
+            $queryFilter = " AND nompesfon LIKE :parteNome ";
+            $params['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
         }
 
-        $query = "SELECT *
-            FROM LOCALIZAPESSOA
-            WHERE tipvin = 'ALUNOGR'
-                AND codundclg IN ({$codundclg})
-                $queryParteNome
-            ORDER BY nompes ASC
+        if ($codCur) {
+            $queryFilter .= " AND C.codcur = :codcur";
+            $params['codcur'] = $codCur;
+        }
+
+        if ($anoIngresso) {
+            $queryFilter .= " AND YEAR(V.dtainivin) = convert(int, :anoIngresso) ";
+            $params['anoIngresso'] = $anoIngresso;
+        }
+
+        $query = "SELECT L.codpes, L.nompes, L.codema, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin
+        FROM LOCALIZAPESSOA L
+        INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes) AND (L.codundclg = V.codclg)
+        INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)
+        INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)
+        WHERE L.tipvin = 'ALUNOGR'
+            AND L.codundclg IN ({$codundclg})
+            AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)
+            {$queryFilter}
+        ORDER BY L.nompes ASC
         ";
-        return DB::fetchAll($query, $param);
+
+        return DB::fetchAll($query, $params);
     }
 
     /**
      * Mostra contagem de alunos ativos na unidades
-     * 
+     *
      * @return Integer
      * @author Masaki K Neto, em 13/10/2021, #475
      */
@@ -112,19 +129,20 @@ class Graduacao
      */
     public static function curso($codpes, $codundclgi)
     {
-        $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
-        $query .= " FROM LOCALIZAPESSOA L";
-        $query .= " INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes) AND (L.codundclg = V.codclg)";
-        $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
-        $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
-        $query .= " WHERE (L.codpes = convert(int,:codpes))";
-        $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg = convert(int,:codundclgi))";
-        $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
+        $query = " SELECT L.codpes, L.nompes, L.codema, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd
+        FROM LOCALIZAPESSOA L
+        INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes) AND (L.codundclg = V.codclg)
+        INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)
+        INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)
+        WHERE L.tipvin = 'ALUNOGR' --(L.codpes = convert(int,:codpes))
+        -- AND
+        AND L.codundclg IN (" . getenv('REPLICADO_CODUNDCLG') . ")
+        AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
         $param = [
             'codpes' => $codpes,
             'codundclgi' => $codundclgi,
         ];
-        return DB::fetch($query, $param);
+        return DB::fetchAll($query, $param);
     }
 
     /**
