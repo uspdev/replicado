@@ -30,6 +30,7 @@ class Graduacao
     /**
      * Método para retornar alunos ativos na unidade
      *
+     * @deprecated em 13/10/2021, em favor de listarAtivos()
      * @param Int $condundclgi
      * @param String $partNome (optional)
      * @return array(campos tabela LOCALIZAPESSOA)
@@ -49,6 +50,57 @@ class Graduacao
         }
         $query .= " ORDER BY nompes ASC";
         return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Lista alunos ativos na unidade
+     * 
+     * Para as unidades que possuem mais de um CODUNDCLG, todos devem estar listados no ENV
+     * Se informado parteNome, será usado para fazer uma busca fonética no nome.
+     * Substitui o método ativos()
+     *
+     * @param String $parteNome (optional)
+     * @return Array (campos tabela LOCALIZAPESSOA)
+     * @author Masaki K Neto, em 13/10/2021, #475
+     */
+    public static function listarAtivos($parteNome = null)
+    {
+        $codundclg = getenv('REPLICADO_CODUNDCLG');
+        if (!is_null($parteNome)) {
+            $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
+            $parteNome = strtoupper(str_replace(' ', '%', $parteNome));
+            $queryParteNome = " AND nompesfon LIKE :parteNome";
+            $param['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
+        } else {
+            $queryParteNome = "";
+            $param = [];
+        }
+
+        $query = "SELECT *
+            FROM LOCALIZAPESSOA
+            WHERE tipvin = 'ALUNOGR'
+                AND codundclg IN ({$codundclg})
+                $queryParteNome
+            ORDER BY nompes ASC
+        ";
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Mostra contagem de alunos ativos na unidades
+     * 
+     * @return Integer
+     * @author Masaki K Neto, em 13/10/2021, #475
+     */
+    public static function contarAtivos()
+    {
+        $codundclg = getenv('REPLICADO_CODUNDCLG');
+        $query = "SELECT count(*) total
+            FROM LOCALIZAPESSOA
+            WHERE tipvin = 'ALUNOGR'
+                AND codundclg IN ({$codundclg})
+        ";
+        return DB::fetchAll($query);
     }
 
     /**
