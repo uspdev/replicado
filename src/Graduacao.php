@@ -74,7 +74,7 @@ class Graduacao
         if ($parteNome) {
             $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
             $parteNome = strtoupper(str_replace(' ', '%', $parteNome));
-            $queryFilter = " AND nompesfon LIKE :parteNome ";
+            $queryFilter = " AND L.nompesfon LIKE :parteNome ";
             $params['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
         }
 
