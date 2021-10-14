@@ -72,14 +72,12 @@ class Graduacao
         $queryFilter = "";
         $params = [];
         if ($parteNome) {
-            $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
-            $parteNome = strtoupper(str_replace(' ', '%', $parteNome));
             $queryFilter = " AND L.nompesfon LIKE :parteNome ";
-            $params['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
+            $params['parteNome'] = '%' . str_replace(' ', '%', Uteis::fonetico($parteNome)) . '%';
         }
 
         if ($codCur) {
-            $queryFilter .= " AND C.codcur = :codcur";
+            $queryFilter .= " AND C.codcur = convert(int, :codcur)";
             $params['codcur'] = $codCur;
         }
 
