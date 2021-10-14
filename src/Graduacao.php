@@ -127,20 +127,19 @@ class Graduacao
      */
     public static function curso($codpes, $codundclgi)
     {
-        $query = " SELECT L.codpes, L.nompes, L.codema, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd
-        FROM LOCALIZAPESSOA L
-        INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes) AND (L.codundclg = V.codclg)
-        INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)
-        INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)
-        WHERE L.tipvin = 'ALUNOGR' --(L.codpes = convert(int,:codpes))
-        -- AND
-        AND L.codundclg IN (" . getenv('REPLICADO_CODUNDCLG') . ")
-        AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
+        $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
+        $query .= " FROM LOCALIZAPESSOA L";
+        $query .= " INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes) AND (L.codundclg = V.codclg)";
+        $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
+        $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
+        $query .= " WHERE (L.codpes = convert(int,:codpes))";
+        $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg = convert(int,:codundclgi))";
+        $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
         $param = [
             'codpes' => $codpes,
             'codundclgi' => $codundclgi,
         ];
-        return DB::fetchAll($query, $param);
+        return DB::fetch($query, $param);
     }
 
     /**
