@@ -115,7 +115,7 @@ class Graduacao
             WHERE tipvin = 'ALUNOGR'
                 AND codundclg IN ({$codundclg})
         ";
-        return DB::fetchAll($query);
+        return DB::fetch($query)['total'];
     }
 
     /**
