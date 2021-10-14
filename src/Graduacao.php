@@ -102,7 +102,7 @@ class Graduacao
     }
 
     /**
-     * Mostra contagem de alunos ativos na unidades
+     * Retorna contagem de alunos ativos na unidade
      *
      * @return Integer
      * @author Masaki K Neto, em 13/10/2021, #475
