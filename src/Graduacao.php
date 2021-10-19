@@ -30,6 +30,7 @@ class Graduacao
     /**
      * Método para retornar alunos ativos na unidade
      *
+     * @deprecated em 13/10/2021, em favor de listarAtivos()
      * @param Int $condundclgi
      * @param String $partNome (optional)
      * @return array(campos tabela LOCALIZAPESSOA)
@@ -49,6 +50,72 @@ class Graduacao
         }
         $query .= " ORDER BY nompes ASC";
         return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Lista alunos de graduação ativos na unidade, podendo filtrar por codcur, anoIngresso ou parteNome
+     *
+     * Para as unidades que possuem mais de um CODUNDCLG, todos devem estar listados no ENV
+     * Se informado parteNome, será usado para fazer uma busca fonética no nome.
+     * Substitui o método ativos()
+     *
+     * @param Int $codCur (opcional)
+     * @param Int $anoIngresso (opcional)
+     * @param String $parteNome (opcional)
+     * @return Array codpes, nompes, codema, codcur, nomcur, codhab, nomhab, dtainivin
+     * @author Masaki K Neto, em 13/10/2021, #475
+     */
+    public static function listarAtivos($codCur = null, $anoIngresso = null, $parteNome = null)
+    {
+        $codundclg = getenv('REPLICADO_CODUNDCLG');
+
+        $queryFilter = "";
+        $params = [];
+        if ($parteNome) {
+            $queryFilter = " AND L.nompesfon LIKE :parteNome ";
+            $params['parteNome'] = '%' . str_replace(' ', '%', Uteis::fonetico($parteNome)) . '%';
+        }
+
+        if ($codCur) {
+            $queryFilter .= " AND C.codcur = convert(int, :codcur)";
+            $params['codcur'] = $codCur;
+        }
+
+        if ($anoIngresso) {
+            $queryFilter .= " AND YEAR(V.dtainivin) = convert(int, :anoIngresso) ";
+            $params['anoIngresso'] = $anoIngresso;
+        }
+
+        $query = "SELECT L.codpes, L.nompes, L.codema, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin
+        FROM LOCALIZAPESSOA L
+        INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes) AND (L.codundclg = V.codclg)
+        INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)
+        INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)
+        WHERE L.tipvin = 'ALUNOGR'
+            AND L.codundclg IN ({$codundclg})
+            AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)
+            {$queryFilter}
+        ORDER BY L.nompes ASC
+        ";
+
+        return DB::fetchAll($query, $params);
+    }
+
+    /**
+     * Retorna contagem de alunos ativos na unidade
+     *
+     * @return Integer
+     * @author Masaki K Neto, em 13/10/2021, #475
+     */
+    public static function contarAtivos()
+    {
+        $codundclg = getenv('REPLICADO_CODUNDCLG');
+        $query = "SELECT count(*) total
+            FROM LOCALIZAPESSOA
+            WHERE tipvin = 'ALUNOGR'
+                AND codundclg IN ({$codundclg})
+        ";
+        return DB::fetch($query)['total'];
     }
 
     /**
