@@ -294,30 +294,6 @@ class Pessoa
         return DB::fetch($query, $param)['computed'];
     }
 
-    /**
-     * Método para retornar o total de alunos de Pós Graduação matriculados, de acordo com o nível do programa, na unidade
-     *
-     * @param Integer $codundclg
-     * @param String $nivpgm Pode ser ME, DO ou DD
-     * @param Integer $codundclg (opt)
-     * @return Integer
-     */
-    public static function totalPosNivelPrograma($nivpgm, $codundclg)
-    {
-        $query = "SELECT COUNT(lp.codpes) FROM LOCALIZAPESSOA AS lp
-                    INNER JOIN VINCULOPESSOAUSP AS vpu
-                    ON(lp.codpes = vpu.codpes AND lp.tipvin = vpu.tipvin)
-                    WHERE lp.tipvin='ALUNOPOS'
-                        AND lp.codundclg= convert(int,:codundclg)
-                        AND lp.sitatl='A'
-                        AND vpu.nivpgm=:nivpgm";
-
-        $param = [
-            'nivpgm' => $nivpgm,
-            'codundclg' => $codundclg,
-        ];
-        return DB::fetch($query, $param)['computed'];
-    }
 
     /**
      * Método para retornar todos os tipos de vínculos por extenso (tipvinext)
