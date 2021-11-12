@@ -835,6 +835,12 @@ class Pessoa
      */
     public static function listarMaisInformacoesServidores(string $tipvinext) {
         $codundclg = getenv('REPLICADO_CODUNDCLG');
+        // Para o caso da pessoa ter mais de um vínculo ativo como funcionário e também como docente
+        if ($tipvinext == 'Servidor') {
+            $condicao = "AND (V.tipmer IS NULL)";
+        } else {
+            $condicao = "AND (V.tipmer IS NOT NULL)";
+        }
         $query = "SELECT DISTINCT P.codpes, P.nompesttd, P.sexpes, P.dtanas, P.dtanas,
                 L.tipvin, L.tipvinext, L.dtainivin, L.dtainivin, L.codset, L.nomabvset,
                 L.nomset, V.nomabvfnc, L.nomfnc, V.tipfnc, V.dtainisitfun, L.nomloc,
@@ -847,18 +853,10 @@ class Pessoa
                 LEFT OUTER JOIN DIM_PESSOA_XMLUSP D ON P.codpes = D.codpes
                 LEFT OUTER JOIN TABGRAUFORM AS GF ON V.grufor = GF.grufor
             WHERE (L.tipvinext = :tipvinext)
-                AND (L.codundclg IN ({$codundclg})
-                AND (V.dtainisitfun IS NOT NULL)";
-        // Para o caso da pessoa ter mais de um vínculo ativo como funcionário e
-        // também ser docente na coluna V.tipfnc
-        if ($tipvinext == 'Servidor') {
-            $query .= " AND (V.tipmer IS NULL)";
-        } elseif ($tipvinext == 'Docente' or $tipvinext == 'Docente Aposentado') {
-            $query .= " AND (V.tipmer IS NOT NULL)";
-        }
-        $query .= " ORDER BY P.nompesttd";
+                AND (L.codundclg IN ($codundclg))
+                AND (V.dtainisitfun IS NOT NULL) $condicao
+            ORDER BY P.nompesttd" ;
         $param = [
-            'codundclgi' => getenv('REPLICADO_CODUNDCLG'),
             'tipvinext' => $tipvinext,
         ];
         return DB::fetchAll($query, $param);
