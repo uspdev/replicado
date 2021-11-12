@@ -827,32 +827,19 @@ class Pessoa
 
     /**
      * Método para listar mais informações de servidores
-     *
      * Somente ATIVOS (funcionários, docentes e aposentados)
-     *
-     * Se o terceiro parâmetro $contar for igual a 1, retorna um array
-     * com o índice total que corresponde ao número total de pessoas
-     *
      * Usado em uspdev/pessoas
-     *
-     * @param string $tipvinext
-     * @param integer $codundclgi
-     * @param integer $contar default 0
+     * @param string $tipvinext default 'Servidor' or 'Docente' or 'Docente Aposentado'
      * @return array
-     * @author @alecostaweb em 12/11/2021
+     * @author @alecostaweb em 12/11/2021 issue #478
      */
-    public static function listarMaisInformacoesServidores(string $tipvinext, int $codundclgi, int $contar = 0) {
-        if ($contar == 0) {
-            $colunas = "DISTINCT P.codpes, P.nompesttd, P.sexpes, P.dtanas, P.dtanas,
+    public static function listarMaisInformacoesServidores(string $tipvinext) {
+        $colunas = "DISTINCT P.codpes, P.nompesttd, P.sexpes, P.dtanas, P.dtanas,
                 L.tipvin, L.tipvinext, L.dtainivin, L.dtainivin, L.codset, L.nomabvset,
                 L.nomset, V.nomabvfnc, L.nomfnc, V.tipfnc, V.dtainisitfun, L.nomloc,
                 L.epflgrund, L.numtelfmt, codema, D.idfpescpq, E.nomesc, E.nivesc,
                 GF.dscgrufor, V.tipcon, V.nomcaa, V.nomabvcla, V.nivgrupvm, V.tipjor, V.tipmer";
-            $ordem = "ORDER BY P.nompesttd";
-        } else {
-            $colunas = "COUNT(*) total";
-            $ordem = "";
-        }
+        $ordem = "ORDER BY P.nompesttd";
         $query = "SELECT $colunas
             FROM PESSOA P
                 INNER JOIN LOCALIZAPESSOA L ON P.codpes = L.codpes
@@ -872,7 +859,7 @@ class Pessoa
         }
         $query .= $ordem;
         $param = [
-            'codundclgi' => $codundclgi,
+            'codundclgi' => getenv('REPLICADO_CODUNDCLG'),
             'tipvinext' => $tipvinext,
         ];
         return DB::fetchAll($query, $param);
