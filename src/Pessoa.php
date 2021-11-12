@@ -825,6 +825,59 @@ class Pessoa
         return null;
     }
 
+    /**
+     * Método para listar mais informações de servidores
+     *
+     * Somente ATIVOS (funcionários, docentes e aposentados)
+     *
+     * Se o terceiro parâmetro $contar for igual a 1, retorna um array
+     * com o índice total que corresponde ao número total de pessoas
+     *
+     * Usado em uspdev/pessoas
+     *
+     * @param string $tipvinext
+     * @param integer $codundclgi
+     * @param integer $contar default 0
+     * @return array
+     * @author @alecostaweb em 12/11/2021
+     */
+    public static function listarMaisInformacoesServidores(string $tipvinext, int $codundclgi, int $contar = 0) {
+        if ($contar == 0) {
+            $colunas = "DISTINCT P.codpes, P.nompesttd, P.sexpes, P.dtanas, P.dtanas,
+                L.tipvin, L.tipvinext, L.dtainivin, L.dtainivin, L.codset, L.nomabvset,
+                L.nomset, V.nomabvfnc, L.nomfnc, V.tipfnc, V.dtainisitfun, L.nomloc,
+                L.epflgrund, L.numtelfmt, codema, D.idfpescpq, E.nomesc, E.nivesc,
+                GF.dscgrufor, V.tipcon, V.nomcaa, V.nomabvcla, V.nivgrupvm, V.tipjor, V.tipmer";
+            $ordem = "ORDER BY P.nompesttd";
+        } else {
+            $colunas = "COUNT(*) total";
+            $ordem = "";
+        }
+        $query = "SELECT $colunas
+            FROM PESSOA P
+                INNER JOIN LOCALIZAPESSOA L ON P.codpes = L.codpes
+                INNER JOIN VINCULOPESSOAUSP V ON P.codpes = V.codpes
+                INNER JOIN ESCOLARIDADE AS E ON V.codesc = E.codesc
+                LEFT OUTER JOIN DIM_PESSOA_XMLUSP D ON P.codpes = D.codpes
+                LEFT OUTER JOIN TABGRAUFORM AS GF ON V.grufor = GF.grufor
+            WHERE (L.tipvinext = :tipvinext)
+                AND (L.codundclg = CONVERT(INT, :codundclgi))
+                AND (V.dtainisitfun IS NOT NULL)";
+        // Para o caso da pessoa ter mais de um vínculo ativo como funcionário e
+        // também ser docente na coluna V.tipfnc
+        if ($tipvinext == 'Servidor') {
+            $query .= " AND (V.tipmer IS NULL)";
+        } elseif ($tipvinext == 'Docente' or $tipvinext == 'Docente Aposentado') {
+            $query .= " AND (V.tipmer IS NOT NULL)";
+        }
+        $query .= $ordem;
+        $param = [
+            'codundclgi' => $codundclgi,
+            'tipvinext' => $tipvinext,
+        ];
+        return DB::fetchAll($query, $param);
+    }
+
     /********** Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
     /**
@@ -902,5 +955,8 @@ class Pessoa
     {
         return self::listarDesignados();
     }
+
+
+
 
 }
