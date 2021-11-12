@@ -826,21 +826,20 @@ class Pessoa
     }
 
     /**
-     * Método para listar mais informações de servidores
-     * Somente ATIVOS (funcionários, docentes e aposentados)
+     * Método para listar mais informações de servidores ativos
+     *
      * Usado em uspdev/pessoas
-     * @param string $tipvinext default 'Servidor' or 'Docente' or 'Docente Aposentado'
+     * @param string $tipvinext valores possíveis 'Servidor', 'Docente' ou 'Docente Aposentado'
      * @return array
      * @author @alecostaweb em 12/11/2021 issue #478
      */
     public static function listarMaisInformacoesServidores(string $tipvinext) {
-        $colunas = "DISTINCT P.codpes, P.nompesttd, P.sexpes, P.dtanas, P.dtanas,
+        $codundclg = getenv('REPLICADO_CODUNDCLG');
+        $query = "SELECT DISTINCT P.codpes, P.nompesttd, P.sexpes, P.dtanas, P.dtanas,
                 L.tipvin, L.tipvinext, L.dtainivin, L.dtainivin, L.codset, L.nomabvset,
                 L.nomset, V.nomabvfnc, L.nomfnc, V.tipfnc, V.dtainisitfun, L.nomloc,
                 L.epflgrund, L.numtelfmt, codema, D.idfpescpq, E.nomesc, E.nivesc,
-                GF.dscgrufor, V.tipcon, V.nomcaa, V.nomabvcla, V.nivgrupvm, V.tipjor, V.tipmer";
-        $ordem = "ORDER BY P.nompesttd";
-        $query = "SELECT $colunas
+                GF.dscgrufor, V.tipcon, V.nomcaa, V.nomabvcla, V.nivgrupvm, V.tipjor, V.tipmer
             FROM PESSOA P
                 INNER JOIN LOCALIZAPESSOA L ON P.codpes = L.codpes
                 INNER JOIN VINCULOPESSOAUSP V ON P.codpes = V.codpes
@@ -848,7 +847,7 @@ class Pessoa
                 LEFT OUTER JOIN DIM_PESSOA_XMLUSP D ON P.codpes = D.codpes
                 LEFT OUTER JOIN TABGRAUFORM AS GF ON V.grufor = GF.grufor
             WHERE (L.tipvinext = :tipvinext)
-                AND (L.codundclg = CONVERT(INT, :codundclgi))
+                AND (L.codundclg IN ({$codundclg})
                 AND (V.dtainisitfun IS NOT NULL)";
         // Para o caso da pessoa ter mais de um vínculo ativo como funcionário e
         // também ser docente na coluna V.tipfnc
@@ -857,7 +856,7 @@ class Pessoa
         } elseif ($tipvinext == 'Docente' or $tipvinext == 'Docente Aposentado') {
             $query .= " AND (V.tipmer IS NOT NULL)";
         }
-        $query .= $ordem;
+        $query .= " ORDER BY P.nompesttd";
         $param = [
             'codundclgi' => getenv('REPLICADO_CODUNDCLG'),
             'tipvinext' => $tipvinext,
