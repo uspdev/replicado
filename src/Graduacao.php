@@ -642,9 +642,9 @@ class Graduacao
      * @return string
      * @author gabrielareisg em 14/06/2021
      */
-    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null)
+    public static function obterMediaPonderada(int $codpes, int $codpgm = null, $rstfim = "('A','RN','RA','RF')")
     {
-        $query = DB::getQuery('Graduacao.obterMediaPonderadaLimpa.sql');
+        $query = DB::getQuery('Graduacao.obterMediaPonderada.sql');
 
         if ($codpgm === null) {
             $query_codpgm = "(SELECT MAX(H2.codpgm) FROM HISTESCOLARGR H2 WHERE H2.codpes = convert(int,:codpes))";
@@ -653,7 +653,8 @@ class Graduacao
         }
 
         $query = str_replace('__codpgm__', $query_codpgm, $query);
-
+        $query = str_replace('__rstfim__', $rstfim, $query);
+        
         $param = [
             'codpes' => $codpes,
             'codpgm' => $codpgm,
@@ -665,6 +666,7 @@ class Graduacao
         // calculando a media ponderada
         $creditos = 0;
         $soma = 0;
+
         foreach ($result as $row) {
             $creditos += $row['creaul'] + $row['cretrb'];
             $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
@@ -672,5 +674,13 @@ class Graduacao
             $soma += $mult;
         }
         return empty($soma) ? 0 : round($soma / $creditos, 1);
+    }
+
+    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null){
+        return self::obterMediaPonderada($codpes,$codpgm,"('A')");
+    }
+
+    public static function obterMediaPonderadaSuja(int $codpes, int $codpgm = null){
+        return self::obterMediaPonderada($codpes,$codpgm,"('A','RN','RA','RF')");
     }
 }
