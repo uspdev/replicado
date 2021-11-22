@@ -631,33 +631,38 @@ class Graduacao
     }
 
     /**
-     * Método que recebe o número USP de um aluno e retorna a sua média ponderada limpa.
+     * Método que recebe o número USP de um aluno e retorna a sua média ponderada.
      *
-     * Se o aluno possuir mais de uma graduação deve passar por parametro o número:
+     * Se o aluno possuir mais de uma graduação deve passar por parametro o número em $codpgm:
      * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
      * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
-     *
+     * 
+     * Método comum que é chamado por obterMediaPonderadaLimpa e obterMediaPonderadaSuja.
+     * 
      * @param Integer $codpes
      * @param Integer $codpgm Código que identifica cada programa do aluno.
-     * @return string
+     * @param Array $rstfim ['A'] - média limpa ou ['A','RN','RA','RF'] - média suja (default)
+     * @return Float Arredondado para 1 casa decimal.
      * @author gabrielareisg em 14/06/2021
+     * @author modificado por thiagogomesverissimo em 22/11/2021
      */
-    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null)
+    public static function obterMediaPonderada(int $codpes, int $codpgm = null, array $rstfim = ['A','RN','RA','RF'])
     {
-        $query = DB::getQuery('Graduacao.obterMediaPonderadaLimpa.sql');
+        $query = DB::getQuery('Graduacao.obterMediaPonderada.sql');
 
         if ($codpgm === null) {
             $query_codpgm = "(SELECT MAX(H2.codpgm) FROM HISTESCOLARGR H2 WHERE H2.codpes = convert(int,:codpes))";
         } else {
             $query_codpgm = "convert(int,:codpgm)";
+            $param['codpgm'] = $codpgm;
         }
+        
+        $rstfim_string = "'" . implode ( "','", $rstfim ) . "'";
 
         $query = str_replace('__codpgm__', $query_codpgm, $query);
-
-        $param = [
-            'codpes' => $codpes,
-            'codpgm' => $codpgm,
-        ];
+        $query = str_replace('__rstfim__', $rstfim_string, $query);
+        
+        $param['codpes'] = $codpes;
 
         // recuperando as disciplina cursadas
         $result = DB::fetchAll($query, $param);
@@ -665,6 +670,7 @@ class Graduacao
         // calculando a media ponderada
         $creditos = 0;
         $soma = 0;
+
         foreach ($result as $row) {
             $creditos += $row['creaul'] + $row['cretrb'];
             $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
@@ -672,5 +678,43 @@ class Graduacao
             $soma += $mult;
         }
         return empty($soma) ? 0 : round($soma / $creditos, 1);
+    }
+
+    /**
+     * Método que recebe o número USP de um aluno e retorna a sua média ponderada limpa.
+     *
+     * Se o aluno possuir mais de uma graduação deve passar por parametro o número:
+     * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
+     * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
+     *
+     * OBS.: Este método não utiliza o cache na configuração padrão pois o retorno ocupa poucos bytes. 
+     * Deve modificar a configuração do cache se for conveniente.
+     * 
+     * @param Integer $codpes
+     * @param Integer $codpgm Código que identifica cada programa do aluno.
+     * @return string
+     * @author thiagogomesverissimo em 21/11/2021
+     */
+    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null){
+        return self::obterMediaPonderada($codpes,$codpgm,['A']);
+    }
+
+    /**
+     * Método que recebe o número USP de um aluno e retorna a sua média ponderada suja.
+     *
+     * Se o aluno possuir mais de uma graduação deve passar por parametro o número:
+     * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
+     * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
+     *
+     * OBS.: Este método não utiliza o cache na configuração padrão pois o retorno ocupa poucos bytes. 
+     * Deve modificar a configuração do cache se for conveniente.
+     * 
+     * @param Integer $codpes
+     * @param Integer $codpgm Código que identifica cada programa do aluno.
+     * @return string
+     * @author thiagogomesverissimo em 21/11/2021
+     */
+    public static function obterMediaPonderadaSuja(int $codpes, int $codpgm = null){
+        return self::obterMediaPonderada($codpes,$codpgm,['A','RN','RA','RF']);
     }
 }
