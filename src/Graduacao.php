@@ -631,7 +631,7 @@ class Graduacao
     }
 
     /**
-     * Método que recebe o número USP de um aluno e retorna a sua média ponderada limpa.
+     * Método que recebe o número USP de um aluno e retorna a sua média ponderada.
      *
      * Se o aluno possuir mais de uma graduação deve passar por parametro o número:
      * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
@@ -642,7 +642,7 @@ class Graduacao
      * @return string
      * @author gabrielareisg em 14/06/2021
      */
-    public static function obterMediaPonderada(int $codpes, int $codpgm = null, $rstfim = "('A','RN','RA','RF')")
+    public static function obterMediaPonderada(int $codpes, int $codpgm = null, array $rstfim = ['A','RN','RA','RF'])
     {
         $query = DB::getQuery('Graduacao.obterMediaPonderada.sql');
 
@@ -651,9 +651,11 @@ class Graduacao
         } else {
             $query_codpgm = "convert(int,:codpgm)";
         }
+        
+        $rstfim_string = "'" . implode ( "', '", $rstfim ) . "'";
 
         $query = str_replace('__codpgm__', $query_codpgm, $query);
-        $query = str_replace('__rstfim__', $rstfim, $query);
+        $query = str_replace('__rstfim__', $rstfim_string, $query);
         
         $param = [
             'codpes' => $codpes,
@@ -676,11 +678,35 @@ class Graduacao
         return empty($soma) ? 0 : round($soma / $creditos, 1);
     }
 
+    /**
+     * Método que recebe o número USP de um aluno e retorna a sua média ponderada limpa.
+     *
+     * Se o aluno possuir mais de uma graduação deve passar por parametro o número:
+     * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
+     * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
+     *
+     * @param Integer $codpes
+     * @param Integer $codpgm Código que identifica cada programa do aluno.
+     * @return string
+     * @author thiagogomesverissimo em 21/11/2021
+     */
     public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null){
-        return self::obterMediaPonderada($codpes,$codpgm,"('A')");
+        return self::obterMediaPonderada($codpes,$codpgm,['A']);
     }
 
+    /**
+     * Método que recebe o número USP de um aluno e retorna a sua média ponderada suja.
+     *
+     * Se o aluno possuir mais de uma graduação deve passar por parametro o número:
+     * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
+     * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
+     *
+     * @param Integer $codpes
+     * @param Integer $codpgm Código que identifica cada programa do aluno.
+     * @return string
+     * @author thiagogomesverissimo em 21/11/2021
+     */
     public static function obterMediaPonderadaSuja(int $codpes, int $codpgm = null){
-        return self::obterMediaPonderada($codpes,$codpgm,"('A','RN','RA','RF')");
+        return self::obterMediaPonderada($codpes,$codpgm,['A','RN','RA','RF']);
     }
 }
