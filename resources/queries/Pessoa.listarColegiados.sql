@@ -8,3 +8,5 @@ FROM PARTICIPANTECOLEG
 
 WHERE COLEGIADO.codundrsp IN (__unidades__)
   AND PARTICIPANTECOLEG.dtafimmdt > :dtafimmdt
+
+ORDER BY COLEGIADO.nomclg
