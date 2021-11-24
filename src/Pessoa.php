@@ -838,7 +838,7 @@ class Pessoa
         $query = DB::getQuery('Pessoa.retornarNomeColegiado.sql');
 
         $unidades = getenv('REPLICADO_CODUNDCLG');
-        $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
+        $query = str_replace('__unidades__', $unidades, $query);
 
         $param = [
             'codclg' => $codclg,
@@ -866,7 +866,7 @@ class Pessoa
         $query = DB::getQuery('Pessoa.listarColegiados.sql');
 
         $unidades = getenv('REPLICADO_CODUNDCLG');
-        $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
+        $query = str_replace('__unidades__', $unidades, $query);
 
         $dtafimmdt = Date('Y-m-d') . ' 00:00:00';
 
@@ -890,7 +890,7 @@ class Pessoa
         $query = DB::getQuery('Pessoa.listarTitularesDoColegiado.sql');
 
         $unidades = getenv('REPLICADO_CODUNDCLG');
-        $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
+        $query = str_replace('__unidades__', $unidades, $query);
 
         $dtafimmdt = Date('Y-m-d') . ' 00:00:00';
 
@@ -915,7 +915,7 @@ class Pessoa
         $query = DB::getQuery('Pessoa.listarTitularesSuplentesDoColegiado.sql');
 
         $unidades = getenv('REPLICADO_CODUNDCLG');
-        $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
+        $query = str_replace('__unidades__', $unidades, $query);
 
         $dtafimmdt = Date('Y-m-d') . ' 00:00:00';
 
