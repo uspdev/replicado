@@ -927,6 +927,42 @@ class Pessoa
         return DB::fetchAll($query, $param);
     }
 
+    /*
+     * Método para listar mais informações de servidores ativos
+     *
+     * Usado em uspdev/pessoas
+     * @param string $tipvinext valores possíveis 'Servidor', 'Docente' ou 'Docente Aposentado'
+     * @return array
+     * @author @alecostaweb em 12/11/2021 issue #478
+     */
+    public static function listarMaisInformacoesServidores(string $tipvinext) {
+        $codundclg = getenv('REPLICADO_CODUNDCLG');
+        // Para o caso da pessoa ter mais de um vínculo ativo como funcionário e também como docente
+        if ($tipvinext == 'Servidor') {
+            $condicao = "AND (V.tipmer IS NULL)";
+        } else {
+            $condicao = "AND (V.tipmer IS NOT NULL)";
+        }
+        $query = "SELECT DISTINCT P.codpes, P.nompesttd, P.sexpes, P.dtanas, P.dtanas,
+                L.tipvin, L.tipvinext, L.dtainivin, L.dtainivin, L.codset, L.nomabvset,
+                L.nomset, V.nomabvfnc, L.nomfnc, V.tipfnc, V.dtainisitfun, L.nomloc,
+                L.epflgrund, L.numtelfmt, codema, D.idfpescpq, E.nomesc, E.nivesc,
+                GF.dscgrufor, V.tipcon, V.nomcaa, V.nomabvcla, V.nivgrupvm, V.tipjor, V.tipmer
+            FROM PESSOA P
+                INNER JOIN LOCALIZAPESSOA L ON P.codpes = L.codpes
+                INNER JOIN VINCULOPESSOAUSP V ON P.codpes = V.codpes
+                INNER JOIN ESCOLARIDADE AS E ON V.codesc = E.codesc
+                LEFT OUTER JOIN DIM_PESSOA_XMLUSP D ON P.codpes = D.codpes
+                LEFT OUTER JOIN TABGRAUFORM AS GF ON V.grufor = GF.grufor
+            WHERE (L.tipvinext = :tipvinext)
+                AND (L.codundclg IN ($codundclg))
+                AND (V.dtainisitfun IS NOT NULL) $condicao
+            ORDER BY P.nompesttd" ;
+        $param = [
+            'tipvinext' => $tipvinext,
+        ];
+        return DB::fetchAll($query, $param);
+    }
 
     /********** Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
@@ -1005,5 +1041,8 @@ class Pessoa
     {
         return self::listarDesignados();
     }
+
+
+
 
 }
