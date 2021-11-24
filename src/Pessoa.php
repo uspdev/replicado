@@ -825,6 +825,34 @@ class Pessoa
         return null;
     }
 
+    /**
+     * Método que lista colegiados que possuem membros ativos.
+     *
+     * Não foi usada a tabela COLEGIADO apenas pois não há informações 
+     * de quando o colegiado é desativado. Apesar de existir um campo indicando
+     * que o colegiado foi desativado ele nunca é preenchido, então só sabemos
+     * que o colegiado foi desativado quando ele não tem mais membros
+     *
+     * @return Array lista de colegiados
+     * @author @thiagogomesverissimo - 23/11/2021
+     *
+     */
+    public static function listarColegiados()
+    {
+        $query = DB::getQuery('Pessoa.listarColegiados.sql');
+
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
+
+        $dtafimmdt = Date('Y-m-d') . ' 00:00:00';
+
+        $param = [
+            'dtafimmdt' => $dtafimmdt,
+        ];
+
+        return DB::fetchAll($query, $param);
+    }
+
     /********** Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
     /**
