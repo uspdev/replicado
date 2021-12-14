@@ -826,19 +826,21 @@ class Pessoa
     }
 
     /**
-     * Método que facilita pegar o nome do colegiado dado seu código
+     * Método que facilita pegar o nome do colegiado dado seu código e sigla (opcional)
      * 
      * @param Integer $codclg código do colegiado pode ser obtido com listarColegiados()
+     * @param String $sglclg filtro opcional pela sigla do colegiado, também pode ser obtido com listarColegiados() 
      * @return String nome do colegiado
      * @author @thiagogomesverissimo - 23/11/2021
      *
      */
-    public static function retornarNomeColegiado(int $codclg)
+    public static function retornarNomeColegiado(int $codclg, string $sglclg = '')
     {
         $query = DB::getQuery('Pessoa.retornarNomeColegiado.sql');
 
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = str_replace('__unidades__', $unidades, $query);
+        $query = str_replace('__sglclg__', "AND COLEGIADO.sglclg = '$sglclg'" , $query);
 
         $param = [
             'codclg' => $codclg,
@@ -878,44 +880,21 @@ class Pessoa
     }
 
     /**
-     * Método que lista membros titulares para um dado colegiado
-     * 
-     * @param Integer $codclg código do colegiado pode ser obtido com listarColegiados()
-     * @return Array lista de membros do colegiado selecioando
-     * @author @thiagogomesverissimo - 23/11/2021
-     *
-     */
-    public static function listarTitularesDoColegiado(int $codclg)
-    {
-        $query = DB::getQuery('Pessoa.listarTitularesDoColegiado.sql');
-
-        $unidades = getenv('REPLICADO_CODUNDCLG');
-        $query = str_replace('__unidades__', $unidades, $query);
-
-        $dtafimmdt = Date('Y-m-d') . ' 00:00:00';
-
-        $param = [
-            'dtafimmdt' => $dtafimmdt,
-            'codclg'    => $codclg
-        ];
-
-        return DB::fetchAll($query, $param);
-    }
-
-    /**
      * Método que lista membros titulares e suplentes para um dado colegiado
      * 
      * @param Integer $codclg código do colegiado pode ser obtido com listarColegiados()
+     * @param String $sglclg Alguns colegiados tem o mesmo código e podem ser diferenciados através da sigla, por esta razão é recomendado buscar através do par código e sigla do colegiado.
      * @return Array lista de membros do colegiado selecioando
      * @author @thiagogomesverissimo - 23/11/2021
      *
      */
-    public static function listarTitularesSuplentesDoColegiado(int $codclg)
+    public static function listarTitularesSuplentesDoColegiado(int $codclg, string $sglclg = '')
     {
         $query = DB::getQuery('Pessoa.listarTitularesSuplentesDoColegiado.sql');
 
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = str_replace('__unidades__', $unidades, $query);
+        $query = str_replace('__sglclg__', "AND PARTICIPANTECOLEG.sglclg = '$sglclg'" , $query);
 
         $dtafimmdt = Date('Y-m-d') . ' 00:00:00';
 
@@ -923,6 +902,7 @@ class Pessoa
             'dtafimmdt' => $dtafimmdt,
             'codclg'    => $codclg
         ];
+        
 
         return DB::fetchAll($query, $param);
     }
