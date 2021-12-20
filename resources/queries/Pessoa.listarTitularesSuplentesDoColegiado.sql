@@ -18,7 +18,7 @@ WHERE PARTICIPANTECOLEG.dtafimmdt > :dtafimmdt
 -- Somente da unidade e colegiado em questão
   AND COLEGIADO.codundrsp IN (__unidades__)
   AND COLEGIADO.codclg = convert(int,:codclg)
-  __sglclg__
+  AND PARTICIPANTECOLEG.sglclg = :sglclg
   AND PARTICIPANTECOLEG.tipfncclg in ('Presidente','Vice-Presidente')
 )
 UNION 
@@ -41,7 +41,7 @@ WHERE PARTICIPANTECOLEG.dtafimmdt > :dtafimmdt
 -- Somente da unidade e colegiado em questão
   AND COLEGIADO.codundrsp IN (__unidades__)
   AND COLEGIADO.codclg = convert(int,:codclg)
-  __sglclg__
+  AND PARTICIPANTECOLEG.sglclg = :sglclg
   AND PARTICIPANTECOLEG.tipfncclg != 'Suplente'
   AND PARTICIPANTECOLEG.codpes NOT IN 
     (
@@ -59,9 +59,8 @@ WHERE PARTICIPANTECOLEG.dtafimmdt > :dtafimmdt
 		-- Somente da unidade e colegiado em questão
 		  AND COLEGIADO.codundrsp IN (__unidades__)
 		  AND COLEGIADO.codclg = convert(int,:codclg)
-		  __sglclg__
+		  AND PARTICIPANTECOLEG.sglclg = :sglclg
 		  AND PARTICIPANTECOLEG.tipfncclg in ('Presidente','Vice-Presidente')
     )
   )
-  order by titular
 
