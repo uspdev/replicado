@@ -636,9 +636,9 @@ class Graduacao
      * Se o aluno possuir mais de uma graduação deve passar por parametro o número em $codpgm:
      * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
      * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
-     * 
+     *
      * Método comum que é chamado por obterMediaPonderadaLimpa e obterMediaPonderadaSuja.
-     * 
+     *
      * @param Integer $codpes
      * @param Integer $codpgm Código que identifica cada programa do aluno.
      * @param Array $rstfim ['A'] - média limpa ou ['A','RN','RA','RF'] - média suja (default)
@@ -646,7 +646,7 @@ class Graduacao
      * @author gabrielareisg em 14/06/2021
      * @author modificado por thiagogomesverissimo em 22/11/2021
      */
-    public static function obterMediaPonderada(int $codpes, int $codpgm = null, array $rstfim = ['A','RN','RA','RF'])
+    public static function obterMediaPonderada(int $codpes, int $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
     {
         $query = DB::getQuery('Graduacao.obterMediaPonderada.sql');
 
@@ -656,12 +656,12 @@ class Graduacao
             $query_codpgm = "convert(int,:codpgm)";
             $param['codpgm'] = $codpgm;
         }
-        
-        $rstfim_string = "'" . implode ( "','", $rstfim ) . "'";
+
+        $rstfim_string = "'" . implode("','", $rstfim) . "'";
 
         $query = str_replace('__codpgm__', $query_codpgm, $query);
         $query = str_replace('__rstfim__', $rstfim_string, $query);
-        
+
         $param['codpes'] = $codpes;
 
         // recuperando as disciplina cursadas
@@ -687,16 +687,17 @@ class Graduacao
      * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
      * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
      *
-     * OBS.: Este método não utiliza o cache na configuração padrão pois o retorno ocupa poucos bytes. 
+     * OBS.: Este método não utiliza o cache na configuração padrão pois o retorno ocupa poucos bytes.
      * Deve modificar a configuração do cache se for conveniente.
-     * 
+     *
      * @param Integer $codpes
      * @param Integer $codpgm Código que identifica cada programa do aluno.
      * @return string
      * @author thiagogomesverissimo em 21/11/2021
      */
-    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null){
-        return self::obterMediaPonderada($codpes,$codpgm,['A']);
+    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null)
+    {
+        return self::obterMediaPonderada($codpes, $codpgm, ['A']);
     }
 
     /**
@@ -706,15 +707,51 @@ class Graduacao
      * sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
      * Se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
      *
-     * OBS.: Este método não utiliza o cache na configuração padrão pois o retorno ocupa poucos bytes. 
+     * OBS.: Este método não utiliza o cache na configuração padrão pois o retorno ocupa poucos bytes.
      * Deve modificar a configuração do cache se for conveniente.
-     * 
+     *
      * @param Integer $codpes
      * @param Integer $codpgm Código que identifica cada programa do aluno.
      * @return string
      * @author thiagogomesverissimo em 21/11/2021
      */
-    public static function obterMediaPonderadaSuja(int $codpes, int $codpgm = null){
-        return self::obterMediaPonderada($codpes,$codpgm,['A','RN','RA','RF']);
+    public static function obterMediaPonderadaSuja(int $codpes, int $codpgm = null)
+    {
+        return self::obterMediaPonderada($codpes, $codpgm, ['A', 'RN', 'RA', 'RF']);
+    }
+
+    /**
+     * Retorna lista de disciplinas cursadas pelo aluno em determinado semestre
+     *
+     * $rstfim é um array com os códigos possiveis de resultado-final e pode incluir 'NULL' (maiúsculo) para
+     * as disciplinas que ainda não foram finalizadas.
+     *
+     * @param Int $codpes
+     * @param Int $anoSemestre Ex.: '20211', '20212', ...
+     * @param Array $rstfim - default = ['A', 'AR', 'R', 'RN', 'RA', 'RF', 'NULL']
+     * @return Array
+     * @author Gustavo Medeiros (EEL), em 10/12/2021
+     * @author Masaki K Neto (EESC)
+     */
+    public static function listarDisciplinasAlunoAnoSemestre(int $codpes, int $anoSemestre, array $rstfim = null)
+    {
+        $query = DB::getQuery('Graduacao.listarDisciplinasAlunoAnoSemestre.sql');
+
+        $rstfim = $rstfim ?: ['A', 'AR', 'R', 'RN', 'RA', 'RF', 'NULL'];
+
+        if (in_array('NULL', $rstfim) !== null) {
+            $query_rstfim_null = ' OR H.rstfim IS NULL';
+            if (($key = array_search('NULL', $rstfim)) !== false) {
+                unset($rstfim[$key]);
+            }
+        }
+
+        $rstfim_string = "AND (H.rstfim IN ('" . implode("','", $rstfim) . "') $query_rstfim_null)";
+        $query = str_replace('__rstfim__', $rstfim_string, $query);
+
+        $param['codpes'] = $codpes;
+        $param['anoSemestre'] = $anoSemestre;
+
+        return DB::fetchAll($query, $param);
     }
 }
