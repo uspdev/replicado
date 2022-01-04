@@ -306,16 +306,44 @@ class Pessoa
         return DB::fetchAll($query);
     }
 
+
     /**
      * Retorna o nome completo (nome social) a partir do codpes
      * @param type $codpes
      * @return boolean
+     * @deprecated em favor de obterNome, em 20/12/2021
      */
     public static function nomeCompleto($codpes)
     {
-        $result = Pessoa::dump($codpes, ['nompesttd']);
-        if (!empty($result)) {
-            return $result['nompesttd'];
+        return SELF::obterNome($codpes);
+    }
+
+    /**
+     * Recebe um codpes e retorna o nome completo (nome social) 
+     * ou recebe um array de codpes e retorna uma lista chaveada dos nomes (codpes->nome) 
+     * @param Integer|Array $codpes
+     * @return String|Array
+     */
+    public static function obterNome($codpes)
+    {
+        if(is_array($codpes)){
+            $codpes = implode(',', $codpes);
+        }else{
+            $codpes = (int) $codpes; //se não for array, garante que seja int
+        }
+        $query = "SELECT codpes, nompesttd FROM PESSOA
+                  WHERE codpes IN ({$codpes}) ORDER BY nompes";
+        
+        $result = DB::fetchAll($query);
+        
+        if(!is_int($codpes)){// se for array de codpes
+            $nomes = [];
+            foreach($result as $pessoa){
+                $nomes[$pessoa['codpes']] = $pessoa['nompesttd'];
+            }
+            return $nomes;
+        }else if (!empty($result)) { // se for apenas um codpes, retornará o nome direto em string
+            return $result[0]['nompesttd'];
         }
 
         return $result;
@@ -826,22 +854,25 @@ class Pessoa
     }
 
     /**
-     * Método que facilita pegar o nome do colegiado dado seu código
+     * Método que facilita pegar o nome do colegiado dado seu código e sigla 
      * 
      * @param Integer $codclg código do colegiado pode ser obtido com listarColegiados()
+     * @param String $sglclg sigla do colegiado, também pode ser obtido com listarColegiados()  
      * @return String nome do colegiado
      * @author @thiagogomesverissimo - 23/11/2021
      *
      */
-    public static function retornarNomeColegiado(int $codclg)
+    public static function retornarNomeColegiado(int $codclg, string $sglclg)
     {
         $query = DB::getQuery('Pessoa.retornarNomeColegiado.sql');
 
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = str_replace('__unidades__', $unidades, $query);
+        
 
         $param = [
             'codclg' => $codclg,
+            'sglclg'    => $sglclg
         ];
 
         $return = DB::fetch($query, $param);
@@ -878,39 +909,15 @@ class Pessoa
     }
 
     /**
-     * Método que lista membros titulares para um dado colegiado
-     * 
-     * @param Integer $codclg código do colegiado pode ser obtido com listarColegiados()
-     * @return Array lista de membros do colegiado selecioando
-     * @author @thiagogomesverissimo - 23/11/2021
-     *
-     */
-    public static function listarTitularesDoColegiado(int $codclg)
-    {
-        $query = DB::getQuery('Pessoa.listarTitularesDoColegiado.sql');
-
-        $unidades = getenv('REPLICADO_CODUNDCLG');
-        $query = str_replace('__unidades__', $unidades, $query);
-
-        $dtafimmdt = Date('Y-m-d') . ' 00:00:00';
-
-        $param = [
-            'dtafimmdt' => $dtafimmdt,
-            'codclg'    => $codclg
-        ];
-
-        return DB::fetchAll($query, $param);
-    }
-
-    /**
      * Método que lista membros titulares e suplentes para um dado colegiado
      * 
      * @param Integer $codclg código do colegiado pode ser obtido com listarColegiados()
+     * @param String $sglclg sigla do colegiado, também pode ser obtido com listarColegiados() 
      * @return Array lista de membros do colegiado selecioando
      * @author @thiagogomesverissimo - 23/11/2021
      *
      */
-    public static function listarTitularesSuplentesDoColegiado(int $codclg)
+    public static function listarTitularesSuplentesDoColegiado(int $codclg, string $sglclg)
     {
         $query = DB::getQuery('Pessoa.listarTitularesSuplentesDoColegiado.sql');
 
@@ -921,10 +928,29 @@ class Pessoa
 
         $param = [
             'dtafimmdt' => $dtafimmdt,
-            'codclg'    => $codclg
+            'codclg'    => $codclg,
+            'sglclg'    => $sglclg
         ];
-
-        return DB::fetchAll($query, $param);
+        
+        $result = DB::fetchAll($query, $param);        
+        
+        if($result){
+            $codpes_membros = array_merge(array_column($result, 'titular'),array_column($result, 'suplente'));
+            $codpes_membros = array_map('intval', array_filter($codpes_membros)); //removendo valores vazios e convertendo str para int
+            $nomes_membros =  Pessoa::obterNome($codpes_membros);
+            $membros = [];
+            foreach($result as $membro){
+                
+                $membro['nome_titular'] = $nomes_membros[(int)$membro['titular']];
+                $membro['nome_suplente'] = empty($membro['suplente']) ? '' : $nomes_membros[(int)$membro['suplente']] ;
+                $membros[] = $membro;
+            }
+            usort($membros, function ($a, $b){
+                return strcmp($a["nome_titular"], $b["nome_titular"]);
+            });
+            return $membros;
+        }
+        return [];
     }
 
     /*
