@@ -11,7 +11,7 @@
 
 ## Replicado
 
-Biblioteca PHP que abstrai o acesso aos dados do replicado USP, 
+Biblioteca PHP que abstrai em classes a camade de acesso ao replicado USP, 
 isto é, ao invés de inserir uma consulta SQL diretamente em seu código, 
 como por exemplo: 
 
