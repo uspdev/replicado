@@ -242,6 +242,28 @@ class Graduacao
     }
 
     /**
+     * Método para obter as disciplinas de graduação oferecidas por colegiado
+     *
+     * @param Integer $codclg
+     * @return void
+     * @author André Canale Garcia <acgarcia@sc.sp.br>
+     */
+    public static function obterDisciplinasPorColegiado($codclg = null)
+    {
+        $query = "SELECT D1.* 
+                  FROM DISCIPLINAGR AS D1
+                  WHERE (D1.verdis = (SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis))) 
+                    AND D1.coddis IN (SELECT coddis FROM DISCIPGRCODIGO WHERE DISCIPGRCODIGO.codclg = convert(int,:codclg)) 
+                  ORDER BY D1.nomdis ASC";
+
+        $param = [
+            'codclg' => $codclg ? $codclg : getenv('REPLICADO_CODUNDCLG'),
+        ];
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
      * Método para trazer o nome da disciplina de graduação
      *
      * @param String $coddis

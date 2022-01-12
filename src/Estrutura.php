@@ -4,6 +4,26 @@ namespace Uspdev\Replicado;
 
 class Estrutura
 {
+    /**
+     * Método que recebe codset e retorna todos campos da tabela SETOR.
+     *
+     * @param Integer $codset - Código do setor
+     * @return string
+     * @author André Canale Garcia <acgarcia@sc.sp.br>
+     */
+    public static function dump($codset)
+    {        
+        $query = "SELECT s.*
+                  FROM SETOR AS s 
+                  WHERE s.codset = convert(int,:codset)";
+
+        $param = [
+            'codset' => $codset,
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
      /**
      * Método que recebe o Código da Unidade e retorna todos os setores ativos da mesma.
      * Caso não seja passado a unidade, pega o REPLICADO_CODUNDCLG do .env

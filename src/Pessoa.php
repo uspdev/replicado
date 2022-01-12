@@ -150,6 +150,39 @@ class Pessoa
     }
 
     /**
+     * Método para buscar pessoas por parte do código ou do nome
+     * A busca pode ser fonética ou normal, somente ativos ou todos
+     * 
+     * @param String $busca Código ou Nome a ser buscado
+     * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a base
+     * @return array
+     * @author André Canale Garcia <acgarcia@sc.sp.br> // Adaptação do método procurarPorNome
+     * 
+     * Observação: Esse método não funcionou no sybase sap ase na FFLCH
+     * não sei se por conta da função CAST, mas vamos investigar.
+     * Thiago Gomes Verissimo <thiago.verissimo@usp.br>
+     */
+    public static function procurarPorCodigoOuNome(string $busca, bool $ativos = true)
+    {
+        if ($ativos) {
+            # se ativos vamos fazer join com LOCALIZAPESSOA
+            $query = "SELECT DISTINCT P.* FROM PESSOA P, LOCALIZAPESSOA L
+                    WHERE CAST(P.codpes AS NVARCHAR) LIKE :busca OR UPPER(P.nompes) LIKE UPPER(:busca)
+                    AND L.codpes = P.codpes
+                    ORDER BY P.nompes ASC";
+        } else {
+            $query = "SELECT DISTINCT P.* FROM PESSOA P
+                    WHERE CAST(P.codpes AS NVARCHAR) LIKE :busca OR UPPER(P.nompes) LIKE UPPER(:busca)
+                    ORDER BY P.nompes ASC";
+        }
+
+        $param = [
+            'busca' => '%' . $busca . '%',
+        ];
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
      * Método para listar vínculos de uma pessoa
      *
      * @param Integer $codpes
