@@ -92,7 +92,6 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
-
     /**
      * Retorna lista dos orientadores credenciados na área de concentração (codare) do programa de pós graduação correspondente.
      *
@@ -164,45 +163,38 @@ class Posgraduacao
     /**
      * Retorna a lista de disciplinas em oferecimento de uma determinada área de concentração.
      *
-     * Se $data_ini não for informado, pega a data corrente. Se for informado pegará as disciplinas oferecidas
-     * no semestre que contém a data. O formato pode ser qualquer aceito por datetime().
-     * Se $data_ini for informado, o comportamento de $data_ini é alterado. $data_ini e $data_fim passam a ser
-     * as datas de início e data de fim do período de busca da disciplina, no formato aceito pelo BD (YYYYMMDD).
-     *
+     * Uma mesma disciplina pode ser oferecida para mais de uma área
+     * Modificado em 26/1/2022 de forma a não usar mais as datas de inicio/fim.
+     * Agora usa as informações da tabela R27DISMINCRE
+     * 
      * @param int $codare Código da áreada PG.
-     * @param string $data_ini (opcional) Data na qual vai buscar os limites do semestre.
-     *                         Caso seja fornecido $data_fim então será a data inicial do intervalo.
-     * @param string $data_fim (opcional) data final do intervalo de busca.
-     *
      * @return array
      *
      * @author Masaki K Neto em 2020
      * @author Masaki K Neto, modificado em 3/2/2021
+     * @author Masaki K Neto, modificado em 26/1/2022
      */
-    public static function disciplinasOferecimento(int $codare, string $data_ini = null, string $data_fim = null)
+    public static function disciplinasOferecimento(int $codare)
     {
-        // Se não for passado data_fim, então vamos construir data_ini e data_fim usando uteis
-        // se data_ini for null é tratado no uteis também
-        if (!$data_fim) {
-            list($data_ini, $data_fim) = Uteis::semestre($data_ini);
-        }
-        $query = "SELECT  e.sgldis, MAX(e.numseqdis) AS numseqdis, o.numofe, d.nomdis
-                    FROM OFERECIMENTO AS o, R27DISMINCRE AS r, ESPACOTURMA AS e, DISCIPLINA AS d
-                    WHERE e.sgldis = d.sgldis
-                        AND e.sgldis = r.sgldis
-                        AND o.sgldis = r.sgldis
-                        AND o.numseqdis = d.numseqdis
-                        AND o.dtainiofe > :dtainiofe
-                        AND o.dtafimofe < :dtafimofe
-                        AND r.codare = convert(int,:codare)
-                    GROUP BY e.sgldis, d.nomdis, o.numofe
-                    ORDER BY d.nomdis ASC";
+        $query = "SELECT d.nomdis, d.numcretotdis, o.*
+            FROM OFERECIMENTO o
+            INNER JOIN (
+                SELECT MAX(numofe) numofe, sgldis, numseqdis FROM OFERECIMENTO
+                WHERE sgldis in (
+                    SELECT DISTINCT(sgldis) FROM R27DISMINCRE
+                    WHERE codare=CONVERT(INT,:codare) AND dtadtvdis is NULL AND dtaatvdis is NOT NULL
+                )
+                GROUP BY sgldis, numseqdis
+            ) tb on tb.numofe = o.numofe AND tb.sgldis = o.sgldis and tb.numseqdis = o.numseqdis
+            INNER JOIN DISCIPLINA d on d.sgldis = o.sgldis AND d.numseqdis = o.numseqdis
+            WHERE o.stacslofe IS NULL --status-consolidacao-oferecimento
+                AND o.stacslatm IS NULL --status-consolidacao-automatica
+                AND o.dtacantur IS NULL --data-cancelamento-turma
+                AND o.dtafimofe > GETDATE() --data final futura
+            ORDER BY o.sgldis";
+            /* data final futura exclui algumas disciplinas perdidas em OFERECIMENTO */
 
-        $param = [
-            'codare' => $codare,
-            'dtainiofe' => $data_ini,
-            'dtafimofe' => $data_fim,
-        ];
+        $param = ['codare' => $codare];
 
         return DB::fetchAll($query, $param);
     }
@@ -791,9 +783,9 @@ class Posgraduacao
 
     /**
      * Lista os programas de Pós-graduação da unidade
-     * 
+     *
      * Inicialmente em uso no uspdev/pessoas
-     * 
+     *
      * @return Array - lista contendo código e nome do programa
      * @author masakik, em 22/7/2021
      */
