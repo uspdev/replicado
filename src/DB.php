@@ -137,11 +137,11 @@ class DB
             foreach ($filtros as $coluna => $valor) {
                 $colunaSanitizada = str_replace('.', '', $coluna);
                 if (array_key_exists($coluna, $tipos)) {
-                    $str_where .= " {$coluna} = convert({$tipos[$coluna]}, :{$colunaSanitizada}) ";
-                    $params[$colunaSanitizada] = "{$valor}";
+                    $str_where .= " {$coluna} = CONVERT({$tipos[$coluna]}, :{$colunaSanitizada}) ";
+                    $params[$colunaSanitizada] = $valor;
                 } else {
                     $str_where .= " {$coluna} = :{$colunaSanitizada} ";
-                    $params[$colunaSanitizada] = "{$valor}";
+                    $params[$colunaSanitizada] = $valor;
                 }
                 // Enquanto existir um filtro, adiciona o operador AND
                 if (next($filtros)) {
