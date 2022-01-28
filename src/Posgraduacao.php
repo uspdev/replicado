@@ -192,7 +192,10 @@ class Posgraduacao
                 AND o.dtacantur IS NULL --data-cancelamento-turma
                 AND o.dtafimofe > GETDATE() --data final futura
             ORDER BY o.sgldis";
-            /* data final futura exclui algumas disciplinas perdidas em OFERECIMENTO */
+            /* 
+            -self join com oferecimento para pegar somente as disciplinas listadas em R27DISMINCRE da área
+            -data final futura exclui algumas disciplinas perdidas em OFERECIMENTO 
+            */
 
         $param = ['codare' => $codare];
 
