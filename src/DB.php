@@ -113,12 +113,16 @@ class DB
     }
 
     /**
-     * Retorna array contendo string formatada do WHERE com os filtros/buscas e
-     * as colunas => valores no formato para 'bind'
+     * Retorna array contendo string formatada do WHERE com os filtros/buscas e as colunas => valores no formato para 'bind'
      *
-     * @param array $filtros (opcional) - campo_tabela => valor
-     * @param array $buscas (opcional) - campo_tabela => valor
-     * @param array $tipos (opcional) - campo_tabela => tipo (ex.: codpes => int)
+     * A $str_where pode ser colocada dentro de $query. Cuidado: ela vem iniciada pela string " WHERE ("
+     * $params pode ser passado diretamente no fetch/fetchAll
+     * 
+     * 28/1/2022 - Adicionado $colunaSanitizada poara o caso de passar "tabela.coluna". $colunaSanitizada remove o ponto no $param
+     * 
+     * @param array $filtros - campo_tabela => valor
+     * @param array $buscas - campo_tabela => valor
+     * @param array $tipos - campo_tabela => tipo (ex.: codpes => int)
      *
      * @return array posição [0] => string WHERE, posição [1] = 'colunas' => valores
      *
@@ -131,12 +135,13 @@ class DB
         if (!empty($filtros) && (count($filtros) > 0)) {
             $str_where .= " WHERE (";
             foreach ($filtros as $coluna => $valor) {
+                $colunaSanitizada = str_replace('.', '', $coluna);
                 if (array_key_exists($coluna, $tipos)) {
-                    $str_where .= " {$coluna} = convert({$tipos[$coluna]}, :{$coluna}) ";
-                    $params[$coluna] = "{$valor}";
+                    $str_where .= " {$coluna} = convert({$tipos[$coluna]}, :{$colunaSanitizada}) ";
+                    $params[$colunaSanitizada] = "{$valor}";
                 } else {
-                    $str_where .= " {$coluna} = :{$coluna} ";
-                    $params[$coluna] = "{$valor}";
+                    $str_where .= " {$coluna} = :{$colunaSanitizada} ";
+                    $params[$colunaSanitizada] = "{$valor}";
                 }
                 // Enquanto existir um filtro, adiciona o operador AND
                 if (next($filtros)) {
@@ -155,8 +160,9 @@ class DB
                 $str_where .= " WHERE (";
             }
             foreach ($buscas as $coluna => $valor) {
-                $str_where .= " {$coluna} LIKE :{$coluna} ";
-                $params[$coluna] = "%{$valor}%";
+                $colunaSanitizada = str_replace('.', '', $coluna);
+                $str_where .= " {$coluna} LIKE :{$colunaSanitizada} ";
+                $params[$colunaSanitizada] = "%{$valor}%";
 
                 // Enquanto existir uma busca, adiciona o operador OR
                 if (next($buscas)) {

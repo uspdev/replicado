@@ -152,12 +152,12 @@ class Pessoa
     /**
      * Método para buscar pessoas por parte do código ou do nome
      * A busca pode ser fonética ou normal, somente ativos ou todos
-     * 
+     *
      * @param String $busca Código ou Nome a ser buscado
      * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a base
      * @return array
      * @author André Canale Garcia <acgarcia@sc.sp.br> // Adaptação do método procurarPorNome
-     * 
+     *
      * Observação: Esse método não funcionou no sybase sap ase na FFLCH
      * não sei se por conta da função CAST, mas vamos investigar.
      * Thiago Gomes Verissimo <thiago.verissimo@usp.br>
@@ -228,22 +228,48 @@ class Pessoa
 
     /**
      * Método para retornar servidores ativos na unidade
+     * 
+     * O parâmetro $codundclgi passou a ser opcional pois não vai ser mais utilizado
+     * foi mantido somente para compatibilidade retroativa
      *
      * @param Integer $codundclgi
      * @return array
+     * @deprecated em favor de listarServidores()
+     * @author Masaki K Neto atualizado em 28/1/2022
      */
-    public static function servidores($codundclgi)
+    public static function servidores($codundclgi = '')
     {
+        return SELF::ListarServidores();
+    }
+
+    /**
+     * Retorna lista de servidores não docentes ativos na unidade
+     * 
+     * Retorna dados das tabelas localizapessoa e pessoa
+     * 
+     * E possivel aplicar filtros sobre qualquer coluna retornada. 
+     * O filtro é um array no formato [coluna => valor].
+     * 
+     * @param array $filtros - default = []
+     * @return array
+     * @author Masaki K Neto atualizado em 28/1/2022
+     */
+    public static function listarServidores($filtros = [])
+    {
+        $filtros['LOCALIZAPESSOA.tipvinext'] = 'Servidor';
+        $filtros['LOCALIZAPESSOA.sitatl'] = 'A';
+        list($str_where, $params) = DB::criaFiltroBusca($filtros, [], []);
+        if (!empty(substr($str_where, 7))) {
+            $str_where = ' AND ' . substr($str_where, 7);
+        }
+
         $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
                     INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
-                    WHERE (LOCALIZAPESSOA.tipvinext LIKE 'Servidor'
-                        AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)
-                        AND LOCALIZAPESSOA.sitatl = 'A')
+                    WHERE LOCALIZAPESSOA.codundclg IN (" . getenv('REPLICADO_CODUNDCLG') . ")
+                    {$str_where}
                     ORDER BY LOCALIZAPESSOA.nompes";
-        $param = [
-            'codundclgi' => $codundclgi,
-        ];
-        return DB::fetchAll($query, $param);
+
+        return DB::fetchAll($query, $params);
     }
 
     /**
@@ -327,7 +353,6 @@ class Pessoa
         return DB::fetch($query, $param)['computed'];
     }
 
-
     /**
      * Método para retornar todos os tipos de vínculos por extenso (tipvinext)
      *
@@ -338,7 +363,6 @@ class Pessoa
         $query = "SELECT DISTINCT(tipvinext) FROM LOCALIZAPESSOA";
         return DB::fetchAll($query);
     }
-
 
     /**
      * Retorna o nome completo (nome social) a partir do codpes
@@ -352,30 +376,30 @@ class Pessoa
     }
 
     /**
-     * Recebe um codpes e retorna o nome completo (nome social) 
-     * ou recebe um array de codpes e retorna uma lista chaveada dos nomes (codpes->nome) 
+     * Recebe um codpes e retorna o nome completo (nome social)
+     * ou recebe um array de codpes e retorna uma lista chaveada dos nomes (codpes->nome)
      * @param Integer|Array $codpes
      * @return String|Array
      */
     public static function obterNome($codpes)
     {
-        if(is_array($codpes)){
+        if (is_array($codpes)) {
             $codpes = implode(',', $codpes);
-        }else{
+        } else {
             $codpes = (int) $codpes; //se não for array, garante que seja int
         }
         $query = "SELECT codpes, nompesttd FROM PESSOA
                   WHERE codpes IN ({$codpes}) ORDER BY nompes";
-        
+
         $result = DB::fetchAll($query);
-        
-        if(!is_int($codpes)){// se for array de codpes
+
+        if (!is_int($codpes)) { // se for array de codpes
             $nomes = [];
-            foreach($result as $pessoa){
+            foreach ($result as $pessoa) {
                 $nomes[$pessoa['codpes']] = $pessoa['nompesttd'];
             }
             return $nomes;
-        }else if (!empty($result)) { // se for apenas um codpes, retornará o nome direto em string
+        } else if (!empty($result)) { // se for apenas um codpes, retornará o nome direto em string
             return $result[0]['nompesttd'];
         }
 
@@ -887,10 +911,10 @@ class Pessoa
     }
 
     /**
-     * Método que facilita pegar o nome do colegiado dado seu código e sigla 
-     * 
+     * Método que facilita pegar o nome do colegiado dado seu código e sigla
+     *
      * @param Integer $codclg código do colegiado pode ser obtido com listarColegiados()
-     * @param String $sglclg sigla do colegiado, também pode ser obtido com listarColegiados()  
+     * @param String $sglclg sigla do colegiado, também pode ser obtido com listarColegiados()
      * @return String nome do colegiado
      * @author @thiagogomesverissimo - 23/11/2021
      *
@@ -901,22 +925,24 @@ class Pessoa
 
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = str_replace('__unidades__', $unidades, $query);
-        
 
         $param = [
             'codclg' => $codclg,
-            'sglclg'    => $sglclg
+            'sglclg' => $sglclg,
         ];
 
         $return = DB::fetch($query, $param);
-        if($return) return $return['nomclg'];
+        if ($return) {
+            return $return['nomclg'];
+        }
+
         return '';
     }
 
     /**
      * Método que lista colegiados que possuem membros ativos.
      *
-     * Não foi usada a tabela COLEGIADO apenas pois não há informações 
+     * Não foi usada a tabela COLEGIADO apenas pois não há informações
      * de quando o colegiado é desativado. Apesar de existir um campo indicando
      * que o colegiado foi desativado ele nunca é preenchido, então só sabemos
      * que o colegiado foi desativado quando ele não tem mais membros
@@ -943,9 +969,9 @@ class Pessoa
 
     /**
      * Método que lista membros titulares e suplentes para um dado colegiado
-     * 
+     *
      * @param Integer $codclg código do colegiado pode ser obtido com listarColegiados()
-     * @param String $sglclg sigla do colegiado, também pode ser obtido com listarColegiados() 
+     * @param String $sglclg sigla do colegiado, também pode ser obtido com listarColegiados()
      * @return Array lista de membros do colegiado selecioando
      * @author @thiagogomesverissimo - 23/11/2021
      *
@@ -961,24 +987,24 @@ class Pessoa
 
         $param = [
             'dtafimmdt' => $dtafimmdt,
-            'codclg'    => $codclg,
-            'sglclg'    => $sglclg
+            'codclg' => $codclg,
+            'sglclg' => $sglclg,
         ];
-        
-        $result = DB::fetchAll($query, $param);        
-        
-        if($result){
-            $codpes_membros = array_merge(array_column($result, 'titular'),array_column($result, 'suplente'));
+
+        $result = DB::fetchAll($query, $param);
+
+        if ($result) {
+            $codpes_membros = array_merge(array_column($result, 'titular'), array_column($result, 'suplente'));
             $codpes_membros = array_map('intval', array_filter($codpes_membros)); //removendo valores vazios e convertendo str para int
-            $nomes_membros =  Pessoa::obterNome($codpes_membros);
+            $nomes_membros = Pessoa::obterNome($codpes_membros);
             $membros = [];
-            foreach($result as $membro){
-                
-                $membro['nome_titular'] = $nomes_membros[(int)$membro['titular']];
-                $membro['nome_suplente'] = empty($membro['suplente']) ? '' : $nomes_membros[(int)$membro['suplente']] ;
+            foreach ($result as $membro) {
+
+                $membro['nome_titular'] = $nomes_membros[(int) $membro['titular']];
+                $membro['nome_suplente'] = empty($membro['suplente']) ? '' : $nomes_membros[(int) $membro['suplente']];
                 $membros[] = $membro;
             }
-            usort($membros, function ($a, $b){
+            usort($membros, function ($a, $b) {
                 return strcmp($a["nome_titular"], $b["nome_titular"]);
             });
             return $membros;
@@ -994,7 +1020,8 @@ class Pessoa
      * @return array
      * @author @alecostaweb em 12/11/2021 issue #478
      */
-    public static function listarMaisInformacoesServidores(string $tipvinext) {
+    public static function listarMaisInformacoesServidores(string $tipvinext)
+    {
         $codundclg = getenv('REPLICADO_CODUNDCLG');
         // Para o caso da pessoa ter mais de um vínculo ativo como funcionário e também como docente
         if ($tipvinext == 'Servidor') {
@@ -1016,7 +1043,7 @@ class Pessoa
             WHERE (L.tipvinext = :tipvinext)
                 AND (L.codundclg IN ($codundclg))
                 AND (V.dtainisitfun IS NOT NULL) $condicao
-            ORDER BY P.nompesttd" ;
+            ORDER BY P.nompesttd";
         $param = [
             'tipvinext' => $tipvinext,
         ];
@@ -1100,8 +1127,5 @@ class Pessoa
     {
         return self::listarDesignados();
     }
-
-
-
 
 }
