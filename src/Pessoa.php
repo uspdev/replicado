@@ -112,74 +112,64 @@ class Pessoa
     /**
      * Método para buscar pessoas por nome ou parte do nome
      * A busca pode ser fonética ou normal, somente ativos ou todos
+     * Ativos incluem vinculos externos, dependentes, etc além dos alunos e servidores normais
+     * Inativos são aqueles que não tem mais vínculos com a USP
      *
      * @param String $nome Nome a ser buscado
      * @param Bool $fonetico Se true faz busca no campo nompesfon, se false faz em nompesttd
-     * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a base
+     * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a tabela PESSOAS
      * @return array
      * @author Masaki K Neto, em 10/11/2020
+     * @author Masaki K Neto, atualizado em 1/2/2022
      */
     public static function procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true)
     {
         if ($fonetico) {
             $nome = Uteis::fonetico($nome);
-            $campo = 'nompesfon';
+            $query_busca = "P.nompesfon like :nome";
         } else {
             $nome = trim($nome);
             $nome = Uteis::substituiAcentosParaSql($nome);
-            $nome = strtoupper(str_replace(' ', '%', $nome));
-            $campo = 'nompesttd';
+            $nome = str_replace(' ', '%', $nome);
+            $query_busca = "UPPER(P.nompesttd) like UPPER(:nome)";
         }
 
         if ($ativos) {
-            # se ativos vamos fazer join com LOCALIZAPESSOA
-            $query = "SELECT P.* FROM PESSOA P, LOCALIZAPESSOA L
-                    WHERE UPPER(P.{$campo}) LIKE :nome
-                    AND L.codpes = P.codpes
-                    ORDER BY P.{$campo} ASC";
+            $query = "SELECT P.*, L.* FROM PESSOA P
+                INNER JOIN LOCALIZAPESSOA L on L.codpes = P.codpes
+                WHERE L.tipdsg = NULL --exclui designações
+                AND $query_busca
+                ORDER BY P.nompesttd ASC";
         } else {
             $query = "SELECT P.* FROM PESSOA P
-                    WHERE UPPER(P.{$campo}) LIKE :nome
-                    ORDER BY P.{$campo} ASC";
+                WHERE $query_busca
+                ORDER BY P.nompesttd ASC";
         }
 
-        $param = [
-            'nome' => '%' . $nome . '%',
-        ];
+        $param = ['nome' => '%' . $nome . '%'];
         return DB::fetchAll($query, $param);
     }
 
     /**
      * Método para buscar pessoas por parte do código ou do nome
-     * A busca pode ser fonética ou normal, somente ativos ou todos
+     *
+     * A busca é fonética, somente ativos ou todos
+     * O método foi ajustado para compatibilizar com procuraPorNome() e dump()
      *
      * @param String $busca Código ou Nome a ser buscado
      * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a base
      * @return array
      * @author André Canale Garcia <acgarcia@sc.sp.br> // Adaptação do método procurarPorNome
-     *
-     * Observação: Esse método não funcionou no sybase sap ase na FFLCH
-     * não sei se por conta da função CAST, mas vamos investigar.
-     * Thiago Gomes Verissimo <thiago.verissimo@usp.br>
+     * @author Masaki K Neto, modificado em 1/2/2022
      */
     public static function procurarPorCodigoOuNome(string $busca, bool $ativos = true)
     {
-        if ($ativos) {
-            # se ativos vamos fazer join com LOCALIZAPESSOA
-            $query = "SELECT DISTINCT P.* FROM PESSOA P, LOCALIZAPESSOA L
-                    WHERE CAST(P.codpes AS NVARCHAR) LIKE :busca OR UPPER(P.nompes) LIKE UPPER(:busca)
-                    AND L.codpes = P.codpes
-                    ORDER BY P.nompes ASC";
-        } else {
-            $query = "SELECT DISTINCT P.* FROM PESSOA P
-                    WHERE CAST(P.codpes AS NVARCHAR) LIKE :busca OR UPPER(P.nompes) LIKE UPPER(:busca)
-                    ORDER BY P.nompes ASC";
+        if (intval($busca)) { // é codpes
+            $ret = SELF::dump($busca);
+            return $ret ? [$ret] : $ret;
+        } else { // é nome
+            return SELF::procurarPorNome($busca, true, $ativos);
         }
-
-        $param = [
-            'busca' => '%' . $busca . '%',
-        ];
-        return DB::fetchAll($query, $param);
     }
 
     /**
