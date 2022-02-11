@@ -10,7 +10,7 @@ FROM
     INNER JOIN PESSOA PROF ON M.codpes=PROF.codpes
 WHERE
     A.codpes = :codpes AND
-    T.codtur LIKE CONCAT(:anoSemestre, '%') AND
+    T.codtur LIKE :anoSemestre AND
     H.stamtr = 'M'
     __rstfim__
 ORDER BY
