@@ -250,10 +250,10 @@ class Graduacao
      */
     public static function obterDisciplinasPorColegiado($codclg = null)
     {
-        $query = "SELECT D1.* 
+        $query = "SELECT D1.*
                   FROM DISCIPLINAGR AS D1
-                  WHERE (D1.verdis = (SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis))) 
-                    AND D1.coddis IN (SELECT coddis FROM DISCIPGRCODIGO WHERE DISCIPGRCODIGO.codclg = convert(int,:codclg)) 
+                  WHERE (D1.verdis = (SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis)))
+                    AND D1.coddis IN (SELECT coddis FROM DISCIPGRCODIGO WHERE DISCIPGRCODIGO.codclg = convert(int,:codclg))
                   ORDER BY D1.nomdis ASC";
 
         $param = [
@@ -772,7 +772,7 @@ class Graduacao
         $query = str_replace('__rstfim__', $rstfim_string, $query);
 
         $param['codpes'] = $codpes;
-        $param['anoSemestre'] = $anoSemestre;
+        $param['anoSemestre'] = $anoSemestre . '%';
 
         return DB::fetchAll($query, $param);
     }
