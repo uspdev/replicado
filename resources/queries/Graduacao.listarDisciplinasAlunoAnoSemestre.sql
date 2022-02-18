@@ -9,9 +9,9 @@ FROM
     INNER JOIN MINISTRANTE M ON O.coddis=M.coddis AND O.codtur=M.codtur AND O.verdis=M.verdis
     INNER JOIN PESSOA PROF ON M.codpes=PROF.codpes
 WHERE
-    A.codpes = :codpes AND
-    T.codtur LIKE :anoSemestre AND
-    H.stamtr = 'M'
-    __rstfim__
+    A.codpes = :codpes
+    AND T.codtur LIKE :anoSemestre
+    AND H.stamtr = 'M'
+    AND __rstfim__
 ORDER BY
     D.nomdis;
