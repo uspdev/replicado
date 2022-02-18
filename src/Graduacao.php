@@ -653,6 +653,52 @@ class Graduacao
     }
 
     /**
+     * Lista as disciplinas cursadas por um aluno
+     *
+     * $codpgm: se o aluno possuir mais de uma graduação deve passar por parametro:
+     *  - sendo 1 referente a primeira graduação/ou única graduação, 2 para a segunda, e assim sucessivamente.
+     *  - se o parâmetro não for passado, a média a ser retornada será referente ao último curso do aluno.
+     *
+     * $rstfim: resultado final na disciplina. Exemplos:
+     *  ['A'] - disciplinas que foi aprovado
+     *  ['A','RN','RA','RF'] - aprovadas, reprovadas por nota, reprovadas por ambos, reprovadas por frequência
+     *  ['NULL'] - disciplinas não concluídas. Se presente vai na query com 'OR'
+     *
+     * @param Integer $codpes Número USP do aluno
+     * @param Integer $codpgm Código que identifica cada ingresso do aluno
+     * @param Array $rstfim
+     * @return Array
+     * @author Masaki K Neto em 17/02/2022
+     **/
+    public static function listarDisciplinasAluno(int $codpes, int $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
+    {
+        $query = DB::getQuery('Graduacao.listarDisciplinasAluno.sql');
+        $param['codpes'] = $codpes;
+
+        if ($codpgm === null) { 
+            // se for null vai pegar o mais recente
+            $query_codpgm = "H.codpgm = (SELECT MAX(H2.codpgm) FROM HISTESCOLARGR H2 WHERE H2.codpes = convert(int,:codpes))";
+        } else { 
+            // se não o valor indicado no param
+            $query_codpgm = "H.codpgm = CONVERT(INT,:codpgm)";
+            $param['codpgm'] = $codpgm;
+        }
+        $query = str_replace('__codpgm__', $query_codpgm, $query);
+
+        // monta string para rstfim e processa NULL para pegar disciplinas não conluídas
+        if (in_array('NULL', $rstfim)) {
+            $query_rstfim_null = 'OR H.rstfim IS NULL';
+            unset($rstfim[array_search('NULL', $rstfim)]);
+        } else {
+            $query_rstfim_null = '';
+        }
+        $rstfim_string = "(H.rstfim IN ('" . implode("','", $rstfim) . "') $query_rstfim_null)";
+        $query = str_replace('__rstfim__', $rstfim_string, $query);
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
      * Método que recebe o número USP de um aluno e retorna a sua média ponderada.
      *
      * Se o aluno possuir mais de uma graduação deve passar por parametro o número em $codpgm:
@@ -667,37 +713,19 @@ class Graduacao
      * @return Float Arredondado para 1 casa decimal.
      * @author gabrielareisg em 14/06/2021
      * @author modificado por thiagogomesverissimo em 22/11/2021
+     * @author modificado por Masakik em 18/2/2022
+     * @see SELF::listarDisciplinasAluno()
      */
     public static function obterMediaPonderada(int $codpes, int $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
     {
-        $query = DB::getQuery('Graduacao.obterMediaPonderada.sql');
+        $result = SELF::listarDisciplinasAluno($codpes, $codpgm, $rstfim);
 
-        if ($codpgm === null) {
-            $query_codpgm = "(SELECT MAX(H2.codpgm) FROM HISTESCOLARGR H2 WHERE H2.codpes = convert(int,:codpes))";
-        } else {
-            $query_codpgm = "convert(int,:codpgm)";
-            $param['codpgm'] = $codpgm;
-        }
-
-        $rstfim_string = "'" . implode("','", $rstfim) . "'";
-
-        $query = str_replace('__codpgm__', $query_codpgm, $query);
-        $query = str_replace('__rstfim__', $rstfim_string, $query);
-
-        $param['codpes'] = $codpes;
-
-        // recuperando as disciplina cursadas
-        $result = DB::fetchAll($query, $param);
-
-        // calculando a media ponderada
         $creditos = 0;
         $soma = 0;
-
         foreach ($result as $row) {
             $creditos += $row['creaul'] + $row['cretrb'];
-            $nota = empty($row['notfim2']) ? $row['notfim'] : $row['notfim2'];
-            $mult = $nota * ($row['creaul'] + $row['cretrb']);
-            $soma += $mult;
+            $nota = $row['notfim2'] ?: $row['notfim'];
+            $soma += $nota * ($row['creaul'] + $row['cretrb']);
         }
         return empty($soma) ? 0 : round($soma / $creditos, 1);
     }
