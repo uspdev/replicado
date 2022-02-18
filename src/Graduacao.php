@@ -675,10 +675,10 @@ class Graduacao
         $query = DB::getQuery('Graduacao.listarDisciplinasAluno.sql');
         $param['codpes'] = $codpes;
 
-        if ($codpgm === null) { 
+        if ($codpgm === null) {
             // se for null vai pegar o mais recente
             $query_codpgm = "H.codpgm = (SELECT MAX(H2.codpgm) FROM HISTESCOLARGR H2 WHERE H2.codpes = convert(int,:codpes))";
-        } else { 
+        } else {
             // se não o valor indicado no param
             $query_codpgm = "H.codpgm = CONVERT(INT,:codpgm)";
             $param['codpgm'] = $codpgm;
@@ -771,7 +771,7 @@ class Graduacao
     }
 
     /**
-     * Retorna lista de disciplinas cursadas pelo aluno em determinado semestre
+     * Retorna lista de disciplinas cursadas pelo aluno em determinado semestre, incluindo o ministrante
      *
      * $rstfim é um array com os códigos possiveis de resultado-final e pode incluir 'NULL' (maiúsculo) para
      * as disciplinas que ainda não foram finalizadas.
@@ -783,20 +783,17 @@ class Graduacao
      * @author Gustavo Medeiros (EEL), em 10/12/2021
      * @author Masaki K Neto (EESC)
      */
-    public static function listarDisciplinasAlunoAnoSemestre(int $codpes, int $anoSemestre, array $rstfim = null)
+    public static function listarDisciplinasAlunoAnoSemestre(int $codpes, int $anoSemestre, array $rstfim = ['A', 'AR', 'R', 'RN', 'RA', 'RF', 'NULL'])
     {
         $query = DB::getQuery('Graduacao.listarDisciplinasAlunoAnoSemestre.sql');
 
-        $rstfim = $rstfim ?: ['A', 'AR', 'R', 'RN', 'RA', 'RF', 'NULL'];
-
-        if (in_array('NULL', $rstfim) !== null) {
-            $query_rstfim_null = ' OR H.rstfim IS NULL';
-            if (($key = array_search('NULL', $rstfim)) !== false) {
-                unset($rstfim[$key]);
-            }
+        if (in_array('NULL', $rstfim)) {
+            $query_rstfim_null = 'OR H.rstfim IS NULL';
+            unset($rstfim[array_search('NULL', $rstfim)]);
+        } else {
+            $query_rstfim_null = '';
         }
-
-        $rstfim_string = "AND (H.rstfim IN ('" . implode("','", $rstfim) . "') $query_rstfim_null)";
+        $rstfim_string = "(H.rstfim IN ('" . implode("','", $rstfim) . "') $query_rstfim_null)";
         $query = str_replace('__rstfim__', $rstfim_string, $query);
 
         $param['codpes'] = $codpes;
