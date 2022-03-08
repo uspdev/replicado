@@ -421,8 +421,9 @@ class Graduacao
     public static function setorAluno($codpes, $codundclgi)
     {
         if(self::verifica($codpes, $codundclgi)){
-            $codcur = self::curso($codpes, $codundclgi)['codcur'];
-            $codhab = self::curso($codpes, $codundclgi)['codhab'];
+            $curso = self::curso($codpes, $codundclgi);
+            $codcur = $curso['codcur'];
+            $codhab = $curso['codhab'];
             $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
                         INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
                         WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
@@ -445,18 +446,18 @@ class Graduacao
      * @param Integer $codundclgi
      * @return boolean
     */
-    public static function nomeSetorAluno($codpes, $codundclgi){
-        $codundclgi = intval($codundclgi);
+    public static function retornarNomeSetorAluno($codpes){
+        $codundclgi = getenv('REPLICADO_CODUNDCLG');
+
         $sigla_setor = self::setorAluno($codpes,$codundclgi)['nomabvset'];
 
         if($sigla_setor == 'DEPARTAMENTO NÃO ENCONTRADO') return false;
 
         $query = "SELECT S.codset, S.tipset, S.nomabvset, S.nomset, S.codsetspe FROM SETOR S";
-        $query .= " WHERE S.codund = {$codundclgi} AND S.nomabvset = '{$sigla_setor}'";
+        $query .= " WHERE S.codund IN ({$codundclgi}) AND S.nomabvset = '{$sigla_setor}'";
         $query .= " AND S.tipset = 'Departamento de Ensino'";
 
         $result = DB::fetchAll($query);
-
         if($result == []) return false;
 
         return $result;
