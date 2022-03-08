@@ -420,24 +420,48 @@ class Graduacao
      */
     public static function setorAluno($codpes, $codundclgi)
     {
-        $codcur = self::curso($codpes, $codundclgi)['codcur'];
-        $codhab = self::curso($codpes, $codundclgi)['codhab'];
-        $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
-                    INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
-                    WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
-        $param = [
-            'codcur' => $codcur,
-            'codhab' => $codhab,
-        ];
-        $result = DB::fetch($query, $param);
-        // Nota: Situação a se tratar com log de ocorrências
-        // Se o departamento de ensino do alguno de graduação não foi encontrado
-        if ($result == false) {
-            // Será retornado 'DEPARTAMENTO NÃO ENCONTRADO' a fim de se detectar as situações ATÍPICAS em que isso ocorre
-            $result = ['nomabvset' => 'DEPARTAMENTO NÃO ENCONTRADO'];
+        if(self::verifica($codpes, $codundclgi)){
+            $codcur = self::curso($codpes, $codundclgi)['codcur'];
+            $codhab = self::curso($codpes, $codundclgi)['codhab'];
+            $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
+                        INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
+                        WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
+            $param = [
+                'codcur' => $codcur,
+                'codhab' => $codhab,
+            ];
+            $result = DB::fetch($query, $param);
+
+            if ($result != false) return $result;
         }
+
+        return ['nomabvset' => 'DEPARTAMENTO NÃO ENCONTRADO'];
+    }
+
+    /**
+     * Método para retornar o nome do departamento de um aluno de graduação
+     * 
+     * @param Integer $codpes
+     * @param Integer $codundclgi
+     * @return boolean
+    */
+    public static function nomeSetorAluno($codpes, $codundclgi){
+        $codundclgi = intval($codundclgi);
+        $sigla_setor = self::setorAluno($codpes,$codundclgi)['nomabvset'];
+
+        if($sigla_setor == 'DEPARTAMENTO NÃO ENCONTRADO') return false;
+
+        $query = "SELECT S.codset, S.tipset, S.nomabvset, S.nomset, S.codsetspe FROM SETOR S";
+        $query .= " WHERE S.codund = {$codundclgi} AND S.nomabvset = '{$sigla_setor}'";
+        $query .= " AND S.tipset = 'Departamento de Ensino'";
+
+        $result = DB::fetchAll($query);
+
+        if($result == []) return false;
+
         return $result;
     }
+
 
     /**
      * Método para retornar o total de alunos de graduação do gênero
