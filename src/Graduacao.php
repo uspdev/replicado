@@ -420,23 +420,23 @@ class Graduacao
      */
     public static function setorAluno($codpes, $codundclgi)
     {
-        if(self::verifica($codpes, $codundclgi)){
-            $curso = self::curso($codpes, $codundclgi);
-            $codcur = $curso['codcur'];
-            $codhab = $curso['codhab'];
-            $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
-                        INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
-                        WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
-            $param = [
-                'codcur' => $codcur,
-                'codhab' => $codhab,
-            ];
-            $result = DB::fetch($query, $param);
-
-            if ($result != false) return $result;
+        $codcur = self::curso($codpes, $codundclgi)['codcur'];
+        $codhab = self::curso($codpes, $codundclgi)['codhab'];
+        $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
+                    INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
+                    WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
+        $param = [
+            'codcur' => $codcur,
+            'codhab' => $codhab,
+        ];
+        $result = DB::fetch($query, $param);
+        // Nota: Situação a se tratar com log de ocorrências
+        // Se o departamento de ensino do alguno de graduação não foi encontrado
+        if ($result == false) {
+            // Será retornado 'DEPARTAMENTO NÃO ENCONTRADO' a fim de se detectar as situações ATÍPICAS em que isso ocorre
+            $result = ['nomabvset' => 'DEPARTAMENTO NÃO ENCONTRADO'];
         }
-
-        return ['nomabvset' => 'DEPARTAMENTO NÃO ENCONTRADO'];
+        return $result;
     }
 
     /**
@@ -449,18 +449,33 @@ class Graduacao
     public static function retornarNomeSetorAluno($codpes){
         $codundclgi = getenv('REPLICADO_CODUNDCLG');
 
-        $sigla_setor = self::setorAluno($codpes,$codundclgi)['nomabvset'];
+        if(self::verifica($codpes, $codundclgi)){
+            $curso = self::curso($codpes, $codundclgi);
+            $codcur = $curso['codcur'];
+            $codhab = $curso['codhab'];
 
-        if($sigla_setor == 'DEPARTAMENTO NÃO ENCONTRADO') return false;
+            //Encontra primeiro o departamento correspondente
+            $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
+                                INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
+                                WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
+            $params = [
+                'codcur' => $codcur,
+                'codhab' => $codhab,
+            ];
 
-        $query = "SELECT S.codset, S.tipset, S.nomabvset, S.nomset, S.codsetspe FROM SETOR S";
-        $query .= " WHERE S.codund IN ({$codundclgi}) AND S.nomabvset = '{$sigla_setor}'";
-        $query .= " AND S.tipset = 'Departamento de Ensino'";
+            $sigla_setor = DB::fetch($query, $params);
 
-        $result = DB::fetchAll($query);
-        if($result == []) return false;
+            if($sigla_setor != false){
+                //Depois busca pelo nome do departamento através da sigla retornada
+                $query2 = "SELECT TOP 1 S.codset, S.tipset, S.nomabvset, S.nomset, S.codsetspe FROM SETOR AS S
+                WHERE S.codund IN ({$codundclgi}) AND S.tipset = 'Departamento de Ensino'
+                AND S.nomabvset = '".$sigla_setor['nomabvset']."'";
 
-        return $result;
+                return DB::fetchAll($query2);
+            }
+        }
+
+        return false;
     }
 
 
