@@ -164,7 +164,7 @@ class Pessoa
      * @author André Canale Garcia <acgarcia@sc.sp.br> // Adaptação do método procurarPorNome
      * @author Masaki K Neto, modificado em 1/2/2022
      */
-    public static function procurarPorCodigoOuNome(string $busca, bool $ativos = false)
+    public static function procurarPorCodigoOuNome(string $busca, bool $ativos = true)
     {
         if ($ativos) {
             # se ativos vamos fazer join com LOCALIZAPESSOA
