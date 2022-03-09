@@ -131,7 +131,7 @@ class Pessoa
             $nome = trim($nome);
             $nome = Uteis::substituiAcentosParaSql($nome);
             $nome = str_replace(' ', '%', $nome);
-            $query_busca = "UPPER(P.nompesttd) like UPPER(:nome)";
+            $query_busca = "UPPER(P.nompesttd) LIKE UPPER(:nome)";
         }
 
         if ($ativos) {
@@ -156,6 +156,8 @@ class Pessoa
      * A busca é fonética, somente ativos ou todos
      * O método foi ajustado para compatibilizar com procuraPorNome() e dump()
      *
+     * 9/3/2022 Revertido em parte para o método original, mas mantendo fonético
+     *
      * @param String $busca Código ou Nome a ser buscado
      * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a base
      * @return array
@@ -164,12 +166,23 @@ class Pessoa
      */
     public static function procurarPorCodigoOuNome(string $busca, bool $ativos = true)
     {
-        if (intval($busca)) { // é codpes
-            $ret = SELF::dump($busca);
-            return $ret ? [$ret] : $ret;
-        } else { // é nome
-            return SELF::procurarPorNome($busca, true, $ativos);
+        if ($ativos) {
+            # se ativos vamos fazer join com LOCALIZAPESSOA
+            $query = "SELECT DISTINCT P.* FROM PESSOA P, LOCALIZAPESSOA L
+                WHERE (CAST(P.codpes AS NVARCHAR) LIKE :codpes OR P.nompesfon LIKE :nome)
+                AND L.codpes = P.codpes
+                ORDER BY P.nompes ASC";
+        } else {
+            $query = "SELECT DISTINCT P.* FROM PESSOA P
+                WHERE (CAST(P.codpes AS NVARCHAR) LIKE :codpes OR P.nompesfon LIKE :nome)
+                ORDER BY P.nompes ASC";
         }
+
+        $param = [
+            'codpes' => '%' . $busca . '%',
+            'nome' => '%' . Uteis::fonetico($busca) . '%',
+        ];
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -218,7 +231,7 @@ class Pessoa
 
     /**
      * Método para retornar servidores ativos na unidade
-     * 
+     *
      * O parâmetro $codundclgi passou a ser opcional pois não vai ser mais utilizado
      * foi mantido somente para compatibilidade retroativa
      *
@@ -234,12 +247,12 @@ class Pessoa
 
     /**
      * Retorna lista de servidores não docentes ativos na unidade
-     * 
+     *
      * Retorna dados das tabelas localizapessoa e pessoa
-     * 
-     * E possivel aplicar filtros sobre qualquer coluna retornada. 
+     *
+     * E possivel aplicar filtros sobre qualquer coluna retornada.
      * O filtro é um array no formato [coluna => valor].
-     * 
+     *
      * @param array $filtros - default = []
      * @return array
      * @author Masaki K Neto atualizado em 28/1/2022
