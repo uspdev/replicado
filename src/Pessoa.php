@@ -577,6 +577,26 @@ class Pessoa
     }
 
     /**
+     * Lista os dados de vinculos ativos da pessoa
+     * 
+     * Retorna os dados de localizapessoa.
+     * Não limita por unidade pois a tabela possui dados de outras unidades.
+     * 
+     * @param $codpes
+     * @return Array
+     * @author Masaki K Neto, em 14/3/2022
+     */
+    public static function listarVinculosAtivos($codpes) 
+    {
+        $query = "SELECT *
+            FROM LOCALIZAPESSOA
+            WHERE codpes = convert(int,:codpes)";
+        $param['codpes'] = $codpes;
+
+        return DB::fetchAll($query, $param); 
+    }
+
+    /**
      * Método para retornar data de nascimento de uma pessoa, com base no seu número USP ($codpes)
      *
      * @param Integer $codpes
