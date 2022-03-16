@@ -1174,8 +1174,7 @@ class Pessoa
         ];
         $query = "SELECT V.sitvcipes FROM PESSOAINFOVACINACOVID V WHERE V.codpes = CONVERT(int, :codpes)";
         $param = ['codpes' => $codpes];
-        $sitvcipes = DB::fetch($query, $param)['sitvcipes'];
-        $sitvcipesext = $arrSitvcipesExt[$sitvcipes];
+        $sitvcipesext = (DB::fetch($query, $param)) ? $arrSitvcipesExt[DB::fetch($query, $param)['sitvcipes']] : 'Não cadastrado';
         return $sitvcipesext;
     }
 
