@@ -578,22 +578,22 @@ class Pessoa
 
     /**
      * Lista os dados de vinculos ativos da pessoa
-     * 
+     *
      * Retorna os dados de localizapessoa.
      * Não limita por unidade pois a tabela possui dados de outras unidades.
-     * 
+     *
      * @param $codpes
      * @return Array
      * @author Masaki K Neto, em 14/3/2022
      */
-    public static function listarVinculosAtivos($codpes) 
+    public static function listarVinculosAtivos($codpes)
     {
         $query = "SELECT *
             FROM LOCALIZAPESSOA
             WHERE codpes = convert(int,:codpes)";
         $param['codpes'] = $codpes;
 
-        return DB::fetchAll($query, $param); 
+        return DB::fetchAll($query, $param);
     }
 
     /**
@@ -1149,6 +1149,34 @@ class Pessoa
     public static function designados($codundclgi)
     {
         return self::listarDesignados();
+    }
+
+    /**
+     * Método para retornar a situação por extenso da vacina contra a Covid19
+     *
+     * @param Integer $codpes
+     * @return String $sitvcipes
+     *
+     * @author Alessandro Costa de Oliveira 16/03/2022
+     */
+    public static function obterSituacaoVacinaCovid19(int $codpes)
+    {
+        // Seguindo informações da tabela do replicado
+        // TODO talvez, seja interessante sinalizar com cores tipo um semáforo (sugestão)
+        $arrSitvcipesExt = [
+            '1' => 'Primeira dose',
+            '2' => 'Segunda dose',
+            'U' => 'Dose única',
+            'R' => 'Dose de reforço',
+            'I' => 'Invalidado (a pessoa informou os dados da vacinação, mas houve alguma rejeição por parte do validador)',
+            'M' => 'Não vacinado por restrição médica',
+            'N' => 'Não vacinado (sem justificativa ou por convicção pessoal)'
+        ];
+        $query = "SELECT V.sitvcipes FROM PESSOAINFOVACINACOVID V WHERE V.codpes = CONVERT(int, :codpes)";
+        $param = ['codpes' => $codpes];
+        $sitvcipes = DB::fetch($query, $param)['sitvcipes'];
+        $sitvcipesext = $arrSitvcipesExt[$sitvcipes];
+        return $sitvcipesext;
     }
 
 }
