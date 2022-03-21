@@ -7,7 +7,9 @@ SELECT DISTINCT PESSOA.codpes, -- Código da pessoa
     PESSOA.numdocidf, -- Número do documento de identificação
     PESSOA.numdocfmt, -- Número do documento de identificação formatado
 	PESSOA.dtaexdidf, -- Data de expedição do documento de identificação
+	PESSOA.dtafimvalidf, -- Data final de validade do documento de identificação
 	PESSOA.sglorgexdidf, -- Sigla do Orgão de expedição do documento de identificação
+	PESSOA.sglest, -- Sigla do estado, região, província (nacional ou internacional), onde foi expedido o documento de identificação
 	PESSOA.numcpf, -- Número do CPF
 	COMPLPESSOA.nompaipes, -- Nome do pai
 	COMPLPESSOA.numtitelc, -- Número do título de eleitor
