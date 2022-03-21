@@ -41,6 +41,24 @@ class Pessoa
     }
 
     /**
+     * Método que recebe codpes para retornar os cartões USP ativos e todos os campos da tabela cracha
+     * bem como os vínculos por extenso (coluna nomvin) para o codpes em questão
+     *
+     * @param Integer $codpes
+     * @return array
+     */
+    public static function crachas(int $codpes)
+    {
+        $query = "SELECT C.*, T.* FROM CATR_CRACHA C
+                    INNER JOIN TIPOVINCULO T ON C.tipvinaux = T.tipvin
+                    WHERE codpescra = CONVERT(INT, :codpes)";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
      * Método que recebe número USP para retornar array com todos emails da pessoa
      *
      * @param Integer $codpes
