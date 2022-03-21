@@ -1151,4 +1151,21 @@ class Pessoa
         return self::listarDesignados();
     }
 
+    /**
+     * Método para obter os dados complementares de uma pessoa: estado civil, documentos adicionais, nacionalidade, local de nascimento, etc.
+     *
+     * @param Integer $codpes
+     * @return array
+     * @author André Canale Garcia <acgarcia@sc.sp.br>
+     */
+    public static function obterComplemento(int $codpes)
+    {
+        $query = DB::getQuery('Pessoa.obterComplemento.sql');
+
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        return DB::fetch($query, $param);
+    }
 }
