@@ -1155,16 +1155,13 @@ class Pessoa
      * Método para obter os dados complementares de uma pessoa: estado civil, documentos adicionais, nacionalidade, local de nascimento, etc.
      *
      * @param Integer $codpes
-     * @return array
-     * @author André Canale Garcia <acgarcia@sc.sp.br>
+     * @return Array
+     * @author André Canale Garcia <acgarcia@sc.sp.br>, em 21/3/2022
      */
     public static function obterComplemento(int $codpes)
     {
         $query = DB::getQuery('Pessoa.obterComplemento.sql');
-
-        $param = [
-            'codpes' => $codpes,
-        ];
+        $param['codpes'] = $codpes;
 
         return DB::fetch($query, $param);
     }

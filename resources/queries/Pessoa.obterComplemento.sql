@@ -3,24 +3,27 @@ SELECT DISTINCT PESSOA.codpes, -- Código da pessoa
 	PESSOA.sexpes, -- Sexo da pessoa
 	PESSOA.dtanas, -- Data de nascimento
 	PESSOA.nommaepes, -- Nome da mãe
+	COMPLPESSOA.nompaipes, -- Nome do pai
 	PESSOA.tipdocidf, -- Tipo documento de identificação 
-    PESSOA.numdocidf, -- Número do documento de identificação
-    PESSOA.numdocfmt, -- Número do documento de identificação formatado
+	PESSOA.numdocidf, -- Número do documento de identificação
+	PESSOA.numdocfmt, -- Número do documento de identificação formatado
 	PESSOA.dtaexdidf, -- Data de expedição do documento de identificação
 	PESSOA.dtafimvalidf, -- Data final de validade do documento de identificação
 	PESSOA.sglorgexdidf, -- Sigla do Orgão de expedição do documento de identificação
 	PESSOA.sglest, -- Sigla do estado, região, província (nacional ou internacional), onde foi expedido o documento de identificação
 	PESSOA.numcpf, -- Número do CPF
-	COMPLPESSOA.nompaipes, -- Nome do pai
 	COMPLPESSOA.numtitelc, -- Número do título de eleitor
 	COMPLPESSOA.numsectitelc, -- Número da seção do título de eleitor
 	COMPLPESSOA.numzontitelc, -- Número da zona do título de eleitor
+	localidade_titulo_eleitor.cidloc AS cidade_titulo_eleitor, -- Cidade do título de eleitor
+	localidade_titulo_eleitor.sglest AS estado_titulo_eleitor, -- Estado do título de eleitor
 	COMPLPESSOA.numcermil, -- Número do certificado militar
 	COMPLPESSOA.sercermil, -- Série do certificado militar
 	COMPLPESSOA.codorgcermil, -- Código do órgão do certificado militar
-    COMPLPESSOA.codrgimil, -- Código da região do certificado militar
+	COMPLPESSOA.codrgimil, -- Código da região do certificado militar
 	COMPLPESSOA.epforgcermil, -- Especificação do órgão do certificado militar
 	COMPLPESSOA.dtaemicermil, -- Data de emissão do certificado militar
+	TIPOCERTIFMILITAR.nomctgcermil, -- Nome da categoria do certificado militar
 	COMPLPESSOA.estciv, -- Estado civil
 	COMPLPESSOA.nomcjg, -- Nome do conjuge
 	COMPLPESSOA.numpss, -- Número passaporte
@@ -32,10 +35,8 @@ SELECT DISTINCT PESSOA.codpes, -- Código da pessoa
 	localidade_nascimento.cidloc AS cidade_nascimento, -- Cidade de nascimento
 	localidade_nascimento.sglest AS estado_nascimento, -- Estado de nascimento
 	PAIS.nompas, -- País de nascimento
-    PAIS.nacpas, -- Nacionalidade
-	localidade_titulo_eleitor.cidloc AS cidade_titulo_eleitor, -- Cidade do título de eleitor
-	localidade_titulo_eleitor.sglest AS estado_titulo_eleitor, -- Estado do título de eleitor
-	TIPOCERTIFMILITAR.nomctgcermil -- Nome da categoria do certificado militar
+	PAIS.nacpas -- Nacionalidade
+
 FROM PESSOA 
 LEFT OUTER JOIN VINCULOPESSOAUSP ON VINCULOPESSOAUSP.codpes = PESSOA.codpes 
 LEFT OUTER JOIN COMPLPESSOA ON COMPLPESSOA.codpes = PESSOA.codpes 
