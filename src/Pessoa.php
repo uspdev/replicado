@@ -26,6 +26,7 @@ class Pessoa
 
     /**
      * Método que recebe codpes para retornar todos os campos da tabela cracha para o codpes em questão
+     * 
      * Este método retorna apenas um cartão ativo
      * Existe a possibilidade de uma pessoa ter mais de um cartão ativo, para isso utilize o método listarCrachas
      *
@@ -43,9 +44,10 @@ class Pessoa
     }
 
     /**
-     * Método que recebe codpes para retornar os cartões USP ativos e todos os campos da tabela cracha
-     * bem como os vínculos por extenso (coluna nomvin) para o codpes em questão
-     *
+     * Método que recebe codpes para retornar os cartões USP ativos e os campos das tabelas catr_cracha e tipo_vinculo
+     * 
+     * Eventualmente uma pessoa pode ter mais de um cartão ativo.
+     * 
      * @param Integer $codpes
      * @return array
      * @author Alessandro Costa de Oliveira - 21/03/2022
