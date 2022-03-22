@@ -46,8 +46,9 @@ class Pessoa
      *
      * @param Integer $codpes
      * @return array
+     * @author Alessandro Costa de Oliveira - 21/03/2022
      */
-    public static function crachas(int $codpes)
+    public static function listarCrachas(int $codpes)
     {
         $query = "SELECT C.*, T.* FROM CATR_CRACHA C
                     INNER JOIN TIPOVINCULO T ON C.tipvinaux = T.tipvin
