@@ -26,6 +26,9 @@ class Pessoa
 
     /**
      * Método que recebe codpes para retornar todos os campos da tabela cracha para o codpes em questão
+     * 
+     * Este método retorna apenas um cartão ativo
+     * Existe a possibilidade de uma pessoa ter mais de um cartão ativo, para isso utilize o método listarCrachas
      *
      * @param Integer $codpes
      * @return array
@@ -38,6 +41,26 @@ class Pessoa
             'codpes' => $codpes,
         ];
         return DB::fetch($query, $param);
+    }
+
+    /**
+     * Método que recebe codpes para retornar os cartões USP ativos e os campos das tabelas catr_cracha e tipo_vinculo
+     * 
+     * Eventualmente uma pessoa pode ter mais de um cartão ativo.
+     * 
+     * @param Integer $codpes
+     * @return array
+     * @author Alessandro Costa de Oliveira - 21/03/2022
+     */
+    public static function listarCrachas(int $codpes)
+    {
+        $query = "SELECT C.*, T.* FROM CATR_CRACHA C
+                    INNER JOIN TIPOVINCULO T ON C.tipvinaux = T.tipvin
+                    WHERE codpescra = CONVERT(INT, :codpes)";
+        $param = [
+            'codpes' => $codpes,
+        ];
+        return DB::fetchAll($query, $param);
     }
 
     /**
