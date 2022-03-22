@@ -26,6 +26,8 @@ class Pessoa
 
     /**
      * Método que recebe codpes para retornar todos os campos da tabela cracha para o codpes em questão
+     * Este método retorna apenas um cartão ativo
+     * Existe a possibilidade de uma pessoa ter mais de um cartão ativo, para isso utilize o método listarCrachas
      *
      * @param Integer $codpes
      * @return array
