@@ -26,7 +26,7 @@ class Pessoa
 
     /**
      * Método que recebe codpes para retornar todos os campos da tabela cracha para o codpes em questão
-     * 
+     *
      * Este método retorna apenas um cartão ativo
      * Existe a possibilidade de uma pessoa ter mais de um cartão ativo, para isso utilize o método listarCrachas
      *
@@ -45,9 +45,9 @@ class Pessoa
 
     /**
      * Método que recebe codpes para retornar os cartões USP ativos e os campos das tabelas catr_cracha e tipo_vinculo
-     * 
+     *
      * Eventualmente uma pessoa pode ter mais de um cartão ativo.
-     * 
+     *
      * @param Integer $codpes
      * @return array
      * @author Alessandro Costa de Oliveira - 21/03/2022
@@ -430,6 +430,44 @@ class Pessoa
         }
 
         return $result;
+    }
+
+    /**
+     * Retorna o nome completo (nome social) a partir do codpes
+     *
+     * ou recebe um array de codpes e obtém uma lista chaveada dos nomes (codpes->nome)
+     * Se não encontrado returna null ou []
+     * retorna false se parâmetro incorreto
+     *
+     * @param Integer|Array $codpes
+     * @return String|Array|Null|Bool
+     * @author Masakik em 4/4/2022, fix #509
+     */
+    public static function retornarNome($codpes)
+    {
+        if (is_array($codpes)) {
+            $codpes = implode(',', $codpes);
+            $query = "SELECT codpes, nompesttd FROM PESSOA
+                WHERE codpes IN ({$codpes}) ORDER BY nompes";
+            $result = DB::fetchAll($query);
+            $nomes = [];
+            foreach ($result as $pessoa) {
+                $nomes[$pessoa['codpes']] = $pessoa['nompesttd'];
+            }
+            return $nomes;
+        } elseif (is_numeric($codpes)) {
+            $query = "SELECT nompesttd FROM PESSOA
+                WHERE codpes = convert(INT,:codpes) ORDER BY nompes";
+            $param['codpes'] = $codpes;
+            $result = DB::fetch($query, $param);
+            // dd($result, $query);
+            if ($result) {
+                return $result['nompesttd'];
+            } else {
+                return null;
+            }
+        }
+        return false;
     }
 
     /**
