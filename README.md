@@ -59,6 +59,35 @@ Exemplo de uso
     print_r($emails);
 ```
 
+### Como usar no laravel
+
+Configuração padrão no .env.exemple da aplicação
+
+```
+# REPLICADO #########################################
+# https://github.com/uspdev/replicado
+
+REPLICADO_HOST=
+REPLICADO_PORT=
+REPLICADO_DATABASE=
+REPLICADO_USERNAME=
+REPLICADO_PASSWORD=
+
+# Todos os códigos de colegiados da unidade, separados por vírgula
+REPLICADO_CODUNDCLG=18,97
+
+# Converte de/para UTF-8
+REPLICADO_SYBASE=1
+
+REPLICADO_CODCUR=1,2,3
+
+# habilita o uso do cache https://github.com/uspdev/cache (default=false)
+REPLICADO_USAR_CACHE=false
+
+# Se true mostra o retorno de erros do BD (default=false)
+REPLICADO_DEBUG=${APP_DEBUG}
+```
+
 ### Explicações das variáveis
 
 A maioria das variáveis são autoexplicativas mas outras não.
@@ -66,8 +95,6 @@ A maioria das variáveis são autoexplicativas mas outras não.
 *REPLICADO_CODUNDCLG* -essa variável pode conter múltiplos valores pois representa a unidade ou o colegiado:
 
     REPLICADO_CODUNDCLG=8,27
-
-Atenção, NÃO usar aspas, como no neste exemplo: *REPLICADO_CODUNDCLG="8,27"*.
 
 REPLICADO_SYBASE - serve para indicar se vc está usando SYBASE ou MSSQL. Implica:
 * na conversão para UTF-8 pela biblioteca ou pelo freetds

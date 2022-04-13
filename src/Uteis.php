@@ -41,11 +41,11 @@ class Uteis
 
     /**
      * Substitui acentos por underscore para fazer consulta em BD pois é um caracter coringa
-     * 
+     *
      * Para consultas em BD este método é melhor que o removeAcentos pois permite buscar
      * tanto em palavras acentuadas quanto nas sem acento.
      * Primeiro uso é em Pessoa::procurarPorNome
-     * 
+     *
      * @param String $str
      * @return String
      * @author Masaki K Neto, em 10/11/2020
@@ -128,7 +128,7 @@ class Uteis
      *
      * Se $date não for informado, utilizará a data corrente do sistema.
      * $data_string pode ser em qualquer formato aceito por DateTime para criar uma data
-     * 
+     *
      * @example $inifim = Uteis::semestre();
      * @example $inifim = Uteis::semestre('2019-10-20');
      *
@@ -153,14 +153,56 @@ class Uteis
     }
 
     /**
-     * Retorna a strng correspondente à codificação fonética
+     * Gets the value of an environment variable. Supports boolean, empty and null.
      * 
+     * Adaptado de env() do Laravel
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public static function env($key, $default = null)
+    {
+        $value = getenv($key);
+
+        if ($value === false) {
+            return ($default instanceof \Closure) ? $default() : $default;
+        }
+
+        switch (strtolower($value)) {
+            case 'true':
+            case '(true)':
+                return true;
+
+            case 'false':
+            case '(false)':
+                return false;
+
+            case 'empty':
+            case '(empty)':
+                return '';
+
+            case 'null':
+            case '(null)':
+                return;
+        }
+
+        if (strlen($value) > 1 && (substr($value, 0, 1) == '"') && (substr($value, -1) == '"')) {
+            return substr($value, 1, -1);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Retorna a strng correspondente à codificação fonética
+     *
      * Além desta, as funções abaixo são utilizadas para o fonetico
-     * as regras utilizadas são as do sql e aplicadas na ordem sequencial, 
+     * as regras utilizadas são as do sql e aplicadas na ordem sequencial,
      * com algumas alterações ajustadas empiricamente
      * as exceções às regras estão documentadas na função
      * errou 200 numa amostra de 15K
-     * 
+     *
      * @param String $str string de entrada
      * @return String fonético de $str
      * @author Masaki K Neto, em algum dia de 2018
@@ -312,12 +354,12 @@ class Uteis
 
     public static function horario_formatado($horario)
     {
-        // O formato esperado é com quatro digito (ex.: 0830), 
+        // O formato esperado é com quatro digito (ex.: 0830),
         // mas caso seja encontrado de outra forma, retorna o que foi passado
         if (strlen($horario) == 4) {
             $hora = $horario[0] . $horario[1];
             $minuto = $horario[2] . $horario[3];
-            return  "{$hora}:{$minuto}";
+            return "{$hora}:{$minuto}";
         }
         return $horario;
     }
@@ -338,7 +380,8 @@ class Uteis
      * Método que recebe um buffer content em zip com apenas um arquivo
      * e devolve a string do arquivo. Usado para pegar o xml do lattes como string
      */
-    public static function unzip($zipData) {
+    public static function unzip($zipData)
+    {
         // save content into temp file
         $tempFile = tempnam(sys_get_temp_dir(), 'feed');
         file_put_contents($tempFile, $zipData);
@@ -346,8 +389,8 @@ class Uteis
         // unzip content of first file from archive
         $zip = new ZipArchive();
         $zip->open($tempFile);
-    
-        if($zip->numFiles > 0) {
+
+        if ($zip->numFiles > 0) {
             $data = $zip->getFromIndex(0);
             $zip->close();
         } else {
@@ -355,7 +398,7 @@ class Uteis
         }
 
         unlink($tempFile);
-    
+
         return $data;
     }
 
