@@ -88,6 +88,25 @@ REPLICADO_USAR_CACHE=false
 REPLICADO_DEBUG=${APP_DEBUG}
 ```
 
+## Configuração
+
+A configuração pode ser por variáveis de ambiente (env) ou passando por parâmetro em tempo de execução. Podem ser passadas as mesmas variáveis do env. A configuração setada permanecerá até o fim da execução do php.
+
+    Uspdev\Replicado\DB::getDB(['host'=>'192.168.100.89']);
+
+ou
+
+    Uspdev\Replicado\DB::getDB()->setConfig(['host'=>'192.168.100.89']);
+
+Caso queira resetar para os valores do env:
+
+    Uspdev\Replicado\DB()->setConfig(['reset'=>true]);
+
+Para recuperar a configuração atual:
+
+    Uspdev\Replicado\DB()->getConfig();
+
+
 ### Explicações das variáveis
 
 A maioria das variáveis são autoexplicativas mas outras não.
