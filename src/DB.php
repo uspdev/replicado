@@ -31,10 +31,10 @@ class DB
     protected $password;
 
     # Variáveis de config opcionais
-    protected $usarCache;
-    protected $debug;
     protected $pathLog;
-    protected $sybase;
+    protected ?bool $usarCache = null;
+    protected ?bool $debug = null;
+    protected ?bool $sybase = null;
 
     public function __construct($config = [])
     {
@@ -42,7 +42,8 @@ class DB
     }
 
     private function __clone()
-    {}
+    {
+    }
 
     /**
      * Cria e retorna uma instância de db
@@ -158,9 +159,9 @@ class DB
             'database' => $this->database,
             'username' => $this->username,
             'password' => '**********',
+            'pathLog' => $this->pathLog,
             'usarCache' => $this->usarCache,
             'debug' => $this->debug,
-            'pathLog' => $this->pathLog,
             'sybase' => $this->sybase,
         ];
     }
@@ -186,10 +187,10 @@ class DB
             $this->username = $config['username'] ?? Uteis::env('REPLICADO_USERNAME');
             $this->password = $config['password'] ?? Uteis::env('REPLICADO_PASSWORD');
 
-            $this->usarCache = $config['usarCache'] ?? Uteis::env('REPLICADO_USAR_CACHE', false);
-            $this->debug = $config['debug'] ?? Uteis::env('REPLICADO_DEBUG', false);
             $this->pathLog = $config['pathLog'] ?? Uteis::env('REPLICADO_PATHLOG', '/tmp/replicado.log');
-            $this->sybase = $config['sybase'] ?? Uteis::env('REPLICADO_SYBASE', true);
+            $this->usarCache = isset($config['usarCache']) ? $config['usarCache'] : Uteis::env('REPLICADO_USAR_CACHE', false);
+            $this->debug = isset($config['debug']) ? $config['debug'] : Uteis::env('REPLICADO_DEBUG', false);
+            $this->sybase = isset($config['sybase']) ? $config['sybase'] : Uteis::env('REPLICADO_SYBASE', true);
 
             $this->instance = null;
         } else {
@@ -199,15 +200,17 @@ class DB
             $this->username = isset($config['username']) ? $config['username'] : ($this->username ?: Uteis::env('REPLICADO_USERNAME'));
             $this->password = isset($config['password']) ? $config['password'] : ($this->password ?: Uteis::env('REPLICADO_PASSWORD'));
 
-            $this->usarCache = isset($config['usarCache']) ? $config['usarCache'] : ($this->usarCache ?: Uteis::env('REPLICADO_USAR_CACHE', false));
-            $this->debug = isset($config['debug']) ? $config['debug'] : ($this->debug ?: Uteis::env('REPLICADO_DEBUG', false));
             $this->pathLog = isset($config['pathLog']) ? $config['pathLog'] : ($this->pathLog ?: Uteis::env('REPLICADO_PATHLOG', '/tmp/replicado.log'));
-            $this->sybase = isset($config['sybase']) ? $config['sybase'] : ($this->sybase ?: Uteis::env('REPLICADO_SYBASE', true));
+            $this->usarCache = isset($config['usarCache']) ? $config['usarCache'] : ($this->usarCache !== null ? $this->usarCache : Uteis::env('REPLICADO_USAR_CACHE', false));
+            $this->debug = isset($config['debug']) ? $config['debug'] : ($this->debug !== null ? $this->debug : Uteis::env('REPLICADO_DEBUG', false));
+            $this->sybase = isset($config['sybase']) ? $config['sybase'] : ($this->sybase !== null ? $this->sybase : Uteis::env('REPLICADO_SYBASE', true));
             // a lógica das linhas acima é igual a essa
-            // if (isset($config['host'])) {
-            //   $this->host = $config['host'];
+            // if (isset($config['debug'])) {
+            //   $this->debug = $config['debug'];
             // } else {
-            //   $this->host = $this->host ?: Uteis::env('REPLICADO_HOST');
+            //   if ($this->debug !=== null) {
+            //    $this->debug = Uteis::env('REPLICADO_DEBUG');
+            //   }
             // }
         }
 
@@ -218,7 +221,7 @@ class DB
     }
 
     /**
-     * Cria e retorna ima instância do pode
+     * Retorna uma instância do pdo - cria ou reaproveita se for o caso
      *
      * @return PDO
      */
@@ -260,7 +263,7 @@ class DB
      *
      * A $str_where pode ser colocada dentro de $query. Cuidado: ela vem iniciada pela string " WHERE ("
      * $params pode ser passado diretamente no fetch/fetchAll
-     * 
+     *
      * TODO: Talvez esse método deveria estar em outro lugar
      *
      * 28/1/2022 - Adicionado $colunaSanitizada poara o caso de passar "tabela.coluna". $colunaSanitizada remove o ponto no $param
