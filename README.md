@@ -104,7 +104,7 @@ Caso queira resetar para os valores do env:
 
 Para recuperar a configuração atual:
 
-    Uspdev\Replicado\::getDB()->getConfig();
+    Uspdev\Replicado\DB::getDB()->getConfig();
 
 
 ### Explicações das variáveis
