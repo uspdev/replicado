@@ -56,7 +56,7 @@ class Pessoa
     {
         $query = "SELECT C.*, T.* FROM CATR_CRACHA C
                     INNER JOIN TIPOVINCULO T ON C.tipvinaux = T.tipvin
-                    WHERE codpescra = CONVERT(INT, :codpes)";
+                    WHERE codpescra = :codpes";
         $param = [
             'codpes' => $codpes,
         ];
