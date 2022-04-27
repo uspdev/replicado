@@ -799,4 +799,33 @@ class Posgraduacao
 
         return \Uspdev\Replicado\DB::fetchAll($query);
     }
+
+    /**
+     * Método para obter disciplinas de pós-graduação por colegiado
+     *
+     * @param Integer $codclg
+     * @return void
+     * @author André Canale Garcia <acgarcia@sc.sp.br>
+     */
+    public static function obterDisciplinasPorColegiado($codclg = null)
+    {
+        $query = "SELECT d.*
+                  FROM 
+                  (
+                    SELECT MAX(numseqdis) AS numseqdis, sgldis
+                    FROM dbo.DISCIPLINA
+                    GROUP BY sgldis
+                  ) AS tbl JOIN dbo.DISCIPLINA AS d ON d.sgldis = tbl.sgldis AND d.numseqdis = tbl.numseqdis
+                  JOIN AREA ON AREA.codare = d.codare
+                  JOIN CURSO ON CURSO.codcur = AREA.codcur
+                  WHERE CURSO.codclg = convert(int,:codclg)
+                    AND d.dtadtvdis IS NULL 
+                  ORDER BY d.nomdis ASC";
+
+        $param = [
+            'codclg' => $codclg ? $codclg : getenv('REPLICADO_CODUNDCLG'),
+        ];
+
+        return DB::fetchAll($query, $param);
+    }
 }
