@@ -192,7 +192,7 @@ class Posgraduacao
                 AND o.dtacantur IS NULL --data-cancelamento-turma
                 AND o.dtafimofe > GETDATE() --data final futura
             ORDER BY o.sgldis";
-            /* 
+        /* 
             -self join com oferecimento para pegar somente as disciplinas listadas em R27DISMINCRE da área
             -data final futura exclui algumas disciplinas perdidas em OFERECIMENTO 
             */
@@ -308,16 +308,16 @@ class Posgraduacao
         return DB::fetchAll($query, $param);
     }
 
-/**
- * Retorna as áreas de concentração ativas dos programas de pós-graduação da unidade.
- * Se informado o código do curso (programa), retorna apenas as áreas deste curso.
- *
- * @param int $codundclgi - código da Unidade
- * @param int $codcur - código do curso de pós-graduação
- * @return type
- *
- * por Erickson Zanon - czanon@usp.br
- */
+    /**
+     * Retorna as áreas de concentração ativas dos programas de pós-graduação da unidade.
+     * Se informado o código do curso (programa), retorna apenas as áreas deste curso.
+     *
+     * @param int $codundclgi - código da Unidade
+     * @param int $codcur - código do curso de pós-graduação
+     * @return type
+     *
+     * por Erickson Zanon - czanon@usp.br
+     */
     public static function areasProgramas(int $codundclgi = null, int $codcur = null)
     {
         if (!$codundclgi) {
@@ -363,17 +363,17 @@ class Posgraduacao
         return $programasAreas;
     }
 
-/**
- * Retorna os alunos de um programa (codcur) de pós
- *  da unidade (codundclgi),
- *  indexados pela área (codare).
- * Se codare não foi determinado, busca todas as áreas do programa.
- *
- * @param Int $codundclgi - código da unidade
- * @param Int $codcur - código do curso/programa
- * @param Int $codare - código da área (opcional)
- * @return Array
- */
+    /**
+     * Retorna os alunos de um programa (codcur) de pós
+     *  da unidade (codundclgi),
+     *  indexados pela área (codare).
+     * Se codare não foi determinado, busca todas as áreas do programa.
+     *
+     * @param Int $codundclgi - código da unidade
+     * @param Int $codcur - código do curso/programa
+     * @param Int $codare - código da área (opcional)
+     * @return Array
+     */
     public static function alunosPrograma(int $codundclgi, int $codcur, int $codare = null)
     {
         // se $codare é null, seleciona todas
@@ -801,12 +801,12 @@ class Posgraduacao
     }
 
     /**
-     * Método para listar disciplinas de pós-graduação por colegiado
+     * Método para listar todos os dados das disciplinas de pós-graduação
      *
      * @return Array lista com com disciplinas
      * @author André Canale Garcia <acgarcia@sc.sp.br> (04/2022)
      */
-    public static function listarDisciplinasPorColegiado()
+    public static function listarDisciplinas()
     {
         $codclg = getenv('REPLICADO_CODUNDCLG');
 
