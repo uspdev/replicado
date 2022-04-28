@@ -242,12 +242,14 @@ class Graduacao
     }
 
     /**
-     * Método para listar as disciplinas de graduação oferecidas por colegiado
+     * Método para listar as disciplinas de graduação ativas
+     * 
+     * Alterado o nome do método e aplicado filtro de disciplinas desativadas (4/2022)
      *
      * @return Array lista com com disciplinas
-     * @author André Canale Garcia <acgarcia@sc.sp.br>
+     * @author André Canale Garcia <acgarcia@sc.sp.br> (antes de 4/2022)
      */
-    public static function listarDisciplinasPorColegiado()
+    public static function listarDisciplinas()
     {
         $codclg = getenv('REPLICADO_CODUNDCLG');
 
@@ -255,6 +257,7 @@ class Graduacao
                   FROM DISCIPLINAGR AS D1
                   WHERE (D1.verdis = (SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis)))
                     AND D1.coddis IN (SELECT coddis FROM DISCIPGRCODIGO WHERE DISCIPGRCODIGO.codclg IN ({$codclg}))
+                    AND D1.dtadtvdis is NULL
                   ORDER BY D1.nomdis ASC";
 
         return DB::fetchAll($query);
