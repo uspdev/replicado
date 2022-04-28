@@ -803,7 +803,6 @@ class Posgraduacao
     /**
      * Método para listar disciplinas de pós-graduação por colegiado
      *
-     * @param Integer $codclg
      * @return Array lista com com disciplinas
      * @author André Canale Garcia <acgarcia@sc.sp.br> (04/2022)
      */
