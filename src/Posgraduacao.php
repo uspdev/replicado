@@ -801,14 +801,16 @@ class Posgraduacao
     }
 
     /**
-     * Método para obter disciplinas de pós-graduação por colegiado
+     * Método para listar disciplinas de pós-graduação por colegiado
      *
      * @param Integer $codclg
-     * @return void
-     * @author André Canale Garcia <acgarcia@sc.sp.br>
+     * @return Array lista com com disciplinas
+     * @author André Canale Garcia <acgarcia@sc.sp.br> (04/2022)
      */
-    public static function obterDisciplinasPorColegiado($codclg = null)
+    public static function listarDisciplinasPorColegiado()
     {
+        $codclg = getenv('REPLICADO_CODUNDCLG');
+
         $query = "SELECT d.*
                   FROM 
                   (
@@ -818,14 +820,10 @@ class Posgraduacao
                   ) AS tbl JOIN dbo.DISCIPLINA AS d ON d.sgldis = tbl.sgldis AND d.numseqdis = tbl.numseqdis
                   JOIN AREA ON AREA.codare = d.codare
                   JOIN CURSO ON CURSO.codcur = AREA.codcur
-                  WHERE CURSO.codclg = convert(int,:codclg)
+                  WHERE CURSO.codclg IN ({$codclg})
                     AND d.dtadtvdis IS NULL 
                   ORDER BY d.nomdis ASC";
 
-        $param = [
-            'codclg' => $codclg ? $codclg : getenv('REPLICADO_CODUNDCLG'),
-        ];
-
-        return DB::fetchAll($query, $param);
+        return DB::fetchAll($query);
     }
 }
