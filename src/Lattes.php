@@ -488,12 +488,12 @@ class Lattes
         $aux_textos_jornais_revistas = Arr::get($lattes, 'PRODUCAO-BIBLIOGRAFICA.TEXTOS-EM-JORNAIS-OU-REVISTAS.TEXTO-EM-JORNAL-OU-REVISTA', false);
         if($aux_textos_jornais_revistas){
             $i = 0;
-            foreach($aux_textos_jornais_revistas as $texto){
+            if(isset($aux_textos_jornais_revistas['AUTORES'])){
                 $i++;
-
+                $texto = $aux_textos_jornais_revistas; 
                 $autores = (!isset($texto['AUTORES']) && isset($texto[3])) ? 3 : 'AUTORES';
                 $aux_autores = self::listarAutores(Arr::get($texto, "{$autores}", []));
-
+                
                 $aux_texto = [];
                 $aux_texto['TITULO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.TITULO-DO-TEXTO", "");
                 $aux_texto['TIPO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.NATUREZA", ""); //JORNAL OU REVISTA
@@ -506,11 +506,34 @@ class Lattes
                 $aux_texto['AUTORES'] =   $aux_autores;
                 
                 if(!self::verificarFiltro($tipo, $aux_texto['ANO'], $limit_ini, $limit_fim, $i)){
-                    continue;
-                }
+                    return false;
+                }   
                 
-
                 array_push($textos_jornais_revistas, $aux_texto);
+            }else{
+                foreach($aux_textos_jornais_revistas as $texto){
+                    $i++;
+                    
+                    $autores = (!isset($texto['AUTORES']) && isset($texto[3])) ? 3 : 'AUTORES';
+                    $aux_autores = self::listarAutores(Arr::get($texto, "{$autores}", []));
+                    
+                    $aux_texto = [];
+                    $aux_texto['TITULO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.TITULO-DO-TEXTO", "");
+                    $aux_texto['TIPO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.NATUREZA", ""); //JORNAL OU REVISTA
+                    $aux_texto['SEQUENCIA-PRODUCAO'] = Arr::get($texto, "@attributes.SEQUENCIA-PRODUCAO", ""); 
+                    $aux_texto['ANO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.ANO-DO-TEXTO", ""); 
+                    $aux_texto['TITULO-DO-JORNAL-OU-REVISTA'] =  Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.TITULO-DO-JORNAL-OU-REVISTA", "");
+                    $aux_texto['DATA'] =  Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.DATA-DE-PUBLICACAO", "");
+                    $aux_texto['LOCAL-DE-PUBLICACAO'] =  Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.LOCAL-DE-PUBLICACAO", "");
+                    $aux_texto['VOLUME'] =  Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.VOLUME", "");
+                    $aux_texto['AUTORES'] =   $aux_autores;
+                    
+                    if(!self::verificarFiltro($tipo, $aux_texto['ANO'], $limit_ini, $limit_fim, $i)){
+                        continue;
+                    }   
+                    
+                    array_push($textos_jornais_revistas, $aux_texto);
+                }
             }
         }else{
             return false;
@@ -541,15 +564,16 @@ class Lattes
         $trabalhos_anais = [];
         
         $aux_trabalhos_anais = Arr::get($lattes, 'PRODUCAO-BIBLIOGRAFICA.TRABALHOS-EM-EVENTOS.TRABALHO-EM-EVENTOS', false);  
+        
+        
         if($aux_trabalhos_anais){
             $i = 0;
-            foreach($aux_trabalhos_anais as $anais){
-                
+            if(isset($aux_trabalhos_anais['AUTORES'])){
                 $i++;
-
+                $anais = $aux_trabalhos_anais;
                 $autores = (!isset($anais['AUTORES']) && isset($anais[3])) ? 3 : 'AUTORES';
                 $aux_autores = self::listarAutores(Arr::get($anais, "{$autores}", []));
-
+                
                 $aux_anais = [];
                 $aux_anais['TITULO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.TITULO-DO-TRABALHO", '');
                 $aux_anais['TIPO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.NATUREZA", ''); 
@@ -564,12 +588,40 @@ class Lattes
                 $aux_anais['PAGINA-INICIAL'] =  Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.PAGINA-INICIAL", '');
                 $aux_anais['PAGINA-FINAL'] =  Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.PAGINA-FINAL", '');
                 $aux_anais['AUTORES'] =   $aux_autores;
-
+                
                 if(!self::verificarFiltro($tipo, $aux_anais['ANO'], $limit_ini, $limit_fim, $i)){
-                    continue;
-                }
-
+                    return false;
+                }       
                 array_push($trabalhos_anais, $aux_anais);
+            }else{
+
+                foreach($aux_trabalhos_anais as $anais){
+                    
+                    $i++;
+                    
+                    $autores = (!isset($anais['AUTORES']) && isset($anais[3])) ? 3 : 'AUTORES';
+                    $aux_autores = self::listarAutores(Arr::get($anais, "{$autores}", []));
+                    
+                    $aux_anais = [];
+                    $aux_anais['TITULO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.TITULO-DO-TRABALHO", '');
+                    $aux_anais['TIPO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.NATUREZA", ''); 
+                    $aux_anais['SEQUENCIA-PRODUCAO'] = Arr::get($anais, '@attributes.SEQUENCIA-PRODUCAO', ''); 
+                    $aux_anais['ANO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.ANO-DO-TRABALHO", ''); 
+                    $aux_anais['NOME-DO-EVENTO'] =  Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.NOME-DO-EVENTO", '');
+                    $aux_anais['TITULO-DOS-ANAIS-OU-PROCEEDINGS'] =  Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.TITULO-DOS-ANAIS-OU-PROCEEDINGS", '');
+                    $aux_anais['CIDADE-DO-EVENTO'] =  Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.CIDADE-DO-EVENTO", '');
+                    $aux_anais['CIDADE-DA-EDITORA'] =  Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.CIDADE-DA-EDITORA", '');
+                    $aux_anais['NOME-DA-EDITORA'] =  Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.NOME-DA-EDITORA", '');
+                    $aux_anais['ANO-DE-REALIZACAO'] =  Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.ANO-DE-REALIZACAO", '');
+                    $aux_anais['PAGINA-INICIAL'] =  Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.PAGINA-INICIAL", '');
+                    $aux_anais['PAGINA-FINAL'] =  Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.PAGINA-FINAL", '');
+                    $aux_anais['AUTORES'] =   $aux_autores;
+                    
+                    if(!self::verificarFiltro($tipo, $aux_anais['ANO'], $limit_ini, $limit_fim, $i)){
+                        continue;
+                    }       
+                    array_push($trabalhos_anais, $aux_anais);
+                }
             }
         }else{
             return false;
@@ -733,8 +785,9 @@ class Lattes
         $aux_eventos = Arr::get($lattes, 'PRODUCAO-TECNICA.DEMAIS-TIPOS-DE-PRODUCAO-TECNICA.ORGANIZACAO-DE-EVENTO', false); 
         if($aux_eventos){
             $i = 0;
-            foreach($aux_eventos as $evento){
+            if(isset($aux_eventos['AUTORES'])){
                 $i++;
+                $evento = $aux_eventos;
                 $autores = (!isset($evento['AUTORES']) && isset($evento[3])) ? 3 : 'AUTORES';
                 $aux_autores = self::listarAutores(Arr::get($evento, "{$autores}", [])); 
                 
@@ -747,10 +800,30 @@ class Lattes
                 $aux_evento['AUTORES'] =   $aux_autores;
                 
                 if(!self::verificarFiltro($tipo, $aux_evento['ANO'], $limit_ini, $limit_fim, $i)){
-                    continue;
+                    return;
                 }               
                 
                 array_push($eventos, $aux_evento);
+            }else{
+                foreach($aux_eventos as $evento){
+                    $i++;
+                    $autores = (!isset($evento['AUTORES']) && isset($evento[3])) ? 3 : 'AUTORES';
+                    $aux_autores = self::listarAutores(Arr::get($evento, "{$autores}", [])); 
+                    
+                    $aux_evento = [];
+                    $aux_evento['TITULO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.TITULO", "");
+                    $aux_evento['ANO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.ANO", ""); 
+                    $aux_evento['TIPO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.TIPO", "");
+                    $aux_evento['INSTITUICAO-PROMOTORA'] = Arr::get($evento, "DETALHAMENTO-DA-ORGANIZACAO-DE-EVENTO.@attributes.INSTITUICAO-PROMOTORA", ""); 
+                    $aux_evento['SEQUENCIA-PRODUCAO'] = Arr::get($evento, "@attributes.SEQUENCIA-PRODUCAO", "");
+                    $aux_evento['AUTORES'] =   $aux_autores;
+                    
+                    if(!self::verificarFiltro($tipo, $aux_evento['ANO'], $limit_ini, $limit_fim, $i)){
+                        continue;
+                    }               
+                    
+                    array_push($eventos, $aux_evento);
+                }
             }
         }else{
             return false;
