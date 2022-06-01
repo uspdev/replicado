@@ -736,6 +736,8 @@ class Posgraduacao
         }
 
         $query = DB::getQuery('Posgraduacao.listarDefesas.sql');
+        $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
+        
         $param = [
             'inicio' => $intervalo['inicio'],
             'fim' => $intervalo['fim'],
