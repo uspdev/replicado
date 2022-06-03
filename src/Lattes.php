@@ -1219,7 +1219,7 @@ class Lattes
         return $outras;
     }
 
-    /**
+     /**
     * Recebe o número USP e devolve array com os 5 últimos capítulos de livros publicados cadastrados no currículo Lattes,
     * com o respectivo título do capítulo, título do livro, número de volumes, página inicial e final do capítulo, ano e nome da editora.
     * @param Integer $codpes = Número USP
@@ -1257,11 +1257,13 @@ class Lattes
                 $aux_capitulo = [
                     'TITULO-DO-CAPITULO-DO-LIVRO' => $capitulos[1]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'] ?? '',
                     'TITULO-DO-LIVRO' => $capitulos[2]['@attributes']['TITULO-DO-LIVRO'] ?? '',
+                    'ISBN' => $capitulos[2]['@attributes']['ISBN'] ?? '',
                     'NUMERO-DE-VOLUMES' => $capitulos[2]['@attributes']['NUMERO-DE-VOLUMES'] ?? '',
                     'PAGINA-INICIAL' => $capitulos[2]['@attributes']['PAGINA-INICIAL'] ?? '',
                     'PAGINA-FINAL' => $capitulos[2]['@attributes']['PAGINA-FINAL'] ?? '',
                     'ANO' => $capitulos[1]['@attributes']['ANO'] ?? '',
                     'NOME-DA-EDITORA' => $capitulos[2]['@attributes']['NOME-DA-EDITORA'] ?? '',
+                    'CIDADE-DA-EDITORA' => $capitulos[2]['@attributes']['CIDADE-DA-EDITORA'] ?? '',
                     'AUTORES' => $aux_autores
                 ]; 
 
@@ -1285,11 +1287,13 @@ class Lattes
                         $aux_capitulo = [
                             'TITULO-DO-CAPITULO-DO-LIVRO' => Arr::get($val, "{$dados_basicos}.@attributes.TITULO-DO-CAPITULO-DO-LIVRO", ""),
                             'TITULO-DO-LIVRO' => Arr::get($val, "{$detalhamento}.@attributes.TITULO-DO-LIVRO", ""),
+                            'ISBN' => Arr::get($val, "{$detalhamento}.@attributes.ISBN", ""),
                             'NUMERO-DE-VOLUMES' => Arr::get($val, "{$detalhamento}.@attributes.NUMERO-DE-VOLUMES", ""),
                             'PAGINA-INICIAL' => Arr::get($val, "{$detalhamento}.@attributes.PAGINA-INICIAL", ""),
                             'PAGINA-FINAL' => Arr::get($val, "{$detalhamento}.@attributes.PAGINA-FINAL", ""),
                             'ANO' => Arr::get($val, "{$dados_basicos}.@attributes.ANO", ""),
                             'NOME-DA-EDITORA' => Arr::get($val, "{$detalhamento}.@attributes.NOME-DA-EDITORA", ""),
+                            'CIDADE-DA-EDITORA' => Arr::get($val, "{$detalhamento}.@attributes.CIDADE-DA-EDITORA", ""),
                             'AUTORES' => $aux_autores
                         ];
 
