@@ -1,40 +1,25 @@
 SELECT
-t1.codpes,
-nompes = (SELECT DISTINCT nompes FROM PESSOA WHERE codpes=t1.codpes),
-t1.dtadfapgm, -- Data da Defesa
-t1.nivpgm,    -- ME/DO
-t3.codare,    -- Código da área
-t6.nomare,    -- Nome da área, um curso pode ter muitas áreas
-t4.codcur,    -- Nome do programa de Pós-Graduação
-t4.nomcur,    -- Nome do programa de Pós-Graduação
-t5.tittrb     -- Título da Dissertação / Tese
+  P.codpes,
+	nompes = (SELECT DISTINCT nompes FROM PESSOA WHERE codpes=P.codpes),
+	P.dtadfapgm, -- Data da Defesa
+	P.nivpgm,    -- ME/DO
+	P.codare,    -- Código da área
+	NA.nomare,    -- Nome da área, um curso pode ter muitas áreas
+	NC.codcur,    -- Nome do programa de Pós-Graduação
+	NC.nomcur,    -- Nome do programa de Pós-Graduação
+	T.tittrb     -- Título da Dissertação / Tese
 
-FROM AGPROGRAMA t1 
-    
-INNER JOIN AREA t3
-ON (
-  t1.codare = t3.codare
-)
-
-INNER JOIN NOMECURSO t4
-ON (
-  t3.codcur = t4.codcur
-)
-
-INNER JOIN TRABALHOPROG t5
-ON (
-  t1.numseqpgm = t5.numseqpgm
-  AND t1.codpes = t5.codpes
-  AND t1.codare = t5.codare
-)
-
-INNER JOIN NOMEAREA t6
-ON (
-  t3.codare = t6.codare
-)
-
+FROM 
+			       AGPROGRAMA P
+	INNER JOIN AREA A ON P.codare = A.codare
+	INNER JOIN NOMEAREA NA ON P.codare = NA.codare
+	INNER JOIN CURSO AS C ON A.codcur = C.codcur 
+	INNER JOIN NOMECURSO NC ON A.codcur = NC.codcur
+	INNER JOIN TRABALHOPROG T ON (P.numseqpgm = T.numseqpgm AND P.codpes = T.codpes AND P.codare = T.codare)
 -- Filtros
-WHERE (
-  t1.dtadfapgm >= :inicio AND 
-  t1.dtadfapgm <= :fim
+WHERE 
+  C.codclg IN (__unidades__) AND
+  (
+  P.dtadfapgm >= :inicio AND 
+  P.dtadfapgm <= :fim
 )
