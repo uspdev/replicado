@@ -477,21 +477,18 @@ class Pessoa
      * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH')
      * Incluido também os Docente Aposentado
      *
-     * @param Integer $codundclgi
+     * @param $codundclgi
      * @return Array
      */
     public static function tiposVinculos($codundclgi)
     {
         $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA
                     WHERE sitatl IN ('A', 'P')
-                        AND codundclg = convert(int, :codundclgi)
+                        AND codundclg IN ({$codundclgi})
                         AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'))
                         AND (tipvinext NOT IN ('Servidor Designado', 'Servidor Aposentado'))
                     ORDER BY tipvinext";
-        $param = [
-            'codundclgi' => $codundclgi,
-        ];
-        return DB::fetchAll($query, $param);
+        return DB::fetchAll($query);
     }
 
     /**
@@ -501,7 +498,7 @@ class Pessoa
      * com o índice *total* que corresponde ao número total de pessoas do tipo de vínculo
      *
      * @param String $vinculo
-     * @param Integer $codundclgi
+     * @param $codundclgi
      * @param Integer $contar Default 0
      * @return void
      */
@@ -518,12 +515,11 @@ class Pessoa
         $query = "SELECT $colunas FROM LOCALIZAPESSOA L
                     INNER JOIN PESSOA P ON (L.codpes = P.codpes)
                     WHERE (L.tipvinext = :vinculo
-                        AND L.codundclg = CONVERT(INT, :codundclgi)
+                        AND L.codundclg IN ({$codundclgi})
                         AND L.sitatl IN ('A', 'P'))
                     $ordem";
 
         $param = [
-            'codundclgi' => $codundclgi,
             'vinculo' => $vinculo,
         ];
         return DB::fetchAll($query, $param);
