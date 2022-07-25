@@ -589,11 +589,13 @@ class Pessoa
      * Também Docente Aposentado
      *
      * @param Integer $codpes
-     * @param Integer (opt) $codundclgi
+     * @param (opt) $codundclgi
      * @return array
      */
-    public static function vinculosSetores(int $codpes, int $codundclgi = 0)
+    public static function vinculosSetores(int $codpes, $codundclgi = 0) # codundclgi não pode ser Integer por conta de mais de uma unidade
     {
+        // Array com os códigos de unidades
+        $arrCodUnidades = explode(',', $codundclgi);
         // codfncetr = 0 não traz as linhas de registro de designados (chefias)
         $query = "SELECT * FROM LOCALIZAPESSOA WHERE codpes = CONVERT(INT, :codpes) AND sitatl IN ('A', 'P') AND codfncetr = 0";
         // Por precaução excluí funcionários aposentados
@@ -601,8 +603,8 @@ class Pessoa
         // Somente os vínculos regulares 'ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'
         $query .= " AND tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH')";
         if ($codundclgi != 0) {
-            $query .= " AND codundclg = CONVERT(INT, :codundclgi)";
-            $param['codundclgi'] = $codundclgi;
+            // Considerando mais de uma unidade, ex.: 84 = Alunos de Pós-Graduação Interunidades
+            $query .= " AND codundclg IN ({$codundclgi})";
         }
         $param['codpes'] = $codpes;
 
@@ -617,14 +619,16 @@ class Pessoa
                 array_push($vinculosSetores, $vinculo);
                 // Adiciona o departamento quando também for Aluno de Graduação
                 if (trim($row['tipvinext']) == 'Aluno de Graduação') {
-                    $setorGraduacao = Graduacao::setorAluno($row['codpes'], $codundclgi)['nomabvset'];
+                    // Considerando o primeiro código de unidade
+                    $setorGraduacao = Graduacao::setorAluno($row['codpes'], $arrCodUnidades[0])['nomabvset'];
                     array_push($vinculosSetores, $row['tipvinext'] . ' ' . $setorGraduacao);
                 }
             }
             if (!empty(trim($row['nomabvset']))) {
                 $setor = trim($row['nomabvset']);
                 // Remove o código da unidade da sigla do setor
-                $setor = str_replace('-' . $codundclgi, '', $setor);
+                // Considerando o primeiro código de unidade
+                $setor = str_replace('-' . $arrCodUnidades[0], '', $setor);
                 // Adiciona as siglas dos setores
                 array_push($vinculosSetores, $setor);
                 // Adiciona os vínculos por extenso concatenando a sigla do setor
