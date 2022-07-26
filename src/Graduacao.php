@@ -122,7 +122,7 @@ class Graduacao
      * Método para retornar dados do curso de um aluno na unidade
      *
      * @param Int $codpes
-     * @param Int $codundclgi
+     * @param $codundclgi
      * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
      */
     public static function curso($codpes, $codundclgi)
@@ -133,11 +133,10 @@ class Graduacao
         $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
         $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
         $query .= " WHERE (L.codpes = convert(int,:codpes))";
-        $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg = convert(int,:codundclgi))";
+        $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg IN ({$codundclgi}))";
         $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
         $param = [
             'codpes' => $codpes,
-            'codundclgi' => $codundclgi,
         ];
         return DB::fetch($query, $param);
     }
