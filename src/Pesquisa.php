@@ -99,7 +99,7 @@ class Pesquisa
 
      
     /**
-     * Método para retornar os colaboradores ativos 
+     * Método para retornar as pesquisas dos pós doutorandos ativos 
      * 
      * @return array
      */
@@ -126,12 +126,12 @@ class Pesquisa
 
 
             $query_com_bolsa = DB::getQuery('Pesquisa.buscarPDcomBolsaPorCodpes.sql'); 
-    
-            $query_com_bolsa = str_replace('__unidades__',$unidades,$query_com_bolsa);
-
             $param_com_bolsa = [
-                'codpes' => $p['codpes'],
+                'codprj' => $p['codprj'],
+                'anoprj' => $p['anoprj'],
             ];
+
+
             $result =  DB::fetchAll($query_com_bolsa, $param_com_bolsa);
 
             if(count($result) == 0){

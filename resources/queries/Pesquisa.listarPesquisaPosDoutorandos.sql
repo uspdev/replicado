@@ -1,6 +1,7 @@
 SELECT DISTINCT l.codpes, 
 	l.nompes as nome_aluno, 
 	p.codprj, 
+	p.anoprj,
 	p.titprj, 
 	p.dtainiprj, 
 	p.dtafimprj,
