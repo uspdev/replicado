@@ -937,9 +937,9 @@ class Pessoa
             'codpes' => $codpes,
         ];
 
-        $return = DB::fetch($query, $param);
+        $return = DB::fetchAll($query, $param);
         if ($return) {
-            return array_values($return);
+            return array_column($return, 'tipvin');
         }
 
         return null;
