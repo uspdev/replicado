@@ -477,21 +477,18 @@ class Pessoa
      * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH')
      * Incluido também os Docente Aposentado
      *
-     * @param Integer $codundclgi
+     * @param $codundclgi
      * @return Array
      */
     public static function tiposVinculos($codundclgi)
     {
         $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA
                     WHERE sitatl IN ('A', 'P')
-                        AND codundclg = convert(int, :codundclgi)
+                        AND codundclg IN ({$codundclgi})
                         AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'))
                         AND (tipvinext NOT IN ('Servidor Designado', 'Servidor Aposentado'))
                     ORDER BY tipvinext";
-        $param = [
-            'codundclgi' => $codundclgi,
-        ];
-        return DB::fetchAll($query, $param);
+        return DB::fetchAll($query);
     }
 
     /**
@@ -501,7 +498,7 @@ class Pessoa
      * com o índice *total* que corresponde ao número total de pessoas do tipo de vínculo
      *
      * @param String $vinculo
-     * @param Integer $codundclgi
+     * @param $codundclgi
      * @param Integer $contar Default 0
      * @return void
      */
@@ -518,12 +515,11 @@ class Pessoa
         $query = "SELECT $colunas FROM LOCALIZAPESSOA L
                     INNER JOIN PESSOA P ON (L.codpes = P.codpes)
                     WHERE (L.tipvinext = :vinculo
-                        AND L.codundclg = CONVERT(INT, :codundclgi)
+                        AND L.codundclg IN ({$codundclgi})
                         AND L.sitatl IN ('A', 'P'))
                     $ordem";
 
         $param = [
-            'codundclgi' => $codundclgi,
             'vinculo' => $vinculo,
         ];
         return DB::fetchAll($query, $param);
@@ -589,25 +585,27 @@ class Pessoa
      * Também Docente Aposentado
      *
      * @param Integer $codpes
-     * @param Integer (opt) $codundclgi
+     * @param (opt) $codundclg
      * @return array
      */
-    public static function vinculosSetores(int $codpes, int $codundclgi = 0)
+    public static function listarVinculosSetores(int $codpes, $codundclg = 0) # codundclgi não pode ser Integer por conta de mais de uma unidade
     {
-        // codfncetr = 0 não traz as linhas de registro de designados (chefias)
-        $query = "SELECT * FROM LOCALIZAPESSOA WHERE codpes = CONVERT(INT, :codpes) AND sitatl IN ('A', 'P') AND codfncetr = 0";
-        // Por precaução excluí funcionários aposentados
-        $query .= " AND tipvinext NOT IN ('Servidor Aposentado')";
-        // Somente os vínculos regulares 'ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'
-        $query .= " AND tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH')";
-        if ($codundclgi != 0) {
-            $query .= " AND codundclg = CONVERT(INT, :codundclgi)";
-            $param['codundclgi'] = $codundclgi;
+        // Array com os códigos de unidades
+        if ($codundclg == 0) {
+            $arrCodUnidades = explode(',', getenv('REPLICADO_CODUNDCLG'));
+        } else {
+            $arrCodUnidades = explode(',', $codundclg);
         }
+        // codfncetr = 0 não traz as linhas de registro de designados (chefias)
+        // Por precaução excluí funcionários aposentados
+        // Somente os vínculos regulares 'ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'
+        // Considerando mais de uma unidade, ex.: 84 = Alunos de Pós-Graduação Interunidades
+        $query = "SELECT * FROM LOCALIZAPESSOA WHERE codpes = CONVERT(INT, :codpes) AND sitatl IN ('A', 'P') AND codfncetr = 0
+                 AND tipvinext NOT IN ('Servidor Aposentado')
+                 AND tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH')
+                 AND codundclg IN ({$codundclg})";
         $param['codpes'] = $codpes;
-
         $result = DB::fetchAll($query, $param);
-
         // Inicializa o array de vínculos e setores
         $vinculosSetores = array();
         foreach ($result as $row) {
@@ -617,14 +615,16 @@ class Pessoa
                 array_push($vinculosSetores, $vinculo);
                 // Adiciona o departamento quando também for Aluno de Graduação
                 if (trim($row['tipvinext']) == 'Aluno de Graduação') {
-                    $setorGraduacao = Graduacao::setorAluno($row['codpes'], $codundclgi)['nomabvset'];
+                    // Considerando o primeiro código de unidade
+                    $setorGraduacao = Graduacao::setorAluno($row['codpes'], $arrCodUnidades[0])['nomabvset'];
                     array_push($vinculosSetores, $row['tipvinext'] . ' ' . $setorGraduacao);
                 }
             }
             if (!empty(trim($row['nomabvset']))) {
                 $setor = trim($row['nomabvset']);
                 // Remove o código da unidade da sigla do setor
-                $setor = str_replace('-' . $codundclgi, '', $setor);
+                // Considerando o primeiro código de unidade
+                $setor = str_replace('-' . $arrCodUnidades[0], '', $setor);
                 // Adiciona as siglas dos setores
                 array_push($vinculosSetores, $setor);
                 // Adiciona os vínculos por extenso concatenando a sigla do setor
@@ -633,7 +633,6 @@ class Pessoa
         }
         $vinculosSetores = array_unique($vinculosSetores);
         sort($vinculosSetores);
-
         return $vinculosSetores;
     }
 
@@ -1134,7 +1133,49 @@ class Pessoa
         return DB::fetchAll($query, $param);
     }
 
-    /********** Métodos deprecados que devem ser eliminados numa futura major release ***********/
+    /**
+     * Método para obter os dados complementares de uma pessoa: estado civil, documentos adicionais, nacionalidade, local de nascimento, etc.
+     *
+     * @param Integer $codpes
+     * @return Array
+     * @author André Canale Garcia <acgarcia@sc.sp.br>, em 21/3/2022
+     */
+    public static function obterComplemento(int $codpes)
+    {
+        $query = DB::getQuery('Pessoa.obterComplemento.sql');
+        $param['codpes'] = $codpes;
+
+        return DB::fetch($query, $param);
+    }
+
+    /**
+     * Método para retornar a situação por extenso da vacina contra a Covid19
+     *
+     * @param Integer $codpes
+     * @return String $sitvcipes
+     *
+     * @author Alessandro Costa de Oliveira 16/03/2022
+     */
+    public static function obterSituacaoVacinaCovid19(int $codpes)
+    {
+        // Seguindo informações da tabela do replicado
+        // TODO talvez, seja interessante sinalizar com cores tipo um semáforo (sugestão)
+        $arrSitvcipesExt = [
+            '1' => 'Primeira dose',
+            '2' => 'Segunda dose',
+            'U' => 'Dose única',
+            'R' => 'Dose de reforço',
+            'I' => 'Invalidado (a pessoa informou os dados da vacinação, mas houve alguma rejeição por parte do validador)',
+            'M' => 'Não vacinado por restrição médica',
+            'N' => 'Não vacinado (sem justificativa ou por convicção pessoal)'
+        ];
+        $query = "SELECT V.sitvcipes FROM PESSOAINFOVACINACOVID V WHERE V.codpes = CONVERT(int, :codpes)";
+        $param = ['codpes' => $codpes];
+        $sitvcipesext = (DB::fetch($query, $param)) ? $arrSitvcipesExt[DB::fetch($query, $param)['sitvcipes']] : 'Não cadastrado';
+        return $sitvcipesext;
+    }
+
+    /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
     /**
      * Método para buscar pessoas por nome ou parte do nome, recebe uma string nome e retorna os resultados para a tabela Pessoa
@@ -1213,44 +1254,65 @@ class Pessoa
     }
 
     /**
-     * Método para obter os dados complementares de uma pessoa: estado civil, documentos adicionais, nacionalidade, local de nascimento, etc.
+     * (deprecated) Método para listar todos os vínculos e setores de uma pessoa
+     *
+     * Fundamental para o uspdev/web-ldap-admin
+     * Somente ATIVOS
+     * Também Docente Aposentado
      *
      * @param Integer $codpes
-     * @return Array
-     * @author André Canale Garcia <acgarcia@sc.sp.br>, em 21/3/2022
+     * @param (opt) $codundclgi
+     * @deprecated em favor de listarVinculosSetores, em 19/09/2022 - @alecostaweb
+     * @return array
      */
-    public static function obterComplemento(int $codpes)
+    public static function vinculosSetores(int $codpes, $codundclgi = 0) # codundclgi não pode ser Integer por conta de mais de uma unidade
     {
-        $query = DB::getQuery('Pessoa.obterComplemento.sql');
+        // Array com os códigos de unidades
+        $arrCodUnidades = explode(',', $codundclgi);
+        // codfncetr = 0 não traz as linhas de registro de designados (chefias)
+        $query = "SELECT * FROM LOCALIZAPESSOA WHERE codpes = CONVERT(INT, :codpes) AND sitatl IN ('A', 'P') AND codfncetr = 0";
+        // Por precaução excluí funcionários aposentados
+        $query .= " AND tipvinext NOT IN ('Servidor Aposentado')";
+        // Somente os vínculos regulares 'ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'
+        $query .= " AND tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH')";
+        if ($codundclgi != 0) {
+            // Considerando mais de uma unidade, ex.: 84 = Alunos de Pós-Graduação Interunidades
+            $query .= " AND codundclg IN ({$codundclgi})";
+        }
         $param['codpes'] = $codpes;
 
-        return DB::fetch($query, $param);
+        $result = DB::fetchAll($query, $param);
+
+        // Inicializa o array de vínculos e setores
+        $vinculosSetores = array();
+        foreach ($result as $row) {
+            if (!empty($row['tipvinext'])) {
+                $vinculo = trim($row['tipvinext']);
+                // Adiciona os vínculos por extenso
+                array_push($vinculosSetores, $vinculo);
+                // Adiciona o departamento quando também for Aluno de Graduação
+                if (trim($row['tipvinext']) == 'Aluno de Graduação') {
+                    // Considerando o primeiro código de unidade
+                    $setorGraduacao = Graduacao::setorAluno($row['codpes'], $arrCodUnidades[0])['nomabvset'];
+                    array_push($vinculosSetores, $row['tipvinext'] . ' ' . $setorGraduacao);
+                }
+            }
+            if (!empty(trim($row['nomabvset']))) {
+                $setor = trim($row['nomabvset']);
+                // Remove o código da unidade da sigla do setor
+                // Considerando o primeiro código de unidade
+                $setor = str_replace('-' . $arrCodUnidades[0], '', $setor);
+                // Adiciona as siglas dos setores
+                array_push($vinculosSetores, $setor);
+                // Adiciona os vínculos por extenso concatenando a sigla do setor
+                array_push($vinculosSetores, $row['tipvinext'] . ' ' . $setor);
+            }
+        }
+        $vinculosSetores = array_unique($vinculosSetores);
+        sort($vinculosSetores);
+
+        return $vinculosSetores;
     }
 
-    /**
-     * Método para retornar a situação por extenso da vacina contra a Covid19
-     *
-     * @param Integer $codpes
-     * @return String $sitvcipes
-     *
-     * @author Alessandro Costa de Oliveira 16/03/2022
-     */
-    public static function obterSituacaoVacinaCovid19(int $codpes)
-    {
-        // Seguindo informações da tabela do replicado
-        // TODO talvez, seja interessante sinalizar com cores tipo um semáforo (sugestão)
-        $arrSitvcipesExt = [
-            '1' => 'Primeira dose',
-            '2' => 'Segunda dose',
-            'U' => 'Dose única',
-            'R' => 'Dose de reforço',
-            'I' => 'Invalidado (a pessoa informou os dados da vacinação, mas houve alguma rejeição por parte do validador)',
-            'M' => 'Não vacinado por restrição médica',
-            'N' => 'Não vacinado (sem justificativa ou por convicção pessoal)'
-        ];
-        $query = "SELECT V.sitvcipes FROM PESSOAINFOVACINACOVID V WHERE V.codpes = CONVERT(int, :codpes)";
-        $param = ['codpes' => $codpes];
-        $sitvcipesext = (DB::fetch($query, $param)) ? $arrSitvcipesExt[DB::fetch($query, $param)['sitvcipes']] : 'Não cadastrado';
-        return $sitvcipesext;
-    }
+    /********** FIM - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 }
