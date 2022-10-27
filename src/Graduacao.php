@@ -130,7 +130,7 @@ class Graduacao
      */
     public static function curso($codpes, $codundclg = null)
     {
-        
+        //Fernando
         $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
         
         $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
