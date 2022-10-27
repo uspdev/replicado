@@ -120,20 +120,26 @@ class Graduacao
 
     /**
      * Método para retornar dados do curso de um aluno na unidade
+     * 
+     * $codundclg pode ser fornecido o código ou uma lista separada por ",".
+     * Caso não for informado, é buscado no env.
      *
      * @param Int $codpes
-     * @param $codundclgi
+     * @param String $codundclg (optional)
      * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
      */
-    public static function curso($codpes, $codundclgi)
+    public static function curso($codpes, $codundclg = null)
     {
+        
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
+        
         $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
         $query .= " FROM LOCALIZAPESSOA L";
         $query .= " INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes) AND (L.codundclg = V.codclg)";
         $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
         $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
         $query .= " WHERE (L.codpes = convert(int,:codpes))";
-        $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg IN ({$codundclgi}))";
+        $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg IN ({$codundclg}))";
         $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
         $param = [
             'codpes' => $codpes,
