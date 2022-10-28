@@ -206,7 +206,7 @@ class DB
         $query = file_get_contents($queries . DIRECTORY_SEPARATOR . $filename);
 
         foreach ($replaces as $key => $val) {
-            $query = str_replace("{$key}", $val, $query);
+            $query = str_replace("__{$key}__", $val, $query);
         }
 
         return $query;
