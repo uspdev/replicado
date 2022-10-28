@@ -540,7 +540,7 @@ class Pessoa
      * @return void
      * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
-    public static function listarServidoresSetor(array $codset, int $aposentados = 1)
+    public static function listarServidoresSetor(array $codset, int $aposentados = 1, $contar = 0)
     {
         // $filtro = "WHERE (L.codset IN (:setor) AND L.codfncetr = 0)"; # retira os designados
         $filtro = "WHERE (L.codset IN (" . implode(',', $codset) . ") AND L.codfncetr = 0)"; # retira os designados
@@ -559,26 +559,28 @@ class Pessoa
 
     /**
      * Método para retornar o total de servidores (docentes, funcionários e estagiários) por setor(es)
-     * Se aposentados = 1, conta também os docentes aposentados (stiatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
      *
-     * @param Array $codset
-     * @param Integer $aposentados (opt) Default 1
-     * @return void
+     * Se aposentados = 1, conta também os docentes aposentados (sitatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
+     *
+     * @param Array|String $codset Array contendo setores ou lista separada por vírgula
+     * @param Integer $aposentados (default=1)
+     * @return Array
      * @author Alessandro Costa de Oliveira, em 10/03/2021
+     * @author Masakik, modificado em 28/10/2022
+     *
+     * @todo seria bom padronizar conforme documentação retorno tipo int
      */
-    public static function contarServidoresSetor(array $codset, int $aposentados = 1)
-    { //fernando
-        // $filtro = "WHERE (L.codset IN (:setor) AND L.codfncetr = 0)"; # retira os designados
-        $filtro = "WHERE (L.codset IN (" . implode(',', $codset) . ") AND L.codfncetr = 0)"; # retira os designados
+    public static function contarServidoresSetor($codset, int $aposentados = 1)
+    {
+        $replaces['codset'] = is_array($codset) ? implode(',', $codset) : $codset;
+
         if ($aposentados == 0) {
-            $filtro .= " AND (L.sitatl IN ('A'))";
+            $replaces['filtroAposentados'] = "AND L.sitatl = 'A'";
         } else {
-            $filtro .= " AND (L.sitatl IN ('A', 'P') AND L.tipvinext NOT IN ('Servidor Aposentado'))";
+            $replaces['filtroAposentados'] =  "AND (L.sitatl = 'A' OR L.sitatl = 'P') AND L.tipvinext != 'Servidor Aposentado'";
         }
-        $colunas = "COUNT(*) total";
-        // $param['setor'] = implode(',', $codset); # retorna vazio para mais de um setor
-        $query = "SELECT $colunas FROM PESSOA P INNER JOIN LOCALIZAPESSOA L ON (P.codpes = L.codpes) $filtro";
-        // return DB::fetch($query, $param);
+
+        $query = DB::getQuery('Pessoa.contarServidoresSetor.sql', $replaces);
         return DB::fetch($query);
     }
 
@@ -931,7 +933,7 @@ class Pessoa
      * @param Integer $codpes
      * @return array
      * @author @thiagogomesverissimo em 25/06/2021
-     * 
+     *
      * @todo retorna tipvin - revisar nome do método e documentação
      */
     public static function obterSiglasVinculosAtivos(int $codpes)
