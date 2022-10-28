@@ -183,9 +183,17 @@ class DB
     }
 
     /**
-     * Função auxiliar que ajuda carregar o arquivo sql
+     * Função auxiliar que ajuda carregar o arquivo sql e realizar substituições
+     *
+     * opcionalmente pode-se passar uma coleção tipo ['replace' => 'valor']
+     * para se realizar a substituição. Vai substituir '__replace__' por 'valor'
+     *
+     * @param String $filename
+     * @param Array $repĺaces (default=[])
+     * @return String
+     * @author Masakik, Fernando G. Moura, modificado em 28/10/2022
      */
-    public static function getQuery($filename)
+    public static function getQuery($filename, array $replaces = [])
     {
         $path = new SplFileInfo(__DIR__);
         $queries = $path->getRealPath();
@@ -195,6 +203,12 @@ class DB
         $queries .= 'resources';
         $queries .= DIRECTORY_SEPARATOR;
         $queries .= 'queries';
-        return file_get_contents($queries . DIRECTORY_SEPARATOR . $filename);
+        $query = file_get_contents($queries . DIRECTORY_SEPARATOR . $filename);
+
+        foreach ($replaces as $key => $val) {
+            $query = str_replace("{$key}", $val, $query);
+        }
+
+        return $query;
     }
 }
