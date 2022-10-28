@@ -926,6 +926,8 @@ class Pessoa
      * @param Integer $codpes
      * @return array
      * @author @thiagogomesverissimo em 25/06/2021
+     * 
+     * @todo retorna tipvin - revisar nome do método e documentação
      */
     public static function obterSiglasVinculosAtivos(int $codpes)
     {
