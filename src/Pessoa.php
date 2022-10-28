@@ -299,43 +299,38 @@ class Pessoa
     }
 
     /**
-     * Método para retornar servidores designados ativos na unidade
+     * Método para listar servidores designados ativos na unidade
      *
-     *  Valores possíveis para categoria: 1 para Servidor ou 2 para Docente.
+     *  Valores possíveis para categoria: 0 para todos, 1 para Servidor ou 2 para Docente.
      *  Se for qualquer outro valor retornará todos os designados, independente do vínculo.
      *  Substitui o método designados
      *
-     * @param int $categoria define o tipo de vinculo da pessoa designada.
-     * @return void
+     * @param Int $categoria Define o tipo de vinculo da pessoa designada (default=0).
+     * @return Array
      * @author @st-ricardof, em 8/2022
+     * @author Masakik, modificado em 28/10/2022
      */
     public static function listarDesignados(int $categoria = 0)
-    { //masaki
-        $codundclg = getenv('REPLICADO_CODUNDCLG');
-
-        $query = "SELECT L.*, P.* FROM LOCALIZAPESSOA L
-                    INNER JOIN PESSOA P ON (L.codpes = P.codpes)
-                    WHERE (L.tipvinext = 'Servidor Designado'
-                        AND L.codundclg IN ({$codundclg})
-                        AND L.sitatl = 'A')
-                        __tipvinext__
-                    ORDER BY L.nompes";
+    {
+        $replaces['codundclg'] = getenv('REPLICADO_CODUNDCLGS');
+        $replaces['codundclg'] = $replaces['codundclg'] ?: getenv('REPLICADO_CODUNDCLG');
 
         if ($categoria == 1 || $categoria == 2) {
             $categoria = $categoria == 1 ? 'Servidor' : 'Docente';
 
-            $query_tipvinext = "AND L.codpes IN
-                        (SELECT codpes
-                        FROM LOCALIZAPESSOA L
-                        WHERE L.tipvinext = '$categoria'
-                        AND L.codundclg IN ({$codundclg})
-                        AND L.sitatl = 'A')";
+            $replaces['tipvinext'] = "AND L.codpes IN
+                (SELECT codpes
+                    FROM LOCALIZAPESSOA L
+                    WHERE L.tipvinext = '$categoria'
+                        AND L.codundclg IN ({$replaces['codundclg']})
+                        AND L.sitatl = 'A'
+                )";
 
-            $query = str_replace('__tipvinext__', $query_tipvinext, $query);
         } else {
-            $query = str_replace('__tipvinext__', '', $query);
+            $replaces['tipvinext'] = '';
         }
 
+        $query = DB::getQuery('Pessoa.listarDesignados.sql', $replaces);
         return DB::fetchAll($query);
     }
 
@@ -577,7 +572,7 @@ class Pessoa
         if ($aposentados == 0) {
             $replaces['filtroAposentados'] = "AND L.sitatl = 'A'";
         } else {
-            $replaces['filtroAposentados'] =  "AND (L.sitatl = 'A' OR L.sitatl = 'P') AND L.tipvinext != 'Servidor Aposentado'";
+            $replaces['filtroAposentados'] = "AND (L.sitatl = 'A' OR L.sitatl = 'P') AND L.tipvinext != 'Servidor Aposentado'";
         }
 
         $query = DB::getQuery('Pessoa.contarServidoresSetor.sql', $replaces);
@@ -1177,7 +1172,7 @@ class Pessoa
             'R' => 'Dose de reforço',
             'I' => 'Invalidado (a pessoa informou os dados da vacinação, mas houve alguma rejeição por parte do validador)',
             'M' => 'Não vacinado por restrição médica',
-            'N' => 'Não vacinado (sem justificativa ou por convicção pessoal)'
+            'N' => 'Não vacinado (sem justificativa ou por convicção pessoal)',
         ];
         $query = "SELECT V.sitvcipes FROM PESSOAINFOVACINACOVID V WHERE V.codpes = CONVERT(int, :codpes)";
         $param = ['codpes' => $codpes];
