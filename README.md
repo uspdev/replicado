@@ -145,11 +145,22 @@ O replicado pode consultar tanto o MSSQL quanto o sybase-ase e em diversas vers�
 
 Sugestão para nomear métodos:
 
-* listarXxx - retorna lista de arrays de Xxx
-* obterXxxx - retorna somente um registro (array) de Xxxx
-* contarXxxx - retorna uma contagem (count()) de registros de Xxxx
+* listarXxx - retorna lista de arrays de Xxx - array (fetch)
+* obterXxxx - retorna somente um registro (array) de Xxxx (fetchAll)
+* contarXxxx - retorna uma contagem (count()) de registros de Xxxx - tipo int
 * retornarXxxx - retorna um valor do registro (string, int, etc)
-* verificarXxxx - retorna true ou false em função da condição Xxxx
+* verificarXxxx - retorna true ou false em função da condição Xxxx tipo bool
+
+OBS.: Quando passar parametro array simples, deixar opcional passar string separada por vírgula
+
+OBS.: Se necessário usar REPLICADO_CODUNDCLGS, tentar REPLICADO_CODUNDCLG também para compatibilidade retroativa
+
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
+
+OBS.: As queries dos métodos devem ficar em resources e as substituições, se necessário podem ser feitas no método DB::getQuery()
+
+
 
 Docblock
 
