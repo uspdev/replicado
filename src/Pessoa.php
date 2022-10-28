@@ -310,7 +310,7 @@ class Pessoa
      * @author @st-ricardof, em 8/2022
      */
     public static function listarDesignados(int $categoria = 0)
-    {   //masaki
+    { //masaki
         $codundclg = getenv('REPLICADO_CODUNDCLG');
 
         $query = "SELECT L.*, P.* FROM LOCALIZAPESSOA L
@@ -481,7 +481,7 @@ class Pessoa
      * @return Array
      */
     public static function tiposVinculos($codundclgi)
-    {   //Alessandro
+    { //Alessandro
         $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA
                     WHERE sitatl IN ('A', 'P')
                         AND codundclg IN ({$codundclgi})
@@ -492,18 +492,23 @@ class Pessoa
     }
 
     /**
-     * Método para retornar *array* com todas as pessoas ativas por vínculo
+     * Método para retornar *array* com todas as pessoas ativas por vínculo estendido (tipvinext)
+     *
      * Somente ATIVOS (também Docente Aposentado)
      * Se o terceiro parâmetro *$contar* for igual a 1, retorna um *array*
      * com o índice *total* que corresponde ao número total de pessoas do tipo de vínculo
      *
      * @param String $vinculo
-     * @param $codundclgi
-     * @param Integer $contar Default 0
-     * @return void
+     * @param Int $codundclg (default=null)
+     * @param Int $contar Default 0
+     * @return Array
+     * @author modificado por Masakik em 28/10/2022
      */
-    public static function ativosVinculo($vinculo, $codundclgi, $contar = 0)
-    {   //masaki
+    public static function ativosVinculo(string $vinculo, int $codundclg = null, int $contar = 0)
+    {
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
+
         if ($contar == 0) {
             $colunas = "L.*, P.*";
             $ordem = "ORDER BY L.nompes";
@@ -513,11 +518,11 @@ class Pessoa
         }
 
         $query = "SELECT $colunas FROM LOCALIZAPESSOA L
-                    INNER JOIN PESSOA P ON (L.codpes = P.codpes)
-                    WHERE (L.tipvinext = :vinculo
-                        AND L.codundclg IN ({$codundclgi})
-                        AND L.sitatl IN ('A', 'P'))
-                    $ordem";
+             INNER JOIN PESSOA P ON (L.codpes = P.codpes)
+             WHERE (L.tipvinext = :vinculo
+                 AND L.codundclg IN ($codundclg)
+                 AND L.sitatl IN ('A', 'P'))
+             $ordem";
 
         $param = [
             'vinculo' => $vinculo,
@@ -562,7 +567,7 @@ class Pessoa
      * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
     public static function contarServidoresSetor(array $codset, int $aposentados = 1)
-    {   //fernando
+    { //fernando
         // $filtro = "WHERE (L.codset IN (:setor) AND L.codfncetr = 0)"; # retira os designados
         $filtro = "WHERE (L.codset IN (" . implode(',', $codset) . ") AND L.codfncetr = 0)"; # retira os designados
         if ($aposentados == 0) {
@@ -589,6 +594,7 @@ class Pessoa
      * @return array
      */
     public static function listarVinculosSetores(int $codpes, $codundclg = 0) # codundclgi não pode ser Integer por conta de mais de uma unidade
+
     {
         // Array com os códigos de unidades
         if ($codundclg == 0) {
@@ -1268,7 +1274,8 @@ class Pessoa
      * @return array
      */
     public static function vinculosSetores(int $codpes, $codundclgi = 0) # codundclgi não pode ser Integer por conta de mais de uma unidade
-    {   //Alessandro
+
+    { //Alessandro
         // Array com os códigos de unidades
         $arrCodUnidades = explode(',', $codundclgi);
         // codfncetr = 0 não traz as linhas de registro de designados (chefias)
