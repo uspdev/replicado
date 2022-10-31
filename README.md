@@ -85,8 +85,8 @@ REPLICADO_SYBASE=1
 
 REPLICADO_CODCUR=1,2,3
 
-# habilita o uso do cache https://github.com/uspdev/cache (default=false)
-REPLICADO_USAR_CACHE=false
+# habilita o uso do cache https://github.com/uspdev/cache (default=0)
+REPLICADO_USAR_CACHE=0
 
 # Se true mostra o retorno de erros do BD (default=APP_DEBUG)
 REPLICADO_DEBUG=${APP_DEBUG}
