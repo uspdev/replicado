@@ -472,17 +472,22 @@ class Pessoa
      * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH')
      * Incluido também os Docente Aposentado
      *
-     * @param $codundclgi
+     * @param $codundclg (default=null) # 03/11/2022 - ECAdev @alecosta: Não pode setar como inteiro já que pode aceitar uma string de valores separados por vírgula
      * @return Array
+     * @author modificado por Alessandro em 03/11/2022
      */
-    public static function tiposVinculos($codundclgi)
-    { //Alessandro
+    public static function tiposVinculos($codundclg = null)
+    {
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
+
         $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA
                     WHERE sitatl IN ('A', 'P')
-                        AND codundclg IN ({$codundclgi})
+                        AND codundclg IN ({$codundclg})
                         AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'))
                         AND (tipvinext NOT IN ('Servidor Designado', 'Servidor Aposentado'))
                     ORDER BY tipvinext";
+
         return DB::fetchAll($query);
     }
 
@@ -494,12 +499,12 @@ class Pessoa
      * com o índice *total* que corresponde ao número total de pessoas do tipo de vínculo
      *
      * @param String $vinculo
-     * @param Int $codundclg (default=null)
+     * @param $codundclg (default=null) # 03/11/2022 - ECAdev @alecosta: Não pode setar como inteiro já que pode aceitar uma string de valores separados por vírgula
      * @param Int $contar Default 0
      * @return Array
      * @author modificado por Masakik em 28/10/2022
      */
-    public static function ativosVinculo(string $vinculo, int $codundclg = null, int $contar = 0)
+    public static function ativosVinculo(string $vinculo, $codundclg = null, int $contar = 0)
     {
         $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
         $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
@@ -1272,7 +1277,7 @@ class Pessoa
      */
     public static function vinculosSetores(int $codpes, $codundclgi = 0) # codundclgi não pode ser Integer por conta de mais de uma unidade
 
-    { //Alessandro
+    { // TODO Alessandro
         // Array com os códigos de unidades
         $arrCodUnidades = explode(',', $codundclgi);
         // codfncetr = 0 não traz as linhas de registro de designados (chefias)
