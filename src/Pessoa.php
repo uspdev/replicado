@@ -592,18 +592,19 @@ class Pessoa
      * Também Docente Aposentado
      *
      * @param Integer $codpes
-     * @param (opt) $codundclg
+     * @param (opt) $codundclg (default=null)
      * @return array
+     * @author modificado por Alessandro em 03/11/2022
      */
-    public static function listarVinculosSetores(int $codpes, $codundclg = 0) # codundclgi não pode ser Integer por conta de mais de uma unidade
+    public static function listarVinculosSetores(int $codpes, $codundclg = null) # codundclgi não pode ser Integer por conta de mais de uma unidade
 
     {
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
+
         // Array com os códigos de unidades
-        if ($codundclg == 0) {
-            $arrCodUnidades = explode(',', getenv('REPLICADO_CODUNDCLG'));
-        } else {
-            $arrCodUnidades = explode(',', $codundclg);
-        }
+        $arrCodUnidades = explode(',', $codundclg);
+
         // codfncetr = 0 não traz as linhas de registro de designados (chefias)
         // Por precaução excluí funcionários aposentados
         // Somente os vínculos regulares 'ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'
