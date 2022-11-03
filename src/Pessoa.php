@@ -596,7 +596,7 @@ class Pessoa
      * @return array
      * @author modificado por Alessandro em 03/11/2022
      */
-    public static function listarVinculosSetores(int $codpes, $codundclg = null) # codundclgi não pode ser Integer por conta de mais de uma unidade
+    public static function listarVinculosSetores(int $codpes, $codundclg = null) # codundclg não pode ser Integer por conta de mais de uma unidade
 
     {
         $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
@@ -1278,7 +1278,7 @@ class Pessoa
      */
     public static function vinculosSetores(int $codpes, $codundclgi = 0) # codundclgi não pode ser Integer por conta de mais de uma unidade
 
-    { // TODO Alessandro
+    {
         // Array com os códigos de unidades
         $arrCodUnidades = explode(',', $codundclgi);
         // codfncetr = 0 não traz as linhas de registro de designados (chefias)
