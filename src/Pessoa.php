@@ -462,27 +462,26 @@ class Pessoa
     }
 
     /**
-     * Método para retornar os tipos de vínculos por extenso (tipvinext) de ativos, com base na unidade
+     * Método para listar os tipos de vínculos por extenso (tipvinext) de ativos, com base na unidade
      *
-     * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT'),
-     * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH')
-     * Incluido também os Docente Aposentado
+     * Somente ATIVOS:
+     * - alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT'),
+     * - funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH')
+     * - inclui também os Docentes Aposentados
      *
-     * @param $codundclg (default=null) # 03/11/2022 - ECAdev @alecosta: Não pode setar como inteiro já que pode aceitar uma string de valores separados por vírgula
+     * Removido sitatl IN ('A', 'P') pois só existem essas duas possibilidades
+     * Parecido com todosVinculosExtenso()
+     * Substitui tiposVinculos()
+     *
      * @return Array
-     * @author modificado por Alessandro em 03/11/2022
+     * @author modificado por Masakik em 8/11/2022
      */
-    public static function tiposVinculos($codundclg = null)
+    public static function listarTiposVinculoExtenso()
     {
-        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
-        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
+        $replaces['codundclgs'] = getenv('REPLICADO_CODUNDCLGS');
+        $replaces['codundclgs'] = $replaces['codundclgs'] ?: getenv('REPLICADO_CODUNDCLG');
 
-        $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA
-                    WHERE sitatl IN ('A', 'P')
-                        AND codundclg IN ({$codundclg})
-                        AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'))
-                        AND (tipvinext NOT IN ('Servidor Designado', 'Servidor Aposentado'))
-                    ORDER BY tipvinext";
+        $query = DB::getQuery('Pessoa.listarTiposVinculoExtenso.sql', $replaces);
 
         return DB::fetchAll($query);
     }
@@ -1322,6 +1321,32 @@ class Pessoa
 
         return $vinculosSetores;
     }
+
+    /**
+     * (deprecated) Método para retornar os tipos de vínculos por extenso (tipvinext) de ativos, com base na unidade
+     *
+     * Somente ATIVOS: alunos regulares, tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT'),
+     * funcionários, estagiários e docentes, tipvin IN ('SERVIDOR', 'ESTAGIARIORH')
+     * Incluido também os Docente Aposentado
+     *
+     * @deprecated em 8/11/2022, em favor de listarTiposVinculoExtenso, por Masakik
+     * @param Integer $codundclgi
+     * @return Array
+     */
+    public static function tiposVinculos($codundclgi)
+    {
+        $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA
+                    WHERE sitatl IN ('A', 'P')
+                        AND codundclg = convert(int, :codundclgi)
+                        AND (tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'))
+                        AND (tipvinext NOT IN ('Servidor Designado', 'Servidor Aposentado'))
+                    ORDER BY tipvinext";
+        $param = [
+            'codundclgi' => $codundclgi,
+        ];
+        return DB::fetchAll($query, $param);
+    }
+
 
     /********** FIM - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 }
