@@ -97,11 +97,13 @@ A maioria das variáveis são autoexplicativas mas outras não.
 
 **REPLICADO_CODUNDCLG** - essa variável é o código da unidade. Até 11/2022, ela podia conter valores separados por vírgula. No entanto, para manter compatibilidade e organizar melhor, criou-se outra váriável para conter múltiplos valores:
 
-    REPLICADO_CODUNDCLG=8,27
-
-Atenção, NÃO usar aspas, como no neste exemplo: *REPLICADO_CODUNDCLG="8,27"*.
+    REPLICADO_CODUNDCLG=8
 
 **REPLICADO_CODUNDCLGS** (com S no final) - Representa os colegiados da unidade. Importante para as unidades que tem cursos compartilhados.
+
+    REPLICADO_CODUNDCLGS=8,27
+
+Atenção, NÃO usar aspas, como neste exemplo: *REPLICADO_CODUNDCLG="8,27"*.
 
 **REPLICADO_SYBASE** - serve para indicar se vc está usando SYBASE ou MSSQL. Implica:
 * na conversão para UTF-8 pela biblioteca ou pelo freetds
@@ -117,7 +119,7 @@ Para usar é necessário instalar ele com
 
 e seguir a documentação da biblioteca para levantar o servidor memcached e configurar ele. 
 
-Por fim ative o cache do replicado com do
+Por fim ative o cache do replicado com
 
     putenv('REPLICADO_USAR_CACHE=1');
 
@@ -136,33 +138,38 @@ O replicado pode consultar tanto o MSSQL quanto o sybase-ase e em diversas vers�
 * Abra uma issue antes de começar a mexer no código. A discussão prévia é importante para alinhar as idéias.
 * As contribuições serão aceitas por meio de pull requests. Para tanto faça as alterações em uma branch issue_xx.
 * Ao criar um novo método, lembre de documentar o DOCBLOCK
-* Ao criar um novo método, crie o teste correspondente
+* Ao criar um novo método, coloque o sql em resources/queries
 * A branch master é considerada estável e pode ser usada em produção, porém os releases têm sido regulares.
 * Os argumentos dos métodos devem ser tipados, incluindo int, string etc
 * Deve-se dar preferência para aspas simples em strings pois o PHP não tenta parsear seu conteúdo
 
+Referência: Pessoa::listarDesignados()
+
 Sugestão para nomear métodos:
 
-* listarXxx - retorna lista de arrays de Xxx - array (fetch)
-* obterXxxx - retorna somente um registro (array) de Xxxx (fetchAll)
-* contarXxxx - retorna uma contagem (count()) de registros de Xxxx - tipo int
-* retornarXxxx - retorna um valor do registro (string, int, etc)
-* verificarXxxx - retorna true ou false em função da condição Xxxx tipo bool
+* listarXxx - retorna lista de registros de dados (fetchAll)
+* obterXxxx - retorna somente um registro (fetch)
+* contarXxxx - retorna uma contagem (count()) - retorno tipo int
+* retornarXxxx - retorna um valor do registro - retorno string, int, etc
+* verificarXxxx - retorna true ou false em função da condição -retorno bool
 
-OBS.: Quando passar parametro array simples, deixar opcional passar string separada por vírgula
+OBS1.: Quando passar parametro array simples, deixar opcional passar string separada por vírgula
 
-OBS.: Se necessário usar REPLICADO_CODUNDCLGS, tentar REPLICADO_CODUNDCLG também para compatibilidade retroativa
+OBS2.: Se necessário usar REPLICADO_CODUNDCLGS, tentar REPLICADO_CODUNDCLG também para compatibilidade retroativa
 
-        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
-        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
+        $replaces['codundclg'] = getenv('REPLICADO_CODUNDCLGS');
+        $replaces['codundclg'] = $replaces['codundclg'] ?: getenv('REPLICADO_CODUNDCLG');
 
-OBS.: As queries dos métodos devem ficar em resources e as substituições, se necessário podem ser feitas no método DB::getQuery()
+OBS3.: As queries dos métodos devem ficar em resources e as substituições, se necessário podem ser feitas no método DB::getQuery()
 
 
-
-Docblock
+#### Docblock
 
 Coloque o campo @author no docblock do método. Assim facilita consultar o autor sobre o método.
+
+Se você alterar um método coloque também 
+
+    @author Fulano, modificado em xx/xx/xxxx
 ### phpunit
 
 Ao criar um método novo é necessário criar um método correspondente de teste, usando o phpunit. Para isso, você precisa de um banco de dados sybase ou mssql 
