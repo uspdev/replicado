@@ -83,8 +83,6 @@ REPLICADO_CODUNDCLGS=${REPLICADO_CODUNDCLG}
 # Converte de/para UTF-8
 REPLICADO_SYBASE=1
 
-REPLICADO_CODCUR=1,2,3
-
 # habilita o uso do cache https://github.com/uspdev/cache (default=0)
 REPLICADO_USAR_CACHE=0
 
