@@ -157,8 +157,8 @@ OBS1.: Quando passar parametro array simples, deixar opcional passar string sepa
 
 OBS2.: Se necessário usar REPLICADO_CODUNDCLGS, tentar REPLICADO_CODUNDCLG também para compatibilidade retroativa
 
-        $replaces['codundclg'] = getenv('REPLICADO_CODUNDCLGS');
-        $replaces['codundclg'] = $replaces['codundclg'] ?: getenv('REPLICADO_CODUNDCLG');
+        $replaces['codundclgs'] = getenv('REPLICADO_CODUNDCLGS');
+        $replaces['codundclgs'] = $replaces['codundclgs'] ?: getenv('REPLICADO_CODUNDCLG');
 
 OBS3.: As queries dos métodos devem ficar em resources e as substituições, se necessário podem ser feitas no método DB::getQuery()
 
