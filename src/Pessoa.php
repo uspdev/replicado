@@ -487,7 +487,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar *array* com todas as pessoas ativas por vínculo estendido (tipvinext)
+     * Método para retornar *array* com as pessoas ativas por tipo-vinculo-extenso (tipvinext)
      *
      * Somente ATIVOS (também Docente Aposentado)
      * Se o terceiro parâmetro *$contar* for igual a 1, retorna um *array*
