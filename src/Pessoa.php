@@ -299,35 +299,31 @@ class Pessoa
     }
 
     /**
-     * Método para listar servidores designados ativos na unidade
+     * Método para listar servidores designados ativos por categoria
      *
      *  Valores possíveis para categoria: 0 para todos, 1 para Servidor ou 2 para Docente.
      *  Se for qualquer outro valor retornará todos os designados, independente do vínculo.
      *  Substitui o método designados
      *
-     * @param Int $categoria Define o tipo de vinculo da pessoa designada (default=0).
+     * @param Int $categoria Tipo de vinculo da pessoa designada (default=0)
      * @return Array
      * @author @st-ricardof, em 8/2022
-     * @author Masakik, modificado em 28/10/2022
+     * @author Masakik, modificado em 8/11/2022
      */
     public static function listarDesignados(int $categoria = 0)
     {
-        $replaces['codundclg'] = getenv('REPLICADO_CODUNDCLGS');
-        $replaces['codundclg'] = $replaces['codundclg'] ?: getenv('REPLICADO_CODUNDCLG');
+        $replaces['codundclgs'] = getenv('REPLICADO_CODUNDCLGS');
+        $replaces['codundclgs'] = $replaces['codundclgs'] ?: getenv('REPLICADO_CODUNDCLG');
 
-        if ($categoria == 1 || $categoria == 2) {
-            $categoria = $categoria == 1 ? 'Servidor' : 'Docente';
-
-            $replaces['tipvinext'] = "AND L.codpes IN
-                (SELECT codpes
-                    FROM LOCALIZAPESSOA L
-                    WHERE L.tipvinext = '$categoria'
-                        AND L.codundclg IN ({$replaces['codundclg']})
-                        AND L.sitatl = 'A'
-                )";
-
-        } else {
-            $replaces['tipvinext'] = '';
+        switch ($categoria) {
+            case 2:
+                $replaces['tipvinext'] = "'Docente'";
+                break;
+            case 1:
+                $replaces['tipvinext'] = "'Servidor'";
+                break;
+            default:
+                $replaces['tipvinext'] = "'Servidor','Docente'";
         }
 
         $query = DB::getQuery('Pessoa.listarDesignados.sql', $replaces);
@@ -615,6 +611,7 @@ class Pessoa
                  AND codundclg IN ({$codundclg})";
         $param['codpes'] = $codpes;
         $result = DB::fetchAll($query, $param);
+
         // Inicializa o array de vínculos e setores
         $vinculosSetores = array();
         foreach ($result as $row) {
