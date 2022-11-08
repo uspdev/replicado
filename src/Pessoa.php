@@ -600,12 +600,11 @@ class Pessoa
         // Array com os códigos de unidades
         $arrCodUnidades = explode(',', $codundclg);
 
-        // codfncetr = 0 não traz as linhas de registro de designados (chefias)
-        // Por precaução excluí funcionários aposentados
         // Somente os vínculos regulares 'ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH'
         // Considerando mais de uma unidade, ex.: 84 = Alunos de Pós-Graduação Interunidades
-        $query = "SELECT * FROM LOCALIZAPESSOA WHERE codpes = CONVERT(INT, :codpes) AND sitatl IN ('A', 'P') AND codfncetr = 0
-                 AND tipvinext NOT IN ('Servidor Aposentado')
+        $query = "SELECT * FROM LOCALIZAPESSOA WHERE codpes = CONVERT(INT, :codpes)
+                 AND codfncetr = 0 --exclui designados
+                 AND tipvinext != 'Servidor Aposentado' --exclui funcionários não docentes aposentados
                  AND tipvin IN ('ALUNOGR', 'ALUNOPOS', 'ALUNOCEU', 'ALUNOEAD', 'ALUNOPD', 'ALUNOCONVENIOINT', 'SERVIDOR', 'ESTAGIARIORH')
                  AND codundclg IN ({$codundclg})";
         $param['codpes'] = $codpes;
