@@ -535,7 +535,7 @@ class Pessoa
      * @return void
      * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
-    public static function listarServidoresSetor(array $codset, int $aposentados = 1, $contar = 0)
+    public static function listarServidoresSetor(array $codset, int $aposentados = 1)
     {
         // $filtro = "WHERE (L.codset IN (:setor) AND L.codfncetr = 0)"; # retira os designados
         $filtro = "WHERE (L.codset IN (" . implode(',', $codset) . ") AND L.codfncetr = 0)"; # retira os designados
