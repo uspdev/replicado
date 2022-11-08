@@ -572,7 +572,7 @@ class Pessoa
         if ($aposentados == 0) {
             $replaces['filtroAposentados'] = "AND L.sitatl = 'A'";
         } else {
-            $replaces['filtroAposentados'] = "AND (L.sitatl = 'A' OR L.sitatl = 'P') AND L.tipvinext != 'Servidor Aposentado'";
+            $replaces['filtroAposentados'] = "AND L.tipvinext != 'Servidor Aposentado'";
         }
 
         $query = DB::getQuery('Pessoa.contarServidoresSetor.sql', $replaces);
