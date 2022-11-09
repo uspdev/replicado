@@ -28,31 +28,6 @@ class Graduacao
     }
 
     /**
-     * Método para retornar alunos ativos na unidade
-     *
-     * @deprecated em 13/10/2021, em favor de listarAtivos()
-     * @param Int $condundclgi
-     * @param String $partNome (optional)
-     * @return array(campos tabela LOCALIZAPESSOA)
-     */
-    public static function ativos($codundclgi, $parteNome = null)
-    {
-        $param = [
-            'codundclgi' => $codundclgi,
-        ];
-        $query = " SELECT LOCALIZAPESSOA.* FROM LOCALIZAPESSOA";
-        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)";
-        if (!is_null($parteNome)) {
-            $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
-            $parteNome = strtoupper(str_replace(' ', '%', $parteNome));
-            $query .= " AND nompesfon LIKE :parteNome";
-            $param['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
-        }
-        $query .= " ORDER BY nompes ASC";
-        return DB::fetchAll($query, $param);
-    }
-
-    /**
      * Lista alunos de graduação ativos na unidade, podendo filtrar por codcur, anoIngresso ou parteNome
      *
      * Para as unidades que possuem mais de um CODUNDCLG, todos devem estar listados no ENV
@@ -119,27 +94,21 @@ class Graduacao
     }
 
     /**
-     * Método para retornar dados do curso de um aluno na unidade
+     * Método para retornar dados do curso de um aluno ativo na unidade
+     *
+     * Caso o aluno não esteja cursando, retorna array vazio
+     * Substitui método curso
      *
      * @param Int $codpes
-     * @param Int $codundclgi
-     * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
+     * @return Array (codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
+     * @author Masakik, adaptado em 8/11/2022
      */
-    public static function curso($codpes, $codundclgi)
+    public static function obterCursoAtivo(int $codpes)
     {
-        $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
-        $query .= " FROM LOCALIZAPESSOA L";
-        $query .= " INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes) AND (L.codundclg = V.codclg)";
-        $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
-        $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
-        $query .= " WHERE (L.codpes = convert(int,:codpes))";
-        $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg = convert(int,:codundclgi))";
-        $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
-        $param = [
-            'codpes' => $codpes,
-            'codundclgi' => $codundclgi,
-        ];
-        return DB::fetch($query, $param);
+        $query = DB::getQuery('Graduacao.obterCursoAtivo.sql');
+        $param['codpes'] = $codpes;
+
+        return DB::fetch($query, $param) ?: [];
     }
 
     /**
@@ -242,25 +211,25 @@ class Graduacao
     }
 
     /**
-     * Método para obter as disciplinas de graduação oferecidas por colegiado
+     * Método para listar as disciplinas de graduação ativas
      *
-     * @param Integer $codclg
-     * @return void
-     * @author André Canale Garcia <acgarcia@sc.sp.br>
+     * Alterado o nome do método e aplicado filtro de disciplinas desativadas (4/2022)
+     *
+     * @return Array lista com com disciplinas
+     * @author André Canale Garcia <acgarcia@sc.sp.br> (antes de 4/2022)
      */
-    public static function obterDisciplinasPorColegiado($codclg = null)
+    public static function listarDisciplinas()
     {
+        $codclg = getenv('REPLICADO_CODUNDCLG');
+
         $query = "SELECT D1.*
                   FROM DISCIPLINAGR AS D1
                   WHERE (D1.verdis = (SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis)))
-                    AND D1.coddis IN (SELECT coddis FROM DISCIPGRCODIGO WHERE DISCIPGRCODIGO.codclg = convert(int,:codclg))
+                    AND D1.coddis IN (SELECT coddis FROM DISCIPGRCODIGO WHERE DISCIPGRCODIGO.codclg IN ({$codclg}))
+                    AND D1.dtadtvdis is NULL
                   ORDER BY D1.nomdis ASC";
 
-        $param = [
-            'codclg' => $codclg ? $codclg : getenv('REPLICADO_CODUNDCLG'),
-        ];
-
-        return DB::fetchAll($query, $param);
+        return DB::fetchAll($query);
     }
 
     /**
@@ -801,4 +770,59 @@ class Graduacao
 
         return DB::fetchAll($query, $param);
     }
+
+    /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
+
+    /**
+     * Método para retornar alunos ativos na unidade
+     *
+     * @deprecated em 13/10/2021, em favor de listarAtivos()
+     * @param Int $condundclgi
+     * @param String $partNome (optional)
+     * @return array(campos tabela LOCALIZAPESSOA)
+     */
+    public static function ativos($codundclgi, $parteNome = null)
+    {
+        $param = [
+            'codundclgi' => $codundclgi,
+        ];
+        $query = " SELECT LOCALIZAPESSOA.* FROM LOCALIZAPESSOA";
+        $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)";
+        if (!is_null($parteNome)) {
+            $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
+            $parteNome = strtoupper(str_replace(' ', '%', $parteNome));
+            $query .= " AND nompesfon LIKE :parteNome";
+            $param['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
+        }
+        $query .= " ORDER BY nompes ASC";
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * (deprecated) Método para retornar dados do curso de um aluno na unidade
+     *
+     * @deprecated em 8/11/2022, em favor de obterCursoAtivo, por Masakik
+     * @param Int $codpes
+     * @param Int $codundclgi
+     * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
+     */
+    public static function curso($codpes, $codundclgi)
+    {
+        $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
+        $query .= " FROM LOCALIZAPESSOA L";
+        $query .= " INNER JOIN VINCULOPESSOAUSP V ON (L.codpes = V.codpes) AND (L.codundclg = V.codclg)";
+        $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
+        $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
+        $query .= " WHERE (L.codpes = convert(int,:codpes))";
+        $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg = convert(int,:codundclgi))";
+        $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
+        $param = [
+            'codpes' => $codpes,
+            'codundclgi' => $codundclgi,
+        ];
+        return DB::fetch($query, $param);
+    }
+
+
+    /********** FIM - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 }

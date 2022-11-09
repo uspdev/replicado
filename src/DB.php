@@ -264,8 +264,11 @@ class DB
      * A $str_where pode ser colocada dentro de $query. Cuidado: ela vem iniciada pela string " WHERE ("
      * $params pode ser passado diretamente no fetch/fetchAll
      *
+<<<<<<< HEAD
      * TODO: Talvez esse método deveria estar em outro lugar
      *
+=======
+>>>>>>> master
      * 28/1/2022 - Adicionado $colunaSanitizada poara o caso de passar "tabela.coluna". $colunaSanitizada remove o ponto no $param
      *
      * @param array $filtros - campo_tabela => valor
@@ -329,14 +332,20 @@ class DB
     }
 
     /**
-     * Método auxiliar que ajuda carregar o conteúdo do arquivo contendo sql
+     * Função auxiliar que ajuda carregar o arquivo sql e realizar substituições
      *
-     * Arquivos de query estão na pasta resources/queries
+     * opcionalmente pode-se passar uma coleção tipo ['replace' => 'valor']
+     * para se realizar a substituição. Vai substituir '__replace__' por 'valor'
      *
-     * @param string $filename
+     * Caso não seja passado ['codundclgs' => 'valor'], o método pegará automaticamente
+     * do env se necessário
+     *
+     * @param String $filename
+     * @param Array $repĺaces (default=[])
      * @return String
+     * @author Masakik, Fernando G. Moura, modificado em 28/10/2022
      */
-    public static function getQuery(string $filename)
+    public static function getQuery($filename, array $replaces = [])
     {
         $path = new SplFileInfo(__DIR__);
         $queries = $path->getRealPath();
@@ -346,6 +355,18 @@ class DB
         $queries .= 'resources';
         $queries .= DIRECTORY_SEPARATOR;
         $queries .= 'queries';
-        return file_get_contents($queries . DIRECTORY_SEPARATOR . $filename);
+        $query = file_get_contents($queries . DIRECTORY_SEPARATOR . $filename);
+
+        foreach ($replaces as $key => $val) {
+            $query = str_replace("__{$key}__", $val, $query);
+        }
+
+        if (str_contains($query, '__codundclgs__')) {
+            $codundclgs = getenv('REPLICADO_CODUNDCLGS');
+            $codundclgs = $codundclgs ?: getenv('REPLICADO_CODUNDCLG');
+            $query = str_replace("__codundclgs__", $codundclgs, $query);
+        }
+
+        return $query;
     }
 }
