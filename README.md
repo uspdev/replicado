@@ -137,39 +137,58 @@ O replicado pode consultar tanto o MSSQL quanto o sybase-ase e em diversas vers�
 
 * Abra uma issue antes de começar a mexer no código. A discussão prévia é importante para alinhar as idéias.
 * As contribuições serão aceitas por meio de pull requests. Para tanto faça as alterações em uma branch issue_xx.
-* Ao criar um novo método, lembre de documentar o DOCBLOCK
-* Ao criar um novo método, coloque o sql em resources/queries
-* A branch master é considerada estável e pode ser usada em produção, porém os releases têm sido regulares.
+* Documentar o DOCBLOCK
+    * Texto principal, texto complementar, @param, @return
+    * @author seu-nome, em xx/xx/xxxx ou
+    * @author seu-nome, modificado em xx/xx/xxxx
+* Coloque o sql em resources/queries
 * Os argumentos dos métodos devem ser tipados, incluindo int, string etc
-* Deve-se dar preferência para aspas simples em strings pois o PHP não tenta parsear seu conteúdo
+* (11/2022) Caso ocorra algum erro, os métodos `DB::fetch` e `DB::fetchAll` retornam `false` e uma mensagem de erro. Em caso de retorno "vazio", alguns métodos precisam de tratamento:
+    * **obterXxxx**: `PDOStatement::fetch()` retorna false em caso de vazio. Nesse caso use\
+        `return DB::fetch($query) :? [];`
+    * **retornarXxxx**: deve retornar `null`
+* Dar preferência para aspas simples em strings pois o PHP não tenta parsear seu conteúdo
+* A branch `master` é considerada estável e pode ser usada em produção, porém os `releases` têm sido regulares.
 
-Referência: Pessoa::listarDesignados()
+Referência: `Pessoa::listarDesignados()`
 
 Sugestão para nomear métodos:
 
-* listarXxx - retorna lista de registros de dados (fetchAll)
-* obterXxxx - retorna somente um registro (fetch)
-* contarXxxx - retorna uma contagem (count()) - retorno tipo int
-* retornarXxxx - retorna um valor do registro - retorno string, int, etc
-* verificarXxxx - retorna true ou false em função da condição -retorno bool
+1. listarXxx - retorna lista de registros de dados (fetchAll)
+2. obterXxxx - retorna somente um registro (fetch)
+3. contarXxxx - retorna uma contagem (count()) - retorno tipo int
+4. retornarXxxx - retorna um valor do registro - retorno string, int, etc
+5. verificarXxxx - retorna true ou false em função da condição - retorno bool
 
-OBS1.: Quando passar parametro array simples, deixar opcional passar string separada por vírgula
+OBS1.: Quando passar parâmetro array simples, deixar opcional passar string separada por vírgula. Ex.: `Pessoa::contarServidoresSetor()`
 
-OBS2.: Se necessário usar REPLICADO_CODUNDCLGS, tentar REPLICADO_CODUNDCLG também para compatibilidade retroativa
+OBS2.: (11/2022) As queries dos métodos devem ficar em `resources/queries` e as substituições, se necessário podem ser feitas no método `DB::getQuery('arquivo.sql', $replaces)`
 
-        $replaces['codundclgs'] = getenv('REPLICADO_CODUNDCLGS');
-        $replaces['codundclgs'] = $replaces['codundclgs'] ?: getenv('REPLICADO_CODUNDCLG');
+OBS3.: (11/2022) Se necessário usar `REPLICADO_CODUNDCLGS` na query substituindo `__codundclgs__`, não é necessário carregar do `env` e colocar em `$replaces`. O método `DB::getQuery` já busca automaticamente e faz a substituição. Mas se quiser passar algo diferente do `env`, fique à vontade.
 
-OBS3.: As queries dos métodos devem ficar em resources e as substituições, se necessário podem ser feitas no método DB::getQuery()
+### Métodos deprecados
+
+Se você utiliza um desses métodos nos seus sistemas, atualize para o novo método correspondente.
+
+2020
+- Pessoa::nome -> procurarPorNome (11/2020)
+- Pessoa::nomeFonetico -> procurarPorNome (11/2020)
+
+2021
+- Pessoa::vinculosSiglas -> obterSiglasVinculosAtivos (3/2021)
+- Pessoa::setoresSiglas -> obterSiglasSetoresAtivos (6/2021)
+- Pessoa::emailusp -> retornarEmailUsp (6/2021)
+- Pessoa::designados -> listarDesignados (7/2021)
+- Graduacao::ativos -> listarAtivos (10/2021)
+- Pessoa::nomeCompleto -> obterNome (12/2021)
+
+2022
+- Pessoa::servidores -> listarServidores (1/2022)
+- Pessoa::vinculosSetores -> listarVinculosSetores (9/2022)
+- Pessoa::tiposVinculos -> listarTiposVinculoExtenso (11/2022)
+- Graduacao::curso -> obterCursoAtivo (11/2022)
 
 
-#### Docblock
-
-Coloque o campo @author no docblock do método. Assim facilita consultar o autor sobre o método.
-
-Se você alterar um método coloque também 
-
-    @author Fulano, modificado em xx/xx/xxxx
 ### phpunit
 
 Ao criar um método novo é necessário criar um método correspondente de teste, usando o phpunit. Para isso, você precisa de um banco de dados sybase ou mssql 
