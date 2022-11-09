@@ -301,9 +301,9 @@ class Pessoa
     /**
      * Método para listar servidores designados ativos por categoria
      *
-     *  Valores possíveis para categoria: 0 para todos, 1 para Servidor ou 2 para Docente.
-     *  Se for qualquer outro valor retornará todos os designados, independente do vínculo.
-     *  Substitui o método designados
+     * Valores possíveis para categoria: 0 para todos, 1 para Servidor ou 2 para Docente.
+     * Se for qualquer outro valor retornará todos os designados, independente do vínculo.
+     * Substitui o método designados
      *
      * @param Int $categoria Tipo de vinculo da pessoa designada (default=0)
      * @return Array
