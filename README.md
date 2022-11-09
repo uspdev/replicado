@@ -59,23 +59,59 @@ Exemplo de uso
     print_r($emails);
 ```
 
+### Como usar no laravel
+
+Configuração padrão no .env.exemple da aplicação
+
+```
+# REPLICADO #########################################
+# https://github.com/uspdev/replicado
+
+REPLICADO_HOST=
+REPLICADO_PORT=
+REPLICADO_DATABASE=
+REPLICADO_USERNAME=
+REPLICADO_PASSWORD=
+
+# Código da unidade (modificado em 11/2022 - #524)
+REPLICADO_CODUNDCLG=
+
+# Todos os códigos de colegiados da unidade, separados por vírgula (#524)
+# (default=REPLICADO_CODUNDCLG)
+REPLICADO_CODUNDCLGS=${REPLICADO_CODUNDCLG}
+
+# Converte de/para UTF-8
+REPLICADO_SYBASE=1
+
+# habilita o uso do cache https://github.com/uspdev/cache (default=0)
+REPLICADO_USAR_CACHE=0
+
+# Se true mostra o retorno de erros do BD (default=APP_DEBUG)
+REPLICADO_DEBUG=${APP_DEBUG}
+```
+
+
 ### Explicações das variáveis
 
 A maioria das variáveis são autoexplicativas mas outras não.
 
-*REPLICADO_CODUNDCLG* -essa variável pode conter múltiplos valores pois representa a unidade ou o colegiado:
+**REPLICADO_CODUNDCLG** - essa variável é o código da unidade. Até 11/2022, ela podia conter valores separados por vírgula. No entanto, para manter compatibilidade e organizar melhor, criou-se outra váriável para conter múltiplos valores:
 
-    REPLICADO_CODUNDCLG=8,27
+    REPLICADO_CODUNDCLG=8
 
-Atenção, NÃO usar aspas, como no neste exemplo: *REPLICADO_CODUNDCLG="8,27"*.
+**REPLICADO_CODUNDCLGS** (com S no final) - Representa os colegiados da unidade. Importante para as unidades que tem cursos compartilhados.
 
-REPLICADO_SYBASE - serve para indicar se vc está usando SYBASE ou MSSQL. Implica:
+    REPLICADO_CODUNDCLGS=8,27
+
+Atenção, NÃO usar aspas, como neste exemplo: *REPLICADO_CODUNDCLG="8,27"*.
+
+**REPLICADO_SYBASE** - serve para indicar se vc está usando SYBASE ou MSSQL. Implica:
 * na conversão para UTF-8 pela biblioteca ou pelo freetds
 * na remoção de espaços adicionais no final das strings
 
 Dependendo da configuração do MSSQL pode ser necessário ativar essa variável.
 
-REPLICADO_USAR_CACHE - o replicado pode usar memcached através da biblioteca (https://github.com/uspdev/cache). 
+**REPLICADO_USAR_CACHE** - o replicado pode usar memcached através da biblioteca (https://github.com/uspdev/cache).
 
 Para usar é necessário instalar ele com 
 
@@ -83,7 +119,7 @@ Para usar é necessário instalar ele com
 
 e seguir a documentação da biblioteca para levantar o servidor memcached e configurar ele. 
 
-Por fim ative o cache do replicado com do
+Por fim ative o cache do replicado com
 
     putenv('REPLICADO_USAR_CACHE=1');
 
@@ -101,23 +137,58 @@ O replicado pode consultar tanto o MSSQL quanto o sybase-ase e em diversas vers�
 
 * Abra uma issue antes de começar a mexer no código. A discussão prévia é importante para alinhar as idéias.
 * As contribuições serão aceitas por meio de pull requests. Para tanto faça as alterações em uma branch issue_xx.
-* Ao criar um novo método, lembre de documentar o DOCBLOCK
-* Ao criar um novo método, crie o teste correspondente
-* A branch master é considerada estável e pode ser usada em produção, porém os releases têm sido regulares.
+* Documentar o DOCBLOCK
+    * Texto principal, texto complementar, @param, @return
+    * @author seu-nome, em xx/xx/xxxx ou
+    * @author seu-nome, modificado em xx/xx/xxxx
+* Coloque o sql em resources/queries
 * Os argumentos dos métodos devem ser tipados, incluindo int, string etc
-* Deve-se dar preferência para aspas simples em strings pois o PHP não tenta parsear seu conteúdo
+* (11/2022) Caso ocorra algum erro, os métodos `DB::fetch` e `DB::fetchAll` retornam `false` e uma mensagem de erro. Em caso de retorno "vazio", alguns métodos precisam de tratamento:
+    * **obterXxxx**: `PDOStatement::fetch()` retorna false em caso de vazio. Nesse caso use\
+        `return DB::fetch($query) :? [];`
+    * **retornarXxxx**: deve retornar `null`
+* Dar preferência para aspas simples em strings pois o PHP não tenta parsear seu conteúdo
+* A branch `master` é considerada estável e pode ser usada em produção, porém os `releases` têm sido regulares.
+
+Referência: `Pessoa::listarDesignados()`
 
 Sugestão para nomear métodos:
 
-* listarXxx - retorna lista de arrays de Xxx
-* obterXxxx - retorna somente um registro (array) de Xxxx
-* contarXxxx - retorna uma contagem (count()) de registros de Xxxx
-* retornarXxxx - retorna um valor do registro (string, int, etc)
-* verificarXxxx - retorna true ou false em função da condição Xxxx
+1. listarXxx - retorna lista de registros de dados (fetchAll)
+2. obterXxxx - retorna somente um registro (fetch)
+3. contarXxxx - retorna uma contagem (count()) - retorno tipo int
+4. retornarXxxx - retorna um valor do registro - retorno string, int, etc
+5. verificarXxxx - retorna true ou false em função da condição - retorno bool
 
-Docblock
+OBS1.: Quando passar parâmetro array simples, deixar opcional passar string separada por vírgula. Ex.: `Pessoa::contarServidoresSetor()`
 
-Coloque o campo @author no docblock do método. Assim facilita consultar o autor sobre o método.
+OBS2.: (11/2022) As queries dos métodos devem ficar em `resources/queries` e as substituições, se necessário podem ser feitas no método `DB::getQuery('arquivo.sql', $replaces)`
+
+OBS3.: (11/2022) Se necessário usar `REPLICADO_CODUNDCLGS` na query substituindo `__codundclgs__`, não é necessário carregar do `env` e colocar em `$replaces`. O método `DB::getQuery` já busca automaticamente e faz a substituição. Mas se quiser passar algo diferente do `env`, fique à vontade.
+
+### Métodos deprecados
+
+Se você utiliza um desses métodos nos seus sistemas, atualize para o novo método correspondente.
+
+2020
+- Pessoa::nome -> procurarPorNome (11/2020)
+- Pessoa::nomeFonetico -> procurarPorNome (11/2020)
+
+2021
+- Pessoa::vinculosSiglas -> obterSiglasVinculosAtivos (3/2021)
+- Pessoa::setoresSiglas -> obterSiglasSetoresAtivos (6/2021)
+- Pessoa::emailusp -> retornarEmailUsp (6/2021)
+- Pessoa::designados -> listarDesignados (7/2021)
+- Graduacao::ativos -> listarAtivos (10/2021)
+- Pessoa::nomeCompleto -> obterNome (12/2021)
+
+2022
+- Pessoa::servidores -> listarServidores (1/2022)
+- Pessoa::vinculosSetores -> listarVinculosSetores (9/2022)
+- Pessoa::tiposVinculos -> listarTiposVinculoExtenso (11/2022)
+- Graduacao::curso -> obterCursoAtivo (11/2022)
+
+
 ### phpunit
 
 Ao criar um método novo é necessário criar um método correspondente de teste, usando o phpunit. Para isso, você precisa de um banco de dados sybase ou mssql 
