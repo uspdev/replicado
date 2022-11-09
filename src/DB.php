@@ -117,9 +117,9 @@ class DB
      *
      * A $str_where pode ser colocada dentro de $query. Cuidado: ela vem iniciada pela string " WHERE ("
      * $params pode ser passado diretamente no fetch/fetchAll
-     * 
+     *
      * 28/1/2022 - Adicionado $colunaSanitizada poara o caso de passar "tabela.coluna". $colunaSanitizada remove o ponto no $param
-     * 
+     *
      * @param array $filtros - campo_tabela => valor
      * @param array $buscas - campo_tabela => valor
      * @param array $tipos - campo_tabela => tipo (ex.: codpes => int)
@@ -188,6 +188,9 @@ class DB
      * opcionalmente pode-se passar uma coleção tipo ['replace' => 'valor']
      * para se realizar a substituição. Vai substituir '__replace__' por 'valor'
      *
+     * Caso não seja passado ['codundclgs' => 'valor'], o método pegará automaticamente
+     * do env se necessário
+     *
      * @param String $filename
      * @param Array $repĺaces (default=[])
      * @return String
@@ -207,6 +210,12 @@ class DB
 
         foreach ($replaces as $key => $val) {
             $query = str_replace("__{$key}__", $val, $query);
+        }
+
+        if (str_contains($query, '__codundclgs__')) {
+            $codundclgs = getenv('REPLICADO_CODUNDCLGS');
+            $codundclgs = $codundclgs ?: getenv('REPLICADO_CODUNDCLG');
+            $query = str_replace("__codundclgs__", $codundclgs, $query);
         }
 
         return $query;

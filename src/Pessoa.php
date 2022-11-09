@@ -312,9 +312,6 @@ class Pessoa
      */
     public static function listarDesignados(int $categoria = 0)
     {
-        $replaces['codundclgs'] = getenv('REPLICADO_CODUNDCLGS');
-        $replaces['codundclgs'] = $replaces['codundclgs'] ?: getenv('REPLICADO_CODUNDCLG');
-
         switch ($categoria) {
             case 2:
                 $replaces['tipvinext'] = "'Docente'";
@@ -478,11 +475,7 @@ class Pessoa
      */
     public static function listarTiposVinculoExtenso()
     {
-        $replaces['codundclgs'] = getenv('REPLICADO_CODUNDCLGS');
-        $replaces['codundclgs'] = $replaces['codundclgs'] ?: getenv('REPLICADO_CODUNDCLG');
-
-        $query = DB::getQuery('Pessoa.listarTiposVinculoExtenso.sql', $replaces);
-
+        $query = DB::getQuery('Pessoa.listarTiposVinculoExtenso.sql');
         return DB::fetchAll($query);
     }
 
