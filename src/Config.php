@@ -87,6 +87,7 @@ class Config
         foreach ($config->vars as $var) {
             // var=usarCache -> varSnake=usar_cache
             $varSnake = ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $var)), '_');
+
             if (isset($newConfig[$var])) {
                 $config->$var = $newConfig[$var];
             } else {
