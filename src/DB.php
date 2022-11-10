@@ -16,13 +16,10 @@ class DB
      */
     protected static $instance;
 
-    public function __construct()
-    {
-    }
-
+    private function __construct()
+    {}
     private function __clone()
-    {
-    }
+    {}
 
     /**
      * Retorna uma instância do pdo - cria ou reaproveita se for o caso
