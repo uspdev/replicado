@@ -8,10 +8,11 @@ use Monolog\Logger;
 class Config
 {
 
-    /**
-     * Instância do Config
-     */
+    /** Instância do Config */
     protected static $instance;
+
+    /** Instância do logger */
+    protected static $logger;
 
     # Variáveis de config
     public $host;
@@ -84,6 +85,7 @@ class Config
         $config = SELF::getInstance();
 
         foreach ($config->vars as $var) {
+            // var=usarCache -> varSnake=usar_cache
             $varSnake = ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $var)), '_');
             if (isset($newConfig[$var])) {
                 $config->$var = $newConfig[$var];
@@ -109,11 +111,11 @@ class Config
      */
     public function log(string $channelName, string $message)
     {
-        $config = SELF::getInstance();
-
-        $logger = new Logger($channelName);
-        $logger->pushHandler(new StreamHandler($this->pathlog, Logger::DEBUG));
-        $logger->error($message);
+        if (!isset(SELF::$logger)) {
+            SELF::$logger = new Logger($channelName);
+            SELF::$logger->pushHandler(new StreamHandler($this->pathlog, Logger::DEBUG));
+        }
+        SELF::$logger->error($message);
     }
 
 }
