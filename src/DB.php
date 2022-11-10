@@ -2,43 +2,22 @@
 
 namespace Uspdev\Replicado;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 use PDO;
 use SplFileInfo;
 use Throwable;
 use Uspdev\Cache\Cache;
+use Uspdev\Replicado\Config;
 
 class DB
 {
     /**
-     * Instância do DB
-     * @var Uspdev\Replicado\DB $db
-     */
-    protected static $db = null;
-
-    /**
      * Instância do PDO
      * @var PDO $instance
      */
-    protected $instance;
+    protected static $instance;
 
-    # Variáveis de config obrigatórias
-    protected $host;
-    protected $port;
-    protected $database;
-    protected $username;
-    protected $password;
-
-    # Variáveis de config opcionais
-    protected $pathLog;
-    protected ?bool $usarCache = null;
-    protected ?bool $debug = null;
-    protected ?bool $sybase = null;
-
-    public function __construct($config = [])
+    public function __construct()
     {
-        $this->setConfig($config);
     }
 
     private function __clone()
@@ -46,32 +25,28 @@ class DB
     }
 
     /**
-     * Cria e retorna uma instância de db
+     * Retorna uma instância do pdo - cria ou reaproveita se for o caso
      *
-     * Aplica novas configurações se passados em $config
-     *
-     * @param Array $config
-     * @return Uspdev\Replicado\DB
+     * @return PDO
      */
-    public static function getDB($config = [])
+    protected function getInstance()
     {
-        if (SELF::$db) {
-            SELF::$db->setConfig($config);
-        } else {
-            SELF::$db = new DB($config);
+        $config = Config::getInstance();
+        if (!SELF::$instance) {
+            try {
+                $dsn = "dblib:host={$config->host}:{$config->port};dbname={$config->database}";
+                SELF::$instance = new PDO($dsn, $config->username, $config->password, [PDO::ATTR_TIMEOUT => 10]);
+                SELF::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (Throwable $t) {
+                $config->log('Conexão', $t->getMessage());
+                if ($config->debug) {
+                    die("Conexão com o replicado: " . $t->getMessage());
+                } else {
+                    die('Erro na conexão com o replicado! Contate o suporte.');
+                }
+            }
         }
-        return SELF::$db;
-    }
-
-    /**
-     * Testa funcionamento do replicado fazendo a conexão com o banco
-     *
-     * @return bool
-     */
-    public static function test($config = [])
-    {
-        $db = SELF::getDB($config);
-        return $db->getInstance() ? true : false;
+        return SELF::$instance;
     }
 
     /**
@@ -83,11 +58,12 @@ class DB
      */
     public static function fetch(string $query, array $param = [])
     {
-        $db = SELF::getDB();
-        if ($db->usarCache) {
-            return (new Cache($db))->getCached('overrideFetch', ['fetch', $query, $param]);
+        $config = Config::getInstance();
+        if ($config->usarCache) {
+            $cache = new Cache();
+            return $cache->getCached('Uspdev\Replicado\DB::overrideFetch', ['fetch', $query, $param]);
         } else {
-            return $db->overrideFetch('fetch', $query, $param);
+            return SELF::overrideFetch('fetch', $query, $param);
         }
     }
 
@@ -100,11 +76,12 @@ class DB
      */
     public static function fetchAll(string $query, array $param = [])
     {
-        $db = SELF::getDB();
-        if ($db->usarCache) {
-            return (new Cache($db))->getCached('overrideFetch', ['fetchAll', $query, $param]);
+        $config = Config::getInstance();
+        if ($config->usarCache) {
+            $cache = new Cache();
+            return $cache->getCached('Uspdev\Replicado\DB::overrideFetch', ['fetchAll', $query, $param]);
         } else {
-            return $db->overrideFetch('fetchAll', $query, $param);
+            return SELF::overrideFetch('fetchAll', $query, $param);
         }
     }
 
@@ -121,16 +98,17 @@ class DB
      */
     public function overrideFetch(string $fetchType, string $query, array $param = [])
     {
-        $stmt = $this->getInstance()->prepare($query);
+        $config = Config::getInstance();
+        $stmt = SELF::getInstance()->prepare($query);
         foreach ($param as $campo => $valor) {
-            $valor = $this->sybase ? utf8_decode($valor) : $valor;
+            $valor = $config->sybase ? utf8_decode($valor) : $valor;
             $stmt->bindValue(":$campo", $valor);
         }
         try {
             $stmt->execute();
         } catch (\Throwable $t) {
-            $this->log('Consulta', $t->getMessage());
-            if ($this->debug) {
+            $config->log('Consulta', $t->getMessage());
+            if ($config->debug) {
                 die('Consulta do replicado: ' . $t->getMessage());
             } else {
                 die('Erro na consulta do replicado!');
@@ -139,7 +117,7 @@ class DB
 
         $result = $stmt->$fetchType(PDO::FETCH_ASSOC);
 
-        if (!empty($result) && $this->sybase) {
+        if (!empty($result) && $config->sybase) {
             $result = Uteis::utf8_converter($result);
             $result = Uteis::trim_recursivo($result);
         }
@@ -147,115 +125,14 @@ class DB
     }
 
     /**
-     * Retorna as configurações em uso
+     * Testa funcionamento do replicado fazendo a conexão com o banco
      *
-     * @return Array
+     * @return bool
      */
-    public function getConfig()
+    public static function test($config = [])
     {
-        return [
-            'host' => $this->host,
-            'port' => $this->port,
-            'database' => $this->database,
-            'username' => $this->username,
-            'password' => '**********',
-            'pathLog' => $this->pathLog,
-            'usarCache' => $this->usarCache,
-            'debug' => $this->debug,
-            'sybase' => $this->sybase,
-        ];
-    }
-
-    /**
-     * Aplica configuração do DB
-     *
-     * Pode ser passado por parâmetro (tem precedência) ou pegar pelo env.
-     * Além dos parâmetros do env, pode ser passado ['reset'=>true] para
-     * reverter todas as configs para padrão env
-     *
-     * TODO: Não foram tratados os configs de queries: CODUNDCLG e CODCUR. ****************
-     *
-     * @param Array $config
-     * @return Void
-     */
-    public function setConfig(array $config = [])
-    {
-        if (isset($config['reset']) && $config['reset'] == true) {
-            $this->host = $config['host'] ?? Uteis::env('REPLICADO_HOST');
-            $this->port = $config['port'] ?? Uteis::env('REPLICADO_PORT');
-            $this->database = $config['database'] ?? Uteis::env('REPLICADO_DATABASE');
-            $this->username = $config['username'] ?? Uteis::env('REPLICADO_USERNAME');
-            $this->password = $config['password'] ?? Uteis::env('REPLICADO_PASSWORD');
-
-            $this->pathLog = $config['pathLog'] ?? Uteis::env('REPLICADO_PATHLOG', '/tmp/replicado.log');
-            $this->usarCache = isset($config['usarCache']) ? $config['usarCache'] : Uteis::env('REPLICADO_USAR_CACHE', false);
-            $this->debug = isset($config['debug']) ? $config['debug'] : Uteis::env('REPLICADO_DEBUG', false);
-            $this->sybase = isset($config['sybase']) ? $config['sybase'] : Uteis::env('REPLICADO_SYBASE', true);
-
-            $this->instance = null;
-        } else {
-            $this->host = isset($config['host']) ? $config['host'] : ($this->host ?: Uteis::env('REPLICADO_HOST'));
-            $this->port = isset($config['port']) ? $config['port'] : ($this->port ?: Uteis::env('REPLICADO_PORT'));
-            $this->database = isset($config['database']) ? $config['database'] : ($this->database ?: Uteis::env('REPLICADO_DATABASE'));
-            $this->username = isset($config['username']) ? $config['username'] : ($this->username ?: Uteis::env('REPLICADO_USERNAME'));
-            $this->password = isset($config['password']) ? $config['password'] : ($this->password ?: Uteis::env('REPLICADO_PASSWORD'));
-
-            $this->pathLog = isset($config['pathLog']) ? $config['pathLog'] : ($this->pathLog ?: Uteis::env('REPLICADO_PATHLOG', '/tmp/replicado.log'));
-            $this->usarCache = isset($config['usarCache']) ? $config['usarCache'] : ($this->usarCache !== null ? $this->usarCache : Uteis::env('REPLICADO_USAR_CACHE', false));
-            $this->debug = isset($config['debug']) ? $config['debug'] : ($this->debug !== null ? $this->debug : Uteis::env('REPLICADO_DEBUG', false));
-            $this->sybase = isset($config['sybase']) ? $config['sybase'] : ($this->sybase !== null ? $this->sybase : Uteis::env('REPLICADO_SYBASE', true));
-            // a lógica das linhas acima é igual a essa
-            // if (isset($config['debug'])) {
-            //   $this->debug = $config['debug'];
-            // } else {
-            //   if ($this->debug !=== null) {
-            //    $this->debug = Uteis::env('REPLICADO_DEBUG');
-            //   }
-            // }
-        }
-
-        if (empty($this->host) || empty($this->port) || empty($this->username) || empty($this->password)) {
-            $this->log('Config', 'Configurações do replicado incompletas.');
-            die('Configurações do replicado incompletas.');
-        }
-    }
-
-    /**
-     * Retorna uma instância do pdo - cria ou reaproveita se for o caso
-     *
-     * @return PDO
-     */
-    protected function getInstance()
-    {
-        if (!$this->instance) {
-            try {
-                $dsn = "dblib:host={$this->host}:{$this->port};dbname={$this->database}";
-                $this->instance = new PDO($dsn, $this->username, $this->password, [PDO::ATTR_TIMEOUT => 10]);
-                $this->instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (Throwable $t) {
-                $this->log('Conexão', $t->getMessage());
-                if ($this->debug) {
-                    die("Conexão com o replicado: " . $t->getMessage());
-                } else {
-                    die('Erro na conexão com o replicado! Contate o suporte.');
-                }
-            }
-        }
-        return $this->instance;
-    }
-
-    /**
-     * Grava em log uma mensagem
-     *
-     * @param String $channelName
-     * @param String $message
-     * @return void
-     */
-    protected function log(string $channelName, string $message)
-    {
-        $logger = new Logger($channelName);
-        $logger->pushHandler(new StreamHandler($this->pathLog, Logger::DEBUG));
-        $logger->error($message);
+        $config = Config::getInstance($config);
+        return SELF::getInstance() ? true : false;
     }
 
     /**
@@ -264,11 +141,6 @@ class DB
      * A $str_where pode ser colocada dentro de $query. Cuidado: ela vem iniciada pela string " WHERE ("
      * $params pode ser passado diretamente no fetch/fetchAll
      *
-<<<<<<< HEAD
-     * TODO: Talvez esse método deveria estar em outro lugar
-     *
-=======
->>>>>>> master
      * 28/1/2022 - Adicionado $colunaSanitizada poara o caso de passar "tabela.coluna". $colunaSanitizada remove o ponto no $param
      *
      * @param array $filtros - campo_tabela => valor
@@ -362,8 +234,9 @@ class DB
         }
 
         if (str_contains($query, '__codundclgs__')) {
-            $codundclgs = getenv('REPLICADO_CODUNDCLGS');
-            $codundclgs = $codundclgs ?: getenv('REPLICADO_CODUNDCLG');
+            $config = Config::getInstance();
+            $codundclgs = $config->codundclgs;
+            $codundclgs = $codundclgs ?: $config->$codundclg;
             $query = str_replace("__codundclgs__", $codundclgs, $query);
         }
 
