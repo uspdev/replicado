@@ -2,8 +2,8 @@
 
 namespace Uspdev\Replicado;
 
-use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class Replicado
 {
@@ -99,10 +99,7 @@ class Replicado
             } else {
                 // var=usarCache -> varSnake=usar_cache
                 $varSnake = ltrim(strtoupper(preg_replace('/[A-Z]/', '_$0', $var)), '_');
-                $envVar = Uteis::env('REPLICADO_' . $varSnake);
-                if ($envVar) {
-                    $config->$var = $envVar;
-                }
+                $config->$var = Uteis::env('REPLICADO_' . $varSnake, $config->$var);
             }
         }
 
