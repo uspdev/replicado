@@ -35,9 +35,9 @@ class DB
                 SELF::$instance = new PDO($dsn, $config->username, $config->password, [PDO::ATTR_TIMEOUT => 10]);
                 SELF::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (Throwable $t) {
-                $config->log('Conexão', $t->getMessage());
+                $config->log('Erro na conexão ', $t->getMessage());
                 if ($config->debug) {
-                    die("Conexão com o replicado: " . $t->getMessage());
+                    die('Erro na conexão com o replicado: ' . $t->getMessage());
                 } else {
                     die('Erro na conexão com o replicado! Contate o suporte.');
                 }
@@ -103,12 +103,12 @@ class DB
         }
         try {
             $stmt->execute();
-        } catch (\Throwable $t) {
-            $config->log('Consulta', $t->getMessage());
+        } catch (Throwable $t) {
+            $config->log('Erro na consulta ', $t->getMessage());
             if ($config->debug) {
-                die('Consulta do replicado: ' . $t->getMessage());
+                die('Erro na consulta do replicado: ' . $t->getMessage());
             } else {
-                die('Erro na consulta do replicado!');
+                die('Erro na consulta do replicado! Contate o suporte.');
             }
         }
 
