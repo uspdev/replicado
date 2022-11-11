@@ -6,7 +6,7 @@ use PDO;
 use SplFileInfo;
 use Throwable;
 use Uspdev\Cache\Cache;
-use Uspdev\Replicado\Config;
+use Uspdev\Replicado\Replicado as Config;
 
 class DB
 {
@@ -14,7 +14,7 @@ class DB
      * Instância do PDO
      * @var PDO $instance
      */
-    protected static $instance;
+    private static $instance;
 
     private function __construct()
     {}

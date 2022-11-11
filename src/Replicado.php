@@ -5,14 +5,14 @@ namespace Uspdev\Replicado;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
-class Config
+class Replicado
 {
 
-    /** Instância do Config */
-    protected static $instance;
+    /** Instância da classe singleton */
+    private static $instance;
 
     /** Instância do logger */
-    protected static $logger;
+    private static $logger;
 
     # Variáveis de config
     public $host;
@@ -30,9 +30,11 @@ class Config
 
     protected $vars = ['host', 'port', 'database', 'username', 'password', 'pathlog', 'usarCache', 'debug', 'sybase', 'codundclg', 'codundclgs'];
 
-    public function __construct()
-    {
-    }
+    private function __construct()
+    {}
+
+    private function __clone()
+    {}
 
     /**
      * Retorna uma instância do config existente ou cria uma nova
@@ -42,7 +44,7 @@ class Config
     public static function getInstance($newConfig = [])
     {
         if (!SELF::$instance) {
-            SELF::$instance = new Config();
+            SELF::$instance = new Self;
             SELF::$instance->setConfig($newConfig);
         }
         return SELF::$instance;
@@ -59,7 +61,7 @@ class Config
         foreach ($config->vars as $var) {
             $ret[$var] = $config->$var;
         }
-        $ret['password'] = '**********'; //mascarando password
+        // $ret['password'] = '**********'; //mascarando password
 
         return $ret;
     }
@@ -82,7 +84,7 @@ class Config
         if (isset($newConfig['reset']) && $newConfig['reset'] == true) {
             SELF::$config = new Config();
         }
-        $config = SELF::getInstance();
+        $config = SELF::getInstance($newConfig);
 
         foreach ($config->vars as $var) {
             // var=usarCache -> varSnake=usar_cache
