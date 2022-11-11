@@ -573,7 +573,7 @@ class Pessoa
     }
 
     /**
-     * Método para listar todos os vínculos e setores de uma pessoa
+     * (deprecated) Método para listar todos os vínculos e setores de uma pessoa
      *
      * Fundamental para o uspdev/web-ldap-admin
      * Somente ATIVOS
@@ -583,6 +583,7 @@ class Pessoa
      * @param (opt) $codundclg (default=null)
      * @return array
      * @author modificado por Alessandro em 03/11/2022
+     * @deprecated método usado diretamente no uspdev/web-ldap-admin a ser retirado do replicado, em 10/11/2022 - @alecostaweb
      */
     public static function listarVinculosSetores(int $codpes, $codundclg = null) # codundclg não pode ser Integer por conta de mais de uma unidade
 
