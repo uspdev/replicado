@@ -187,6 +187,7 @@ Se você utiliza um desses métodos nos seus sistemas, atualize para o novo mét
 - Pessoa::vinculosSetores -> listarVinculosSetores (9/2022)
 - Pessoa::tiposVinculos -> listarTiposVinculoExtenso (11/2022)
 - Graduacao::curso -> obterCursoAtivo (11/2022)
+- Pessoa::listarVinculosSetores -> a ser removido e adicionado no uspdev/web-ldap-admin listarVinculosExtensoSetores (11/2022)
 
 
 ### phpunit
