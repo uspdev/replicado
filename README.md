@@ -34,62 +34,64 @@ Instale via composer
 
     composer require uspdev/replicado
 
-Exemplo de uso
+Exemplo de uso passando `$config`
 
 ```php
-    <?php
-    namespace Meu\Lindo\App;
-    require_once __DIR__ . '/vendor/autoload.php';
-    use Uspdev\Replicado\Pessoa;
-    
-    # Obrigatórias
-    putenv('REPLICADO_HOST=192.168.100.89');
-    putenv('REPLICADO_PORT=1498');
-    putenv('REPLICADO_DATABASE=rep_dbc');
-    putenv('REPLICADO_USERNAME=dbmaint_read');
-    putenv('REPLICADO_PASSWORD=secret');
-    putenv('REPLICADO_CODUNDCLG=8');
+<?php
+namespace Meu\Lindo\App;
+require_once __DIR__ . '/vendor/autoload.php';
+use Uspdev\Replicado\Pessoa;
+use Uspdev\Replicado\Replicado;
 
-    # Opcionais
-    putenv('REPLICADO_PATHLOG=path/to/your.log');
-    putenv('REPLICADO_SYBASE=0');
-    putenv('REPLICADO_USAR_CACHE=0');
+$config = [
+    'host' => '192.168.100.89',
+    'port' => 1498,
+    'database' => 'rep_dbc',
+    'username' => 'dbmaint_read',
+    'password' => 'secret',
+    'codundclg' => '8',
+    'codundclgs' => '8,84',
+    'pathlog' => 'path/to/your.log',
+    'sybase' => 0,
+    'usarCache' => 0,
+    'debug' => 1,
+];
+Replicado::setConfig($config);
 
-    $emails = Pessoa::emails('123456');
-    print_r($emails);
+$emails = Pessoa::emails('123456');
+print_r($emails);
+```
+
+Exemplo de uso com variáveis de ambiente
+
+```php
+<?php
+namespace Meu\Lindo\App;
+require_once __DIR__ . '/vendor/autoload.php';
+use Uspdev\Replicado\Pessoa;
+
+# Obrigatórias
+putenv('REPLICADO_HOST=192.168.100.89');
+putenv('REPLICADO_PORT=1498');
+putenv('REPLICADO_DATABASE=rep_dbc');
+putenv('REPLICADO_USERNAME=dbmaint_read');
+putenv('REPLICADO_PASSWORD=secret');
+putenv('REPLICADO_CODUNDCLG=8');
+putenv('REPLICADO_CODUNDCLGS=8,84');
+
+# Opcionais
+putenv('REPLICADO_PATHLOG=path/to/your.log');
+putenv('REPLICADO_SYBASE=0');
+putenv('REPLICADO_USAR_CACHE=0');
+putenv('DEBUG=1');
+
+$emails = Pessoa::emails('123456');
+print_r($emails);
 ```
 
 ### Como usar no laravel
 
-Configuração padrão no .env.exemple da aplicação
-
-```
-# REPLICADO #########################################
-# https://github.com/uspdev/replicado
-
-REPLICADO_HOST=
-REPLICADO_PORT=
-REPLICADO_DATABASE=
-REPLICADO_USERNAME=
-REPLICADO_PASSWORD=
-
-# Código da unidade (modificado em 11/2022 - #524)
-REPLICADO_CODUNDCLG=
-
-# Todos os códigos de colegiados da unidade, separados por vírgula (#524)
-# (default=REPLICADO_CODUNDCLG)
-REPLICADO_CODUNDCLGS=${REPLICADO_CODUNDCLG}
-
-# Converte de/para UTF-8
-REPLICADO_SYBASE=1
-
-# habilita o uso do cache https://github.com/uspdev/cache (default=0)
-REPLICADO_USAR_CACHE=0
-
-# Se true mostra o retorno de erros do BD (default=APP_DEBUG)
-REPLICADO_DEBUG=${APP_DEBUG}
-```
-
+Veja o projeto [Uspdev\\laravel-replicado](https://github.com/uspdev/laravel-replicado).
 
 ### Explicações das variáveis
 
@@ -154,17 +156,19 @@ Referência: `Pessoa::listarDesignados()`
 
 Sugestão para nomear métodos:
 
-1. listarXxx - retorna lista de registros de dados (fetchAll)
-2. obterXxxx - retorna somente um registro (fetch)
-3. contarXxxx - retorna uma contagem (count()) - retorno tipo int
-4. retornarXxxx - retorna um valor do registro - retorno string, int, etc
-5. verificarXxxx - retorna true ou false em função da condição - retorno bool
+1. **listarXxx** - retorna lista de registros de dados (`fetchAll`)
+2. **obterXxxx** - retorna somente um registro (`fetch`)
+3. **contarXxxx** - retorna uma contagem (`count()`) - retorno tipo `int`
+4. **retornarXxxx** - retorna um valor do registro - retorno `string`, `int`, etc
+5. **verificarXxxx** - retorna true ou false em função da condição - retorno `bool`
 
-OBS1.: Quando passar parâmetro array simples, deixar opcional passar string separada por vírgula. Ex.: `Pessoa::contarServidoresSetor()`
+OBS1.: Quando passar parâmetro `array` simples, deixar opcional passar `string` separada por vírgula. Ex.: `Pessoa::contarServidoresSetor()`
 
 OBS2.: (11/2022) As queries dos métodos devem ficar em `resources/queries` e as substituições, se necessário podem ser feitas no método `DB::getQuery('arquivo.sql', $replaces)`
 
-OBS3.: (11/2022) Se necessário usar `REPLICADO_CODUNDCLGS` na query substituindo `__codundclgs__`, não é necessário carregar do `env` e colocar em `$replaces`. O método `DB::getQuery` já busca automaticamente e faz a substituição. Mas se quiser passar algo diferente do `env`, fique à vontade.
+OBS3.: (11/2022) Se necessário usar `REPLICADO_CODUNDCLGS` na query substituindo `__codundclgs__`, não é necessário carregar do `env` ou do `config` e colocar em `$replaces`. O método `DB::getQuery` já busca automaticamente e faz a substituição. Mas se quiser passar algo diferente do `config`, fique à vontade.
+
+OBS4.: Nos métodos não usar `getenv('REPLICADO_VARIAVEL')`. Usar, se necessário, `Replicado::getConfig('variavel')`.
 
 ### Métodos deprecados
 
