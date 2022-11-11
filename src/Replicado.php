@@ -73,7 +73,7 @@ class Replicado
     }
 
     /**
-     * Aplica configuração do Config
+     * Aplica configuração do Replicado
      *
      * Pode ser passado por parâmetro (tem precedência) ou pegar pelo env.
      * Além dos parâmetros do env, pode ser passado
@@ -93,13 +93,15 @@ class Replicado
         $config = SELF::getInstance($newConfig);
 
         foreach ($config->vars as $var) {
-            // var=usarCache -> varSnake=usar_cache
-            $varSnake = ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $var)), '_');
-
             if (isset($newConfig[$var])) {
                 $config->$var = $newConfig[$var];
             } else {
-                $config->$var = Uteis::env('REPLICADO_' . strtoupper($varSnake));
+                // var=usarCache -> varSnake=usar_cache
+                $varSnake = ltrim(strtoupper(preg_replace('/[A-Z]/', '_$0', $var)), '_');
+                $envVar = Uteis::env('REPLICADO_' . $varSnake);
+                if ($envVar) {
+                    $config->$var = $envVar;
+                }
             }
         }
 
