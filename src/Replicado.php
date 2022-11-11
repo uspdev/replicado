@@ -56,6 +56,7 @@ class Replicado
      * Se não especificado $var retorna um array com todas as variáveis
      * Se retornar array, 'password vem mascarado'. Para obtê-lo use $var='password'
      *
+     * @param $var Variável a ser retornada
      * @return Array|String
      */
     public static function getConfig($var = null)
