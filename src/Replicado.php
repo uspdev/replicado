@@ -53,15 +53,21 @@ class Replicado
     /**
      * Retorna as configurações em uso
      *
-     * @return Array
+     * Se não especificado $var retorna um array com todas as variáveis
+     * Se retornar array, 'password vem mascarado'. Para obtê-lo use $var='password'
+     *
+     * @return Array|String
      */
-    public static function getConfig()
+    public static function getConfig($var = null)
     {
         $config = SELF::getInstance();
+        if ($var) {
+            return $config->$var;
+        }
         foreach ($config->vars as $var) {
             $ret[$var] = $config->$var;
         }
-        // $ret['password'] = '**********'; //mascarando password
+        $ret['password'] = '**********'; //mascarando password
 
         return $ret;
     }
