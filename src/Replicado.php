@@ -39,7 +39,7 @@ class Replicado
     /**
      * Retorna uma instância do config existente ou cria uma nova
      *
-     * @return \Uspdev\Replicado\Config
+     * @return \Uspdev\Replicado\Replicado
      */
     public static function getInstance($newConfig = [])
     {
