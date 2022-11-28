@@ -2,54 +2,61 @@
 
 namespace Uspdev\Replicado;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 use PDO;
 use SplFileInfo;
+use Throwable;
 use Uspdev\Cache\Cache;
+use Uspdev\Replicado\Replicado as Config;
 
 class DB
 {
+    /**
+     * Instância do PDO
+     * @var PDO $instance
+     */
     private static $instance;
-    private static $sgbd;
+
     private function __construct()
     {}
     private function __clone()
     {}
-    private static $logger;
 
-    public static function getInstance()
+    /**
+     * Retorna uma instância do pdo - cria ou reaproveita se for o caso
+     *
+     * @return PDO
+     */
+    protected function getInstance()
     {
-        $host = getenv('REPLICADO_HOST');
-        $port = getenv('REPLICADO_PORT');
-        $db = getenv('REPLICADO_DATABASE');
-        $user = getenv('REPLICADO_USERNAME');
-        $pass = getenv('REPLICADO_PASSWORD');
-
-        if (!self::$instance) {
+        $config = Config::getInstance();
+        if (!SELF::$instance) {
             try {
-                $dsn = "dblib:host={$host}:{$port};dbname={$db}";
-                self::$instance = new PDO($dsn, $user, $pass);
-                self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (\Throwable $t) {
-                echo "Erro na conexão com o database do replicado! Contate o suporte";
-                $log = self::getLogger('Conexão');
-                $log->error($t->getMessage());
-                die();
+                $dsn = "dblib:host={$config->host}:{$config->port};dbname={$config->database}";
+                SELF::$instance = new PDO($dsn, $config->username, $config->password, [PDO::ATTR_TIMEOUT => 10]);
+                SELF::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (Throwable $t) {
+                $config->log('Erro na conexão ', $t->getMessage());
+                if ($config->debug) {
+                    die('Erro na conexão com o replicado: ' . $t->getMessage());
+                } else {
+                    die('Erro na conexão com o replicado! Contate o suporte.');
+                }
             }
         }
-        return self::$instance;
+        return SELF::$instance;
     }
 
-    public static function sybase()
+    /**
+     * Sobrescreve método fetch
+     *
+     * @param String $query
+     * @param Array $param
+     * @return Mixed
+     */
+    public static function fetch(string $query, array $param = [])
     {
-        return getenv('REPLICADO_SYBASE') ?? 1;
-    }
-
-    // overhide fetch and fetchAll functions
-    public static function fetch(string $query, array $param = null)
-    {
-        if (getenv('REPLICADO_USAR_CACHE')) {
+        $config = Config::getInstance();
+        if ($config->usarCache) {
             $cache = new Cache();
             return $cache->getCached('Uspdev\Replicado\DB::overrideFetch', ['fetch', $query, $param]);
         } else {
@@ -57,9 +64,17 @@ class DB
         }
     }
 
-    public static function fetchAll(string $query, array $param = null)
+    /**
+     * Sobrescreve método fetchAll
+     *
+     * @param String $query
+     * @param Array $param
+     * @return Mixed
+     */
+    public static function fetchAll(string $query, array $param = [])
     {
-        if (getenv('REPLICADO_USAR_CACHE')) {
+        $config = Config::getInstance();
+        if ($config->usarCache) {
             $cache = new Cache();
             return $cache->getCached('Uspdev\Replicado\DB::overrideFetch', ['fetchAll', $query, $param]);
         } else {
@@ -70,46 +85,51 @@ class DB
     /**
      * Códigos do fetch e fetchAll sobrescritos
      *
+     * Deve ser public senão dá erro no cache
+     * Call to protected method Uspdev\Replicado\DB::overrideFetch() from context 'Uspdev\Cache\Cache'
+     *
      * @param String $fetchType - fetch ou fetchAll
      * @param String $query Query a ser executada
      * @param Array $param Parâmetros de bind da query
-     * @return Mixed dados da query, pode ser coleção, dicionário, string, etc
+     * @return Mixed Dados da query, pode ser coleção, dicionário, string, etc
      */
-    public static function overrideFetch(string $fetchType, string $query, array $param = null)
+    public function overrideFetch(string $fetchType, string $query, array $param = [])
     {
+        $config = Config::getInstance();
+        $stmt = SELF::getInstance()->prepare($query);
+        foreach ($param as $campo => $valor) {
+            $valor = $config->sybase ? utf8_decode($valor) : $valor;
+            $stmt->bindValue(":$campo", $valor);
+        }
         try {
-            $stmt = self::getInstance()->prepare($query);
-            if (!is_null($param)) {
-                foreach ($param as $campo => $valor) {
-                    $valor = DB::sybase() ? utf8_decode($valor) : $valor;
-                    $stmt->bindValue(":$campo", $valor);
-                }
-            }
             $stmt->execute();
-        } catch (\Throwable $t) {
-            echo "Erro Interno no replicado: contate o suporte!";
-            $log = self::getLogger('Consulta');
-            $log->error($t->getMessage());
-            return false;
+        } catch (Throwable $t) {
+            $config->log('Erro na consulta ', $t->getMessage());
+            if ($config->debug) {
+                die('Erro na consulta do replicado: ' . $t->getMessage());
+            } else {
+                die('Erro na consulta do replicado! Contate o suporte.');
+            }
         }
 
         $result = $stmt->$fetchType(PDO::FETCH_ASSOC);
 
-        if (!empty($result) && self::sybase()) {
+        if (!empty($result) && $config->sybase) {
             $result = Uteis::utf8_converter($result);
             $result = Uteis::trim_recursivo($result);
         }
         return $result;
     }
 
-    protected static function getLogger($channel_name)
+    /**
+     * Testa funcionamento do replicado fazendo a conexão com o banco
+     *
+     * @return bool
+     */
+    public static function test($config = [])
     {
-        if (!isset(self::$logger)) {
-            $pathlog = getenv('REPLICADO_PATHLOG') ?: '/tmp/replicado.log';
-            self::$logger = new Logger($channel_name);
-            self::$logger->pushHandler(new StreamHandler($pathlog, Logger::DEBUG));
-        }
-        return self::$logger;
+        $config = Config::getInstance($config);
+        return SELF::getInstance() ? true : false;
     }
 
     /**
@@ -123,9 +143,7 @@ class DB
      * @param array $filtros - campo_tabela => valor
      * @param array $buscas - campo_tabela => valor
      * @param array $tipos - campo_tabela => tipo (ex.: codpes => int)
-     *
      * @return array posição [0] => string WHERE, posição [1] = 'colunas' => valores
-     *
      */
     public static function criaFiltroBusca(array $filtros, array $buscas, array $tipos)
     {
@@ -213,8 +231,9 @@ class DB
         }
 
         if (str_contains($query, '__codundclgs__')) {
-            $codundclgs = getenv('REPLICADO_CODUNDCLGS');
-            $codundclgs = $codundclgs ?: getenv('REPLICADO_CODUNDCLG');
+            $config = Config::getInstance();
+            $codundclgs = $config->codundclgs;
+            $codundclgs = $codundclgs ?: $config->$codundclg;
             $query = str_replace("__codundclgs__", $codundclgs, $query);
         }
 
