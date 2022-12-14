@@ -2,8 +2,9 @@
 
 namespace Uspdev\Replicado;
 
-use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Uspdev\Cache\Cache;
 
 class Replicado
 {
@@ -14,6 +15,9 @@ class Replicado
     /** Instância do logger */
     private static $logger;
 
+    /**Instância do cache */
+    private $cache;
+
     # Variáveis de config
     public $host;
     public $port;
@@ -23,12 +27,16 @@ class Replicado
     public $codundclg;
     public $codundclgs;
 
-    public $pathlog = '/tmp/replicado.log';
     public $usarCache = false;
+    public $cacheExpiry = 4 * 60 * 60;
+    public $cacheSmall = 32;
+
+    public $pathlog = '/tmp/replicado.log';
     public $debug = false;
     public $sybase = true;
 
-    protected $vars = ['host', 'port', 'database', 'username', 'password', 'pathlog', 'usarCache', 'debug', 'sybase', 'codundclg', 'codundclgs'];
+    /** Variaveis que podem ser atualizadas pelo setConfig() */
+    protected $vars = ['host', 'port', 'database', 'username', 'password', 'pathlog', 'usarCache', 'cacheExpiry', 'cacheSmall', 'debug', 'sybase', 'codundclg', 'codundclgs'];
 
     private function __construct()
     {}
@@ -48,6 +56,40 @@ class Replicado
             SELF::$instance->setConfig($newConfig);
         }
         return SELF::$instance;
+    }
+
+    /**
+     * Retorna uma instância do cache
+     *
+     * Deve ser chamado depois de configurado o replicado
+     */
+    public function getCacheInstance($classToBeCached = null)
+    {
+        if (!$this->cache) {
+            $this->cache = new Cache($classToBeCached);
+            $this->setCacheConfig();
+        }
+        return $this->cache;
+    }
+
+    /**
+     * Atualiza as configurações do cache
+     *
+     * Se $cacheExpiry ou $cacheSmall forem negativos deixam valor padrão
+     *
+     * @return void;
+     */
+    public function setCacheConfig()
+    {
+        if ($this->cache) {
+            if ($this->cacheExpiry >= 0) {
+                $this->cache->expiry = $this->cacheExpiry;
+            }
+            if ($this->cacheSmall >= 0) {
+                $this->cache->small = $this->cacheSmall;
+            }
+            $this->cache->disable = false;
+        }
     }
 
     /**
@@ -101,6 +143,11 @@ class Replicado
                 $varSnake = ltrim(strtoupper(preg_replace('/[A-Z]/', '_$0', $var)), '_');
                 $config->$var = Uteis::env('REPLICADO_' . $varSnake, $config->$var);
             }
+        }
+
+        // atualiza config do cache
+        if ($config->usarCache) {
+            $config->setCacheConfig();
         }
 
         if (empty($config->host) || empty($config->port) || empty($config->username) || empty($config->password)) {
