@@ -57,7 +57,7 @@ class DB
     {
         $config = Config::getInstance();
         if ($config->usarCache) {
-            $cache = new Cache();
+            $cache = $config->getCacheInstance();
             return $cache->getCached('Uspdev\Replicado\DB::overrideFetch', ['fetch', $query, $param]);
         } else {
             return SELF::overrideFetch('fetch', $query, $param);
@@ -75,7 +75,7 @@ class DB
     {
         $config = Config::getInstance();
         if ($config->usarCache) {
-            $cache = new Cache();
+            $cache = $config->getCacheInstance();
             return $cache->getCached('Uspdev\Replicado\DB::overrideFetch', ['fetchAll', $query, $param]);
         } else {
             return SELF::overrideFetch('fetchAll', $query, $param);
@@ -93,7 +93,7 @@ class DB
      * @param Array $param Parâmetros de bind da query
      * @return Mixed Dados da query, pode ser coleção, dicionário, string, etc
      */
-    public function overrideFetch(string $fetchType, string $query, array $param = [])
+    public static function overrideFetch(string $fetchType, string $query, array $param = [])
     {
         $config = Config::getInstance();
         $stmt = SELF::getInstance()->prepare($query);
