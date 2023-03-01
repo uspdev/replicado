@@ -54,21 +54,24 @@ class Lattes
      */
     public static function obterZip($codpes)
     {
-        putenv('REPLICADO_SYBASE=0'); # hotfix -  o utf8_encode estraga o zip
+        # hotfix -  o utf8_encode estraga o zip
+        Replicado::setConfig(['sybase' => false]);
+
         $query = "SELECT imgarqxml from DIM_PESSOA_XMLUSP WHERE codpes = convert(int,:codpes)";
         $param = [
             'codpes' => $codpes,
         ];
         $result = DB::fetch($query, $param);
 
+        # hotfix -  o utf8_encode estraga o zip
+        Replicado::setConfig(['reset' => true]);
+
         if (!empty($result)) {
             return $result['imgarqxml'];
+        } else {
+            return false;
         }
-
-        putenv('REPLICADO_SYBASE=1'); # hotfix -  o utf8_encode estraga o zip
-        return false;
     }
-
     /**
      * Recebe o número USP e salva o zip do lattes
      *
