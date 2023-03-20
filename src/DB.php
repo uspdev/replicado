@@ -32,7 +32,8 @@ class DB
         if (!SELF::$instance) {
             try {
                 $dsn = "dblib:host={$config->host}:{$config->port};dbname={$config->database}";
-                SELF::$instance = new PDO($dsn, $config->username, $config->password, [PDO::ATTR_TIMEOUT => 10]);
+                // SELF::$instance = new PDO($dsn, $config->username, $config->password, [PDO::ATTR_TIMEOUT => 10]);
+                SELF::$instance = new PDO($dsn, $config->username, $config->password);
                 SELF::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (Throwable $t) {
                 $config->log('Erro na conexão ', $t->getMessage());
