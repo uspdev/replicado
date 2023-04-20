@@ -206,7 +206,6 @@ class Lattes
         if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
-
         return Arr::get($lattes, '@attributes.DATA-ATUALIZACAO', false);
     }
 
@@ -232,7 +231,11 @@ class Lattes
     }
 
     /**
-     * Recebe um array com os autores no padrão do currícula lattes e retorna o nome dos autores formatado com apenas o nome e ordem de autoria
+     * Recebe um array com os autores no padrão do currícula lattes e retorna
+     * o nome dos autores formatado com apenas o nome e ordem de autoria
+     *
+     * Auxiliar para listarArtigos(), listarLivrosPublicados(), etc
+     *
      * @param Array $array
      * @return Array
      */
@@ -257,10 +260,19 @@ class Lattes
     }
 
     /**
-     * Verifica se os parâmetros se enquandram no filtro
-     * @param String $tipo = Valores possíveis para determinar o filtro: 'anual' e 'registros', 'periodo'.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * Verifica se os parâmetros se enquadram no filtro
+     *
+     * Serve para pegar uma lista de registros e filtrar por ano, periodo ou quantidade de registros
+     * Auxiliar para listarArtigos(), etc, e todos os métodos que recebem $tipo como parâmetro
+     *
+     * se $tipo for anual, o limit vai pegar os registros dos 'n' útimos anos;
+     * se for registros, irá retornar os últimos n livros;
+     * se for período, irá pegar os registros do ano entre limit_ini e limit_fim.
+     * se limit_ini for igual a -1, então retornará todos os registros
+     *
+     * @param String $tipo Valores possíveis para determinar o filtro: 'anual' e 'registros', 'periodo'.
+     * @param Integer $limit_ini Limite de retorno conforme o tipo.
+     * @param Integer $limit_fim Se o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
      * @param Integer $ano
      * @param Integer $i
      * @return Bool
@@ -286,7 +298,6 @@ class Lattes
             ) {
                 return false;
             }
-
         }
         return true;
     }
@@ -294,9 +305,12 @@ class Lattes
     /**
      * Recebe o número USP e devolve array com os artigos mais recentes cadastrados no currículo Lattes
      *
+     * TODO: refatorar problema 1o registro
+     *
      * Campos retornados: título do artigo, nome da revista ou períodico, volume, número de páginas,
      * ano de publicação, ISSN e autores (json)
      *
+     * Os campos $tipo, $limit_ini e $limit_fim são usado em diversos métodos e o signifcado e valores default são os mesmos
      * Default: tipo = registro, limit_ini = 5
      *
      * Dependendo de $tipo, o resultado é modificado:
@@ -403,18 +417,18 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve a linha de pesquisa
+     * Lista as linhas de pesquisa
+     *
      * @param Integer $codpes
+     * @param Array $lattes_array
      * @return String|Bool
      */
     public static function listarLinhasPesquisa($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        $linhas_de_pesquisa = [];
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
-
+        $linhas_de_pesquisa = [];
         $atuacao_profissional = Arr::get($lattes, 'DADOS-GERAIS.ATUACOES-PROFISSIONAIS.ATUACAO-PROFISSIONAL', false);
         if ($atuacao_profissional) {
             foreach ($atuacao_profissional as $ap) {
@@ -438,22 +452,23 @@ class Lattes
             }
             return $linhas_de_pesquisa;
         }
-        return false;
+        return [];
     }
 
     /**
-     * Recebe o número USP e devolve array com os livros publicados cadastrados no currículo Lattes,
+     * Recebe o número USP e devolve array com os livros publicados
+     *
      * com o respectivo título do livro, ano, número de páginas, nome da editora e autores
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarLivrosPublicados($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -531,21 +546,20 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
-     * Recebe o número USP e devolve array com os textos em revistas ou jornais publicados cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array com os textos publicados em revistas ou jornais
+     *
      * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarTextosJornaisRevistas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -616,21 +630,20 @@ class Lattes
         });
 
         return $textos_jornais_revistas;
-
     }
 
     /**
-     * Recebe o número USP e devolve array com os trabalhos em eventos/anais cadastrados no currículo Lattes
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * Recebe o número USP e devolve array com os trabalhos publicado em eventos/anais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarTrabalhosAnais($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -714,18 +727,17 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array com os trabalhos técnicos cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array com os trabalhos técnicos
      *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarTrabalhosTecnicos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -786,19 +798,17 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array com as apresentações de trabalhos técnicos cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array com as apresentações de trabalhos técnicos
      *
-     * @param Integer $codpes = Número USP
-     * @param Array $lattes_array Lattes convertido para array
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarApresentacaoTrabalho($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -856,19 +866,19 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array com as "outras" produções técnicas cadastradas no currículo Lattes, identidicadas como 'Demais tipos de produção técnica'
+     * Recebe o número USP e devolve array com organização de eventos
      *
+     * indicadas em 'demais tipos de produção técnica'
      *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
-     * @return String|Bool
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
      */
     public static function listarOrganizacaoEvento($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -921,24 +931,23 @@ class Lattes
             return false;
         }
 
-        return ($eventos);
-
+        return $eventos;
     }
 
     /**
-     * Recebe o número USP e devolve array com as "outras" produções técnicas cadastradas no currículo Lattes, identidicadas como 'Demais tipos de produção técnica'
+     * Recebe o número USP e devolve array com as "outras" produções técnicas
      *
+     * identificadas em 'Demais tipos de produção técnica'
      *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
-     * @return String|Bool
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
      */
     public static function listarOutrasProducoesTecnicas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -996,19 +1005,17 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array os cursos de curta duração ministrados cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array os cursos de curta duração
      *
-     *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
-     * @return String|Bool
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
      */
     public static function listarCursosCurtaDuracao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1057,23 +1064,21 @@ class Lattes
                 }
             }
         }
-        return ($cursos);
+        return $cursos;
     }
 
     /**
-     * Recebe o número USP e devolve array os relatórios de pesquisa cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array os relatórios de pesquisa
      *
-     *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
-     * @return String|Bool
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
      */
     public static function listarRelatorioPesquisa($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1124,24 +1129,21 @@ class Lattes
             }
         }
 
-        return ($relatorios);
-
+        return $relatorios;
     }
 
     /**
-     * Recebe o número USP e devolve array com os materiais didáticos ou instrucionais do autor cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array com os materiais didáticos ou instrucionais do autor
      *
-     *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
-     * @return String|Bool
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
      */
     public static function listarMaterialDidaticoInstrucional($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1193,22 +1195,21 @@ class Lattes
             }
         }
 
-        return ($materiais);
-
+        return $materiais;
     }
 
     /**
-     * Recebe o número USP e devolve array com as "outras" produções bibliográficas, uma subcategoria das produções, cadastrados no currículo Lattes
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * Recebe o número USP e devolve array com as "outras" produções bibliográficas, uma subcategoria das produções
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarOutrasProducoesBibliograficas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1264,7 +1265,6 @@ class Lattes
         }
 
         $tipo_outras_bibliografias = [
-
             ['nome do caminho' => 'DA-TRADUCAO', 'nome' => 'TRADUCAO', 'nome extenso' => 'Tradução'],
             ['nome do caminho' => 'DO-PREFACIO-POSFACIO', 'nome' => 'PREFACIO-POSFACIO', 'nome extenso' => 'Prefácio, Pósfacio'],
             ['nome do caminho' => 'DA-PARTITURA', 'nome' => 'PARTITURA-MUSICAL', 'nome extenso' => 'Partitura Musical'],
@@ -1332,18 +1332,19 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array com os 5 últimos capítulos de livros publicados cadastrados no currículo Lattes,
+     * Recebe o número USP e devolve array com capítulos de livros publicados
+     *
      * com o respectivo título do capítulo, título do livro, número de volumes, página inicial e final do capítulo, ano e nome da editora.
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarCapitulosLivros($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1426,14 +1427,16 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
-     * Recebe o número USP e devolve array com o título e ano da tese especificada (MESTRADO ou DOUTORADO), cadastrada no currículo Lattes.
-     * Retorna o título da tese e as palavras-chaves.
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Tipo da tese: DOUTORADO ou MESTRADO, o valor default é DOUTORADO
+     * Recebe o número USP e devolve lista contendo tese defendida pelo autor (MESTRADO ou DOUTORADO)
+     *
+     * Retorna o título da tese, palavras-chave e ano de obtenção
+     * .
+     * @param Integer $codpes
+     * @param Array $lattes_array
+     * @param String $tipo Tipo da tese: DOUTORADO ou MESTRADO, o valor default é DOUTORADO
      * @return Array|Bool
      */
     public static function listarTeses($codpes, $tipo = 'DOUTORADO', $lattes_array = null)
@@ -1490,12 +1493,13 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
-     * Recebe o número USP e retorna array com o título da tese de Livre-Docência, cadastrada no currículo Lattes.
-     * @param Integer $codpes = Número USP
+     * Recebe o número USP e retorna array com o título da tese de Livre-Docência
+     *
+     * @param Integer $codpes
+     * @param Array $lattes_array
      * @return Array|Bool
      */
     public static function obterLivreDocencia($codpes, $lattes_array = null)
@@ -1534,12 +1538,15 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
      * Recebe o número USP e retorna array com os título das teses de Mestrado onde o docente particiou como integrante da banca avaliadora.
+     *
+     * TODO: aqui deve ser listar
+     *
      * @param Integer $codpes = Número USP
+     * @param Array $lattes_array
      * @return Array|Bool
      */
     public static function retornarBancaMestrado($codpes, $lattes_array = null)
@@ -1571,12 +1578,15 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
-     * Recebe o número USP e retorna array com os título das teses de Doutorado onde o docente particiou como integrante da banca avaliadora.
-     * @param Integer $codpes = Número USP
+     * Recebe o número USP e retorna array com os títulos das teses de Doutorado onde o docente particiou como integrante da banca avaliadora.
+     *
+     * TODO: aqui deve ser listar
+     *
+     * @param Integer $codpes
+     * @param Array $lattes_array
      * @return Array|Bool
      */
     public static function retornarBancaDoutorado($codpes, $lattes_array = null)
@@ -1613,12 +1623,18 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
-     * Recebe o número USP e retorna array com o título do trabalho, nome da instituição e ano da formação acadêmica, sendo Gradução, Doutorado, etc.
+     * Recebe o número USP e retorna array com formação acadêmica
+     *
+     * Chave: titulo (GRADUACAO, MESTRADO, etc)
+     * Valor: json contendo título do trabalho, nome da instituição, ano da formação acadêmica, etc
+     *
+     * TODO: Aqui deve ser listar
+     *
      * @param Integer $codpes = Número USP
+     * @param Array $lattes_array
      * @return Array|Bool
      */
     public static function retornarFormacaoAcademica($codpes, $lattes_array = null)
@@ -1795,9 +1811,17 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e retorna array com os vínculos profissionais atuais: nome da instituição, ano de inicio e
-     * ano fim, tipo de vínculo e outras informações.
-     * @param Integer $codpes = Número USP
+     * Recebe o número USP e retorna array com os vínculos profissionais atuais
+     *
+     * nome da instituição, ano de inicio e ano fim, tipo de vínculo e outras informações.
+     *
+     * Padrão tipo=periodo, de 2017 a 2020
+     * TODO: ajustar esse padrão corretamente
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarFormacaoProfissional($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020)
@@ -1897,15 +1921,22 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e retorna array com as participações em rádio ou TV presente no currículo Lattes, com o título da entrevista,
-     * emissora e nome para citação.
-     * @param Integer $codpes = Número USP
+     * Recebe o número USP e retorna array com as participações em rádio ou TV
+     *
+     * o título da entrevista, emissora e nome para citação.
+     *
+     * Padrão tipo=periodo, de 2017 a 2020
+     * TODO: ajustar esse padrão corretamente
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarRadioTV($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1995,28 +2026,26 @@ class Lattes
      * @param Integer $codpes
      * @param Array $lattes_array (opt) Currículo lattes, convertido para array
      * @return String|Bool
-     *
      */
     public static function retornarOrcidID($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
-
-        $campo = 'ORCID-ID';
-        $orcid = Arr::get($lattes, "DADOS-GERAIS.@attributes.{$campo}", false);
-
-        return $orcid;
+        return Arr::get($lattes, 'DADOS-GERAIS.@attributes.ORCID-ID', false);
     }
 
     /**
-     * Recebe o número USP e retorna projetos de pesquisa cadastrados no currículo Lattes.
-     * @param Integer $codpes = Número USP
+     * Recebe o número USP e retorna projetos de pesquisa
+     *
+     * TODO: está retornando fora de ordem de data, então pega os 5 cadastrados primeiro
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-
     public static function listarProjetosPesquisa($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
         $lattes = $lattes_array ?? self::obterArray($codpes);
@@ -2141,6 +2170,5 @@ class Lattes
         } else {
             return false;
         }
-
     }
 }
