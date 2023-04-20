@@ -2484,4 +2484,48 @@ class Lattes
         return $ret;
     }
 
+    /**
+     * Lista as orientações em andamento de mestrado
+     *
+     * Traz os dados básicos, detalhamento, palavras-chave,
+     * areas do conhecimento, setores de atividade e informações adicionais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesEmAndamentoMestrado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $registros = self::listarRegistrosPorChaveOrdenado(
+            $lattes,
+            'DADOS-COMPLEMENTARES.ORIENTACOES-EM-ANDAMENTO.ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO', //chave
+            'DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO.@attributes.ANO' //chaveOrdenacao
+        );
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            $sai = [];
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO']['@attributes'],
+                $ent['DETALHAMENTO-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO']['@attributes'],
+                $ent['PALAVRAS-CHAVE']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-1']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-2']['@attributes'] ?? [],
+                $ent['SETORES-DE-ATIVIDADE']['@attributes'] ?? [],
+                $ent['INFORMACOES-ADICIONAIS']['@attributes'] ?? [],
+            );
+        }
+        return $ret;
+    }
+
 }
