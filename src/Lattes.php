@@ -2396,5 +2396,48 @@ class Lattes
         return $ret;
     }
 
+    /**
+     * Lista as orientações concluídas de iniciação científica - IC
+     *
+     * Traz os dados básicos, detalhamento
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesConcluidasIC($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $chave = 'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.OUTRAS-ORIENTACOES-CONCLUIDAS';
+        $registros = self::listarRegistrosPorChaveOrdenado($lattes, $chave);
 
+        // temos de filtrar diferente das outras produções
+        $registros = Arr::where($registros, function ($value, $key) {
+            return Arr::get($value, 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.NATUREZA') == 'INICIACAO_CIENTIFICA' ? true : false;
+        });
+
+        $chaveOrdenacao = 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.ANO';
+        $registros = self::ordenarRegistros($registros, $chaveOrdenacao);
+
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            $sai = [];
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+
+            $sai = $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes'];
+            $sai = array_merge($sai, $ent['DETALHAMENTO-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']);
+            $ret[] = $sai;
+        }
+
+        return $ret;
+    }
 }
