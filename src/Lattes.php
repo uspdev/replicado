@@ -2171,4 +2171,141 @@ class Lattes
             return false;
         }
     }
+
+    /**
+     * Dada uma chave de busca, recupera os registros da $chave de $lattes_array
+     *
+     * Se informado $chaveOrdenacao, irá ordenar segundo $ordem
+     * Default: sem ordenação, se ordenado, em ordem inversa
+     *
+     * @param Array $lattes_array
+     * @param String $chave Chave de filtragem no formato dot - para Arr::get()
+     * @param String $chaveOrdenacao Chave que será utiulizada no callback de ordenação
+     * @param Int $ordem
+     * @return Array
+     * @author Masakik, em 20/4/2023
+     */
+    protected static function listarRegistrosPorChaveOrdenado($lattes_array, $chave, $chaveOrdenacao = null, $ordem = -1)
+    {
+        $registros = Arr::get($lattes_array, $chave, []);
+
+        // trata registro unico
+        $registros = isset($registros['@attributes']) ? [$registros] : $registros;
+
+        // ordena pelo ano, ordem inversa, se especificado chave
+        return $chaveOrdenacao ? self::ordenarRegistros($registros, $chaveOrdenacao, $ordem) : $registros;
+
+    }
+
+    /**
+     * Auxiliar para ordernar registros de produção do lattes
+     *
+     * Usado nos métodos listarRegistrosPorChaveOrdenado(), listarOrientacoesConcluidasMestrado e similares
+     *
+     * @param Array $registros Registros a serem ordenados
+     * @param String $chaveOrdenacao Chave do array no format dot para Arr::get()
+     * @param Int $ordem Se -1 é decrescente, se 1, é crescente
+     * @author Masakik, em 20/4/2023
+     */
+    protected static function ordenarRegistros($registros, $chaveOrdenacao, $ordem = -1)
+    {
+        usort($registros, function ($a, $b) use ($chaveOrdenacao) {
+            if (Arr::get($b, $chaveOrdenacao, false) == false) {
+                return 0;
+            }
+            if ($ordem = -1) {
+                return (int) Arr::get($b, $chaveOrdenacao, false) - (int) Arr::get($a, $chaveOrdenacao, false);
+            } else {
+                return (int) Arr::get($a, $chaveOrdenacao, false) - (int) Arr::get($b, $chaveOrdenacao, false);
+            }
+        });
+        return $registros;
+    }
+
+    /**
+     * Lista as orientações concluídas de mestrado
+     *
+     * Traz os dados básicos, detalhamento, palavras-chave,
+     * areas do conhecimento, setores de atividade e informações adicionais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesConcluidasMestrado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $registros = self::listarRegistrosPorChaveOrdenado(
+            $lattes,
+            'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.ORIENTACOES-CONCLUIDAS-PARA-MESTRADO', //chave
+            'DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO.@attributes.ANO' //chaveOrdenacao
+        );
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO']['@attributes'],
+                $ent['DETALHAMENTO-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO']['@attributes'],
+                $ent['PALAVRAS-CHAVE']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-1']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-2']['@attributes'] ?? [],
+                $ent['SETORES-DE-ATIVIDADE']['@attributes'] ?? [],
+                $ent['INFORMACOES-ADICIONAIS']['@attributes'] ?? [],
+            );
+        }
+        return $ret;
+    }
+
+    /**
+     * Lista as orientações concluídas de doutorado
+     *
+     * Traz os dados básicos, detalhamento, palavras-chave,
+     * areas do conhecimento, setores de atividade e informações adicionais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesConcluidasDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $registros = self::listarRegistrosPorChaveOrdenado(
+            $lattes,
+            'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO',
+            'DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO.@attributes.ANO',
+        );
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO']['@attributes'],
+                $ent['DETALHAMENTO-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO']['@attributes'],
+                $ent['PALAVRAS-CHAVE']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-1']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-2']['@attributes'] ?? [],
+                $ent['SETORES-DE-ATIVIDADE']['@attributes'] ?? [],
+                $ent['INFORMACOES-ADICIONAIS']['@attributes'] ?? [],
+            );
+        }
+        return $ret;
+    }
+
 }
