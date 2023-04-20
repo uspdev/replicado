@@ -183,13 +183,11 @@ class Lattes
             return false;
         }
 
-        $campo = 'TEXTO-RESUMO-CV-RH';
+        $path = 'DADOS-GERAIS.RESUMO-CV.@attributes.TEXTO-RESUMO-CV-RH';
         if (strtolower($idioma) == 'en') {
-            $campo .= '-EN';
+            $path .= '-EN';
         }
-
-        $path = "DADOS-GERAIS.RESUMO-CV.@attributes.{$campo}";
-        return Arr::get($lattes, $path, '');
+        return html_entity_decode(Arr::get($lattes, $path, ''));
     }
 
     /**
