@@ -303,13 +303,24 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array com os últimos artigos cadastrados no currículo Lattes,
-     * com o respectivo título do artigo, nome da revista ou períodico, volume, número de páginas e ano de publicação
+     * Recebe o número USP e devolve array com os artigos mais recentes cadastrados no currículo Lattes
+     *
+     * Campos retornados: título do artigo, nome da revista ou períodico, volume, número de páginas,
+     * ano de publicação, ISSN e autores (json)
+     *
+     * Default: tipo = registro, limit_ini = 5
+     *
+     * Dependendo de $tipo, o resultado é modificado:
+     * $tipo == 'anual': retorna os artigos dos últimos $limit_ini anos
+     * $tipo == 'registros': retorna os $limit_ini artigos mais recentes
+     * $tipo == 'periodo': retorna todos os registros dos anos entre $limit_ini e $limit_fim
+     *
      * @param Integer $codpes = Número USP
      * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos;
+     * @param Integer $limit_fim = Se o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
      * @return Array|Bool
+     * @author modificado por Masakik, em 3/2023, issue #536
      */
     public static function listarArtigos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
@@ -319,6 +330,18 @@ class Lattes
         }
 
         $artigos = Arr::get($lattes, 'PRODUCAO-BIBLIOGRAFICA.ARTIGOS-PUBLICADOS.ARTIGO-PUBLICADO', false);
+        if (!$artigos) {
+            return false;
+        }
+
+        //ordena em ordem decrescente.
+        usort($artigos, function ($a, $b) {
+            if (!isset($b['DADOS-BASICOS-DO-ARTIGO']['@attributes']['ANO-DO-ARTIGO'])) {
+                return 0;
+            }
+            return (int) $b['DADOS-BASICOS-DO-ARTIGO']['@attributes']['ANO-DO-ARTIGO'] - (int) $a['DADOS-BASICOS-DO-ARTIGO']['@attributes']['ANO-DO-ARTIGO'];
+        });
+
         $i = 0;
         $ultimos_artigos = [];
 
@@ -351,13 +374,6 @@ class Lattes
 
                 array_push($ultimos_artigos, $aux_artigo);
 
-                //ordena em ordem decrescente.
-                usort($ultimos_artigos, function ($a, $b) {
-                    if (!isset($b['SEQUENCIA-PRODUCAO'])) {
-                        return 0;
-                    }
-                    return (int) $b['SEQUENCIA-PRODUCAO'] - (int) $a['SEQUENCIA-PRODUCAO'];
-                });
             } else {
 
                 foreach ($artigos as $val) {
@@ -387,19 +403,12 @@ class Lattes
 
                     array_push($ultimos_artigos, $aux_artigo);
 
-                    //ordena em ordem decrescente.
-                    usort($ultimos_artigos, function ($a, $b) {
-                        if (!isset($b['SEQUENCIA-PRODUCAO'])) {
-                            return 0;
-                        }
-                        return (int) $b['SEQUENCIA-PRODUCAO'] - (int) $a['SEQUENCIA-PRODUCAO'];
-                    });
                 }
             }
 
             return $ultimos_artigos;
         } else {
-            return false;
+            return [];
         }
 
     }
