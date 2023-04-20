@@ -2428,16 +2428,15 @@ class Lattes
         $ret = [];
         foreach ($registros as $ent) {
             $i++;
-            $sai = [];
             if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
-
-            $sai = $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes'];
-            $sai = array_merge($sai, $ent['DETALHAMENTO-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']);
-            $ret[] = $sai;
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes'],
+                $ent['DETALHAMENTO-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']
+            );
         }
-
         return $ret;
     }
+
 }
