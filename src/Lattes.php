@@ -191,20 +191,44 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve a última atualização do currículo do lattes
+     * (deprecado)Recebe o número USP e devolve a data da última atualização do currículo do lattes
+     *
+     * Em favor de retornarDataUltimaAtualizacao pois pega do SQL e não do curriculo lattes.
+     * Também retorna formatado em dd/mm/yyyy
+     *
      * @param Integer $codpes
      * @param Array $lattes_array (opt) Lattes convertido para array
      * @return Int|Bool
+     * @deprecated por Masakik em 20/4/2023
      */
     public static function retornarUltimaAtualizacao($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
         return Arr::get($lattes, '@attributes.DATA-ATUALIZACAO', false);
+    }
+
+    /**
+     * Recebe o número USP e devolve a data da última atualização do currículo do lattes
+     *
+     * Substituto de retornarUltimaAtualizacao
+     *
+     * @param Int $codpes
+     * @return String formatado em dd/mm/yyyy
+     * @author Masakik, em 20/4/3023
+     */
+    public static function retornarDataUltimaAtualizacao(int $codpes)
+    {
+        $query = "SELECT  CONVERT(VARCHAR(10), dtaultalt ,103) dtaultalt
+            FROM DIM_PESSOA_XMLUSP
+            WHERE codpes = CONVERT(int,:codpes)";
+
+        $param['codpes'] = $codpes;
+        $result = DB::fetch($query, $param);
+
+        return $result ? $result['dtaultalt'] : false;
     }
 
     /**
