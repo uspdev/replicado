@@ -14,16 +14,10 @@ class Lattes
      */
     public static function id($codpes)
     {
-        $query = "SELECT idfpescpq from DIM_PESSOA_XMLUSP WHERE codpes = convert(int,:codpes)";
-        $param = [
-            'codpes' => $codpes,
-        ];
+        $query = "SELECT idfpescpq from DIM_PESSOA_XMLUSP WHERE codpes = CONVERT(int,:codpes)";
+        $param['codpes'] = $codpes;
         $result = DB::fetch($query, $param);
-        if ($result) {
-            return $result['idfpescpq'];
-        }
-
-        return false;
+        return $result ? $result['idfpescpq'] : false;
     }
 
     /**
@@ -34,16 +28,10 @@ class Lattes
      */
     public static function retornarCodpesPorIDLattes($id)
     {
-        $query = "SELECT codpes from DIM_PESSOA_XMLUSP WHERE idfpescpq  = convert(varchar,:idfpescpq)";
-        $param = [
-            'idfpescpq' => $id,
-        ];
+        $query = "SELECT codpes from DIM_PESSOA_XMLUSP WHERE idfpescpq  = CONVERT(varchar,:idfpescpq)";
+        $param['idfpescpq'] = $id;
         $result = DB::fetch($query, $param);
-        if ($result) {
-            return $result['codpes'];
-        }
-
-        return false;
+        return $result ? $result['codpes'] : false;
     }
 
     /**
@@ -51,27 +39,24 @@ class Lattes
      *
      * @param Integer $codpes
      * @return String|Bool
+     *
+     * @author Masakik, ajustado para nova config do replicado em 2/2023 aprox
      */
     public static function obterZip($codpes)
     {
         # hotfix -  o utf8_encode estraga o zip
         Replicado::setConfig(['sybase' => false]);
 
-        $query = "SELECT imgarqxml from DIM_PESSOA_XMLUSP WHERE codpes = convert(int,:codpes)";
-        $param = [
-            'codpes' => $codpes,
-        ];
+        $query = "SELECT imgarqxml from DIM_PESSOA_XMLUSP WHERE codpes = CONVERT(int,:codpes)";
+        $param['codpes'] = $codpes;
         $result = DB::fetch($query, $param);
 
         # hotfix -  o utf8_encode estraga o zip
         Replicado::setConfig(['reset' => true]);
 
-        if (!empty($result)) {
-            return $result['imgarqxml'];
-        } else {
-            return false;
-        }
+        return $result ? $result['imgarqxml'] : false;
     }
+
     /**
      * Recebe o número USP e salva o zip do lattes
      *
@@ -103,14 +88,12 @@ class Lattes
         $content = self::obterZip($codpes);
         if ($content) {
             $xml = Uteis::unzip($content);
-            // Evitar salvar XML com 0 bytes
-            if (!$xml) {
-                return false;
+            if ($xml) {
+                $xmlFile = fopen("{$to}/{$codpes}.xml", "w");
+                fwrite($xmlFile, $xml);
+                fclose($xmlFile);
+                return true;
             }
-            $xmlFile = fopen("{$to}/{$codpes}.xml", "w");
-            fwrite($xmlFile, $xml);
-            fclose($xmlFile);
-            return true;
         }
         return false;
     }
@@ -124,11 +107,7 @@ class Lattes
     public static function obterXml($codpes)
     {
         $zip = self::obterZip($codpes);
-        if (!$zip) {
-            return false;
-        }
-
-        return Uteis::unzip($zip);
+        return $zip ? Uteis::unzip($zip) : false;
     }
 
     /**
@@ -140,11 +119,7 @@ class Lattes
     public static function obterJson($codpes)
     {
         $xml = self::obterXml($codpes);
-        if (!$xml) {
-            return false;
-        }
-
-        return json_encode(simplexml_load_string($xml));
+        return $xml ? json_encode(simplexml_load_string($xml)) : false;
     }
 
     /**
@@ -156,16 +131,12 @@ class Lattes
     public static function obterArray($codpes)
     {
         $json = self::obterJson($codpes);
-        if (!$json) {
-            return false;
-        }
-
-        return Uteis::utf8_converter(json_decode($json, true));
+        return $json ? Uteis::utf8_converter(json_decode($json, true)) : false;
     }
 
     /**
-     * Recebe o número USP e devolve array dos prêmios e títulos cadastros no currículo Lattes,
-     * com o respectivo ano de prêmiação
+     * Recebe o número USP e devolve array dos prêmios e títulos com o respectivo ano de prêmiação
+     *
      * @param Integer $codpes
      * @return String|Bool
      */
@@ -186,13 +157,11 @@ class Lattes
                 } else {
                     array_push($nome_premios, $p['@attributes']['NOME-DO-PREMIO-OU-TITULO'] . ' - Ano: ' . $p['@attributes']['ANO-DA-PREMIACAO']);
                 }
-
             }
             return $nome_premios;
         } else {
             return false;
         }
-
     }
 
     /**
@@ -210,9 +179,7 @@ class Lattes
      */
     public static function retornarResumoCV($codpes, $idioma = 'pt', $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
