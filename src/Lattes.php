@@ -2353,10 +2353,9 @@ class Lattes
     }
 
     /**
-     * Lista as orientações concluídas de pós doutorado
+     * Lista as orientações concluídas de TCC da graduação
      *
-     * Traz os dados básicos, detalhamento, palavras-chave,
-     * areas do conhecimento, setores de atividade e informações adicionais
+     * Traz os dados básicos, detalhamento
      *
      * @param Integer $codpes
      * @param String $tipo (ver método listarArtigos)
@@ -2396,5 +2395,6 @@ class Lattes
         }
         return $ret;
     }
+
 
 }
