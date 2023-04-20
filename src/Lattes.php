@@ -239,7 +239,7 @@ class Lattes
      * @param Array $array
      * @return Array
      */
-    private static function listarAutores($array)
+    protected static function listarAutores($array)
     {
         $aux_autores = [];
         if ($array) {
@@ -277,7 +277,7 @@ class Lattes
      * @param Integer $i
      * @return Bool
      */
-    private static function verificarFiltro($tipo, $ano, $limit_ini, $limit_fim, $i)
+    protected static function verificarFiltro($tipo, $ano, $limit_ini, $limit_fim, $i)
     {
         if ($tipo == 'registros') {
             if ($limit_ini != -1 && $i > $limit_ini) {
