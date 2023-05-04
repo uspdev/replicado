@@ -26,7 +26,7 @@ class DB
      *
      * @return PDO
      */
-    protected function getInstance()
+    protected static function getInstance()
     {
         $config = Config::getInstance();
         if (!SELF::$instance) {
