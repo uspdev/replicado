@@ -265,10 +265,10 @@ class Lattes
      * Serve para pegar uma lista de registros e filtrar por ano, periodo ou quantidade de registros
      * Auxiliar para listarArtigos(), etc, e todos os métodos que recebem $tipo como parâmetro
      *
-     * se $tipo for anual, o limit vai pegar os registros dos 'n' útimos anos;
-     * se for registros, irá retornar os últimos n livros;
-     * se for período, irá pegar os registros do ano entre limit_ini e limit_fim.
      * se limit_ini for igual a -1, então retornará todos os registros
+     * se $tipo for registros, irá retornar os últimos limit_ini registro;
+     * se $tipo for anual, o limit vai pegar os registros dos limit_ini útimos anos;
+     * se $tipo for período, irá pegar os registros do ano entre limit_ini e limit_fim.
      *
      * @param String $tipo Valores possíveis para determinar o filtro: 'anual' e 'registros', 'periodo'.
      * @param Integer $limit_ini Limite de retorno conforme o tipo.
@@ -279,23 +279,20 @@ class Lattes
      */
     protected static function verificarFiltro($tipo, $ano, $limit_ini, $limit_fim, $i)
     {
-        if ($tipo == 'registros') {
-            if ($limit_ini != -1 && $i > $limit_ini) {
-                return false;
-            }
+        if ($limit_ini == -1) {
+            return true;
+        }
 
-        } else if ($tipo == 'anual') {
-            if ($limit_ini != -1 && (int) $ano != $limit_ini) {
+        if ($tipo == 'registros') {
+            if ($i > $limit_ini) {
                 return false;
             }
-            //se for diferente do ano determinado, pula para o próximo
+        } else if ($tipo == 'anual') {
+            if ( date('Y') - (int) $ano >= $limit_ini) {
+                return false;
+            }
         } else if ($tipo == 'periodo') {
-            if ($limit_ini != -1 &&
-                (
-                    (int) $ano < $limit_ini ||
-                    (int) $ano > $limit_fim
-                )
-            ) {
+            if ((int) $ano < $limit_ini || (int) $ano > $limit_fim) {
                 return false;
             }
         }
@@ -325,7 +322,7 @@ class Lattes
      * @return Array|Bool
      * @author modificado por Masakik, em 3/2023, issue #536
      */
-    public static function listarArtigos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    public static function listarArtigos($codpes, $lattes_array = [], $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
         $lattes = $lattes_array ?? self::obterArray($codpes);
         if (!$lattes || !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) {
