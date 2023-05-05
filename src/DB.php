@@ -204,8 +204,9 @@ class DB
     /**
      * Função auxiliar que ajuda carregar o arquivo sql e realizar substituições
      *
-     * opcionalmente pode-se passar uma coleção tipo ['replace' => 'valor']
-     * para se realizar a substituição. Vai substituir '__replace__' por 'valor'
+     * Opcionalmente pode-se passar uma coleção tipo ['replace' => 'valor']
+     * para se realizar a substituição. Vai substituir '__replace__' por 'valor'.
+     * Se ['--replace--' => 'valor'], vai substituir 'replace' por 'valor'
      *
      * Caso não seja passado ['codundclgs' => 'valor'], o método pegará automaticamente
      * do env se necessário
@@ -214,6 +215,7 @@ class DB
      * @param Array $repĺaces (default=[])
      * @return String
      * @author Masakik, Fernando G. Moura, modificado em 28/10/2022
+     * @author Masakik, modificado em 5/5/2023, incluindo replace de comentário
      */
     public static function getQuery($filename, array $replaces = [])
     {
@@ -228,9 +230,14 @@ class DB
         $query = file_get_contents($queries . DIRECTORY_SEPARATOR . $filename);
 
         foreach ($replaces as $key => $val) {
-            $query = str_replace("__{$key}__", $val, $query);
+            if (str_starts_with($key, '--') || str_starts_with($key, '__')) {
+                $query = str_replace($key, $val, $query); // replace de comentário
+            } else {
+                $query = str_replace("__{$key}__", $val, $query);
+            }
         }
 
+        // replace automátido do codundclgs, anteriormente __unidades__
         if (str_contains($query, '__codundclgs__')) {
             $config = Config::getInstance();
             $codundclgs = $config->codundclgs;
