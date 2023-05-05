@@ -241,7 +241,7 @@ class DB
         if (str_contains($query, '__codundclgs__')) {
             $config = Config::getInstance();
             $codundclgs = $config->codundclgs;
-            $codundclgs = $codundclgs ?: $config->$codundclg;
+            $codundclgs = $codundclgs ?: $config->codundclg;
             $query = str_replace("__codundclgs__", $codundclgs, $query);
         }
 
