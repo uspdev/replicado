@@ -637,21 +637,21 @@ class Pessoa
     /**
      * Lista os dados de vinculos ativos da pessoa
      *
-     * Retorna os dados de localizapessoa.
-     * Não limita por unidade pois a tabela possui dados de outras unidades.
+     * Retorna os dados de localizapessoa
+     * Não limita por unidade pois a tabela possui dados de outras unidades
+     * Pode não incluir designações
      *
      * @param $codpes
+     * @param $designados Se false não retorna designados
      * @return Array
      * @author Masaki K Neto, em 14/3/2022
+     * @author Masaki K Neto, modificado em 5/5/2023
      */
-    public static function listarVinculosAtivos($codpes)
+    public static function listarVinculosAtivos(int $codpes, bool $designados = true)
     {
-        $query = "SELECT *
-            FROM LOCALIZAPESSOA
-            WHERE codpes = convert(int,:codpes)";
-        $param['codpes'] = $codpes;
-
-        return DB::fetchAll($query, $param);
+        $replaces = $designados ? [] : ['--designados--' => ''];
+        $query = DB::getQuery('Pessoa.listarVinculosAtivos.sql', $replaces);
+        return DB::fetchAll($query, ['codpes' => $codpes]);
     }
 
     /**

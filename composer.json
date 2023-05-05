@@ -16,7 +16,10 @@
     "autoload": {
         "psr-4" : {
             "Uspdev\\Replicado\\" : "src"
-        }
+        },
+        "files": [
+            "helpers/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
