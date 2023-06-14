@@ -14,16 +14,10 @@ class Lattes
      */
     public static function id($codpes)
     {
-        $query = "SELECT idfpescpq from DIM_PESSOA_XMLUSP WHERE codpes = convert(int,:codpes)";
-        $param = [
-            'codpes' => $codpes,
-        ];
+        $query = "SELECT idfpescpq from DIM_PESSOA_XMLUSP WHERE codpes = CONVERT(int,:codpes)";
+        $param['codpes'] = $codpes;
         $result = DB::fetch($query, $param);
-        if ($result) {
-            return $result['idfpescpq'];
-        }
-
-        return false;
+        return $result ? $result['idfpescpq'] : false;
     }
 
     /**
@@ -34,16 +28,10 @@ class Lattes
      */
     public static function retornarCodpesPorIDLattes($id)
     {
-        $query = "SELECT codpes from DIM_PESSOA_XMLUSP WHERE idfpescpq  = convert(varchar,:idfpescpq)";
-        $param = [
-            'idfpescpq' => $id,
-        ];
+        $query = "SELECT codpes from DIM_PESSOA_XMLUSP WHERE idfpescpq  = CONVERT(varchar,:idfpescpq)";
+        $param['idfpescpq'] = $id;
         $result = DB::fetch($query, $param);
-        if ($result) {
-            return $result['codpes'];
-        }
-
-        return false;
+        return $result ? $result['codpes'] : false;
     }
 
     /**
@@ -51,27 +39,24 @@ class Lattes
      *
      * @param Integer $codpes
      * @return String|Bool
+     *
+     * @author Masakik, ajustado para nova config do replicado em 2/2023 aprox
      */
     public static function obterZip($codpes)
     {
         # hotfix -  o utf8_encode estraga o zip
         Replicado::setConfig(['sybase' => false]);
 
-        $query = "SELECT imgarqxml from DIM_PESSOA_XMLUSP WHERE codpes = convert(int,:codpes)";
-        $param = [
-            'codpes' => $codpes,
-        ];
+        $query = "SELECT imgarqxml from DIM_PESSOA_XMLUSP WHERE codpes = CONVERT(int,:codpes)";
+        $param['codpes'] = $codpes;
         $result = DB::fetch($query, $param);
 
         # hotfix -  o utf8_encode estraga o zip
         Replicado::setConfig(['reset' => true]);
 
-        if (!empty($result)) {
-            return $result['imgarqxml'];
-        } else {
-            return false;
-        }
+        return $result ? $result['imgarqxml'] : false;
     }
+
     /**
      * Recebe o número USP e salva o zip do lattes
      *
@@ -103,14 +88,12 @@ class Lattes
         $content = self::obterZip($codpes);
         if ($content) {
             $xml = Uteis::unzip($content);
-            // Evitar salvar XML com 0 bytes
-            if (!$xml) {
-                return false;
+            if ($xml) {
+                $xmlFile = fopen("{$to}/{$codpes}.xml", "w");
+                fwrite($xmlFile, $xml);
+                fclose($xmlFile);
+                return true;
             }
-            $xmlFile = fopen("{$to}/{$codpes}.xml", "w");
-            fwrite($xmlFile, $xml);
-            fclose($xmlFile);
-            return true;
         }
         return false;
     }
@@ -124,11 +107,7 @@ class Lattes
     public static function obterXml($codpes)
     {
         $zip = self::obterZip($codpes);
-        if (!$zip) {
-            return false;
-        }
-
-        return Uteis::unzip($zip);
+        return $zip ? Uteis::unzip($zip) : false;
     }
 
     /**
@@ -140,11 +119,7 @@ class Lattes
     public static function obterJson($codpes)
     {
         $xml = self::obterXml($codpes);
-        if (!$xml) {
-            return false;
-        }
-
-        return json_encode(simplexml_load_string($xml));
+        return $xml ? json_encode(simplexml_load_string($xml)) : false;
     }
 
     /**
@@ -156,16 +131,12 @@ class Lattes
     public static function obterArray($codpes)
     {
         $json = self::obterJson($codpes);
-        if (!$json) {
-            return false;
-        }
-
-        return Uteis::utf8_converter(json_decode($json, true));
+        return $json ? Uteis::utf8_converter(json_decode($json, true)) : false;
     }
 
     /**
-     * Recebe o número USP e devolve array dos prêmios e títulos cadastros no currículo Lattes,
-     * com o respectivo ano de prêmiação
+     * Recebe o número USP e devolve array dos prêmios e títulos com o respectivo ano de prêmiação
+     *
      * @param Integer $codpes
      * @return String|Bool
      */
@@ -186,13 +157,11 @@ class Lattes
                 } else {
                     array_push($nome_premios, $p['@attributes']['NOME-DO-PREMIO-OU-TITULO'] . ' - Ano: ' . $p['@attributes']['ANO-DA-PREMIACAO']);
                 }
-
             }
             return $nome_premios;
         } else {
             return false;
         }
-
     }
 
     /**
@@ -210,44 +179,67 @@ class Lattes
      */
     public static function retornarResumoCV($codpes, $idioma = 'pt', $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
-        $campo = 'TEXTO-RESUMO-CV-RH';
+        $path = 'DADOS-GERAIS.RESUMO-CV.@attributes.TEXTO-RESUMO-CV-RH';
         if (strtolower($idioma) == 'en') {
-            $campo .= '-EN';
+            $path .= '-EN';
         }
-
-        $path = "DADOS-GERAIS.RESUMO-CV.@attributes.{$campo}";
-        return Arr::get($lattes, $path, '');
+        return html_entity_decode(Arr::get($lattes, $path, ''));
     }
 
     /**
-     * Recebe o número USP e devolve a última atualização do currículo do lattes
+     * (deprecado)Recebe o número USP e devolve a data da última atualização do currículo do lattes
+     *
+     * Em favor de retornarDataUltimaAtualizacao pois pega do SQL e não do curriculo lattes.
+     * Também retorna formatado em dd/mm/yyyy
+     *
      * @param Integer $codpes
      * @param Array $lattes_array (opt) Lattes convertido para array
      * @return Int|Bool
+     * @deprecated por Masakik em 20/4/2023
      */
     public static function retornarUltimaAtualizacao($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
-
         return Arr::get($lattes, '@attributes.DATA-ATUALIZACAO', false);
     }
 
     /**
-     * Recebe um array com os autores no padrão do currícula lattes e retorna o nome dos autores formatado com apenas o nome e ordem de autoria
+     * Recebe o número USP e devolve a data da última atualização do currículo do lattes
+     *
+     * Substituto de retornarUltimaAtualizacao
+     *
+     * @param Int $codpes
+     * @return String formatado em dd/mm/yyyy
+     * @author Masakik, em 20/4/3023
+     */
+    public static function retornarDataUltimaAtualizacao(int $codpes)
+    {
+        $query = "SELECT  CONVERT(VARCHAR(10), dtaultalt ,103) dtaultalt
+            FROM DIM_PESSOA_XMLUSP
+            WHERE codpes = CONVERT(int,:codpes)";
+
+        $param['codpes'] = $codpes;
+        $result = DB::fetch($query, $param);
+
+        return $result ? $result['dtaultalt'] : false;
+    }
+
+    /**
+     * Recebe um array com os autores no padrão do currícula lattes e retorna
+     * o nome dos autores formatado com apenas o nome e ordem de autoria
+     *
+     * Auxiliar para listarArtigos(), listarLivrosPublicados(), etc
+     *
      * @param Array $array
      * @return Array
      */
-    private static function listarAutores($array)
+    protected static function listarAutores($array)
     {
         $aux_autores = [];
         if ($array) {
@@ -268,50 +260,69 @@ class Lattes
     }
 
     /**
-     * Verifica se os parâmetros se enquandram no filtro
-     * @param String $tipo = Valores possíveis para determinar o filtro: 'anual' e 'registros', 'periodo'.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * Verifica se os parâmetros se enquadram no filtro
+     *
+     * Serve para pegar uma lista de registros e filtrar por ano, periodo ou quantidade de registros
+     * Auxiliar para listarArtigos(), etc, e todos os métodos que recebem $tipo como parâmetro
+     *
+     * se limit_ini for igual a -1, então retornará todos os registros
+     * se $tipo for registros, irá retornar os últimos limit_ini registro;
+     * se $tipo for anual, o limit vai pegar os registros dos limit_ini útimos anos;
+     * se $tipo for período, irá pegar os registros do ano entre limit_ini e limit_fim.
+     *
+     * @param String $tipo Valores possíveis para determinar o filtro: 'anual' e 'registros', 'periodo'.
+     * @param Integer $limit_ini Limite de retorno conforme o tipo.
+     * @param Integer $limit_fim Se o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
      * @param Integer $ano
      * @param Integer $i
      * @return Bool
      */
-    private static function verificarFiltro($tipo, $ano, $limit_ini, $limit_fim, $i)
+    protected static function verificarFiltro($tipo, $ano, $limit_ini, $limit_fim, $i)
     {
+        if ($limit_ini == -1) {
+            return true;
+        }
+
         if ($tipo == 'registros') {
-            if ($limit_ini != -1 && $i > $limit_ini) {
+            if ($i > $limit_ini) {
                 return false;
             }
-
         } else if ($tipo == 'anual') {
-            if ($limit_ini != -1 && (int) $ano != $limit_ini) {
+            if ( date('Y') - (int) $ano >= $limit_ini) {
                 return false;
             }
-            //se for diferente do ano determinado, pula para o próximo
         } else if ($tipo == 'periodo') {
-            if ($limit_ini != -1 &&
-                (
-                    (int) $ano < $limit_ini ||
-                    (int) $ano > $limit_fim
-                )
-            ) {
+            if ((int) $ano < $limit_ini || (int) $ano > $limit_fim) {
                 return false;
             }
-
         }
         return true;
     }
 
     /**
-     * Recebe o número USP e devolve array com os últimos artigos cadastrados no currículo Lattes,
-     * com o respectivo título do artigo, nome da revista ou períodico, volume, número de páginas e ano de publicação
+     * Recebe o número USP e devolve array com os artigos mais recentes cadastrados no currículo Lattes
+     *
+     * TODO: refatorar problema 1o registro
+     *
+     * Campos retornados: título do artigo, nome da revista ou períodico, volume, número de páginas,
+     * ano de publicação, ISSN e autores (json)
+     *
+     * Os campos $tipo, $limit_ini e $limit_fim são usado em diversos métodos e o signifcado e valores default são os mesmos
+     * Default: tipo = registro, limit_ini = 5
+     *
+     * Dependendo de $tipo, o resultado é modificado:
+     * $tipo == 'anual': retorna os artigos dos últimos $limit_ini anos
+     * $tipo == 'registros': retorna os $limit_ini artigos mais recentes
+     * $tipo == 'periodo': retorna todos os registros dos anos entre $limit_ini e $limit_fim
+     *
      * @param Integer $codpes = Número USP
      * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos;
+     * @param Integer $limit_fim = Se o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
      * @return Array|Bool
+     * @author modificado por Masakik, em 3/2023, issue #536
      */
-    public static function listarArtigos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    public static function listarArtigos($codpes, $lattes_array = [], $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
         $lattes = $lattes_array ?? self::obterArray($codpes);
         if (!$lattes || !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) {
@@ -319,6 +330,18 @@ class Lattes
         }
 
         $artigos = Arr::get($lattes, 'PRODUCAO-BIBLIOGRAFICA.ARTIGOS-PUBLICADOS.ARTIGO-PUBLICADO', false);
+        if (!$artigos) {
+            return false;
+        }
+
+        //ordena em ordem decrescente.
+        usort($artigos, function ($a, $b) {
+            if (!isset($b['DADOS-BASICOS-DO-ARTIGO']['@attributes']['ANO-DO-ARTIGO'])) {
+                return 0;
+            }
+            return (int) $b['DADOS-BASICOS-DO-ARTIGO']['@attributes']['ANO-DO-ARTIGO'] - (int) $a['DADOS-BASICOS-DO-ARTIGO']['@attributes']['ANO-DO-ARTIGO'];
+        });
+
         $i = 0;
         $ultimos_artigos = [];
 
@@ -351,13 +374,6 @@ class Lattes
 
                 array_push($ultimos_artigos, $aux_artigo);
 
-                //ordena em ordem decrescente.
-                usort($ultimos_artigos, function ($a, $b) {
-                    if (!isset($b['SEQUENCIA-PRODUCAO'])) {
-                        return 0;
-                    }
-                    return (int) $b['SEQUENCIA-PRODUCAO'] - (int) $a['SEQUENCIA-PRODUCAO'];
-                });
             } else {
 
                 foreach ($artigos as $val) {
@@ -387,36 +403,29 @@ class Lattes
 
                     array_push($ultimos_artigos, $aux_artigo);
 
-                    //ordena em ordem decrescente.
-                    usort($ultimos_artigos, function ($a, $b) {
-                        if (!isset($b['SEQUENCIA-PRODUCAO'])) {
-                            return 0;
-                        }
-                        return (int) $b['SEQUENCIA-PRODUCAO'] - (int) $a['SEQUENCIA-PRODUCAO'];
-                    });
                 }
             }
 
             return $ultimos_artigos;
         } else {
-            return false;
+            return [];
         }
 
     }
 
     /**
-     * Recebe o número USP e devolve a linha de pesquisa
+     * Lista as linhas de pesquisa
+     *
      * @param Integer $codpes
+     * @param Array $lattes_array
      * @return String|Bool
      */
     public static function listarLinhasPesquisa($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        $linhas_de_pesquisa = [];
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
-
+        $linhas_de_pesquisa = [];
         $atuacao_profissional = Arr::get($lattes, 'DADOS-GERAIS.ATUACOES-PROFISSIONAIS.ATUACAO-PROFISSIONAL', false);
         if ($atuacao_profissional) {
             foreach ($atuacao_profissional as $ap) {
@@ -440,22 +449,23 @@ class Lattes
             }
             return $linhas_de_pesquisa;
         }
-        return false;
+        return [];
     }
 
     /**
-     * Recebe o número USP e devolve array com os livros publicados cadastrados no currículo Lattes,
+     * Recebe o número USP e devolve array com os livros publicados
+     *
      * com o respectivo título do livro, ano, número de páginas, nome da editora e autores
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarLivrosPublicados($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -533,21 +543,20 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
-     * Recebe o número USP e devolve array com os textos em revistas ou jornais publicados cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array com os textos publicados em revistas ou jornais
+     *
      * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarTextosJornaisRevistas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -618,21 +627,20 @@ class Lattes
         });
 
         return $textos_jornais_revistas;
-
     }
 
     /**
-     * Recebe o número USP e devolve array com os trabalhos em eventos/anais cadastrados no currículo Lattes
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * Recebe o número USP e devolve array com os trabalhos publicado em eventos/anais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarTrabalhosAnais($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -716,18 +724,17 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array com os trabalhos técnicos cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array com os trabalhos técnicos
      *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarTrabalhosTecnicos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -788,19 +795,17 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array com as apresentações de trabalhos técnicos cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array com as apresentações de trabalhos técnicos
      *
-     * @param Integer $codpes = Número USP
-     * @param Array $lattes_array Lattes convertido para array
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarApresentacaoTrabalho($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -858,19 +863,19 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array com as "outras" produções técnicas cadastradas no currículo Lattes, identidicadas como 'Demais tipos de produção técnica'
+     * Recebe o número USP e devolve array com organização de eventos
      *
+     * indicadas em 'demais tipos de produção técnica'
      *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
-     * @return String|Bool
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
      */
     public static function listarOrganizacaoEvento($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -923,24 +928,23 @@ class Lattes
             return false;
         }
 
-        return ($eventos);
-
+        return $eventos;
     }
 
     /**
-     * Recebe o número USP e devolve array com as "outras" produções técnicas cadastradas no currículo Lattes, identidicadas como 'Demais tipos de produção técnica'
+     * Recebe o número USP e devolve array com as "outras" produções técnicas
      *
+     * identificadas em 'Demais tipos de produção técnica'
      *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
-     * @return String|Bool
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
      */
     public static function listarOutrasProducoesTecnicas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -998,19 +1002,17 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array os cursos de curta duração ministrados cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array os cursos de curta duração
      *
-     *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
-     * @return String|Bool
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
      */
     public static function listarCursosCurtaDuracao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1059,23 +1061,21 @@ class Lattes
                 }
             }
         }
-        return ($cursos);
+        return $cursos;
     }
 
     /**
-     * Recebe o número USP e devolve array os relatórios de pesquisa cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array os relatórios de pesquisa
      *
-     *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
-     * @return String|Bool
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
      */
     public static function listarRelatorioPesquisa($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1126,24 +1126,21 @@ class Lattes
             }
         }
 
-        return ($relatorios);
-
+        return $relatorios;
     }
 
     /**
-     * Recebe o número USP e devolve array com os materiais didáticos ou instrucionais do autor cadastrados no currículo Lattes
+     * Recebe o número USP e devolve array com os materiais didáticos ou instrucionais do autor
      *
-     *
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
-     * @return String|Bool
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
      */
     public static function listarMaterialDidaticoInstrucional($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1195,22 +1192,21 @@ class Lattes
             }
         }
 
-        return ($materiais);
-
+        return $materiais;
     }
 
     /**
-     * Recebe o número USP e devolve array com as "outras" produções bibliográficas, uma subcategoria das produções, cadastrados no currículo Lattes
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     * Recebe o número USP e devolve array com as "outras" produções bibliográficas, uma subcategoria das produções
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarOutrasProducoesBibliograficas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1266,7 +1262,6 @@ class Lattes
         }
 
         $tipo_outras_bibliografias = [
-
             ['nome do caminho' => 'DA-TRADUCAO', 'nome' => 'TRADUCAO', 'nome extenso' => 'Tradução'],
             ['nome do caminho' => 'DO-PREFACIO-POSFACIO', 'nome' => 'PREFACIO-POSFACIO', 'nome extenso' => 'Prefácio, Pósfacio'],
             ['nome do caminho' => 'DA-PARTITURA', 'nome' => 'PARTITURA-MUSICAL', 'nome extenso' => 'Partitura Musical'],
@@ -1334,18 +1329,19 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e devolve array com os 5 últimos capítulos de livros publicados cadastrados no currículo Lattes,
+     * Recebe o número USP e devolve array com capítulos de livros publicados
+     *
      * com o respectivo título do capítulo, título do livro, número de volumes, página inicial e final do capítulo, ano e nome da editora.
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Valores possíveis para determinar o limite: 'anual' e 'registros', 'periodo'. Default: últimos 5 registros.
-     * @param Integer $limit_ini = Limite de retorno conforme o tipo. Se for anual, o limit vai pegar os registros dos 'n' útimos anos; se for registros, irá retornar os últimos n livros; se for período, irá pegar os registros do ano entre limit_ini e limit_fim. Se limit_ini for igaul a -1, então retornará todos os registros
-     * @param Integer $limit_fim = Se  o tipo for periodo, irá pegar os registros do ano entre limit_ini e limit_fim
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarCapitulosLivros($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1428,14 +1424,16 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
-     * Recebe o número USP e devolve array com o título e ano da tese especificada (MESTRADO ou DOUTORADO), cadastrada no currículo Lattes.
-     * Retorna o título da tese e as palavras-chaves.
-     * @param Integer $codpes = Número USP
-     * @param String $tipo = Tipo da tese: DOUTORADO ou MESTRADO, o valor default é DOUTORADO
+     * Recebe o número USP e devolve lista contendo tese defendida pelo autor (MESTRADO ou DOUTORADO)
+     *
+     * Retorna o título da tese, palavras-chave e ano de obtenção
+     * .
+     * @param Integer $codpes
+     * @param Array $lattes_array
+     * @param String $tipo Tipo da tese: DOUTORADO ou MESTRADO, o valor default é DOUTORADO
      * @return Array|Bool
      */
     public static function listarTeses($codpes, $tipo = 'DOUTORADO', $lattes_array = null)
@@ -1492,12 +1490,13 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
-     * Recebe o número USP e retorna array com o título da tese de Livre-Docência, cadastrada no currículo Lattes.
-     * @param Integer $codpes = Número USP
+     * Recebe o número USP e retorna array com o título da tese de Livre-Docência
+     *
+     * @param Integer $codpes
+     * @param Array $lattes_array
      * @return Array|Bool
      */
     public static function obterLivreDocencia($codpes, $lattes_array = null)
@@ -1536,12 +1535,15 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
      * Recebe o número USP e retorna array com os título das teses de Mestrado onde o docente particiou como integrante da banca avaliadora.
+     *
+     * TODO: aqui deve ser listar
+     *
      * @param Integer $codpes = Número USP
+     * @param Array $lattes_array
      * @return Array|Bool
      */
     public static function retornarBancaMestrado($codpes, $lattes_array = null)
@@ -1573,12 +1575,15 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
-     * Recebe o número USP e retorna array com os título das teses de Doutorado onde o docente particiou como integrante da banca avaliadora.
-     * @param Integer $codpes = Número USP
+     * Recebe o número USP e retorna array com os títulos das teses de Doutorado onde o docente particiou como integrante da banca avaliadora.
+     *
+     * TODO: aqui deve ser listar
+     *
+     * @param Integer $codpes
+     * @param Array $lattes_array
      * @return Array|Bool
      */
     public static function retornarBancaDoutorado($codpes, $lattes_array = null)
@@ -1615,12 +1620,18 @@ class Lattes
         } else {
             return false;
         }
-
     }
 
     /**
-     * Recebe o número USP e retorna array com o título do trabalho, nome da instituição e ano da formação acadêmica, sendo Gradução, Doutorado, etc.
+     * Recebe o número USP e retorna array com formação acadêmica
+     *
+     * Chave: titulo (GRADUACAO, MESTRADO, etc)
+     * Valor: json contendo título do trabalho, nome da instituição, ano da formação acadêmica, etc
+     *
+     * TODO: Aqui deve ser listar
+     *
      * @param Integer $codpes = Número USP
+     * @param Array $lattes_array
      * @return Array|Bool
      */
     public static function retornarFormacaoAcademica($codpes, $lattes_array = null)
@@ -1797,9 +1808,17 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e retorna array com os vínculos profissionais atuais: nome da instituição, ano de inicio e
-     * ano fim, tipo de vínculo e outras informações.
-     * @param Integer $codpes = Número USP
+     * Recebe o número USP e retorna array com os vínculos profissionais atuais
+     *
+     * nome da instituição, ano de inicio e ano fim, tipo de vínculo e outras informações.
+     *
+     * Padrão tipo=periodo, de 2017 a 2020
+     * TODO: ajustar esse padrão corretamente
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarFormacaoProfissional($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020)
@@ -1899,15 +1918,22 @@ class Lattes
     }
 
     /**
-     * Recebe o número USP e retorna array com as participações em rádio ou TV presente no currículo Lattes, com o título da entrevista,
-     * emissora e nome para citação.
-     * @param Integer $codpes = Número USP
+     * Recebe o número USP e retorna array com as participações em rádio ou TV
+     *
+     * o título da entrevista, emissora e nome para citação.
+     *
+     * Padrão tipo=periodo, de 2017 a 2020
+     * TODO: ajustar esse padrão corretamente
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
     public static function listarRadioTV($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
 
@@ -1997,28 +2023,26 @@ class Lattes
      * @param Integer $codpes
      * @param Array $lattes_array (opt) Currículo lattes, convertido para array
      * @return String|Bool
-     *
      */
     public static function retornarOrcidID($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
-
-        if (!$lattes) {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
             return false;
         }
-
-        $campo = 'ORCID-ID';
-        $orcid = Arr::get($lattes, "DADOS-GERAIS.@attributes.{$campo}", false);
-
-        return $orcid;
+        return Arr::get($lattes, 'DADOS-GERAIS.@attributes.ORCID-ID', false);
     }
 
     /**
-     * Recebe o número USP e retorna projetos de pesquisa cadastrados no currículo Lattes.
-     * @param Integer $codpes = Número USP
+     * Recebe o número USP e retorna projetos de pesquisa
+     *
+     * TODO: está retornando fora de ordem de data, então pega os 5 cadastrados primeiro
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-
     public static function listarProjetosPesquisa($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
         $lattes = $lattes_array ?? self::obterArray($codpes);
@@ -2143,6 +2167,481 @@ class Lattes
         } else {
             return false;
         }
+    }
 
+    /**
+     * Dada uma chave de busca, recupera os registros da $chave de $lattes_array
+     *
+     * Se informado $chaveOrdenacao, irá ordenar segundo $ordem
+     * Default: sem ordenação, se ordenado, em ordem inversa
+     *
+     * @param Array $lattes_array
+     * @param String $chave Chave de filtragem no formato dot - para Arr::get()
+     * @param String $chaveOrdenacao Chave que será utiulizada no callback de ordenação
+     * @param Int $ordem
+     * @return Array
+     * @author Masakik, em 20/4/2023
+     */
+    protected static function listarRegistrosPorChaveOrdenado($lattes_array, $chave, $chaveOrdenacao = null, $ordem = -1)
+    {
+        $registros = Arr::get($lattes_array, $chave, []);
+
+        // trata registro unico
+        $registros = isset($registros['@attributes']) ? [$registros] : $registros;
+
+        // ordena pelo ano, ordem inversa, se especificado chave
+        return $chaveOrdenacao ? self::ordenarRegistros($registros, $chaveOrdenacao, $ordem) : $registros;
+
+    }
+
+    /**
+     * Auxiliar para ordernar registros de produção do lattes
+     *
+     * Usado nos métodos listarRegistrosPorChaveOrdenado(), listarOrientacoesConcluidasMestrado e similares
+     *
+     * @param Array $registros Registros a serem ordenados
+     * @param String $chaveOrdenacao Chave do array no format dot para Arr::get()
+     * @param Int $ordem Se -1 é decrescente, se 1, é crescente
+     * @author Masakik, em 20/4/2023
+     */
+    protected static function ordenarRegistros($registros, $chaveOrdenacao, $ordem = -1)
+    {
+        usort($registros, function ($a, $b) use ($chaveOrdenacao) {
+            if (Arr::get($b, $chaveOrdenacao, false) == false) {
+                return 0;
+            }
+            if ($ordem = -1) {
+                return (int) Arr::get($b, $chaveOrdenacao, false) - (int) Arr::get($a, $chaveOrdenacao, false);
+            } else {
+                return (int) Arr::get($a, $chaveOrdenacao, false) - (int) Arr::get($b, $chaveOrdenacao, false);
+            }
+        });
+        return $registros;
+    }
+
+    /**
+     * Lista as orientações concluídas de mestrado
+     *
+     * Traz os dados básicos, detalhamento, palavras-chave,
+     * areas do conhecimento, setores de atividade e informações adicionais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesConcluidasMestrado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $registros = self::listarRegistrosPorChaveOrdenado(
+            $lattes,
+            'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.ORIENTACOES-CONCLUIDAS-PARA-MESTRADO', //chave
+            'DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO.@attributes.ANO' //chaveOrdenacao
+        );
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO']['@attributes'],
+                $ent['DETALHAMENTO-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO']['@attributes'],
+                $ent['PALAVRAS-CHAVE']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-1']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-2']['@attributes'] ?? [],
+                $ent['SETORES-DE-ATIVIDADE']['@attributes'] ?? [],
+                $ent['INFORMACOES-ADICIONAIS']['@attributes'] ?? [],
+            );
+        }
+        return $ret;
+    }
+
+    /**
+     * Lista as orientações concluídas de doutorado
+     *
+     * Traz os dados básicos, detalhamento, palavras-chave,
+     * areas do conhecimento, setores de atividade e informações adicionais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesConcluidasDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $registros = self::listarRegistrosPorChaveOrdenado(
+            $lattes,
+            'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO',
+            'DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO.@attributes.ANO',
+        );
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO']['@attributes'],
+                $ent['DETALHAMENTO-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO']['@attributes'],
+                $ent['PALAVRAS-CHAVE']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-1']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-2']['@attributes'] ?? [],
+                $ent['SETORES-DE-ATIVIDADE']['@attributes'] ?? [],
+                $ent['INFORMACOES-ADICIONAIS']['@attributes'] ?? [],
+            );
+        }
+        return $ret;
+    }
+
+    /**
+     * Lista as orientações concluídas de pós doutorado
+     *
+     * Traz os dados básicos, detalhamento, palavras-chave,
+     * areas do conhecimento, setores de atividade e informações adicionais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesConcluidasPosDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $registros = self::listarRegistrosPorChaveOrdenado(
+            $lattes,
+            'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.ORIENTACOES-CONCLUIDAS-PARA-POS-DOUTORADO',
+            'DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-POS-DOUTORADO.@attributes.ANO'
+        );
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            $sai = [];
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-POS-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-POS-DOUTORADO']['@attributes'],
+                $ent['DETALHAMENTO-DE-ORIENTACOES-CONCLUIDAS-PARA-POS-DOUTORADO']['@attributes'],
+                $ent['PALAVRAS-CHAVE']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-1']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-2']['@attributes'] ?? [],
+                $ent['SETORES-DE-ATIVIDADE']['@attributes'] ?? [],
+                $ent['INFORMACOES-ADICIONAIS']['@attributes'] ?? [],
+            );
+        }
+        return $ret;
+    }
+
+    /**
+     * Lista as orientações concluídas de TCC da graduação
+     *
+     * Traz os dados básicos, detalhamento
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesConcluidasTccGraduacao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $chave = 'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.OUTRAS-ORIENTACOES-CONCLUIDAS';
+        $registros = self::listarRegistrosPorChaveOrdenado($lattes, $chave);
+
+        // temos de filtrar diferente das outras produções
+        $registros = Arr::where($registros, function ($value, $key) {
+            return Arr::get($value, 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.NATUREZA') == 'TRABALHO_DE_CONCLUSAO_DE_CURSO_GRADUACAO' ? true : false;
+        });
+
+        $chaveOrdenacao = 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.ANO';
+        $registros = self::ordenarRegistros($registros, $chaveOrdenacao);
+
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes'],
+                $ent['DETALHAMENTO-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']
+            );
+        }
+        return $ret;
+    }
+
+    /**
+     * Lista as orientações concluídas de iniciação científica - IC
+     *
+     * Traz os dados básicos, detalhamento
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesConcluidasIC($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $chave = 'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.OUTRAS-ORIENTACOES-CONCLUIDAS';
+        $registros = self::listarRegistrosPorChaveOrdenado($lattes, $chave);
+
+        // temos de filtrar diferente das outras produções
+        $registros = Arr::where($registros, function ($value, $key) {
+            return Arr::get($value, 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.NATUREZA') == 'INICIACAO_CIENTIFICA' ? true : false;
+        });
+
+        $chaveOrdenacao = 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.ANO';
+        $registros = self::ordenarRegistros($registros, $chaveOrdenacao);
+
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes'],
+                $ent['DETALHAMENTO-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']
+            );
+        }
+        return $ret;
+    }
+
+    /**
+     * Lista as monografias concluídas de cursos de aperfeicoamento e especialização
+     *
+     * Traz os dados básicos, detalhamento
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarMonografiasConcluidasAperfeicoamentoEspecializacao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $chave = 'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.OUTRAS-ORIENTACOES-CONCLUIDAS';
+        $registros = self::listarRegistrosPorChaveOrdenado($lattes, $chave);
+
+        // temos de filtrar diferente das outras produções
+        $registros = Arr::where($registros, function ($value, $key) {
+            return Arr::get($value, 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.NATUREZA') == 'MONOGRAFIA_DE_CONCLUSAO_DE_CURSO_APERFEICOAMENTO_E_ESPECIALIZACAO' ? true : false;
+        });
+
+        $chaveOrdenacao = 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.ANO';
+        $registros = self::ordenarRegistros($registros, $chaveOrdenacao);
+
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes'],
+                $ent['DETALHAMENTO-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes'],
+                // será que tem outros dados complementares aqui ???
+            );
+        }
+        return $ret;
+    }
+
+    /**
+     * Lista as orientações em andamento de mestrado
+     *
+     * Traz os dados básicos, detalhamento, palavras-chave,
+     * areas do conhecimento, setores de atividade e informações adicionais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesEmAndamentoMestrado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $registros = self::listarRegistrosPorChaveOrdenado(
+            $lattes,
+            'DADOS-COMPLEMENTARES.ORIENTACOES-EM-ANDAMENTO.ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO', //chave
+            'DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO.@attributes.ANO' //chaveOrdenacao
+        );
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            $sai = [];
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO']['@attributes'],
+                $ent['DETALHAMENTO-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO']['@attributes'],
+                $ent['PALAVRAS-CHAVE']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-1']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-2']['@attributes'] ?? [],
+                $ent['SETORES-DE-ATIVIDADE']['@attributes'] ?? [],
+                $ent['INFORMACOES-ADICIONAIS']['@attributes'] ?? [],
+            );
+        }
+        return $ret;
+    }
+
+    /**
+     * Lista as orientações em andamento de doutorado
+     *
+     * Traz os dados básicos, detalhamento, palavras-chave,
+     * areas do conhecimento, setores de atividade e informações adicionais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesEmAndamentoDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $registros = self::listarRegistrosPorChaveOrdenado(
+            $lattes,
+            'DADOS-COMPLEMENTARES.ORIENTACOES-EM-ANDAMENTO.ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO',
+            'DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO.@attributes.ANO'
+        );
+        $i = 0;
+        $ret = [];
+        foreach ($registros as $ent) {
+            $i++;
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO']['@attributes'],
+                $ent['DETALHAMENTO-DA-ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO']['@attributes'],
+                $ent['PALAVRAS-CHAVE']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-1']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-2']['@attributes'] ?? [],
+                $ent['SETORES-DE-ATIVIDADE']['@attributes'] ?? [],
+                $ent['INFORMACOES-ADICIONAIS']['@attributes'] ?? [],
+            );
+        }
+        return $ret;
+    }
+
+    /**
+     * Lista as orientações em andamento de pós doutorado
+     *
+     * Traz os dados básicos, detalhamento, palavras-chave,
+     * areas do conhecimento, setores de atividade e informações adicionais
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesEmAndamentoPosDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $chave = 'DADOS-COMPLEMENTARES.ORIENTACOES-EM-ANDAMENTO.ORIENTACAO-EM-ANDAMENTO-DE-POS-DOUTORADO';
+        $chaveOrdenacao = 'DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-POS-DOUTORADO.@attributes.ANO';
+
+        $i = 0;
+        $ret = [];
+        foreach (self::listarRegistrosPorChaveOrdenado($lattes, $chave, $chaveOrdenacao) as $ent) {
+            $i++;
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-POS-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-POS-DOUTORADO']['@attributes'],
+                $ent['DETALHAMENTO-DA-ORIENTACAO-EM-ANDAMENTO-DE-POS-DOUTORADO']['@attributes'],
+                $ent['PALAVRAS-CHAVE']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-1']['@attributes'] ?? [],
+                $ent['AREAS-DO-CONHECIMENTO']['AREA-DO-CONHECIMENTO-2']['@attributes'] ?? [],
+                $ent['SETORES-DE-ATIVIDADE']['@attributes'] ?? [],
+                $ent['INFORMACOES-ADICIONAIS']['@attributes'] ?? [],
+            );
+        }
+        return $ret;
+    }
+
+    /**
+     * Lista as orientações em andamento de iniciação científica - IC
+     *
+     * Traz os dados básicos, detalhamento
+     *
+     * @param Integer $codpes
+     * @param String $tipo (ver método listarArtigos)
+     * @param Integer $limit_ini (ver método listarArtigos)
+     * @param Integer $limit_fim (ver método listarArtigos)
+     * @return Array|Bool
+     * @author Masakik, em 20/4/2023
+     */
+    public static function listarOrientacoesEmAndamentoIC($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    {
+        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+            return false;
+        }
+        $chave = 'DADOS-COMPLEMENTARES.ORIENTACOES-EM-ANDAMENTO.ORIENTACAO-EM-ANDAMENTO-DE-INICIACAO-CIENTIFICA';
+        $chaveOrdenacao = 'DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-INICIACAO-CIENTIFICA.@attributes.ANO';
+
+        $i = 0;
+        $ret = [];
+        foreach (self::listarRegistrosPorChaveOrdenado($lattes, $chave, $chaveOrdenacao) as $ent) {
+            $i++;
+            $sai = [];
+            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-INICIACAO-CIENTIFICA']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+                continue;
+            }
+            $ret[] = array_merge(
+                $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-INICIACAO-CIENTIFICA']['@attributes'],
+                $ent['DETALHAMENTO-DA-ORIENTACAO-EM-ANDAMENTO-DE-INICIACAO-CIENTIFICA']['@attributes'],
+            );
+        }
+        return $ret;
     }
 }
