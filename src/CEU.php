@@ -9,8 +9,9 @@ class CEU
      * Método para retornar os cursos de cultura e extensão de um período, permite filtrar por departamentos também 
      * @param int $ano_inicio - ano inicial do período (se null, usa o ano atual)
      * @param int $ano_fim - ano final do período (se null, usa igual $ano_inicio ano atual)
-     * @param array $deptos - Recebe um array com os códigos dos departamentos desejados. Se for igual a null, a consulta retornará todos os departamentos.
+     * @param array $deptos - Recebe um array ou valores separados por vírgula com os códigos dos departamentos desejados. Se for igual a null, a consulta retornará todos os departamentos.
      * @return array
+     * @author Erickson Zanon <ezanon@gmail.com> alterado em 06/2023 https://github.com/uspdev/replicado/issues/545
      */    
     public static function listarCursos($ano_inicio = null, $ano_fim = null, $deptos = null){
         
@@ -18,17 +19,12 @@ class CEU
         if (!$ano_inicio) $ano_inicio = date('Y');
         // se não foi enviado $ano_fim, atribui mesmo valor do $ano_inicio
         if (!$ano_fim) $ano_fim = $ano_inicio;
-        
-        $unidades = getenv('REPLICADO_CODUNDCLG');   
             
         $query = DB::getQuery('CEU.listarCursos.sql');
         
         //adiciona as unidades
-        $query = str_replace('__unidades__', $unidades, $query);
-        
-        // adiciona a parte dos anos
-        $anos = " AND e.dtainiofeedi BETWEEN '".$ano_inicio."-01-01' AND '".$ano_fim."-12-31'";
-        $query = str_replace('__anos__', $anos, $query);
+//        $unidades = getenv('REPLICADO_CODUNDCLG');
+//        $query = str_replace('__unidades__', $unidades, $query);
         
         // adiciona os departamentos   
         $deptoo = '';
@@ -44,20 +40,21 @@ class CEU
         $query = str_replace('__deptos__',$deptoo, $query);  
         
         // executando a query
-        $result = DB::fetchAll($query);
+        $param = [
+            'ano_inicio' => $ano_inicio,
+            'ano_fim' => $ano_fim       
+        ];
+        $result_cursos = DB::fetchAll($query,$param);
         
         // recuperar mais informações dos cursos obtidos
         $cursos = [];
-        foreach($result as $curso){
+        foreach($result_cursos as $curso){
             
-            // contar matriculados
-            $query = DB::getQuery('CEU.contarMatriculadosCurso.sql');
-            $param = [
-                'codcurceu' => $curso['codcurceu'],
-                'codedicurceu' => $curso['codedicurceu']       
-            ];
-            $result_matriculados = DB::fetchAll($query, $param);
-            $curso['matriculados'] = $result_matriculados[0]['matriculados'];
+            // se a edição foi cancelada não continua pois não será devolvido este valor
+            if ($curso['staedi']=='CAN'){
+                unset($curso);
+                continue;
+            }
             
             // obter ministrantes
             $query = DB::getQuery('CEU.listarMinistrantesPorCurso.sql');
@@ -77,10 +74,10 @@ class CEU
                 $curso['ministrantes'] = implode(", ", $ministrantes);
             }
             
-            // adiciona este curso ao array
-            array_push($cursos, $curso);     
-            
+            // adiciona o curso ao array cursos que será retornado
+            array_push($cursos, $curso);
             unset($curso);
+
         }       
         return $cursos;
     }
