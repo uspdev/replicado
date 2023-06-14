@@ -51,11 +51,7 @@ class CEU {
                 'codedicurceu' => $curso['codedicurceu']
             ];
             $result_ministrantes = DB::fetchAll($query, $param);
-            $ministrantes = [];
-            foreach ($result_ministrantes as $m) {
-                array_push($ministrantes, $m['nompes']);
-            }
-            $curso['ministrantes'] = implode(", ", $ministrantes);
+            $curso['ministrantes'] = implode(", ", array_column($result_ministrantes, 'nompes'));
 
             // adiciona o curso ao array cursos que será retornado
             array_push($cursos, $curso);
