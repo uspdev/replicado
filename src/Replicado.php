@@ -19,24 +19,28 @@ class Replicado
     private $cache;
 
     # Variáveis de config
-    public $host;
-    public $port;
+    public $host; //obrigatório
+    public $port; //obrigatório
     public $database;
-    public $username;
-    public $password;
+    public $username; //obrigatório
+    public $password; //obrigatório
     public $codundclg;
     public $codundclgs;
 
+    public $sybase = true;
     public $usarCache = false;
     public $cacheExpiry = 4 * 60 * 60;
     public $cacheSmall = 32;
 
     public $pathlog = '/tmp/replicado.log';
     public $debug = false;
-    public $sybase = true;
+    public $debugLevel = 1; // 1: somente erros, 2: log de queries
 
     /** Variaveis que podem ser atualizadas pelo setConfig() */
-    protected $vars = ['host', 'port', 'database', 'username', 'password', 'pathlog', 'usarCache', 'cacheExpiry', 'cacheSmall', 'debug', 'sybase', 'codundclg', 'codundclgs'];
+    protected $vars = [
+        'host', 'port', 'database', 'username', 'password',
+        'codundclg', 'codundclgs', 'sybase', 'usarCache', 'cacheExpiry', 'cacheSmall',
+        'pathlog', 'debug', 'debugLevel'];
 
     private function __construct()
     {}
@@ -131,7 +135,7 @@ class Replicado
     public static function setConfig(array $newConfig = [])
     {
         if (isset($newConfig['reset']) && $newConfig['reset'] == true) {
-            $newConfig = [];
+            SELF::$config = new Config();
         }
         $config = SELF::getInstance($newConfig);
 
@@ -139,7 +143,7 @@ class Replicado
             if (isset($newConfig[$var])) {
                 $config->$var = $newConfig[$var];
             } else {
-                // var=usarCache -> varSnake=usar_cache
+                // var=usarCache -> varSnake=USAR_CACHE
                 $varSnake = ltrim(strtoupper(preg_replace('/[A-Z]/', '_$0', $var)), '_');
                 $config->$var = Uteis::env('REPLICADO_' . $varSnake, $config->$var);
             }
@@ -165,13 +169,13 @@ class Replicado
      * @param String $message
      * @return void
      */
-    public function log(string $channelName, string $message)
+    public function log(string $channelName, string $message, string $level = 'error')
     {
         if (!isset(SELF::$logger)) {
             SELF::$logger = new Logger($channelName);
             SELF::$logger->pushHandler(new StreamHandler($this->pathlog, Logger::DEBUG));
         }
-        SELF::$logger->error($message);
+        SELF::$logger->$level($message);
     }
 
 }
