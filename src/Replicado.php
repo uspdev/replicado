@@ -135,7 +135,7 @@ class Replicado
     public static function setConfig(array $newConfig = [])
     {
         if (isset($newConfig['reset']) && $newConfig['reset'] == true) {
-            SELF::$config = new Config();
+            SELF::$instance = new Self;
         }
         $config = SELF::getInstance($newConfig);
 
