@@ -108,7 +108,7 @@ class DB
         if ($config->debugLevel >= 2) {
             // remove comentários sql
             // https://stackoverflow.com/questions/9690448/regular-expression-to-remove-comments-from-sql-statement
-            $queryLog = preg_replace('@(--[^\r\n]*)|(\#[^\r\n]*)|(/\*[\w\W]*?(?=\*/)\*/)@ms', '', $queryLog ?? '');
+            $queryLog = preg_replace('@(--[^\r\n]*)|(\#[^\r\n]*)|(/\*[\w\W]*?(?=\*/)\*/)@ms', '', $queryLog ?? $query);
             // remove espaços em excesso
             $queryLog = preg_replace('/\s+/', ' ', $queryLog);
             // pega a classe::método que chamou - procura nos 5 ultimos
