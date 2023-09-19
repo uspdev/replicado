@@ -11,7 +11,7 @@
 
 ## Replicado
 
-Biblioteca PHP que abstrai em classes a camade de acesso ao replicado USP, 
+Biblioteca PHP que abstrai em classes a camada de acesso ao replicado USP, 
 isto é, ao invés de inserir uma consulta SQL diretamente em seu código, 
 como por exemplo: 
 
@@ -24,7 +24,7 @@ seu código muito mais limpo, além de torna as consultas reutilizáveis:
 
 ## Dependências
 
-* É necessário pelo menos o PHP v7.3.
+* É necessário pelo menos o PHP v7.3 e é compatível com php v8.0 e posteriores
 * Esta biblioteca precisa da extensão `ext-sybase`. No ubuntu instale com `sudo apt install php-sybase`
 * Esta biblioteca usa opcionalmente `uspdev/cache`. Caso queira usar o cache consulte a documentação em: https://github.com/uspdev/cache
 
@@ -52,9 +52,10 @@ $config = [
     'codundclg' => '8',
     'codundclgs' => '8,84',
     'pathlog' => 'path/to/your.log',
-    'sybase' => 0,
-    'usarCache' => 0,
-    'debug' => 1,
+    'sybase' => true,
+    'usarCache' => false,
+    'debug' => false,
+    'debugLevel' => 1,
 ];
 Replicado::setConfig($config);
 
@@ -79,11 +80,12 @@ putenv('REPLICADO_PASSWORD=secret');
 putenv('REPLICADO_CODUNDCLG=8');
 putenv('REPLICADO_CODUNDCLGS=8,84');
 
-# Opcionais
-putenv('REPLICADO_PATHLOG=path/to/your.log');
-putenv('REPLICADO_SYBASE=0');
-putenv('REPLICADO_USAR_CACHE=0');
-putenv('DEBUG=1');
+# Opcionais - estes são os valores default
+putenv('REPLICADO_PATHLOG=/tmp/replicado.log');
+putenv('REPLICADO_SYBASE=true');
+putenv('REPLICADO_USAR_CACHE=false');
+putenv('REPLICADO_DEBUG=false');
+putenv('REPLICADO_DEBUG_LEVEL=1');
 
 $emails = Pessoa::emails('123456');
 print_r($emails);
@@ -125,7 +127,32 @@ Por fim ative o cache do replicado com
 
     putenv('REPLICADO_USAR_CACHE=1');
 
+Ainda é possível controlar o comportamento do cache somente para o replicado com
+
+    putenv('REPLICADO_CACHE_EXPIRY=14400'); // 4 horas para expirar
+    putenv('REPLICADO_CACHE_SMALL=32'); // tamanho máx em bytes do retorno que não vai ser cacheado
+
 Em produção vale a pena usar mas em testes mantenha desativado.
+
+## Debug
+
+A variável debug, se `true`, mostra mensagens na tela em caso de erro.
+
+Por padrão os erros também são gravados no log. Caso queira gravar em log as queries executadas no BD do replicado, 
+aumente o debugLevel para 2.
+
+    putenv('REPLICADO_DEBUG_LEVEL=2');
+
+## Config reset
+
+No método `Lattes::obterZip()`, pode ser necessário alterar a configuração do replicado momentaneamente definindo `sybase = false`. Isso é possível com o comando abaixo
+
+        Replicado::setConfig(['sybase' => false]);
+
+Para retornar às configurações do env, pode-se utilizar o comando reset como segue
+
+        Replicado::setConfig(['reset' => true]);
+
 
 ## Informações sobre tabelas
 

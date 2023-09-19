@@ -101,11 +101,32 @@ class DB
         foreach ($param as $campo => $valor) {
             $valor = $config->sybase ? utf8_decode($valor) : $valor;
             $stmt->bindValue(":$campo", $valor);
+            if ($config->debugLevel >= 2) {
+                $queryLog = str_replace(":$campo", $valor, $queryLog ?? $query);
+            }
+        }
+        if ($config->debugLevel >= 2) {
+            // remove comentários sql
+            // https://stackoverflow.com/questions/9690448/regular-expression-to-remove-comments-from-sql-statement
+            $queryLog = preg_replace('@(--[^\r\n]*)|(\#[^\r\n]*)|(/\*[\w\W]*?(?=\*/)\*/)@ms', '', $queryLog ?? '');
+            // remove espaços em excesso
+            $queryLog = preg_replace('/\s+/', ' ', $queryLog);
+            // pega a classe::método que chamou - procura nos 5 ultimos
+            $fn = '';
+            foreach (debug_backtrace(!DEBUG_BACKTRACE_PROVIDE_OBJECT, 5) as $bt) {
+                if (!in_array($bt['function'], ['overrideFetch', 'getRaw', 'getCached', 'fetchAll'])) {
+                    $fn = $bt['class'] . $bt['type'] . $bt['function'];
+                    break;
+                }
+            }
+            $config->log('debug:2 ', $fn . ', ' . $queryLog, 'info');
         }
         try {
             $stmt->execute();
         } catch (Throwable $t) {
-            $config->log('Erro na consulta ', $t->getMessage());
+            if ($config->debugLevel >= 1) {
+                $config->log('Erro na consulta ', $t->getMessage());
+            }
             if ($config->debug) {
                 die('Erro na consulta do replicado: ' . $t->getMessage());
             } else {
