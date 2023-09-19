@@ -114,7 +114,7 @@ class DB
             // pega a classe::método que chamou - procura nos 5 ultimos
             $fn = '';
             foreach (debug_backtrace(!DEBUG_BACKTRACE_PROVIDE_OBJECT, 5) as $bt) {
-                if (!in_array($bt['function'], ['overrideFetch', 'getRaw', 'getCached', 'fetchAll'])) {
+                if (!in_array($bt['function'], ['overrideFetch', 'getRaw', 'getCached', 'fetchAll', 'fetch'])) {
                     $fn = $bt['class'] . $bt['type'] . $bt['function'];
                     break;
                 }
