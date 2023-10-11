@@ -97,6 +97,7 @@ class DB
     public static function overrideFetch(string $fetchType, string $query, array $param = [])
     {
         $config = Config::getInstance();
+        $query = SELF::automaticReplaces($query);
         $stmt = SELF::getInstance()->prepare($query);
         foreach ($param as $campo => $valor) {
             $valor = $config->sybase ? utf8_decode($valor) : $valor;
@@ -250,20 +251,27 @@ class DB
         $queries .= 'queries';
         $query = file_get_contents($queries . DIRECTORY_SEPARATOR . $filename);
 
-        foreach ($replaces as $key => $val) {
-            if (str_starts_with($key, '--') || str_starts_with($key, '__')) {
-                $query = str_replace($key, $val, $query); // replace de comentário
-            } else {
-                $query = str_replace("__{$key}__", $val, $query);
-            }
-        }
+        return $query;
+    }
 
-        // replace automátido do codundclgs, anteriormente __unidades__
+    /**
+     * Replaces automáticos de variáveis do replicado
+     *
+     * Vai substituir __codundclg__ e __codundclgs__ pelo conteúdo da variável no config.
+     *
+     * @param String $query
+     * @return String
+     */
+    public static function automaticReplaces($query)
+    {
+        $config = Config::getInstance();
         if (str_contains($query, '__codundclgs__')) {
-            $config = Config::getInstance();
             $codundclgs = $config->codundclgs;
             $codundclgs = $codundclgs ?: $config->codundclg;
             $query = str_replace("__codundclgs__", $codundclgs, $query);
+        }
+        if (str_contains($query, '__codundclg__')) {
+            $query = str_replace("__codundclg__", $config->codundclg, $query);
         }
 
         return $query;
