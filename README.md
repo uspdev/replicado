@@ -193,7 +193,7 @@ OBS1.: Quando passar parâmetro `array` simples, deixar opcional passar `string`
 
 OBS2.: (11/2022) As queries dos métodos devem ficar em `resources/queries` e as substituições, se necessário podem ser feitas no método `DB::getQuery('arquivo.sql', $replaces)`
 
-OBS3.: (11/2022) Se necessário usar `REPLICADO_CODUNDCLGS` na query substituindo `__codundclgs__`, não é necessário carregar do `env` ou do `config` e colocar em `$replaces`. O método `DB::getQuery` já busca automaticamente e faz a substituição. Mas se quiser passar algo diferente do `config`, fique à vontade.
+OBS3.: (10/2023) Se necessário usar `REPLICADO_CODUNDCLGS` ou `REPLICADO_CODUNDCLG` na query, basta colocar `__codundclgs__` ou `__codundclg__` que a biblioteca fará a substituição correspondente. A substituição é feita no método `DB::overrideFetch`. Mas se quiser passar algo diferente do `config`, fique à vontade.
 
 OBS4.: Nos métodos não usar `getenv('REPLICADO_VARIAVEL')`. Usar, se necessário, `Replicado::getConfig('variavel')`.
 
