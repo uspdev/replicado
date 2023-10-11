@@ -156,7 +156,7 @@ class Replicado
 
         if (empty($config->host) || empty($config->port) || empty($config->username) || empty($config->password)) {
             $config->log('Config', 'Configurações do replicado incompletas.');
-            die('Configurações do replicado incompletas.');
+            // die('Configurações do replicado incompletas.');
         }
 
         return $config->getConfig();
