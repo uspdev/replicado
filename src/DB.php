@@ -268,10 +268,10 @@ class DB
         if (str_contains($query, '__codundclgs__')) {
             $codundclgs = $config->codundclgs;
             $codundclgs = $codundclgs ?: $config->codundclg;
-            $query = str_replace("__codundclgs__", $codundclgs, $query);
+            $query = str_replace('__codundclgs__', $codundclgs, $query);
         }
         if (str_contains($query, '__codundclg__')) {
-            $query = str_replace("__codundclg__", $config->codundclg, $query);
+            $query = str_replace('__codundclg__', $config->codundclg, $query);
         }
 
         return $query;
