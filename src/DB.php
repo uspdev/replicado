@@ -238,6 +238,7 @@ class DB
      * @return String
      * @author Masakik, Fernando G. Moura, modificado em 28/10/2022
      * @author Masakik, modificado em 5/5/2023, incluindo replace de comentário
+     * @author Masakik, 1/2/2024, revertendo replaces que foi removido indevidamente #566
      */
     public static function getQuery($filename, array $replaces = [])
     {
@@ -250,6 +251,14 @@ class DB
         $queries .= DIRECTORY_SEPARATOR;
         $queries .= 'queries';
         $query = file_get_contents($queries . DIRECTORY_SEPARATOR . $filename);
+
+        foreach ($replaces as $key => $val) {
+            if (str_starts_with($key, '--') || str_starts_with($key, '__')) {
+                $query = str_replace($key, $val, $query); // replace de comentário
+            } else {
+                $query = str_replace("__{$key}__", $val, $query);
+            }
+        }
 
         return $query;
     }
