@@ -1,0 +1,1 @@
+SELECT codset, nomset, nomabvset FROM SETOR  WHERE codund IN (__codundclg__) AND tipset = 'Departamento de Ensino'

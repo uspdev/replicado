@@ -771,6 +771,18 @@ class Graduacao
         return DB::fetchAll($query, $param);
     }
 
+
+    /**
+     * Retorna lista com o código de setor, nome e sigla dos departamentos de ensino da unidade.
+     * 
+     * @return Array
+     * @author Kawan Santana, em 19/03/2024
+     */
+    public static function listarDepartamentosDeEnsino(){
+        $query = DB::getQuery('Graduacao.listarDepartamentosDeEnsino.sql');
+        return DB::fetchAll($query);
+    }
+
     /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
     /**
