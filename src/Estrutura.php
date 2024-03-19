@@ -82,4 +82,9 @@ class Estrutura
 
         return DB::fetchAll($query, $param);
     }
+
+    public static function listarUnidadesAtivas(){
+        $query = DB::getQuery('Estrutura.listarUnidadesAtivas.sql');
+        return Db::fetchAll($query);
+    }
 }
