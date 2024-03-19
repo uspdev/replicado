@@ -89,8 +89,8 @@ class Estrutura
      * @return Array
      * @author Kawan Santana, em 19/03/2024
      */
-    public static function listarUnidadesAtivas(){
-        $query = DB::getQuery('Estrutura.listarUnidadesAtivas.sql');
+    public static function listarUnidades(){
+        $query = DB::getQuery('Estrutura.listarUnidades.sql');
         return Db::fetchAll($query);
     }
 }
