@@ -773,7 +773,7 @@ class Graduacao
 
 
     /**
-     * Retorna lista os departamentos de ensino da unidade.
+     * Retorna lista com os departamentos de ensino da unidade.
      * 
      * @return Array
      * @author Kawan Santana, em 19/03/2024
