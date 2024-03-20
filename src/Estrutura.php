@@ -82,4 +82,15 @@ class Estrutura
 
         return DB::fetchAll($query, $param);
     }
+
+    /**
+     * Retorna lista com todas as unidades ativas da universidade.
+     * 
+     * @return Array
+     * @author Kawan Santana, em 19/03/2024
+     */
+    public static function listarUnidades(){
+        $query = DB::getQuery('Estrutura.listarUnidades.sql');
+        return Db::fetchAll($query);
+    }
 }
