@@ -1178,8 +1178,10 @@ class Pessoa
     /**
      * Método para retornar a lista de titulações de uma pessoa
      *
+     * As titulações dentro da USP são adicionadas automaticamente, as demais cada servidor pode adicionar no sistema MarteWeb.
+     *
      * @param Integer $codpes
-     * @return Array 
+     * @return Array
      *
      * @author Alessandro Costa de Oliveira, em 11/04/2024
      */
