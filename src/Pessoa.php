@@ -1175,6 +1175,23 @@ class Pessoa
         return $sitvcipesext;
     }
 
+    /**
+     * Método para retornar a lista de titulações de uma pessoa
+     *
+     * As titulações dentro da USP são adicionadas automaticamente, as demais cada servidor pode adicionar no sistema MarteWeb.
+     *
+     * @param Integer $codpes
+     * @return Array
+     *
+     * @author Alessandro Costa de Oliveira, em 11/04/2024
+     */
+    public static function listarTitulacoes(int $codpes)
+    {
+        $query = DB::getQuery('Pessoa.listarTitulacoes.sql');
+        $param = ['codpes' => $codpes];
+        return DB::fetchAll($query, $param);
+    }
+
     /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
     /**
