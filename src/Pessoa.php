@@ -328,6 +328,18 @@ class Pessoa
     }
 
     /**
+     * Método para listar servidores afastados da unidade.
+     * 
+     * @return Array
+     * @author Kawan Santana, em 22/04/2024
+     */
+    public static function listarAfastados()
+    {
+        $query = DB::getQuery('Pessoa.listarAfastados.sql');
+        return DB::fetchAll($query);
+    }
+
+    /**
      * Método para retornar estagiários ativos na unidade
      *
      * @param Integer $codundclgi
