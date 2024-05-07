@@ -217,18 +217,11 @@ class Graduacao
      *
      * @return Array lista com com disciplinas
      * @author André Canale Garcia <acgarcia@sc.sp.br> (antes de 4/2022)
+     * @author Masakik, em 7/5/2024, fix #565 - aplicado filtro de disciplinas não ativadas
      */
     public static function listarDisciplinas()
     {
-        $codclg = getenv('REPLICADO_CODUNDCLG');
-
-        $query = "SELECT D1.*
-                  FROM DISCIPLINAGR AS D1
-                  WHERE (D1.verdis = (SELECT MAX(D2.verdis) FROM DISCIPLINAGR AS D2 WHERE (D2.coddis = D1.coddis)))
-                    AND D1.coddis IN (SELECT coddis FROM DISCIPGRCODIGO WHERE DISCIPGRCODIGO.codclg IN ({$codclg}))
-                    AND D1.dtadtvdis is NULL
-                  ORDER BY D1.nomdis ASC";
-
+        $query = DB::getQuery('Graduacao.listarDisciplinas.sql');
         return DB::fetchAll($query);
     }
 
@@ -774,7 +767,7 @@ class Graduacao
 
     /**
      * Retorna lista com os departamentos de ensino da unidade.
-     * 
+     *
      * @return Array
      * @author Kawan Santana, em 19/03/2024
      */
