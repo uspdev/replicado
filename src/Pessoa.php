@@ -1204,6 +1204,23 @@ class Pessoa
         return DB::fetchAll($query, $param);
     }
 
+    /**
+     * Método para retornar a lista do histórico funcional de uma pessoa
+     *
+     * Somente os já encerrados dentro da unidade
+     *
+     * @param Integer $codpes
+     * @return Array
+     *
+     * @author Alessandro Costa de Oliveira, em 04/06/2024
+     */
+    public static function listarHistoricoFuncional(int $codpes)
+    {
+        $query = DB::getQuery('Pessoa.listarHistoricoFuncional.sql');
+        $param = ['codpes' => $codpes];
+        return DB::fetchAll($query, $param);
+    }
+
     /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
     /**
