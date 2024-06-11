@@ -96,7 +96,8 @@ class Estrutura
 
     /**
      * Método que retorna todos campos da tabela UNIDADE.
-     *
+     * Fetch retornando apenas um registro, logo somente um código de unidade
+     *  
      * @param Integer $codund - Código da unidade 
      * @return Array
      * @author Alessandro Costa de Oliveira, em 11/06/2024
