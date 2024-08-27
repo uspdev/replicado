@@ -93,4 +93,20 @@ class Estrutura
         $query = DB::getQuery('Estrutura.listarUnidades.sql');
         return Db::fetchAll($query);
     }
+
+    /**
+     * Método que retorna todos campos da tabela UNIDADE.
+     * Fetch retornando apenas um registro, logo somente um código de unidade
+     *  
+     * @param Integer $codund - Código da unidade 
+     * @return Array
+     * @author Alessandro Costa de Oliveira, em 11/06/2024
+     */
+    public static function obterUnidade($codund)
+    {        
+        $query = DB::getQuery('Estrutura.obterUnidade.sql');
+        $param = ['codund' => $codund];
+        return DB::fetch($query, $param);
+    }
+
 }
