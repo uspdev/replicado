@@ -842,21 +842,17 @@ class Pessoa
      * @param integer $codpes
      * @return string
      */
+    // TODO: Depreciar este método e criar um novo trocando o verbo para retornarRamalUsp, já que o método retorna um valor e não um registro 
     public static function obterRamalUsp(int $codpes)
     {
-        $query = " SELECT numtelfmt
-                    FROM LOCALIZAPESSOA
-                    WHERE LOCALIZAPESSOA.codpes = convert(int, :codpes)";
+        $query = DB::getQuery('Pessoa.obterRamalUsp.sql');
         $param = [
             'codpes' => $codpes,
         ];
-
         $result = DB::fetch($query, $param);
-
         if (!empty($result)) {
             return $result['numtelfmt'];
         }
-
         return "";
     }
 
