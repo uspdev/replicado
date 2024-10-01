@@ -141,11 +141,13 @@ class Pessoa
      * @param String $nome Nome a ser buscado
      * @param Bool $fonetico Se true faz busca no campo nompesfon, se false faz em nompesttd
      * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a tabela PESSOAS
+     * @param String $vinculo
+     * @param String $codundclg Se não vazio faz busca restrita à unidade especificada
      * @return array
      * @author Masaki K Neto, em 10/11/2020
      * @author Masaki K Neto, atualizado em 1/2/2022
      */
-    public static function procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true)
+    public static function procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string $vinculo = null, $codundclg = null)
     {
         if ($fonetico) {
             $nome = Uteis::fonetico($nome);
@@ -157,6 +159,11 @@ class Pessoa
             $query_busca = "UPPER(P.nompesttd) LIKE UPPER(:nome)";
         }
 
+        if (!is_null($codundclg))
+            $query_busca .= " AND L.tipvin = :vinculo
+                AND L.codundclg IN ($codundclg)
+                AND L.sitatl IN ('A', 'P')";
+        
         if ($ativos) {
             $query = "SELECT P.*, L.* FROM PESSOA P
                 INNER JOIN LOCALIZAPESSOA L on L.codpes = P.codpes
@@ -164,12 +171,14 @@ class Pessoa
                 AND $query_busca
                 ORDER BY P.nompesttd ASC";
         } else {
-            $query = "SELECT P.* FROM PESSOA P
+            $query = "SELECT DISTINCT P.* FROM PESSOA P
+                LEFT JOIN LOCALIZAPESSOA L on L.codpes = P.codpes --inclui LOCALIZAPESSOA na query para poder filtrar por codundclg, se necessário
                 WHERE $query_busca
                 ORDER BY P.nompesttd ASC";
         }
 
-        $param = ['nome' => '%' . $nome . '%'];
+        $param = ['nome' => '%' . $nome . '%',
+                  'vinculo' => $vinculo];
         return DB::fetchAll($query, $param);
     }
 
@@ -1200,23 +1209,6 @@ class Pessoa
     public static function listarTitulacoes(int $codpes)
     {
         $query = DB::getQuery('Pessoa.listarTitulacoes.sql');
-        $param = ['codpes' => $codpes];
-        return DB::fetchAll($query, $param);
-    }
-
-    /**
-     * Método para retornar a lista do histórico funcional de uma pessoa
-     *
-     * Somente os já encerrados dentro da unidade
-     *
-     * @param Integer $codpes
-     * @return Array
-     *
-     * @author Alessandro Costa de Oliveira, em 04/06/2024
-     */
-    public static function listarHistoricoFuncional(int $codpes)
-    {
-        $query = DB::getQuery('Pessoa.listarHistoricoFuncional.sql');
         $param = ['codpes' => $codpes];
         return DB::fetchAll($query, $param);
     }
