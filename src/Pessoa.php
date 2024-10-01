@@ -141,13 +141,14 @@ class Pessoa
      * @param String $nome Nome a ser buscado
      * @param Bool $fonetico Se true faz busca no campo nompesfon, se false faz em nompesttd
      * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a tabela PESSOAS
-     * @param String $vinculo
-     * @param String $codundclg Se não vazio faz busca restrita à unidade especificada
+     * @param String $tipvin Se não vazio faz busca restrita ao tipo de vínculo especificado
+     * @param String $codundclgs Se não vazio faz busca restrita à unidade especificada
      * @return array
      * @author Masaki K Neto, em 10/11/2020
      * @author Masaki K Neto, atualizado em 1/2/2022
+     * @author Marcelo A K Fontana, atualizado em 01/10/2024
      */
-    public static function procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string $vinculo = null, $codundclg = null)
+    public static function procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string $tipvin = null, string $codundclgs = null)
     {
         if ($fonetico) {
             $nome = Uteis::fonetico($nome);
@@ -159,9 +160,11 @@ class Pessoa
             $query_busca = "UPPER(P.nompesttd) LIKE UPPER(:nome)";
         }
 
-        if (!is_null($codundclg))
-            $query_busca .= " AND L.tipvin = :vinculo
-                AND L.codundclg IN ($codundclg)
+        if (!is_null($tipvin))
+            $query_busca .= " AND L.tipvin = :tipvin";
+        
+        if (!is_null($codundclgs))
+            $query_busca .= " AND L.codundclg IN ($codundclgs)
                 AND L.sitatl IN ('A', 'P')";
         
         if ($ativos) {
@@ -172,13 +175,13 @@ class Pessoa
                 ORDER BY P.nompesttd ASC";
         } else {
             $query = "SELECT DISTINCT P.* FROM PESSOA P
-                LEFT JOIN LOCALIZAPESSOA L on L.codpes = P.codpes --inclui LOCALIZAPESSOA na query para poder filtrar por codundclg, se necessário
+                LEFT JOIN LOCALIZAPESSOA L on L.codpes = P.codpes --inclui LOCALIZAPESSOA na query para poder filtrar por tipvin e codundclg, se necessário
                 WHERE $query_busca
                 ORDER BY P.nompesttd ASC";
         }
 
         $param = ['nome' => '%' . $nome . '%',
-                  'vinculo' => $vinculo];
+                  'tipvin' => $tipvin];
         return DB::fetchAll($query, $param);
     }
 
