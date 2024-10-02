@@ -180,8 +180,9 @@ class Pessoa
                 ORDER BY P.nompesttd ASC";
         }
 
-        $param = ['nome' => '%' . $nome . '%',
-                  'tipvin' => $tipvin];
+        $param = ['nome' => '%' . $nome . '%'];
+        if (!is_null($tipvin))
+            $param += ['tipvin' => $tipvin];
         return DB::fetchAll($query, $param);
     }
 
