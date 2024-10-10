@@ -223,16 +223,17 @@ Se você utiliza um desses métodos nos seus sistemas, atualize para o novo mét
 
 ### phpunit
 
-Ao criar um método novo é necessário criar um método correspondente de teste, usando o phpunit. Para isso, você precisa de um banco de dados sybase ou mssql 
-que possa deletar as tabelas, há quatro opções para você rodar os testes:
+De forma opcional, se quiser fazer do jeito *bonitinho*, pode-se criar teste unitário, usando o phpunit. 
+Para isso, você precisa de um banco de dados sybase ou mssql que possa deletar as tabelas, 
+há quatro opções para você rodar os testes:
 
 - Baixar o mssql ou sybase e instalá-los manualmente
 - Subir um container Sybase com https://github.com/uspdev/asedocker
 - Instalar o sybase com ansible https://github.com/fflch/ansible-role-sap-ase
 - Nós mantemos um servidor sybase de testes, se quiser, solicite as credenciais uspdev@usp.br
 
-As Pull Request são automaticamente testadas pelo travis, assim, antes de abrir um
-PR garanta que os testes estão passando:
+Os Pull Request são automaticamente testadas pelo travis (desativado por enquanto).
+Para verificar se os testes estão passando:
 
     ./vendor/bin/phpunit
 
