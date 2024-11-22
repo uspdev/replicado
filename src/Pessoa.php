@@ -143,12 +143,14 @@ class Pessoa
      * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a tabela PESSOAS
      * @param String $tipvin Se não vazio faz busca restrita ao tipo de vínculo especificado
      * @param String $codundclgs Se não vazio faz busca restrita à unidade especificada
+     * @param String $tipvinext Se não vazio faz busca restrita ao tipo de vínculo ext especificado
      * @return array
      * @author Masaki K Neto, em 10/11/2020
      * @author Masaki K Neto, atualizado em 1/2/2022
      * @author Marcelo A K Fontana, atualizado em 01/10/2024
+     * @author Marcelo A K Fontana, atualizado em 22/11/2024
      */
-    public static function procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string $tipvin = null, string $codundclgs = null)
+    public static function procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string $tipvin = null, string $codundclgs = null, string $tipvinext = null)
     {
         if ($fonetico) {
             $nome = Uteis::fonetico($nome);
@@ -162,6 +164,9 @@ class Pessoa
 
         if (!is_null($tipvin))
             $query_busca .= " AND L.tipvin = :tipvin";
+        
+        if (!is_null($tipvinext))
+            $query_busca .= " AND L.tipvinext = :tipvinext";
         
         if (!is_null($codundclgs))
             $query_busca .= " AND L.codundclg IN ($codundclgs)
@@ -183,6 +188,8 @@ class Pessoa
         $param = ['nome' => '%' . $nome . '%'];
         if (!is_null($tipvin))
             $param += ['tipvin' => $tipvin];
+        if (!is_null($tipvinext))
+            $param += ['tipvinext' => $tipvinext];
         return DB::fetchAll($query, $param);
     }
 
