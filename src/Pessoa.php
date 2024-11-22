@@ -162,11 +162,17 @@ class Pessoa
             $query_busca = "UPPER(P.nompesttd) LIKE UPPER(:nome)";
         }
 
-        if (!is_null($tipvin))
-            $query_busca .= " AND L.tipvin = :tipvin";
+        $param['nome'] = '%' . $nome . '%';
         
-        if (!is_null($tipvinext))
+        if (!is_null($tipvin)) {
+            $query_busca .= " AND L.tipvin = :tipvin";
+            $param['tipvin'] = $tipvin;
+        }
+        
+        if (!is_null($tipvinext)) {
             $query_busca .= " AND L.tipvinext = :tipvinext";
+            $param['tipvinext'] = $tipvinext;
+        }
         
         if (!is_null($codundclgs))
             $query_busca .= " AND L.codundclg IN ($codundclgs)
@@ -185,11 +191,6 @@ class Pessoa
                 ORDER BY P.nompesttd ASC";
         }
 
-        $param = ['nome' => '%' . $nome . '%'];
-        if (!is_null($tipvin))
-            $param += ['tipvin' => $tipvin];
-        if (!is_null($tipvinext))
-            $param += ['tipvinext' => $tipvinext];
         return DB::fetchAll($query, $param);
     }
 
