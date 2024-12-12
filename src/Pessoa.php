@@ -7,11 +7,12 @@ class Pessoa
 
     /**
      * Método que recebe codpes e retorna todos campos da tabela Pessoa para o codpes em questão.
+     *
      * O campos $fields é opcional.
      *
      * @param Integer $codpes
-     * @param array $fields
-     * @return void
+     * @param Array $fields
+     * @return Array
      */
     public static function dump(int $codpes, array $fields = ['*'])
     {
@@ -31,7 +32,7 @@ class Pessoa
      * Existe a possibilidade de uma pessoa ter mais de um cartão ativo, para isso utilize o método listarCrachas
      *
      * @param Integer $codpes
-     * @return array
+     * @return Array
      */
     public static function cracha($codpes)
     {
@@ -49,7 +50,7 @@ class Pessoa
      * Eventualmente uma pessoa pode ter mais de um cartão ativo.
      *
      * @param Integer $codpes
-     * @return array
+     * @return Array
      * @author Alessandro Costa de Oliveira - 21/03/2022
      */
     public static function listarCrachas(int $codpes)
@@ -67,7 +68,7 @@ class Pessoa
      * Método que recebe número USP para retornar array com todos emails da pessoa
      *
      * @param Integer $codpes
-     * @return array
+     * @return Array
      */
     public static function emails($codpes)
     {
@@ -86,8 +87,7 @@ class Pessoa
     }
 
     /**
-     * Método que recebe o número USP para retornar email de correspondência da pessoa,
-     * cujo campo 'stamtr' é igual a 'S'
+     * Método que recebe o número USP para retornar email de correspondência da pessoa, cujo campo 'stamtr' é igual a 'S'
      *
      * @param Integer $codpes
      * @return String
@@ -113,7 +113,7 @@ class Pessoa
      * Método que recebe o número USP e retorna array com telefones da pessoa
      *
      * @param Integer $codpes
-     * @return array
+     * @return Array
      */
     public static function telefones($codpes)
     {
@@ -134,6 +134,7 @@ class Pessoa
 
     /**
      * Método para buscar pessoas por nome ou parte do nome
+     *
      * A busca pode ser fonética ou normal, somente ativos ou todos
      * Ativos incluem vinculos externos, dependentes, etc além dos alunos e servidores normais
      * Inativos são aqueles que não tem mais vínculos com a USP
@@ -163,21 +164,22 @@ class Pessoa
         }
 
         $param['nome'] = '%' . $nome . '%';
-        
+
         if (!is_null($tipvin)) {
             $query_busca .= " AND L.tipvin = :tipvin";
             $param['tipvin'] = $tipvin;
         }
-        
+
         if (!is_null($tipvinext)) {
             $query_busca .= " AND L.tipvinext = :tipvinext";
             $param['tipvinext'] = $tipvinext;
         }
-        
-        if (!is_null($codundclgs))
+
+        if (!is_null($codundclgs)) {
             $query_busca .= " AND L.codundclg IN ($codundclgs)
                 AND L.sitatl IN ('A', 'P')";
-        
+        }
+
         if ($ativos) {
             $query = "SELECT P.*, L.* FROM PESSOA P
                 INNER JOIN LOCALIZAPESSOA L on L.codpes = P.codpes
@@ -204,7 +206,7 @@ class Pessoa
      *
      * @param String $busca Código ou Nome a ser buscado
      * @param Bool $ativos Se true faz busca somente entre os ativos, se false busca em toda a base
-     * @return array
+     * @return Array
      * @author André Canale Garcia <acgarcia@sc.sp.br> // Adaptação do método procurarPorNome
      * @author Masaki K Neto, modificado em 1/2/2022
      */
@@ -234,7 +236,7 @@ class Pessoa
      *
      * @param Integer $codpes
      * @param Integer $codundclgi (opt)
-     * @return array
+     * @return Array
      * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      */
     public static function vinculos(int $codpes, int $codundclgi = 0)
@@ -294,7 +296,7 @@ class Pessoa
      *
      * Retorna dados das tabelas localizapessoa e pessoa
      *
-     * E possivel aplicar filtros sobre qualquer coluna retornada.
+     * É possivel aplicar filtros sobre qualquer coluna retornada.
      * O filtro é um array no formato [coluna => valor].
      *
      * @param array $filtros - default = []
@@ -349,8 +351,8 @@ class Pessoa
     }
 
     /**
-     * Método para listar servidores afastados da unidade.
-     * 
+     * Método para listar servidores afastados da unidade
+     *
      * @return Array
      * @author Kawan Santana, em 22/04/2024
      */
@@ -424,6 +426,7 @@ class Pessoa
 
     /**
      * Recebe um codpes e retorna o nome completo (nome social)
+     *
      * ou recebe um array de codpes e retorna uma lista chaveada dos nomes (codpes->nome)
      * @param Integer|Array $codpes
      * @return String|Array
@@ -729,6 +732,7 @@ class Pessoa
 
     /**
      * Método para retornar o total de docentes ativos na unidade do gênero especificado
+     *
      * @param Char $sexpes
      * @return Integer
      */
@@ -749,6 +753,7 @@ class Pessoa
 
     /**
      * Método para retornar o total de estágiarios ativos na unidade do gênero especificado
+     *
      * @param Char $sexpes
      * @return Integer
      */
@@ -768,7 +773,8 @@ class Pessoa
     }
 
     /**
-     * Método que recebe o codpes e retorna os campos para o endereço completo:
+     * Método que recebe o codpes e retorna os campos para o endereço completo
+     *
      * rua/avenida, número, complemento, bairro, cidade e UF.
      * @param Integer $codpes
      * @return array
@@ -820,6 +826,7 @@ class Pessoa
 
     /**
      * Método para retornar o total de servidores ativos na unidade do gênero especificado
+     *
      * @param Integer $codpes
      * @return int|bool
      */
@@ -838,8 +845,8 @@ class Pessoa
     }
 
     /**
-     * Método que recebe um email cadastrado no sistema (email usp ou alternativo) e
-     * retorna o número USP da pessoa
+     * Método que recebe um email cadastrado no sistema (email usp ou alternativo) e retorna o número USP da pessoa
+     *
      * @param String
      * @return boolean
      */
@@ -860,10 +867,11 @@ class Pessoa
 
     /**
      * Método que dado um número USP retorna um ramal USP
+     *
      * @param integer $codpes
      * @return string
      */
-    // TODO: Depreciar este método e criar um novo trocando o verbo para retornarRamalUsp, já que o método retorna um valor e não um registro 
+    // TODO: Depreciar este método e criar um novo trocando o verbo para retornarRamalUsp, já que o método retorna um valor e não um registro
     public static function obterRamalUsp(int $codpes)
     {
         $query = DB::getQuery('Pessoa.obterRamalUsp.sql');
@@ -912,6 +920,7 @@ class Pessoa
     /**
      * Método para retornar o codcur e o nome do curso da pessoa através do codpes
      *
+     * @param integer $codpes
      * @return array
      */
     public static function retornarCursoPorCodpes($codpes)
@@ -928,7 +937,11 @@ class Pessoa
 
     /**
      * Método que recebe um período (dtaini, dtafim) para listar falecidos.
+     *
      * Data no formato americano AAAA-MM-DD
+     *
+     * @param $dtaini
+     * @param $dtafim
      * @return array
      */
     public static function listarFalecidosPorPeriodo($dtaini, $dtafim)
@@ -1061,7 +1074,6 @@ class Pessoa
      *
      * @return Array lista de colegiados
      * @author @thiagogomesverissimo - 23/11/2021
-     *
      */
     public static function listarColegiados()
     {
@@ -1086,7 +1098,6 @@ class Pessoa
      * @param String $sglclg sigla do colegiado, também pode ser obtido com listarColegiados()
      * @return Array lista de membros do colegiado selecioando
      * @author @thiagogomesverissimo - 23/11/2021
-     *
      */
     public static function listarTitularesSuplentesDoColegiado(int $codclg, string $sglclg)
     {
@@ -1128,6 +1139,7 @@ class Pessoa
      * Método para listar mais informações de servidores ativos
      *
      * Usado em uspdev/pessoas
+     *
      * @param string $tipvinext valores possíveis 'Servidor', 'Docente' ou 'Docente Aposentado'
      * @return array
      * @author @alecostaweb em 12/11/2021 issue #478
@@ -1224,7 +1236,7 @@ class Pessoa
     /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
     /**
-     * Método para buscar pessoas por nome ou parte do nome, recebe uma string nome e retorna os resultados para a tabela Pessoa
+     * (deprecated) Método para buscar pessoas por nome ou parte do nome, recebe uma string nome e retorna os resultados para a tabela Pessoa
      *
      * @param string $nome
      * @return array
@@ -1236,7 +1248,7 @@ class Pessoa
     }
 
     /**
-     * Método para buscar pessoas por nomes fonéticos
+     * (deprecated)Método para buscar pessoas por nomes fonéticos
      *
      * @param string $nome
      * @return void
@@ -1248,7 +1260,7 @@ class Pessoa
     }
 
     /**
-     * Método que lista siglas dos vínculos ativos de uma pessoa, em uma dada unidade
+     * (deprecated) Método que lista siglas dos vínculos ativos de uma pessoa, em uma dada unidade
      *
      * @param Integer $codpes
      * @param Integer (opt) $codundclgi
@@ -1262,7 +1274,7 @@ class Pessoa
     }
 
     /**
-     * Método para retornar siglas dos setores que uma pessoa tem vínculo
+     * (deprecated) Método para retornar siglas dos setores que uma pessoa tem vínculo
      *
      * @param Integer $codpes
      * @param Integer $codundclgi
@@ -1385,7 +1397,6 @@ class Pessoa
         ];
         return DB::fetchAll($query, $param);
     }
-
 
     /********** FIM - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 }
