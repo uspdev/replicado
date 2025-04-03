@@ -411,13 +411,14 @@ class Graduacao
     public static function contarAtivosPorGenero($sexpes, $codcur = null)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
-
-        $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA
-                    JOIN PESSOA ON PESSOA.codpes = LOCALIZAPESSOA.codpes
-                    JOIN SITALUNOATIVOGR ON SITALUNOATIVOGR.codpes = LOCALIZAPESSOA.codpes
-                    WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR'
-                    AND LOCALIZAPESSOA.codundclg IN ({$unidades})
-                    AND PESSOA.sexpes = :sexpes AND SITALUNOATIVOGR.codcur = convert(int,:codcur) ";
+        $query = "SELECT COUNT (DISTINCT L.codpes) 
+                  FROM LOCALIZAPESSOA L
+                      INNER JOIN PESSOA P ON P.codpes = L.codpes
+                      INNER JOIN HABILPROGGR H ON H.codpes = L.codpes
+                  WHERE L.tipvin = 'ALUNOGR'
+                      AND L.codundclg IN ({$unidades})
+                      AND P.sexpes = :sexpes
+                      AND H.codcur = CONVERT(INT, :codcur) ";
         $param = [
             'sexpes' => $sexpes,
             'codcur' => $codcur,
