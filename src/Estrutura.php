@@ -109,6 +109,14 @@ class Estrutura
         return DB::fetch($query, $param);
     }
 
+    /**
+     * Obtém todas as informações de um único local da tabela LOCALUSP.
+     * Retorna um array contendo todos os campos do registro correspondente ao código de local informado.
+     *  
+     * @param Integer $codlocusp - Código do local
+     * @return Array
+     * @author Antonio Augusto de Campos, em 13/08/2025
+     */
     public static function obterLocalusp($codlocusp)
     {
         $query = DB::getQuery('Estrutura.obterLocalusp.sql');
@@ -116,6 +124,16 @@ class Estrutura
         return DB::fetch($query, $param);
     }
 
+    /**
+     * Lista todos os registros de local de uma unidade específica.
+     *
+     * Se o código da unidade não for informado, será utilizado o valor definido
+     * na variável de ambiente `REPLICADO_CODUNDCLG`.
+     * 
+     * @param Integer $codund - Código da unidade 
+     * @return Array
+     * @author Antonio Augusto de Campos, em 13/08/2025
+     */
     public static function listarLocalusp($codund = null)
     {
         $codund = $codund ?: getenv('REPLICADO_CODUNDCLG');
@@ -128,6 +146,20 @@ class Estrutura
         return DB::fetchAll($query, $param);
     }
 
+    /**
+     * Procura locais por código parcial e retorna informações adicionais.
+     *
+     * Faz a busca na tabela LOCALUSP trazendo todos os campos do local,
+     * adicionando também:
+     *  - `epflgr` e `numlgr` da tabela ENDUSP
+     *  - `sglund` da tabela UNIDADE
+     * 
+     * Fetch retornando todos os locais com código que iniciam com o valor parcial passado
+     *  
+     * @param Integer $partCodlocusp - Código parcial de Local
+     * @return Array
+     * @author Antonio Augusto de Campos, em 13/08/2025
+     */
     public static function procurarLocalusp($partCodlocusp)
     {
         $query = DB::getQuery('Estrutura.procurarLocalusp.sql');
