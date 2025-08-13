@@ -136,13 +136,11 @@ class Estrutura
      */
     public static function listarLocalusp($codund = null)
     {
-        $codund = $codund ?: getenv('REPLICADO_CODUNDCLG');
+        $codund = $codund ?: Replicado::getConfig('codundclg');
         
         $query = DB::getQuery('Estrutura.listarLocalusp.sql');
-        $param = [];
-        if ($codund) {
-            $param['codund'] = $codund;
-        }
+        $param['codund'] = $codund;
+        
         return DB::fetchAll($query, $param);
     }
 
