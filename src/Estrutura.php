@@ -12,7 +12,7 @@ class Estrutura
      * @author André Canale Garcia <acgarcia@sc.sp.br>
      */
     public static function dump($codset)
-    {        
+    {
         $query = "SELECT s.*
                   FROM SETOR AS s 
                   WHERE s.codset = convert(int,:codset)";
@@ -24,7 +24,7 @@ class Estrutura
         return DB::fetch($query, $param);
     }
 
-     /**
+    /**
      * Método que recebe o Código da Unidade e retorna todos os setores ativos da mesma.
      * Caso não seja passado a unidade, pega o REPLICADO_CODUNDCLG do .env
      * 
@@ -37,17 +37,17 @@ class Estrutura
         $query = "SELECT codset, tipset, nomabvset, nomset, codsetspe  FROM SETOR                   
                   WHERE codund = convert(int,:codund) AND dtadtvset IS NULL AND nomset NOT LIKE 'Inativo'
                   ORDER BY codset ASC";
-        
+
         if ($codund) {
             $param = [
                 'codund' => $codund,
             ];
-        }else{
+        } else {
             $unidades = getenv('REPLICADO_CODUNDCLG');
             $param = [
                 'codund' => $unidades,
             ];
-        } 
+        }
 
         return DB::fetchAll($query, $param);
     }
@@ -61,15 +61,15 @@ class Estrutura
      * @author Fernando G. Moura <fgm@sc.sp.br>
      */
     public static function getChefiaSetor($codset, $substitutos = true)
-    {        
-        if ($substitutos) { 
+    {
+        if ($substitutos) {
             //substituição de uma designação já existente (S); exercício de liderança em substituição (E);
-            $s = ''; 
-        }else{ 
+            $s = '';
+        } else {
             //designação uma função (D); pró-labore (P); exercício de liderança (L); Exercendo Coordenação (C).
             $s = "AND c.tipdsg LIKE 'D' OR c.tipdsg LIKE 'P' OR c.tipdsg LIKE 'L' OR c.tipdsg LIKE 'C'";
         }
-        
+
         $query = "SELECT c.codpes, c.nompes, c.nomfnc, s.codsetspe, s.nomabvset, s.nomset  FROM SETOR AS s 
             INNER JOIN LOCALIZAPESSOA AS c
             ON c.codset = s.codset
@@ -89,7 +89,8 @@ class Estrutura
      * @return Array
      * @author Kawan Santana, em 19/03/2024
      */
-    public static function listarUnidades(){
+    public static function listarUnidades()
+    {
         $query = DB::getQuery('Estrutura.listarUnidades.sql');
         return Db::fetchAll($query);
     }
@@ -103,7 +104,7 @@ class Estrutura
      * @author Alessandro Costa de Oliveira, em 11/06/2024
      */
     public static function obterUnidade($codund)
-    {        
+    {
         $query = DB::getQuery('Estrutura.obterUnidade.sql');
         $param = ['codund' => $codund];
         return DB::fetch($query, $param);
@@ -129,7 +130,7 @@ class Estrutura
      * Lista todos os registros de local de uma unidade específica.
      *
      * Se o código da unidade não for informado, será utilizado o valor definido
-     * na variável de ambiente `REPLICADO_CODUNDCLG`.
+     * na variável de ambiente `REPLICADO_CODUNDCLG` (default).
      * 
      * @param int|null $codund - Código da unidade
      * @return Array
@@ -138,32 +139,40 @@ class Estrutura
     public static function listarLocaisUnidade($codund = null)
     {
         $codund = $codund ?: Replicado::getConfig('codundclg');
-        
+
         $query = DB::getQuery('Estrutura.listarLocaisUnidade.sql');
         $param['codund'] = $codund;
-        
         return DB::fetchAll($query, $param);
     }
 
     /**
-     * Procura locais por código parcial e retorna informações adicionais.
+     * Procura locais da Unidade (default) por código parcial e retorna informações adicionais.
      *
      * Faz a busca na tabela LOCALUSP trazendo todos os campos do local,
      * adicionando também:
      *  - `epflgr` e `numlgr` da tabela ENDUSP
      *  - `sglund` da tabela UNIDADE
      * 
-     * Fetch retornando todos os locais com código que iniciam com o valor parcial passado
-     *  
      * @param Integer $partCodlocusp - Código parcial de Local
+     * @param Integer $codund - Código da unidade (opcional)
+     *      se 0: pega do env REPLICADO_CODUNDCLG (default),
+     *      se -1: pega de todas as unidades,
+     *      se > 0: pega da unidade especificada
      * @return Array
      * @author Antonio Augusto de Campos, em 13/08/2025
      */
-    public static function procurarLocal($partCodlocusp)
+    public static function procurarLocal($partCodlocusp, $codund = 0)
     {
-        $query = DB::getQuery('Estrutura.procurarLocal.sql');
-        $param = ['partCodlocusp' => $partCodlocusp . '%'];
+        if ($codund === 0) {
+            $replaces['__filtro_codund__'] = 'L.codund = ' . Replicado::getConfig('codundclg');
+        } elseif ($codund < 0) {
+            $replaces['__filtro_codund__'] = '1 = 1';
+        } else {
+            $replaces['__filtro_codund__'] = 'L.codund = ' . $codund;
+        }
+
+        $query = DB::getQuery('Estrutura.procurarLocal.sql', $replaces);
+        $param['partCodlocusp'] = $partCodlocusp . '%';
         return DB::fetchAll($query, $param);
     }
-
 }
