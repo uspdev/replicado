@@ -111,13 +111,14 @@ class Estrutura
 
     /**
      * Obtém todas as informações de um único local da tabela LOCALUSP.
+     * 
      * Retorna um array contendo todos os campos do registro correspondente ao código de local informado.
      *  
      * @param Integer $codlocusp - Código do local
      * @return Array
      * @author Antonio Augusto de Campos, em 13/08/2025
      */
-    public static function obterLocalusp($codlocusp)
+    public static function obterLocal($codlocusp)
     {
         $query = DB::getQuery('Estrutura.obterLocalusp.sql');
         $param = ['codlocusp' => $codlocusp];
@@ -130,11 +131,11 @@ class Estrutura
      * Se o código da unidade não for informado, será utilizado o valor definido
      * na variável de ambiente `REPLICADO_CODUNDCLG`.
      * 
-     * @param Integer $codund - Código da unidade 
+     * @param int|null $codund - Código da unidade
      * @return Array
      * @author Antonio Augusto de Campos, em 13/08/2025
      */
-    public static function listarLocalusp($codund = null)
+    public static function listarLocaisUnidade($codund = null)
     {
         $codund = $codund ?: Replicado::getConfig('codundclg');
         
@@ -158,7 +159,7 @@ class Estrutura
      * @return Array
      * @author Antonio Augusto de Campos, em 13/08/2025
      */
-    public static function procurarLocalusp($partCodlocusp)
+    public static function procurarLocal($partCodlocusp)
     {
         $query = DB::getQuery('Estrutura.procurarLocalusp.sql');
         $param = ['partCodlocusp' => $partCodlocusp . '%'];
