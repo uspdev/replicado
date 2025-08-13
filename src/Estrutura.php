@@ -109,4 +109,30 @@ class Estrutura
         return DB::fetch($query, $param);
     }
 
+    public static function obterLocalusp($codlocusp)
+    {
+        $query = DB::getQuery('Estrutura.obterLocalusp.sql');
+        $param = ['codlocusp' => $codlocusp];
+        return DB::fetch($query, $param);
+    }
+
+    public static function listarLocalusp($codund = null)
+    {
+        $codund = $codund ?: getenv('REPLICADO_CODUNDCLG');
+        
+        $query = DB::getQuery('Estrutura.listarLocalusp.sql');
+        $param = [];
+        if ($codund) {
+            $param['codund'] = $codund;
+        }
+        return DB::fetchAll($query, $param);
+    }
+
+    public static function procurarLocalusp($partCodlocusp)
+    {
+        $query = DB::getQuery('Estrutura.procurarLocalusp.sql');
+        $param = ['partCodlocusp' => $partCodlocusp . '%'];
+        return DB::fetchAll($query, $param);
+    }
+
 }
