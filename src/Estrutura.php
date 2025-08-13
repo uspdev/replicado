@@ -120,7 +120,7 @@ class Estrutura
      */
     public static function obterLocal($codlocusp)
     {
-        $query = DB::getQuery('Estrutura.obterLocalusp.sql');
+        $query = DB::getQuery('Estrutura.obterLocal.sql');
         $param = ['codlocusp' => $codlocusp];
         return DB::fetch($query, $param);
     }
@@ -139,7 +139,7 @@ class Estrutura
     {
         $codund = $codund ?: Replicado::getConfig('codundclg');
         
-        $query = DB::getQuery('Estrutura.listarLocalusp.sql');
+        $query = DB::getQuery('Estrutura.listarLocaisUnidade.sql');
         $param['codund'] = $codund;
         
         return DB::fetchAll($query, $param);
@@ -161,7 +161,7 @@ class Estrutura
      */
     public static function procurarLocal($partCodlocusp)
     {
-        $query = DB::getQuery('Estrutura.procurarLocalusp.sql');
+        $query = DB::getQuery('Estrutura.procurarLocal.sql');
         $param = ['partCodlocusp' => $partCodlocusp . '%'];
         return DB::fetchAll($query, $param);
     }
