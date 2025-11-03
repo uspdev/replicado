@@ -1,8 +1,8 @@
 SELECT 
     c.codcvn,
     c.nomcvn AS nomeConvenio,
-    CONVERT(VARCHAR(10), c.dtaasicvn, 103) AS dataInicio,
-    CONVERT(VARCHAR(10), c.dtadtvcvn, 103) AS dataFim
+    c.dtaasicvn AS dataInicio,
+    c.dtadtvcvn AS dataFim
 FROM CONVENIO c
 JOIN CONVUNIDDESP u ON u.codcvn = c.codcvn
 WHERE 

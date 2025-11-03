@@ -16,42 +16,48 @@ class Convenio {
      * @return array - Retorna um array associativo contendo os convênios, seus responsáveis e organizações.
      * @author Erickson Zanon <ezanon@gmail.com>
      */
-    public static function listarConveniosAcademicosInternacionais($ativos = true) {
+    public static function listarConveniosAcademicosInternacionais($ativos = true)
+    {
+        // Define qual consulta usar
         if ($ativos) {
-            $query = DB::getQuery('Convenios.listarConveniosAcademicosInternacionais.sql');
-        }
-        else {
-            $query = DB::getQuery('Convenios.listarConveniosAcademicosInternacionaisInativos.sql');
+            $query = DB::getQuery('Convenio.listarConveniosAcademicosInternacionais.sql');
+        } else {
+            $query = DB::getQuery('Convenio.listarConveniosAcademicosInternacionaisInativos.sql');
         }
 
         $convenios = DB::fetchAll($query);
 
-        // relacionamentos 1-N
+        // Processa relacionamentos e formata datas
         foreach ($convenios as $key => $conv) {
 
             $codcvn = $conv['codcvn'];
 
-            // obtém responsáveis pelo convênio
-            $resps = self::listarResponsaveisConvenio($codcvn);
+            // 🔹 Converte datas (mantendo compatibilidade MSSQL/Sybase)
+            $inicio = !empty($conv['dataInicio']) ? date('d/m/Y', strtotime($conv['dataInicio'])) : '—';
+            $fim = !empty($conv['dataFim']) ? date('d/m/Y', strtotime($conv['dataFim'])) : '—';
+            $convenios[$key]['dataInicio'] = $inicio;
+            $convenios[$key]['dataFim'] = $fim;
 
-            // armazena os diversos responsáveis como uma string separada por '|'
+            // 🔹 Obtém responsáveis
+            $resps = self::listarResponsaveisConvenio($codcvn);
             $convenios[$key]['responsaveis'] = '';
             foreach ($resps as $resp) {
-                $convenios[$key]['responsaveis'] .= $convenios[$key]['responsaveis'] == '' ? Pessoa::nomeCompleto($resp['codpes']) : '|' . Pessoa::nomeCompleto($resp['codpes']);
+                $nome = Pessoa::nomeCompleto($resp['codpes']);
+                $convenios[$key]['responsaveis'] .= $convenios[$key]['responsaveis'] == '' ? $nome : '|' . $nome;
             }
 
-            // obtém organizações envolvidas
+            // 🔹 Obtém organizações
             $orgs = self::listarOrganizacoesConvenio($codcvn);
-
-            // armazena as diversas organizações como uma string separada por '|'
             $convenios[$key]['organizacoes'] = '';
             foreach ($orgs as $org) {
-                $convenios[$key]['organizacoes'] .= $convenios[$key]['organizacoes'] == '' ? $org['nomeOrganizacao'] : '|' . $org['nomeOrganizacao'];
+                $nomeOrg = $org['nomeOrganizacao'];
+                $convenios[$key]['organizacoes'] .= $convenios[$key]['organizacoes'] == '' ? $nomeOrg : '|' . $nomeOrg;
             }
         }
 
         return $convenios;
     }
+
 
     /**
      * Método para listar os responsáveis vinculados a um convênio específico.
@@ -64,7 +70,7 @@ class Convenio {
      * @author Erickson Zanon <ezanon@gmail.com>
      */
     public static function listarResponsaveisConvenio($codcvn) {
-        $query = DB::getQuery('Convenios.listarResponsaveisConvenio.sql');
+        $query = DB::getQuery('Convenio.listarResponsaveisConvenio.sql');
         $params = [
             'codcvn' => $codcvn
         ];
@@ -84,7 +90,7 @@ class Convenio {
      * @author Erickson Zanon <ezanon@gmail.com>
      */
     public static function listarOrganizacoesConvenio($codcvn) {
-        $query = DB::getQuery('Convenios.listarOrganizacoesConvenio.sql');
+        $query = DB::getQuery('Convenio.listarOrganizacoesConvenio.sql');
         $params = [
             'codcvn' => $codcvn
         ];
