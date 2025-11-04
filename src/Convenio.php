@@ -9,11 +9,19 @@ class Convenio {
      *
      * Quando o parâmetro $ativos for verdadeiro, carrega apenas convênios ativos,
      * conforme definido na consulta 'Convenios.listarConveniosAcademicosInternacionais.sql'.
-     * Além dos dados principais, o método também agrega as informações de responsáveis e
+     * Além dos dados principais, o método também agrega as informações de coordenadores e
      * organizações associadas a cada convênio, unificando-os em strings separadas por '|'.
      *
+     * O array de saída contém os seguintes campos:
+     * - codcvn: código do convênio
+     * - nomeConvenio: nome do convênio
+     * - dataInicio: data de início do convênio (formato dd/mm/yyyy)
+     * - dataFim: data de término do convênio (formato dd/mm/yyyy)
+     * - coordenadores: nomes dos coordenadores vinculados (separados por '|')
+     * - organizacoes: nomes das organizações vinculadas (separados por '|')
+     *
      * @param bool $ativos - Define se devem ser listados apenas convênios ativos (true) ou todos (false).
-     * @return array - Retorna um array associativo contendo os convênios, seus responsáveis e organizações.
+     * @return array - Retorna um array associativo contendo os convênios, seus coordenadores e organizações.
      * @author Erickson Zanon <ezanon@gmail.com>
      */
     public static function listarConveniosAcademicosInternacionais($ativos = true)
@@ -59,14 +67,19 @@ class Convenio {
     }
 
 
-    /**
+    /** 
      * Método para listar os responsáveis vinculados a um convênio específico.
      *
-     * Utiliza a consulta 'Convenios.listarResponsaveisConvenio.sql' para obter os registros
+     * Utiliza a consulta 'Convenios.listarCoordenadoresConvenio.sql' para obter os registros
      * de responsáveis associados ao código do convênio informado.
      *
-     * @param int $codcvn - Código do convênio cujos responsáveis serão consultados.
-     * @return array - Retorna um array associativo contendo os responsáveis do convênio.
+     * O array de saída contém os seguintes campos:
+     * - codcvn: código do convênio
+     * - codpes: código do coordenador
+     * - nompesttd: nome social da pessoa (se houver)
+     *
+     * @param int $codcvn - Código do convênio cujos coordenadores serão consultados.
+     * @return array - Retorna um array associativo contendo os coordenadores do convênio.
      * @author Erickson Zanon <ezanon@gmail.com>
      */
     public static function listarCoordenadoresConvenio($codcvn) {
@@ -84,6 +97,11 @@ class Convenio {
      *
      * Utiliza a consulta 'Convenios.listarOrganizacoesConvenio.sql' para obter as organizações
      * relacionadas ao convênio informado, conforme seu código.
+     *
+     * O array de saída contém os seguintes campos:
+     * - codcvn: código do convênio
+     * - codorg: código da organização vinculada
+     * - nomeOrganizacao: razão social da organização
      *
      * @param int $codcvn - Código do convênio cujas organizações serão consultadas.
      * @return array - Retorna um array associativo contendo as organizações do convênio.

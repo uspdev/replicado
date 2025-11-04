@@ -6,11 +6,12 @@ SELECT
 FROM CONVENIO c
 JOIN CONVUNIDDESP u ON u.codcvn = c.codcvn
 WHERE 
-    c.tipcvn = 13
-    AND c.sticvn = 2
+    c.tipcvn = 13 --convenio
+    AND c.sticvn = 2 --internacional
     AND c.stacvn = 'Aprovado'
-    AND u.codunddsp in (__codundclgs__)
+    AND u.codunddsp in (__codundclg__)
     AND c.dtaasicvn IS NOT NULL
     AND c.dtadtvcvn IS NOT NULL
     AND GETDATE() BETWEEN c.dtaasicvn AND c.dtadtvcvn
 ORDER BY c.dtaasicvn;
+
