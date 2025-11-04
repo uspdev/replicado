@@ -39,11 +39,11 @@ class Convenio {
             $convenios[$key]['dataFim'] = $fim;
 
             // 🔹 Obtém responsáveis
-            $resps = self::listarResponsaveisConvenio($codcvn);
-            $convenios[$key]['responsaveis'] = '';
+            $resps = self::listarCoordenadoresConvenio($codcvn);
+            $convenios[$key]['coordenadores'] = '';
             foreach ($resps as $resp) {
-                $nome = Pessoa::nomeCompleto($resp['codpes']);
-                $convenios[$key]['responsaveis'] .= $convenios[$key]['responsaveis'] == '' ? $nome : '|' . $nome;
+                $nome = $resp['nompesttd'];
+                $convenios[$key]['coordenadores'] .= $convenios[$key]['coordenadores'] == '' ? $nome : '|' . $nome;
             }
 
             // 🔹 Obtém organizações
@@ -69,8 +69,8 @@ class Convenio {
      * @return array - Retorna um array associativo contendo os responsáveis do convênio.
      * @author Erickson Zanon <ezanon@gmail.com>
      */
-    public static function listarResponsaveisConvenio($codcvn) {
-        $query = DB::getQuery('Convenio.listarResponsaveisConvenio.sql');
+    public static function listarCoordenadoresConvenio($codcvn) {
+        $query = DB::getQuery('Convenio.listarCoordenadoresConvenio.sql');
         $params = [
             'codcvn' => $codcvn
         ];
