@@ -122,5 +122,92 @@ class Pesquisa
 
         return $pesquisas_pos_doutorando;
     }
+    
+    /**
+     * Retorna a quantidade de projetos PD por ano.
+     *
+     * Quando o parâmetro $statuses é nulo ou vazio, a função identifica
+     * automaticamente todos os valores distintos existentes na coluna
+     * `staatlprj` da tabela PDPROJETO, utilizando-os como filtro.
+     *
+     * Caso contrário, usa exatamente os status informados ou o padrão.
+     *
+     * Retorno:
+     * - Array associativo onde:
+     *     - chave = ano (int)
+     *     - valor = quantidade de projetos nesse ano (int)
+     *
+     * @author Erickson Zanon
+     * @date 14/11/2025
+     * @param array|null $statuses Lista de status a filtrar ou NULL para autodetecção
+     * @return array
+     */
+
+    public static function contarPDporAno($statuses = ['Ativo','Aprovado'])
+    {
+        if (($statuses === null) or (count($statuses)==0)) {
+            $query = "SELECT DISTINCT staatlprj FROM PDPROJETO";
+            $result = DB::fetchAll($query);
+            $statuses = [];
+            foreach ($result as $row) {
+                if (!empty($row['staatlprj'])) {
+                    $statuses[] = $row['staatlprj'];
+                }
+            } 
+        }
+        $query = DB::getQuery('Pesquisa.contarPDporAno.sql');
+        $statusesString = "'" . implode("','", $statuses) . "'";
+        $query = str_replace('__statuses__', $statusesString, $query);
+        $contagem = DB::fetchAll($query);
+        $contagemPorAno = array();
+        foreach ($contagem as $c){
+            $contagemPorAno[$c['Ano']] = $c['qtdProjetosAtivos'];
+            
+        }
+        return $contagemPorAno;        
+    }
+    
+    /**
+     * Retorna a quantidade de projetos PD por mês nos últimos 12 meses.
+     *
+     * Quando o parâmetro $statuses é nulo ou vazio, a função identifica
+     * automaticamente todos os valores distintos existentes na coluna
+     * `staatlprj` da tabela PDPROJETO, utilizando-os como filtro.
+     *
+     * Caso contrário, usa exatamente os status informados ou o padrão.
+     *
+     * Retorno:
+     * - Array associativo onde:
+     *     - chave = "YYYY-MM" (string)
+     *     - valor = quantidade de projetos nesse mês (int)
+     *
+     * @author Erickson Zanon
+     * @date 14/11/2025
+     * @param array|null $statuses Lista de status a filtrar ou NULL para autodetecção
+     * @return array
+     */
+
+    public static function contarPDporUltimos12Meses($statuses = ['Ativo','Aprovado'])
+    {
+        if (($statuses === null) or (count($statuses)==0)) {
+            $query = "SELECT DISTINCT staatlprj FROM PDPROJETO";
+            $result = DB::fetchAll($query);
+            $statuses = [];
+            foreach ($result as $row) {
+                if (!empty($row['staatlprj'])) {
+                    $statuses[] = $row['staatlprj'];
+                }
+            }
+        }
+        $query = DB::getQuery('Pesquisa.contarPDporUltimos12Meses.sql');
+        $statusesString = "'" . implode("','", $statuses) . "'";
+        $query = str_replace('__statuses__', $statusesString, $query);
+        $contagem = DB::fetchAll($query);
+        $contagemPorMes = array();
+        foreach ($contagem as $c){
+            $contagemPorMes[$c['AnoMes']] = $c['qtdProjetosAtivos'];
+        }
+        return $contagemPorMes;        
+    }
 
 }
