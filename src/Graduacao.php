@@ -782,7 +782,9 @@ class Graduacao
      *
      * $turma são os dados de TURMAGR, especificamente coddis, verdis e codtur
      *
-     * @param Array $turma
+     * @param String $coddis
+     * @param Int $verdis
+     * @param String $codtur
      * @return Array
      * @author Masaki K Neto, em 28/3/3023
      */
