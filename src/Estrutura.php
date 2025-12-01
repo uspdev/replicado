@@ -53,6 +53,30 @@ class Estrutura
     }
 
     /**
+     * Método que recebe o Código da Unidade e retorna todos os setores de ensino ativos da mesma.
+     * 
+     * Caso não seja passado a unidade, pega o REPLICADO_CODUNDCLG do .env
+     * 
+     * @param Integer $codund - código da Unidade
+     * @return array
+     * @author Masaki Kawabata
+     */
+    public static function listarSetoresEnsino($codund = null)
+    {
+        $query = "SELECT codset, tipset, nomabvset, nomset, codsetspe, codema, numtelref
+          FROM SETOR                   
+          WHERE codund = convert(int,:codund) 
+            AND dtadtvset IS NULL AND nomset NOT LIKE 'Inativo'
+            AND tipset = 'Departamento de Ensino'
+          ORDER BY nomabvset ASC";
+
+        $codund = $codund ?: Replicado::getConfig('codundclg');
+        $param = ['codund' => $codund];
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
      * Método que recebe o cógido do setor para retornar a(s) chefia(s) do mesmo
      *
      * @param Integer $codset - Código do setor
