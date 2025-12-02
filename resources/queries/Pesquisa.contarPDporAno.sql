@@ -1,28 +1,24 @@
-WITH Limites AS (
-    SELECT 
-        MIN(YEAR(dtainiprj)) AS AnoInicial,
-        YEAR(GETDATE()) AS AnoFinal
-    FROM PDPROJETO
-    WHERE codund in (__codundclg__)
-      AND (staatlprj = 'Aprovado' OR staatlprj = 'Ativo')
-),
-Anos AS (
-    SELECT AnoInicial AS Ano
-    FROM Limites
-    UNION ALL
-    SELECT Ano + 1
-    FROM Anos, Limites
-    WHERE Ano < AnoFinal
-)
 SELECT 
-    a.Ano,
+    anos.Ano,
     COUNT(p.codprj) AS qtdProjetosAtivos
-FROM Anos a
+FROM (
+    SELECT DISTINCT YEAR(dtainiprj) AS Ano
+    FROM PDPROJETO
+    WHERE codund IN (__codundclg__)
+      AND staatlprj IN (__statuses__)
+      AND YEAR(dtainiprj) <= YEAR(GETDATE())
+    UNION
+    SELECT DISTINCT YEAR(dtafimprj) AS Ano
+    FROM PDPROJETO
+    WHERE codund IN (__codundclg__)
+      AND staatlprj IN (__statuses__)
+      AND dtafimprj IS NOT NULL
+      AND YEAR(dtafimprj) <= YEAR(GETDATE())
+) anos
 LEFT JOIN PDPROJETO p
-    ON p.codund in (__codundclg__)
+    ON p.codund IN (__codundclg__)
    AND p.staatlprj IN (__statuses__)
-   AND YEAR(p.dtainiprj) <= a.Ano
-   AND (YEAR(p.dtafimprj) >= a.Ano OR p.dtafimprj IS NULL)
-GROUP BY a.Ano
-ORDER BY a.Ano
-OPTION (MAXRECURSION 0);
+   AND YEAR(p.dtainiprj) <= anos.Ano
+   AND (p.dtafimprj IS NULL OR YEAR(p.dtafimprj) >= anos.Ano)
+GROUP BY anos.Ano
+ORDER BY anos.Ano;
