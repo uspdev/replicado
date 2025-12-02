@@ -827,4 +827,56 @@ class Posgraduacao
 
         return DB::fetchAll($query);
     }
+
+    /**
+     * Obtém os créditos de todos os docentes de um setor/coleção em um ano.
+     *
+     * Combina dados de créditos com a lista de ministrantes para calcular carga horária
+     * rateada por docente. Usado para sincronização e relatórios.
+     *
+     * @param $codpes Lista de códigos USP dos docentes.
+     * @param int $ano Ano no formato YYYY.
+     * @return array Dados completos das turmas com ministrantes, carga horária e CH total.
+     * @author Antonio A Campos
+     */
+    public static function listarOferecimentosPorAno($codpes, int $ano)
+    {
+        $query = DB::getQuery('Posgraduacao.listarOferecimentosPorAno.sql');
+
+        $placeholders = [];
+        $parameters = ['ano' => $ano];
+
+        if(!is_array($codpes)){
+            $codpes = [$codpes];
+        }
+
+        foreach ($codpes as $index => $codigo) {
+            $placeholder = ":codpes{$index}";
+            $placeholders[] = $placeholder;
+            $parameters["codpes{$index}"] = $codigo;
+        }
+
+        $codpesPlaceholders = implode(',', $placeholders);
+        $query = str_replace(':codpes', $codpesPlaceholders, $query);
+        $turmas = DB::fetchAll($query, $parameters);
+        return $turmas;
+    }
+
+    /**
+     * Lista todos os ministrantes de todas as turmas de pós-graduação em um ano.
+     *
+     * Usado para mapear todos os docentes por turma e calcular carga horária compartilhada.
+     *
+     * @param int $ano Ano no formato YYYY.
+     * @return array Lista de ministrantes com coddis, numseqdis, numofe e lista de nomes.
+     * @author Antonio A Campos
+     */
+    public static function listarMinistrantesTodasTurmasPorAno($ano)
+    {
+        $query = DB::getQuery('Posgraduacao.listarMinistrantesTodasTurmasPorAno.sql');
+
+        return DB::fetchAll($query, [
+            'ano' => $ano,
+        ]);
+    }
 }

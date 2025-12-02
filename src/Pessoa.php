@@ -582,6 +582,113 @@ class Pessoa
     }
 
     /**
+     * Método que recebe o ano e retorna todos os docentes ativos da unidade.
+     *
+     * 
+     * @param Integer $codund - código da Unidade
+     * @return array
+     * @author Masaki Kawabata
+     */
+    public static function listarDocentesSetores($ano)
+    {
+        $setores = implode(',', array_column(Estrutura::listarSetoresEnsino(), 'codset'));
+        $query = "SELECT L.* FROM VINCULOPESSOAUSP L
+            WHERE ( L.tipfnc = 'Docente' or L.nomcaa = 'Pesquisador' ) -- conforme documentacao
+            and L.codund = __codundclg__
+            and L.codset in ($setores)
+            and ((L.dtafimvin < '$ano-12-31' and L.dtafimvin > '$ano-01-01') or L.dtafimvin is null)
+            and L.tipcon = 'Docente'
+            order by L.nompes";
+        return DB::fetchAll($query);
+    }
+
+    
+    /**
+     * Lista docentes ativos em um período.
+     *
+     * - Se nenhuma data for informada → usa hoje.
+     * - Se apenas $dataini for informado:
+     *      - Se for ano (YYYY) → usa 01-01 até 12-31.
+     *      - Se for data (YYYY-MM-DD) → filtra somente esse dia.
+     * - Se $dataini e $datafim forem informados → usa o intervalo.
+     *
+     * @param int|string|null $dataini Ano ou data
+     * @param string|null     $datafim Data
+     * @return array
+     * @author Masaki Kawabata
+     */
+    public static function listarDocentesAtivosPorPeriodo($dataini = null, $datafim = null)
+    {
+        $isYear = fn($v) => is_numeric($v) && strlen($v) === 4;
+
+        [$ini, $fim] = match (true) {
+            $dataini === null && $datafim === null => [date('Y-m-d'), date('Y-m-d')],
+            $datafim === null && $isYear($dataini) => ["$dataini-01-01", "$dataini-12-31"],
+            $datafim === null => [$dataini, $dataini],
+            default => [$dataini, $datafim],
+        };
+
+        $sql = "SELECT P.codpes, P.nompesttd AS nompes,
+                R.dtainisitfun AS dtainivin, R.dtafimsitfun AS dtafimvin, R.tipconfun AS tipcon,
+                R.tipconfun AS tipfnc,
+                S.codset
+            FROM RESUSERVHISTFUNCIONAL R
+            JOIN SETOR S ON S.nomabvset = R.nomabvset
+            JOIN PESSOA P ON P.codpes = R.codpes
+            WHERE R.tipconfun = 'Docente'
+                AND R.codund = __codundclg__
+                AND R.dtainisitfun <= :data_fim
+                AND (R.dtafimsitfun >= :data_ini OR R.dtafimsitfun IS NULL)
+        ";
+
+        return DB::fetchAll($sql, [
+            'data_ini' => $ini,
+            'data_fim' => $fim,
+        ]);
+    }
+
+    /**
+     * Retorna lista de professores seniores ativos da Unidade em um dado periodo.
+     *
+     * Regras:
+     * - Se não informar datas → usa hoje.
+     * - Se informar apenas dtaini:
+     *     - Se for ano (ex.: 2025) → usa 01/01 até 31/12 do ano.
+     *     - Se for data → usa dtaini como início e fim.
+     * - Se informar dtaini e dtafim → usa como período.
+     * 
+     * @param int|string|null $dtaini Ano (YYYY) ou data (YYYY-MM-DD) ou null
+     * @param string|null     $dtafim  Data no formato YYYY-MM-DD ou null
+     * @return array Lista de professores seniores ativos no período
+     * @author Masaki Kawabata
+     */
+    public static function listarDocentesSeniorPorPeriodo($dtaini = null, $dtafim = null)
+    {
+        $isYear = fn($v) => is_numeric($v) && strlen($v) === 4;
+
+        [$ini, $fim] = match (true) {
+            $dtaini === null && $dtafim === null => [date('Y-m-d'), date('Y-m-d')],
+            $dtaini !== null && $dtafim === null && $isYear($dtaini) => ["$dtaini-01-01", "$dtaini-12-31"],
+            $dtaini !== null && $dtafim === null => [$dtaini, $dtaini],
+            default => [$dtaini, $dtafim],
+        };
+
+        $query = "SELECT S.dtainicbd, S.dtafimcbd, V.*
+            FROM VINCSATPROFSENIOR S
+            JOIN VINCULOPESSOAUSP V ON S.codpes = V.codpes 
+            AND S.tipvin = V.tipvin AND S.numseqpes = V.numseqpes
+            WHERE S.dtainicbd <= :dtaini
+                AND S.dtafimcbd >= :dtafim
+                AND S.codund = __codundclg__
+        ";
+
+        return DB::fetchAll($query, [
+            'dtaini' => $ini,
+            'dtafim' => $fim,
+        ]);
+    }
+
+    /**
      * Método para retornar o total de servidores (docentes, funcionários e estagiários) por setor(es)
      *
      * Se aposentados = 1, conta também os docentes aposentados (sitatl = 'P' AND tipvinext NOT IN ('Servidor Aposentado')
