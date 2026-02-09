@@ -104,9 +104,10 @@ class Graduacao
    */
   public static function obterCursoAtivo(int $codpes)
   {
+    $codundclgs = getenv('REPLICADO_CODUNDCLGS') ?: getenv('REPLICADO_CODUNDCLG');
     $query = DB::getQuery('Graduacao.obterCursoAtivo.sql');
+    $query = str_replace('__codundclgs__', $codundclgs, $query);
     $param['codpes'] = $codpes;
-
     return DB::fetch($query, $param) ?: [];
   }
 
