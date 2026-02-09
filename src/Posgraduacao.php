@@ -398,7 +398,7 @@ class Posgraduacao
                         ON (V.codpes = L.codpes)
                         WHERE V.tipvin = 'ALUNOPOS'
                          AND V.sitatl = 'A'
-                         AND L.codundclg IN (:codundclgi)
+                         AND L.codundclg IN (:codundclg)
                          AND V.codare = convert(int, :codare)
                         ORDER BY L.nompes ASC";
       $param = [
