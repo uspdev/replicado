@@ -827,7 +827,7 @@ class Graduacao
     $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
     $param = [
       'codpes' => $codpes,
-      'codundclgi' => $codundclg,
+      'codundclg' => $codundclg,
     ];
     return DB::fetch($query, $param);
   }
