@@ -812,10 +812,10 @@ class Graduacao
    *
    * @deprecated em 8/11/2022, em favor de obterCursoAtivo, por Masakik
    * @param Int $codpes
-   * @param Int $codundclgi
+   * @param $codundclgi
    * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
    */
-  public static function curso($codpes, $codundclgi)
+  public static function curso($codpes, $codundclg)
   {
     $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
     $query .= " FROM LOCALIZAPESSOA L";
@@ -823,11 +823,11 @@ class Graduacao
     $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
     $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
     $query .= " WHERE (L.codpes = convert(int,:codpes))";
-    $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg = convert(int,:codundclgi))";
+    $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg IN (:codundclg))";
     $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
     $param = [
       'codpes' => $codpes,
-      'codundclgi' => $codundclgi,
+      'codundclgi' => $codundclg,
     ];
     return DB::fetch($query, $param);
   }

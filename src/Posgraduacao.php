@@ -370,17 +370,17 @@ class Posgraduacao
    *  indexados pela área (codare).
    * Se codare não foi determinado, busca todas as áreas do programa.
    *
-   * @param Int $codundclgi - código da unidade
+   * @param $codundclg - código(s) da unidade
    * @param Int $codcur - código do curso/programa
    * @param Int $codare - código da área (opcional)
    * @return Array
    */
-  public static function alunosPrograma(int $codundclgi, int $codcur, int $codare = null)
+  public static function alunosPrograma(int $codundclg, int $codcur, int $codare = null)
   {
     // se $codare é null, seleciona todas
     if (!$codare) {
       // obtém áreas do programa
-      $areasPrograma = Posgraduacao::areasProgramas($codundclgi, $codcur);
+      $areasPrograma = Posgraduacao::areasProgramas($codundclg, $codcur);
       foreach ($areasPrograma[$codcur] as $area) {
         $codares[] = $area['codare'];
       }
@@ -398,11 +398,11 @@ class Posgraduacao
                         ON (V.codpes = L.codpes)
                         WHERE V.tipvin = 'ALUNOPOS'
                          AND V.sitatl = 'A'
-                         AND L.codundclg = convert(int, :codundclgi)
+                         AND L.codundclg IN (:codundclgi)
                          AND V.codare = convert(int, :codare)
                         ORDER BY L.nompes ASC";
       $param = [
-        'codundclgi' => $codundclgi,
+        'codundclg' => $codundclg,
         'codare' => $codare,
       ];
       $alunosArea = DB::fetchAll($query, $param);
