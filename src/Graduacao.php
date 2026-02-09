@@ -824,11 +824,10 @@ class Graduacao
     $query .= " INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)";
     $query .= " INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)";
     $query .= " WHERE (L.codpes = convert(int,:codpes))";
-    $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg IN (:codundclg))";
+    $query .= " AND (L.tipvin = 'ALUNOGR' AND L.codundclg IN ({$codundclg}))";
     $query .= " AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)";
     $param = [
       'codpes' => $codpes,
-      'codundclg' => $codundclg,
     ];
     return DB::fetch($query, $param);
   }
