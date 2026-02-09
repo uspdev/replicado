@@ -66,7 +66,7 @@ class Graduacao
         INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)
         INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)
         WHERE L.tipvin = 'ALUNOGR'
-            AND L.codundclg IN ({$codundclg})
+            AND L.codundclg IN (:codundclg)
             AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)
             {$queryFilter}
         ORDER BY L.nompes ASC
@@ -812,7 +812,7 @@ class Graduacao
    *
    * @deprecated em 8/11/2022, em favor de obterCursoAtivo, por Masakik
    * @param Int $codpes
-   * @param $codundclgi
+   * @param $codundclg
    * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
    */
   public static function curso($codpes, $codundclg)
