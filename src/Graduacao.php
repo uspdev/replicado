@@ -66,7 +66,7 @@ class Graduacao
         INNER JOIN CURSOGR C ON (V.codcurgrd = C.codcur)
         INNER JOIN HABILITACAOGR H ON (H.codhab = V.codhab)
         WHERE L.tipvin = 'ALUNOGR'
-            AND L.codundclg IN (:codundclg)
+            AND L.codundclg IN ({$codundclg})
             AND (V.codcurgrd = H.codcur AND V.codhab = H.codhab)
             {$queryFilter}
         ORDER BY L.nompes ASC
