@@ -21,7 +21,6 @@ class Graduacao
                 ) {
                     return true;
                 }
-
             }
         }
         return false;
@@ -176,15 +175,15 @@ class Graduacao
         return $result;
     }
 
-    public static function obterCursosHabilitacoes($codundclgi)
+    public static function obterCursosHabilitacoes($codundclg)
     {
         $query = " SELECT CURSOGR.*, HABILITACAOGR.* FROM CURSOGR, HABILITACAOGR";
-        $query .= " WHERE (CURSOGR.codclg = convert(int, :codundclgi)) AND (CURSOGR.codcur = HABILITACAOGR.codcur)";
+        $query .= " WHERE (CURSOGR.codclg IN (:codundclgi)) AND (CURSOGR.codcur = HABILITACAOGR.codcur)";
         $query .= " AND ( (CURSOGR.dtaatvcur IS NOT NULL) AND (CURSOGR.dtadtvcur IS NULL) )";
         $query .= " AND ( (HABILITACAOGR.dtaatvhab IS NOT NULL) AND (HABILITACAOGR.dtadtvhab IS NULL) )";
         $query .= " ORDER BY CURSOGR.nomcur, HABILITACAOGR.nomhab ASC";
         $param = [
-            'codundclgi' => $codundclgi,
+            'codundclg' => $codundclg,
         ];
         return DB::fetchAll($query, $param);
     }
@@ -772,7 +771,8 @@ class Graduacao
      * @return Array
      * @author Kawan Santana, em 19/03/2024
      */
-    public static function listarDepartamentosDeEnsino(){
+    public static function listarDepartamentosDeEnsino()
+    {
         $query = DB::getQuery('Graduacao.listarDepartamentosDeEnsino.sql');
         return DB::fetchAll($query);
     }
