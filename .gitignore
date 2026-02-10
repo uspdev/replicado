@@ -1,29 +1,35 @@
-/vendor/
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+/.idea
+/.vscode
+/.vagrant
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+.env
+/public/vendor/
+
+# pasta onde guardo coisas que ando testando
+/teste/
+
+# init lando
+.lando.yml
+# lando dockerfile php extensions
+Dockerfile.custom
+# lando php.ini
+php.ini
+
+# vim bkp
 *~
 *.swp
-src/replicado_queries
-composer.lock
-.phpunit.result.cache
 
-.idea
+# Curso graduação x Habilitação x Setor
+/storage/curhabset.json
 
-# index.php used for test
-index.php
-.env
-
-# test
-test.php
-log.log
-credentials.php
-
-# netbeans
-nbproject/
-
-# phpdoc
-docs/phpdoc-cache*
-
-sandbox/
-
-test*.php
-
-/docs/
+# DDEV
+/.ddev
+core.*
