@@ -373,6 +373,39 @@ class Graduacao
     }
 
     /**
+     * Retorna o setor de um aluno
+     * É igual ao método setorAluno, mas chama o método obterCursoAtivo, que permite mais de um codundclg
+     *
+     * @param Int $codpes
+     * @param $codundclg
+     * @return Array(nomabvset)
+     */
+    public static function obterSetorAluno($codpes, $codundclg)
+    {
+
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
+
+        $codcur = self::obterCursoAtivo($codpes)['codcur'];
+        $codhab = self::obterCursoAtivo($codpes)['codhab'];
+        $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
+                    INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
+                    WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
+        $param = [
+            'codcur' => $codcur,
+            'codhab' => $codhab,
+        ];
+        $result = DB::fetch($query, $param);
+        // Nota: Situação a se tratar com log de ocorrências
+        // Se o departamento de ensino do alguno de graduação não foi encontrado
+        if ($result == false) {
+            // Será retornado 'DEPARTAMENTO NÃO ENCONTRADO' a fim de se detectar as situações ATÍPICAS em que isso ocorre
+            $result = ['nomabvset' => 'DEPARTAMENTO NÃO ENCONTRADO'];
+        }
+        return $result;
+    }
+
+    /**
      * Departamento de Ensino do Aluno de Graduação
      *
      * @param Int $codpes
