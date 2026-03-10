@@ -83,6 +83,35 @@ class PosgraduacaoTest extends TestCase
         $this->assertIsArray(Posgraduacao::programas(8));
     }
 
+    public function test_obterPrograma()
+    {
+        DB::getInstance()->prepare('DELETE FROM CURSO')->execute();
+        DB::getInstance()->prepare('DELETE FROM NOMECURSO')->execute();
+
+        $sql = "INSERT INTO CURSO (codcur, codclg, tipcur, dtainiccp) VALUES
+                                   (convert(int,:codcur),convert(int,:codclg),:tipcur,:dtainiccp)";
+
+        $data = [
+            'codcur' => 654321,
+            'codclg' => 8,
+            'tipcur' => 'POS',
+            'dtainiccp' => '2020-10-20 00:00:00',
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $sql = "INSERT INTO NOMECURSO (codcur, nomcur, dtafimcur) VALUES
+                                   (convert(int,:codcur),:nomcur,:dtafimcur)";
+
+        $data = [
+            'codcur' => 654321,
+            'nomcur' => 'Programa Exemplo',
+            'dtafimcur' => null,
+        ];
+        DB::getInstance()->prepare($sql)->execute($data);
+
+        $this->assertIsArray(Posgraduacao::obterPrograma(654321));
+    }
+
     public function test_orientadores(){
         DB::getInstance()->prepare('DELETE FROM PESSOA')->execute();
         DB::getInstance()->prepare('DELETE FROM R25CRECREDOC')->execute();
