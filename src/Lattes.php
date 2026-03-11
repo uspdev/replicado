@@ -229,8 +229,8 @@ class Lattes
 
         return $result ? $result['dtaultalt'] : false;
     }
-
-    /**
+    
+        /**
      * Recebe um array com os autores no padrão do currícula lattes e retorna
      * o nome dos autores formatado com apenas o nome e ordem de autoria
      *
@@ -243,12 +243,12 @@ class Lattes
     {
         $aux_autores = [];
         if ($array) {
-
             foreach ($array as $autor) {
                 array_push($aux_autores, [
-                    "NOME-COMPLETO-DO-AUTOR" => Arr::get($autor, '@attributes', false) ? Arr::get($autor, '@attributes.NOME-COMPLETO-DO-AUTOR', false) : Arr::get($autor, 'NOME-COMPLETO-DO-AUTOR', false),
+                    "NOME-COMPLETO-DO-AUTOR" => Arr::get($autor, '@attributes', false) ? Arr::get($autor, '@attributes.NOME-COMPLETO', false) : Arr::get($autor, 'NOME-COMPLETO', false),
                     "NOME-PARA-CITACAO" => Arr::get($autor, '@attributes', false) ? Arr::get($autor, '@attributes.NOME-PARA-CITACAO', false) : Arr::get($autor, 'NOME-PARA-CITACAO', false),
-                    "ORDEM-DE-AUTORIA" => Arr::get($autor, '@attributes', false) ? Arr::get($autor, '@attributes.ORDEM-DE-AUTORIA', false) : Arr::get($autor, 'ORDEM-DE-AUTORIA', false),
+                    "ORDEM-DE-AUTORIA" => Arr::get($autor, '@attributes', false) ? Arr::get($autor, '@attributes.ORDEM-DE-INTEGRACAO', false) : Arr::get($autor, 'ORDEM-DE-INTEGRACAO', false),
+                    "COORDENACAO" => Arr::get($autor, '@attributes', false) ? Arr::get($autor, '@attributes.FLAG-RESPONSAVEL', false) : Arr::get($autor, 'FLAG-RESPONSAVEL', false),
                 ]);
             }
             usort($aux_autores, function ($a, $b) {
@@ -2062,6 +2062,8 @@ class Lattes
                         foreach ($projeto as $pesquisa) {
                             $integrantes = Arr::get($pesquisa, "EQUIPE-DO-PROJETO.INTEGRANTES-DO-PROJETO", []);
                             $aux_integrantes = self::listarAutores($integrantes);
+                            $financiadores = Arr::get($pesquisa, "FINANCIADORES-DO-PROJETO.FINANCIADOR-DO-PROJETO", []);
+                            $aux_financiadores = self::listarFinanciadores($financiadores);
                             $aux_projeto = [
                                 'NOME-DO-PROJETO' => Arr::get($pesquisa, "@attributes.NOME-DO-PROJETO", ""),
                                 'ANO-INICIO' => Arr::get($pesquisa, "@attributes.ANO-INICIO", ""),
@@ -2070,6 +2072,7 @@ class Lattes
                                 'NATUREZA' => Arr::get($pesquisa, "@attributes.NATUREZA", ""),
                                 'DESCRICAO-DO-PROJETO' => Arr::get($pesquisa, "@attributes.DESCRICAO-DO-PROJETO", ""),
                                 'EQUIPE-DO-PROJETO' => $aux_integrantes,
+                                'FINANCIADORES' => $aux_financiadores,
                             ];
 
                             if (!self::verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
@@ -2081,6 +2084,8 @@ class Lattes
                     } else {
                         $integrantes = Arr::get($projeto, "EQUIPE-DO-PROJETO.INTEGRANTES-DO-PROJETO", []);
                         $aux_integrantes = self::listarAutores($integrantes);
+                        $financiadores = Arr::get($projeto, "FINANCIADORES-DO-PROJETO.FINANCIADOR-DO-PROJETO", []);
+                        $aux_financiadores = self::listarFinanciadores($financiadores);
                         $aux_projeto = [
                             'NOME-DO-PROJETO' => Arr::get($projeto, "@attributes.NOME-DO-PROJETO", ""),
                             'ANO-INICIO' => Arr::get($projeto, "@attributes.ANO-INICIO", ""),
@@ -2089,6 +2094,7 @@ class Lattes
                             'NATUREZA' => Arr::get($projeto, "@attributes.NATUREZA", ""),
                             'DESCRICAO-DO-PROJETO' => Arr::get($projeto, "@attributes.DESCRICAO-DO-PROJETO", ""),
                             'EQUIPE-DO-PROJETO' => $aux_integrantes,
+                            'FINANCIADORES' => $aux_financiadores,
                         ];
 
                         if (!self::verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
@@ -2111,6 +2117,8 @@ class Lattes
                             foreach ($c['PROJETO-DE-PESQUISA'] as $pesquisa) {
                                 $integrantes = Arr::get($pesquisa, "EQUIPE-DO-PROJETO.INTEGRANTES-DO-PROJETO", []);
                                 $aux_integrantes = self::listarAutores($integrantes);
+                                $financiadores = Arr::get($pesquisa, "FINANCIADORES-DO-PROJETO.FINANCIADOR-DO-PROJETO", []);
+                                $aux_financiadores = self::listarFinanciadores($financiadores);
                                 $aux_projeto = [
                                     'NOME-DO-PROJETO' => Arr::get($pesquisa, "@attributes.NOME-DO-PROJETO", ""),
                                     'ANO-INICIO' => Arr::get($pesquisa, "@attributes.ANO-INICIO", ""),
@@ -2119,6 +2127,7 @@ class Lattes
                                     'NATUREZA' => Arr::get($pesquisa, "@attributes.NATUREZA", ""),
                                     'DESCRICAO-DO-PROJETO' => Arr::get($pesquisa, "@attributes.DESCRICAO-DO-PROJETO", ""),
                                     'EQUIPE-DO-PROJETO' => $aux_integrantes,
+                                    'FINANCIADORES' => $aux_financiadores,
                                 ];
 
                                 $i++;
@@ -2133,6 +2142,8 @@ class Lattes
                             if (isset($c['PROJETO-DE-PESQUISA']['EQUIPE-DO-PROJETO']['INTEGRANTES-DO-PROJETO'])) {
                                 $integrantes = Arr::get($c, "PROJETO-DE-PESQUISA.EQUIPE-DO-PROJETO.INTEGRANTES-DO-PROJETO", []);
                                 $aux_integrantes = self::listarAutores($integrantes);
+                                $financiadores = Arr::get($c, "FINANCIADORES-DO-PROJETO.FINANCIADOR-DO-PROJETO", []);
+                                $aux_financiadores = self::listarFinanciadores($financiadores);
                                 $aux_projeto = [
                                     'NOME-DO-PROJETO' => Arr::get($c, "{$dados_basicos}.@attributes.NOME-DO-PROJETO", ""),
                                     'ANO-INICIO' => Arr::get($c, "{$dados_basicos}.@attributes.ANO-INICIO", ""),
@@ -2141,6 +2152,7 @@ class Lattes
                                     'NATUREZA' => Arr::get($c, "{$dados_basicos}.@attributes.NATUREZA", ""),
                                     'DESCRICAO-DO-PROJETO' => Arr::get($c, "{$dados_basicos}.@attributes.DESCRICAO-DO-PROJETO", ""),
                                     'EQUIPE-DO-PROJETO' => $aux_integrantes,
+                                    'FINANCIADORES' => $aux_financiadores,
                                 ];
                             } else {
                                 $aux_projeto = [
@@ -2644,4 +2656,29 @@ class Lattes
         }
         return $ret;
     }
+
+     /**
+     * Recebe um array com os financiadores no padrão do currículo lattes 
+     * e retorna os nomes num array
+     *
+     * Auxiliar para listarProjetosPesquisa()
+     *
+     * @param Array $array
+     * @return Array
+     */
+    protected static function listarFinanciadores($array) {
+        $aux_financiadores = [];
+        if ($array) {
+            foreach ($array as $financiador) {
+                // REMOVIDO o '@attributes.' pois $financiador já são os atributos
+                array_push($aux_financiadores, [
+                    "NOME-INSTITUICAO" => Arr::get($financiador, 'NOME-INSTITUICAO', false),
+                    "NATUREZA" => Arr::get($financiador, 'NATUREZA', false),
+                ]);
+            }
+            return $aux_financiadores;
+        }
+        return false;
+    }
 }
+
