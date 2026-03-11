@@ -803,6 +803,24 @@ class Posgraduacao
     }
 
     /**
+     * Retorna dados de um programa de Pós-graduação da unidade
+     *
+     * @param int $codcur código do curso/programa
+     * @return array|null
+     */
+    public static function obterPrograma(int $codcur)
+    {
+        $query = DB::getQuery('Posgraduacao.obterPrograma.sql');
+        $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
+
+        $param = [
+            'codcur' => $codcur,
+        ];
+
+        return \Uspdev\Replicado\DB::fetch($query, $param);
+    }
+
+    /**
      * Método para listar todos os dados das disciplinas de pós-graduação
      *
      * @return Array lista com com disciplinas
