@@ -1,14 +1,3 @@
-[![Build Status](https://travis-ci.org/uspdev/replicado.svg?branch=master)](https://travis-ci.org/uspdev/replicado)
-
-[![Latest Stable Version](https://poser.pugx.org/uspdev/replicado/v/stable.svg)](https://packagist.org/packages/uspdev/replicado)
-[![Total Downloads](https://poser.pugx.org/uspdev/replicado/downloads.svg)](https://packagist.org/packages/uspdev/replicado)
-
-![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/uspdev/replicado.svg) 
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/uspdev/replicado.svg)
-
-![GitHub issues](https://img.shields.io/github/issues/uspdev/replicado.svg) 
-![GitHub closed issues](https://img.shields.io/github/issues-closed/uspdev/replicado.svg)
-
 ## Replicado
 
 Biblioteca PHP que abstrai em classes a camada de acesso ao replicado USP, 
@@ -86,6 +75,7 @@ putenv('REPLICADO_SYBASE=true');
 putenv('REPLICADO_USAR_CACHE=false');
 putenv('REPLICADO_DEBUG=false');
 putenv('REPLICADO_DEBUG_LEVEL=1');
+putenv('REPLICADO_FAKE=0');
 
 $emails = Pessoa::emails('123456');
 print_r($emails);
@@ -133,6 +123,11 @@ Ainda é possível controlar o comportamento do cache somente para o replicado c
     putenv('REPLICADO_CACHE_SMALL=32'); // tamanho máx em bytes do retorno que não vai ser cacheado
 
 Em produção vale a pena usar mas em testes mantenha desativado.
+
+
+**REPLICADO_FAKE**
+
+Se a variável REPLICADO_FAKE for igual a 1, não será executado consultas no replicado e dados fakes fixos serão retornado. Esse cenário é útil para implementação de testes automatizados ou para conhecer previamente o tipo e a estrutura dos dados que é retornado em cada método. 
 
 ## Debug
 
@@ -220,42 +215,3 @@ Se você utiliza um desses métodos nos seus sistemas, atualize para o novo mét
 - Graduacao::curso -> obterCursoAtivo (11/2022)
 - Pessoa::listarVinculosSetores -> a ser removido e adicionado no uspdev/web-ldap-admin listarVinculosExtensoSetores (11/2022)
 
-
-### phpunit
-
-De forma opcional, se quiser fazer do jeito *bonitinho*, pode-se criar teste unitário, usando o phpunit. 
-Para isso, você precisa de um banco de dados sybase ou mssql que possa deletar as tabelas, 
-há cinco opções para você rodar os testes:
-
-- Baixar o mssql ou sybase e instalá-los manualmente
-- Subir um container SQL Server Express 2022. Temos um [gist de exemplo usando Docker Compose](https://gist.github.com/leandroramos/6856fd8cbdb105cb15ebc96d5901c110).
-- Subir um container Sybase com https://github.com/uspdev/asedocker
-- Instalar o sybase com ansible https://github.com/fflch/ansible-role-sap-ase
-- Nós mantemos um servidor sybase de testes, se quiser, solicite as credenciais uspdev@usp.br
-
-Os Pull Request são automaticamente testadas pelo travis (desativado por enquanto).
-Para verificar se os testes estão passando:
-
-    ./vendor/bin/phpunit
-
-## Documentação
-
-Consulte a documentação em:
-[https://uspdev.github.io/replicado/](https://uspdev.github.io/replicado/)
-
-A documentação é auto-gerada usando [phpDocumentor](https://www.phpdoc.org/) e não é necessário
-fazer nada, pois a cada push uma github action a atualiza.
-
-Mas se quiser testá-la localmente:
-
-    wget http://phpdoc.org/phpDocumentor.phar
-    sudo mv phpDocumentor.phar /usr/local/bin/phpdoc
-    sudo chmod a+x /usr/local/bin/phpdoc
-
-Ainda é necessário instalar:
-
-    sudo apt install graphviz
-
-Gerando a documentação:
-
-    phpdoc
