@@ -5,6 +5,7 @@ namespace Uspdev\Replicado;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Uspdev\Cache\Cache;
+use SplFileInfo;
 
 class Replicado
 {
@@ -35,12 +36,13 @@ class Replicado
     public $pathlog = '/tmp/replicado.log';
     public $debug = false;
     public $debugLevel = 1; // 1: somente erros, 2: log de queries
+    public $fake = false;
 
     /** Variaveis que podem ser atualizadas pelo setConfig() */
     protected $vars = [
         'host', 'port', 'database', 'username', 'password',
         'codundclg', 'codundclgs', 'sybase', 'usarCache', 'cacheExpiry', 'cacheSmall',
-        'pathlog', 'debug', 'debugLevel'];
+        'pathlog', 'debug', 'debugLevel', 'fake'];
 
     private function __construct()
     {}
@@ -178,4 +180,22 @@ class Replicado
         SELF::$logger->$level($message);
     }
 
+    /**
+     * Retorna a estrutura de dados fixa para finalidades de testes
+     *
+     */
+    public static function getFake($name)
+    {
+        $path = new SplFileInfo(__DIR__);
+        $path = $path->getRealPath();
+        $path .= DIRECTORY_SEPARATOR;
+        $path .= '..';
+        $path .= DIRECTORY_SEPARATOR;
+        $path .= 'resources';
+        $path .= DIRECTORY_SEPARATOR;
+        $path .= 'fake';
+        $json = file_get_contents($path . DIRECTORY_SEPARATOR . $name . '.json');
+
+        return json_decode($json, true);
+    }
 }

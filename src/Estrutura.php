@@ -2,6 +2,8 @@
 
 namespace Uspdev\Replicado;
 
+use Uspdev\Replicado\Replicado as Config;
+
 class Estrutura
 {
     /**
@@ -34,6 +36,8 @@ class Estrutura
      */
     public static function listarSetores($codund = null)
     {
+        if(Config::getConfig('fake')) return Config::getFake('Estrutura.listarSetores');
+
         $query = "SELECT codset, tipset, nomabvset, nomset, codsetspe  FROM SETOR                   
                   WHERE codund = convert(int,:codund) AND dtadtvset IS NULL AND nomset NOT LIKE 'Inativo'
                   ORDER BY codset ASC";
@@ -105,6 +109,7 @@ class Estrutura
      */
     public static function obterUnidade($codund)
     {
+        if(Config::getConfig('fake')) return Config::getFake('Estrutura.obterUnidade');
         $query = DB::getQuery('Estrutura.obterUnidade.sql');
         $param = ['codund' => $codund];
         return DB::fetch($query, $param);
