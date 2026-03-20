@@ -10,12 +10,12 @@ class ReplicadoBase
     {
         $class = static::class;
 
-        // 🔹 interceptador fake
+        // interceptador fake
         if (Config::getConfig('fake')) {
             return Config::getFake($class . '.' . $method);
         }
 
-        // 🔹 método real com underscore
+        // método real com underscore
         $realMethod = '_' . $method;
 
         if (method_exists($class, $realMethod)) {
