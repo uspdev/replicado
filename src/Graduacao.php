@@ -21,7 +21,6 @@ class Graduacao
                 ) {
                     return true;
                 }
-
             }
         }
         return false;
@@ -176,15 +175,15 @@ class Graduacao
         return $result;
     }
 
-    public static function obterCursosHabilitacoes($codundclgi)
+    public static function obterCursosHabilitacoes($codundclg)
     {
         $query = " SELECT CURSOGR.*, HABILITACAOGR.* FROM CURSOGR, HABILITACAOGR";
-        $query .= " WHERE (CURSOGR.codclg = convert(int, :codundclgi)) AND (CURSOGR.codcur = HABILITACAOGR.codcur)";
+        $query .= " WHERE (CURSOGR.codclg IN (:codundclgi)) AND (CURSOGR.codcur = HABILITACAOGR.codcur)";
         $query .= " AND ( (CURSOGR.dtaatvcur IS NOT NULL) AND (CURSOGR.dtadtvcur IS NULL) )";
         $query .= " AND ( (HABILITACAOGR.dtaatvhab IS NOT NULL) AND (HABILITACAOGR.dtadtvhab IS NULL) )";
         $query .= " ORDER BY CURSOGR.nomcur, HABILITACAOGR.nomhab ASC";
         $param = [
-            'codundclgi' => $codundclgi,
+            'codundclg' => $codundclg,
         ];
         return DB::fetchAll($query, $param);
     }
@@ -371,6 +370,39 @@ class Graduacao
             'codhab' => $codhab,
         ];
         return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Retorna o setor de um aluno
+     * É igual ao método setorAluno, mas chama o método obterCursoAtivo, que permite mais de um codundclg
+     *
+     * @param Int $codpes
+     * @param $codundclg
+     * @return Array(nomabvset)
+     */
+    public static function obterSetorAluno($codpes, $codundclg)
+    {
+
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
+        $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
+
+        $codcur = self::obterCursoAtivo($codpes)['codcur'];
+        $codhab = self::obterCursoAtivo($codpes)['codhab'];
+        $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
+                    INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
+                    WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
+        $param = [
+            'codcur' => $codcur,
+            'codhab' => $codhab,
+        ];
+        $result = DB::fetch($query, $param);
+        // Nota: Situação a se tratar com log de ocorrências
+        // Se o departamento de ensino do alguno de graduação não foi encontrado
+        if ($result == false) {
+            // Será retornado 'DEPARTAMENTO NÃO ENCONTRADO' a fim de se detectar as situações ATÍPICAS em que isso ocorre
+            $result = ['nomabvset' => 'DEPARTAMENTO NÃO ENCONTRADO'];
+        }
+        return $result;
     }
 
     /**
@@ -772,7 +804,8 @@ class Graduacao
      * @return Array
      * @author Kawan Santana, em 19/03/2024
      */
-    public static function listarDepartamentosDeEnsino(){
+    public static function listarDepartamentosDeEnsino()
+    {
         $query = DB::getQuery('Graduacao.listarDepartamentosDeEnsino.sql');
         return DB::fetchAll($query);
     }

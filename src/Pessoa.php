@@ -104,7 +104,6 @@ class Pessoa
             if (trim($row['stamtr']) == 'S') {
                 return $row['codema'];
             }
-
         }
         return false;
     }
