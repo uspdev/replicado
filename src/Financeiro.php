@@ -2,7 +2,7 @@
 
 namespace Uspdev\Replicado;
 
-class Financeiro
+class Financeiro extends ReplicadoBase
 {
      /**
      * Método que retorna os centros de despesas.
@@ -12,7 +12,7 @@ class Financeiro
      * @return array
      * @author Victor de O. Marinho <victor.oliveira.marinho@usp.br>
      */
-    public static function listarCentrosDespesas()
+    protected static function _listarCentrosDespesas()
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = "SELECT etrhie FROM CENTRODESPHIERARQUIA

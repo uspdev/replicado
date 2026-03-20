@@ -186,6 +186,7 @@ class Replicado
      */
     public static function getFake($name)
     {
+        $name = str_replace('Uspdev\\Replicado\\', '', $name);
         $path = new SplFileInfo(__DIR__);
         $path = $path->getRealPath();
         $path .= DIRECTORY_SEPARATOR;
@@ -194,8 +195,13 @@ class Replicado
         $path .= 'resources';
         $path .= DIRECTORY_SEPARATOR;
         $path .= 'fake';
-        $json = file_get_contents($path . DIRECTORY_SEPARATOR . $name . '.json');
 
-        return json_decode($json, true);
+        $file = $path . DIRECTORY_SEPARATOR . $name . '.json';
+
+        if (is_readable($file)) {
+            $json = file_get_contents($file);
+            return json_decode($json, true);
+        } 
+        return 'Não há dados fake criado para esse método ainda.';
     }
 }

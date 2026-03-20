@@ -2,9 +2,9 @@
 
 namespace Uspdev\Replicado;
 
-class Graduacao
+class Graduacao extends ReplicadoBase
 {
-    public static function verifica($codpes, $codundclgi)
+    protected static function _verifica($codpes, $codundclgi)
     {
         $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
@@ -39,7 +39,7 @@ class Graduacao
      * @return Array codpes, nompes, codema, codcur, nomcur, codhab, nomhab, dtainivin
      * @author Masaki K Neto, em 13/10/2021, #475
      */
-    public static function listarAtivos($codCur = null, $anoIngresso = null, $parteNome = null)
+    protected static function _listarAtivos($codCur = null, $anoIngresso = null, $parteNome = null)
     {
         $codundclg = getenv('REPLICADO_CODUNDCLG');
 
@@ -81,7 +81,7 @@ class Graduacao
      * @return Integer
      * @author Masaki K Neto, em 13/10/2021, #475
      */
-    public static function contarAtivos()
+    protected static function _contarAtivos()
     {
         $codundclg = getenv('REPLICADO_CODUNDCLG');
         $query = "SELECT count(*) total
@@ -102,7 +102,7 @@ class Graduacao
      * @return Array (codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
      * @author Masakik, adaptado em 8/11/2022
      */
-    public static function obterCursoAtivo(int $codpes)
+    protected static function _obterCursoAtivo(int $codpes)
     {
         $query = DB::getQuery('Graduacao.obterCursoAtivo.sql');
         $param['codpes'] = $codpes;
@@ -117,7 +117,7 @@ class Graduacao
      * @return Int
      */
 
-    public static function programa($codpes)
+    protected static function _programa($codpes)
     {
         $query = " SELECT TOP 1 * FROM HISTPROGGR ";
         $query .= " WHERE (HISTPROGGR.codpes = convert(int,:codpes)) ";
@@ -136,7 +136,7 @@ class Graduacao
      * @return String
      */
 
-    public static function nomeCurso($codcur)
+    protected static function _nomeCurso($codcur)
     {
         $query = " SELECT TOP 1 * FROM CURSOGR ";
         $query .= " WHERE (CURSOGR.codcur = convert(int, :codcur)) ";
@@ -159,7 +159,7 @@ class Graduacao
      * @return String
      */
 
-    public static function nomeHabilitacao($codhab, $codcur)
+    protected static function _nomeHabilitacao($codhab, $codcur)
     {
         $query = " SELECT TOP 1 * FROM HABILITACAOGR ";
         $query .= " WHERE (HABILITACAOGR.codhab = convert(int, :codhab) AND HABILITACAOGR.codcur = convert(int, :codcur)) ";
@@ -175,7 +175,7 @@ class Graduacao
         return $result;
     }
 
-    public static function obterCursosHabilitacoes($codundclg)
+    protected static function _obterCursosHabilitacoes($codundclg)
     {
         $query = " SELECT CURSOGR.*, HABILITACAOGR.* FROM CURSOGR, HABILITACAOGR";
         $query .= " WHERE (CURSOGR.codclg IN (:codundclgi)) AND (CURSOGR.codcur = HABILITACAOGR.codcur)";
@@ -194,7 +194,7 @@ class Graduacao
      * @param Array $arrCoddis
      * @return void
      */
-    public static function obterDisciplinas($arrCoddis)
+    protected static function _obterDisciplinas($arrCoddis)
     {
         $query = " SELECT D1.* FROM DISCIPLINAGR AS D1";
         $query .= " WHERE (D1.verdis = (
@@ -218,7 +218,7 @@ class Graduacao
      * @author André Canale Garcia <acgarcia@sc.sp.br> (antes de 4/2022)
      * @author Masakik, em 7/5/2024, fix #565 - aplicado filtro de disciplinas não ativadas
      */
-    public static function listarDisciplinas()
+    protected static function _listarDisciplinas()
     {
         $query = DB::getQuery('Graduacao.listarDisciplinas.sql');
         return DB::fetchAll($query);
@@ -230,7 +230,7 @@ class Graduacao
      * @param String $coddis
      * @return void
      */
-    public static function nomeDisciplina($coddis)
+    protected static function _nomeDisciplina($coddis)
     {
         $query = " SELECT D1.* FROM DISCIPLINAGR AS D1";
         $query .= " WHERE (D1.verdis = (
@@ -253,11 +253,11 @@ class Graduacao
      * @param Int $codpes
      * @return void
      */
-    public static function disciplinasConcluidas($codpes, $codundclgi)
+    protected static function _disciplinasConcluidas($codpes, $codundclgi)
     {
-        $programa = self::programa($codpes);
+        $programa = self::_programa($codpes);
         $programa = $programa['codpgm'];
-        $ingresso = self::curso($codpes, $codundclgi);
+        $ingresso = self::_curso($codpes, $codundclgi);
         $ingresso = substr($ingresso['dtainivin'], 0, 4);
         $query = "SELECT DISTINCT H.coddis, H.rstfim, D.creaul, D.cretrb FROM HISTESCOLARGR AS H, DISCIPLINAGR AS D
             WHERE H.coddis = D.coddis AND H.verdis = D.verdis AND H.codpes = convert(int, :codpes) AND H.codpgm = convert(int, :programa)
@@ -279,7 +279,7 @@ class Graduacao
      * @param string $coddis
      * @return int $creaul
      */
-    public static function creditosDisciplina($coddis)
+    protected static function _creditosDisciplina($coddis)
     {
         $query = " SELECT D1.creaul FROM DISCIPLINAGR AS D1";
         $query .= " WHERE (D1.verdis = (
@@ -306,11 +306,11 @@ class Graduacao
      * @param Int $codundclgi
      * @return Array(coddis, creaulatb)
      */
-    public static function creditosDisciplinasConcluidasAproveitamentoEstudosExterior($codpes, $codundclgi)
+    protected static function _creditosDisciplinasConcluidasAproveitamentoEstudosExterior($codpes, $codundclgi)
     {
-        $programa = self::programa($codpes);
+        $programa = self::_programa($codpes);
         $programa = $programa['codpgm'];
-        $ingresso = self::curso($codpes, $codundclgi);
+        $ingresso = self::_curso($codpes, $codundclgi);
         $ingresso = substr($ingresso['dtainivin'], 0, 4);
         $query = "SELECT DISTINCT H.coddis, R.creaulatb ";
         $query .= "FROM HISTESCOLARGR AS H, DISCIPLINAGR AS D, REQUERHISTESC AS R ";
@@ -333,7 +333,7 @@ class Graduacao
      * @param Int $codhab
      * @return Array(coddis, nomdis, verdis, numsemidl, tipobg)
      */
-    public static function disciplinasCurriculo($codcur, $codhab)
+    protected static function _disciplinasCurriculo($codcur, $codhab)
     {
         $query = "SELECT G.coddis, D.nomdis, G.verdis, G.numsemidl, G.tipobg ";
         $query .= " FROM GRADECURRICULAR G INNER JOIN DISCIPLINAGR D ON (G.coddis = D.coddis AND G.verdis = D.verdis)";
@@ -356,7 +356,7 @@ class Graduacao
      * @param Int $codhab
      * @return Array(coddis, verdis, tipobg, coddis_equivalente, verdis_equivalente)
      */
-    public static function disciplinasEquivalentesCurriculo($codcur, $codhab)
+    protected static function _disciplinasEquivalentesCurriculo($codcur, $codhab)
     {
         $query = "SELECT G.codeqv, G.coddis, G.verdis, GC.tipobg, E.coddis as coddis_eq, E.verdis as verdis_eq ";
         $query .= " FROM GRUPOEQUIVGR G INNER JOIN EQUIVALENCIAGR E ON (G.codeqv = E.codeqv) ";
@@ -380,14 +380,14 @@ class Graduacao
      * @param $codundclg
      * @return Array(nomabvset)
      */
-    public static function obterSetorAluno($codpes, $codundclg)
+    protected static function _obterSetorAluno($codpes, $codundclg)
     {
 
         $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
         $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
 
-        $codcur = self::obterCursoAtivo($codpes)['codcur'];
-        $codhab = self::obterCursoAtivo($codpes)['codhab'];
+        $codcur = self::_obterCursoAtivo($codpes)['codcur'];
+        $codhab = self::_obterCursoAtivo($codpes)['codhab'];
         $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
                     INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
                     WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
@@ -412,10 +412,10 @@ class Graduacao
      * @param Int $codundclgi
      * @return Array(nomabvset)
      */
-    public static function setorAluno($codpes, $codundclgi)
+    protected static function _setorAluno($codpes, $codundclgi)
     {
-        $codcur = self::curso($codpes, $codundclgi)['codcur'];
-        $codhab = self::curso($codpes, $codundclgi)['codhab'];
+        $codcur = self::_curso($codpes, $codundclgi)['codcur'];
+        $codhab = self::_curso($codpes, $codundclgi)['codhab'];
         $query = " SELECT TOP 1 L.nomabvset FROM CURSOGRCOORDENADOR AS C
                     INNER JOIN LOCALIZAPESSOA AS L ON C.codpesdct = L.codpes
                     WHERE C.codcur = CONVERT(INT, :codcur) AND C.codhab = CONVERT(INT, :codhab)";
@@ -440,7 +440,7 @@ class Graduacao
      * @param Integer $codcur (optional)
      * @return void
      */
-    public static function contarAtivosPorGenero($sexpes, $codcur = null)
+    protected static function _contarAtivosPorGenero($sexpes, $codcur = null)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = "SELECT COUNT (DISTINCT L.codpes) 
@@ -463,7 +463,7 @@ class Graduacao
      * @param Integer $codpes
      * @return boolean
      */
-    public static function verificarCoordenadorCursoGrad(int $codpes)
+    protected static function _verificarCoordenadorCursoGrad(int $codpes)
     {
         $query = "SELECT COUNT(codpesdct) as qtde_cursos
                     FROM CURSOGRCOORDENADOR
@@ -491,7 +491,7 @@ class Graduacao
      * @param Integer $codpes
      * @return boolean
      */
-    public static function verificarPessoaGraduadaUnidade(int $codpes)
+    protected static function _verificarPessoaGraduadaUnidade(int $codpes)
     {
         $cursos = implode(',', Graduacao::obterCodigosCursos());
 
@@ -530,7 +530,7 @@ class Graduacao
      * @param Integer $codorg : Código da unidade
      * @return boolean
      */
-    public static function verificarExAlunoGrad($codpes, $codorg)
+    protected static function _verificarExAlunoGrad($codpes, $codorg)
     {
         $query = " SELECT codpes from TITULOPES
                     WHERE codpes = convert(int,:codpes)
@@ -548,7 +548,7 @@ class Graduacao
         return false;
     }
 
-    public static function obterGradeHoraria($codpes)
+    protected static function _obterGradeHoraria($codpes)
     {
         $current = date("Y") . (date("m") > 6 ? 2 : 1);
 
@@ -568,7 +568,7 @@ class Graduacao
      * @author Lucas Flóro 20/04/2021
      * @return array
      */
-    public static function obterCodigosCursos()
+    protected static function _obterCodigosCursos()
     {
         $codigo_unidade = getenv('REPLICADO_CODUNDCLG');
 
@@ -594,7 +594,7 @@ class Graduacao
      * @return Array
      * @author @thiagogomesverissimo 05/05/2021
      **/
-    public static function listarDisciplinasGradeCurricular($codcur, $codhab, $tipobg = 'O')
+    protected static function _listarDisciplinasGradeCurricular($codcur, $codhab, $tipobg = 'O')
     {
         $query = DB::getQuery('Graduacao.listarDisciplinasGradeCurricular.sql');
         $param = [
@@ -612,7 +612,7 @@ class Graduacao
      * @return Array
      * @author @gabrielareisg 28/05/2021
      **/
-    public static function listarIntercambios()
+    protected static function _listarIntercambios()
     {
         $codundclgi = getenv('REPLICADO_CODUNDCLG');
 
@@ -631,7 +631,7 @@ class Graduacao
      * @return Array
      * @author @gabrielareisg 31/05/2021
      **/
-    public static function obterIntercambioPorCodpes(int $codpes)
+    protected static function _obterIntercambioPorCodpes(int $codpes)
     {
         $codundclgi = getenv('REPLICADO_CODUNDCLG');
 
@@ -665,7 +665,7 @@ class Graduacao
      * @return Array
      * @author Masaki K Neto em 17/02/2022
      **/
-    public static function listarDisciplinasAluno(int $codpes, int $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
+    protected static function _listarDisciplinasAluno(int $codpes, int $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
     {
         $query = DB::getQuery('Graduacao.listarDisciplinasAluno.sql');
         $param['codpes'] = $codpes;
@@ -709,11 +709,11 @@ class Graduacao
      * @author gabrielareisg em 14/06/2021
      * @author modificado por thiagogomesverissimo em 22/11/2021
      * @author modificado por Masakik em 18/2/2022
-     * @see SELF::listarDisciplinasAluno()
+     * @see self::_listarDisciplinasAluno()
      */
-    public static function obterMediaPonderada(int $codpes, int $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
+    protected static function _obterMediaPonderada(int $codpes, int $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
     {
-        $result = SELF::listarDisciplinasAluno($codpes, $codpgm, $rstfim);
+        $result = self::_listarDisciplinasAluno($codpes, $codpgm, $rstfim);
 
         $creditos = 0;
         $soma = 0;
@@ -740,9 +740,9 @@ class Graduacao
      * @return string
      * @author thiagogomesverissimo em 21/11/2021
      */
-    public static function obterMediaPonderadaLimpa(int $codpes, int $codpgm = null)
+    protected static function _obterMediaPonderadaLimpa(int $codpes, int $codpgm = null)
     {
-        return self::obterMediaPonderada($codpes, $codpgm, ['A']);
+        return self::_obterMediaPonderada($codpes, $codpgm, ['A']);
     }
 
     /**
@@ -760,9 +760,9 @@ class Graduacao
      * @return string
      * @author thiagogomesverissimo em 21/11/2021
      */
-    public static function obterMediaPonderadaSuja(int $codpes, int $codpgm = null)
+    protected static function _obterMediaPonderadaSuja(int $codpes, int $codpgm = null)
     {
-        return self::obterMediaPonderada($codpes, $codpgm, ['A', 'RN', 'RA', 'RF']);
+        return self::_obterMediaPonderada($codpes, $codpgm, ['A', 'RN', 'RA', 'RF']);
     }
 
     /**
@@ -778,7 +778,7 @@ class Graduacao
      * @author Gustavo Medeiros (EEL), em 10/12/2021
      * @author Masaki K Neto (EESC)
      */
-    public static function listarDisciplinasAlunoAnoSemestre(int $codpes, int $anoSemestre, array $rstfim = ['A', 'AR', 'R', 'RN', 'RA', 'RF', 'NULL'])
+    protected static function _listarDisciplinasAlunoAnoSemestre(int $codpes, int $anoSemestre, array $rstfim = ['A', 'AR', 'R', 'RN', 'RA', 'RF', 'NULL'])
     {
         $query = DB::getQuery('Graduacao.listarDisciplinasAlunoAnoSemestre.sql');
 
@@ -804,7 +804,7 @@ class Graduacao
      * @return Array
      * @author Kawan Santana, em 19/03/2024
      */
-    public static function listarDepartamentosDeEnsino()
+    protected static function _listarDepartamentosDeEnsino()
     {
         $query = DB::getQuery('Graduacao.listarDepartamentosDeEnsino.sql');
         return DB::fetchAll($query);
@@ -820,7 +820,7 @@ class Graduacao
      * @param String $partNome (optional)
      * @return array(campos tabela LOCALIZAPESSOA)
      */
-    public static function ativos($codundclgi, $parteNome = null)
+    protected static function _ativos($codundclgi, $parteNome = null)
     {
         $param = [
             'codundclgi' => $codundclgi,
@@ -845,7 +845,7 @@ class Graduacao
      * @param Int $codundclgi
      * @return array(codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
      */
-    public static function curso($codpes, $codundclgi)
+    protected static function _curso($codpes, $codundclgi)
     {
         $query = " SELECT L.codpes, L.nompes, C.codcur, C.nomcur, H.codhab, H.nomhab, V.dtainivin, V.codcurgrd";
         $query .= " FROM LOCALIZAPESSOA L";

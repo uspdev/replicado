@@ -2,7 +2,7 @@
 
 namespace Uspdev\Replicado;
 
-class Posgraduacao
+class Posgraduacao extends ReplicadoBase
 {
     /**
      * Verifica se aluno (codpes) tem matrícula ativa na pós-graduação da unidade
@@ -12,7 +12,7 @@ class Posgraduacao
      *
      * @return bool
      */
-    public static function verifica($codpes, $codundclgi)
+    protected static function _verifica($codpes, $codundclgi)
     {
         $query = " SELECT * FROM LOCALIZAPESSOA WHERE codpes = convert(int,:codpes)";
         $param = [
@@ -38,7 +38,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function ativos($codundclgi)
+    protected static function _ativos($codundclgi)
     {
         $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA";
         $query .= " INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)";
@@ -60,7 +60,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function programas($codundclgi = null, $codcur = null, $codare = null)
+    protected static function _programas($codundclgi = null, $codcur = null, $codare = null)
     {
         if (!$codundclgi) {
             $codundclgi = getenv('REPLICADO_CODUNDCLG');
@@ -102,7 +102,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function orientadores(int $codare)
+    protected static function _orientadores(int $codare)
     {
         $query = "SELECT r.codpes, MAX(r.dtavalini) AS dtavalini, MAX(p.sexpes) AS sexpes,";
         $query .= " MAX(r.dtavalfim) AS dtavalfim, MIN(r.nivare) AS nivare, MIN(p.nompes) AS nompes";
@@ -125,7 +125,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function catalogoDisciplinas($codare)
+    protected static function _catalogoDisciplinas($codare)
     {
         $query = "SELECT DISTINCT r.sgldis, d.nomdis, r.numseqdis, r.dtaatvdis";
         $query .= " FROM R27DISMINCRE AS r, DISCIPLINA AS d";
@@ -149,7 +149,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function disciplina($sgldis)
+    protected static function _disciplina($sgldis)
     {
         $query = "SELECT TOP 1 * FROM DISCIPLINA";
         $query .= " WHERE sgldis = :sgldis";
@@ -174,7 +174,7 @@ class Posgraduacao
      * @author Masaki K Neto, modificado em 3/2/2021
      * @author Masaki K Neto, modificado em 26/1/2022
      */
-    public static function disciplinasOferecimento(int $codare)
+    protected static function _disciplinasOferecimento(int $codare)
     {
         $query = "SELECT d.nomdis, d.numcretotdis, o.*
             FROM OFERECIMENTO o
@@ -213,7 +213,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function oferecimento(string $sgldis, int $numofe)
+    protected static function _oferecimento(string $sgldis, int $numofe)
     {
         $query = "SELECT o.*, d.nomdis, d.numcretotdis
            FROM OFERECIMENTO as o, DISCIPLINA as d
@@ -229,8 +229,8 @@ class Posgraduacao
         ];
 
         $result = DB::fetch($query, $param);
-        $result['espacoturma'] = self::espacoturma($result['sgldis'], $result['numseqdis'], $result['numofe']);
-        $result['ministrante'] = self::ministrante($result['sgldis'], $result['numseqdis'], $result['numofe']);
+        $result['espacoturma'] = self::_espacoturma($result['sgldis'], $result['numseqdis'], $result['numofe']);
+        $result['ministrante'] = self::_ministrante($result['sgldis'], $result['numseqdis'], $result['numofe']);
 
         // Tratamento das datas no formato d/m/Y
         $result['dtainiofe'] = Uteis::data_mes($result['dtainiofe']);
@@ -239,7 +239,7 @@ class Posgraduacao
 
         // Conversão codlin para nome completo do idioma
         if (isset($result['codlinofe']) && (!empty($result['codlinofe']))) {
-            $result['codlinofe'] = self::idiomaDisciplina($result['codlinofe']);
+            $result['codlinofe'] = self::_idiomaDisciplina($result['codlinofe']);
         }
         return $result;
     }
@@ -256,7 +256,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function espacoturma(string $sgldis, int $numseqdis, int $numofe)
+    protected static function _espacoturma(string $sgldis, int $numseqdis, int $numofe)
     {
         $query = "SELECT *
             FROM ESPACOTURMA
@@ -292,7 +292,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function ministrante(string $sgldis, int $numseqdis, int $numofe)
+    protected static function _ministrante(string $sgldis, int $numseqdis, int $numofe)
     {
         $query = "SELECT r.codpes, p.nompes FROM R32TURMINDOC AS r, PESSOA AS p
         WHERE r.codpes = p.codpes
@@ -318,7 +318,7 @@ class Posgraduacao
      *
      * por Erickson Zanon - czanon@usp.br
      */
-    public static function areasProgramas(int $codundclgi = null, int $codcur = null)
+    protected static function _areasProgramas(int $codundclgi = null, int $codcur = null)
     {
         if (!$codundclgi) {
             $codundclgi = getenv('REPLICADO_CODUNDCLG');
@@ -374,7 +374,7 @@ class Posgraduacao
      * @param Int $codare - código da área (opcional)
      * @return Array
      */
-    public static function alunosPrograma(int $codundclgi, int $codcur, int $codare = null)
+    protected static function _alunosPrograma(int $codundclgi, int $codcur, int $codare = null)
     {
         // se $codare é null, seleciona todas
         if (!$codare) {
@@ -419,7 +419,7 @@ class Posgraduacao
      *
      * @return string
      */
-    public static function idiomaDisciplina($codlinofe)
+    protected static function _idiomaDisciplina($codlinofe)
     {
         if (isset($codlinofe) && (!empty($codlinofe))) {
             $query = "SELECT dsclin
@@ -445,7 +445,7 @@ class Posgraduacao
      *
      * @return Array
      */
-    public static function egressosArea(int $codare)
+    protected static function _egressosArea(int $codare)
     {
         // se não fizer join com TRABALHOPROG retornou um resultado menor que deveria (codare=18134)
         $query = DB::getQuery('Posgraduacao.egressosArea.sql');
@@ -464,7 +464,7 @@ class Posgraduacao
      * @param  Int $codare - código da área do programa de pós graduação
      * @return Array
      */
-    public static function contarEgressosAreaAgrupadoPorAno(int $codare)
+    protected static function _contarEgressosAreaAgrupadoPorAno(int $codare)
     {
         // se não fizer join com TRABALHOPROG retornou um resultado menor que deveria (codare=18134)
         $query = DB::getQuery('Posgraduacao.contarEgressosArea.sql');
@@ -486,7 +486,7 @@ class Posgraduacao
      * @param Integer $codundclg (opt)
      * @return Integer
      */
-    public static function totalPosNivelPrograma($nivpgm, $codundclg)
+    protected static function _totalPosNivelPrograma($nivpgm, $codundclg)
     {
         $query = "SELECT COUNT(lp.codpes) FROM LOCALIZAPESSOA AS lp
                     INNER JOIN VINCULOPESSOAUSP AS vpu
@@ -512,7 +512,7 @@ class Posgraduacao
      * @param Integer $codare (optional) - código da área pertencente a um programa de pós.
      * @return void
      */
-    public static function contarAtivos($codare = null)
+    protected static function _contarAtivos($codare = null)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Posgraduacao.contarAtivos.sql');
@@ -537,7 +537,7 @@ class Posgraduacao
      * @param Integer $codare (optional) - código da área pertencente a um programa de pós.
      * @return void
      */
-    public static function contarAtivosPorGenero($sexpes, $codare = null)
+    protected static function _contarAtivosPorGenero($sexpes, $codare = null)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
 
@@ -567,7 +567,7 @@ class Posgraduacao
      * @param Integer $codorg : Código da unidade
      * @return boolean
      */
-    public static function verificarExAlunoPos($codpes, $codorg)
+    protected static function _verificarExAlunoPos($codpes, $codorg)
     {
         $query = " SELECT codpes from TITULOPES
                     WHERE codpes = convert(int,:codpes)
@@ -595,7 +595,7 @@ class Posgraduacao
      * @return array|boolean
      * @author refatorado por masakik, 5/5/2021, issue #431
      **/
-    public static function listarMembrosBanca($codpes, $codare = null, $numseqpgm = null)
+    protected static function _listarMembrosBanca($codpes, $codare = null, $numseqpgm = null)
     {
 
         $query = "SELECT nompesttd = (SELECT nompesttd FROM PESSOA p WHERE p.codpes = r.codpesdct)
@@ -623,9 +623,9 @@ class Posgraduacao
      *
      * @author Masaki K Neto, em 6/4/2021
      */
-    public static function obterOrientandosAtivos($codpes)
+    protected static function _obterOrientandosAtivos($codpes)
     {
-        return SELF::listarOrientandosAtivos($codpes);
+        return self::_listarOrientandosAtivos($codpes);
     }
 
     /**
@@ -642,7 +642,7 @@ class Posgraduacao
      * @author Refatorado por @gabrielareisg em 30/4/2021 - issue #424
      * @author refatorado por masakik, em 22/7/2021
      **/
-    public static function listarOrientandosAtivos(int $codpes)
+    protected static function _listarOrientandosAtivos(int $codpes)
     {
         $query = DB::getQuery('Posgraduacao.listarOrientandosAtivos.sql');
         $param['codpes'] = $codpes;
@@ -651,7 +651,7 @@ class Posgraduacao
         # O foreach foi utilizado para evitar o uso de vários inner joins,
         # o que deixaria a performance do método lenta.
         foreach ($orientandos as &$orientando) {
-            $vinculo = SELF::obterVinculoAtivo($orientando['codpes']);
+            $vinculo = self::_obterVinculoAtivo($orientando['codpes']);
 
             // vamos mergear somente alguns campos de $vinculo
             if (is_array($vinculo) && count($vinculo)) {
@@ -684,7 +684,7 @@ class Posgraduacao
      * @author @gabrielareisg em 30/04/2021 - #issue424
      * @author @masakik, modificado em 22/7/2021
      */
-    public static function obterVinculoAtivo(int $codpes)
+    protected static function _obterVinculoAtivo(int $codpes)
     {
         $query = DB::getQuery('Posgraduacao.obterVinculoAtivo.sql');
         $param['codpes'] = $codpes;
@@ -696,9 +696,9 @@ class Posgraduacao
      *
      * @author Masaki K Neto, em 6/4/2021
      */
-    public static function obterOrientandosConcluidos($codpes)
+    protected static function _obterOrientandosConcluidos($codpes)
     {
-        return SELF::listarOrientandosConcluidos($codpes);
+        return self::_listarOrientandosConcluidos($codpes);
     }
 
     /**
@@ -710,7 +710,7 @@ class Posgraduacao
      * @return Array
      * @author Refatorado por Masaki K Neto em 6/4/2021
      **/
-    public static function listarOrientandosConcluidos($codpes)
+    protected static function _listarOrientandosConcluidos($codpes)
     {
         $query = DB::getQuery('Posgraduacao.listarOrientandosConcluidos.sql');
         $param = [
@@ -727,7 +727,7 @@ class Posgraduacao
      * @param Array $intervalo = ['inicio'=> '2020-01-01', 'fim' => '2021-01-01']
      * @return Array
      **/
-    public static function listarDefesas($intervalo = [])
+    protected static function _listarDefesas($intervalo = [])
     {
         # Se não for passado o intervalo vamos listar as defesas do ano corrente
         if (empty($intervalo)) {
@@ -751,7 +751,7 @@ class Posgraduacao
      *
      * @return array
      **/
-    public static function obterDefesas($codpes)
+    protected static function _obterDefesas($codpes)
     {
         $query = DB::getQuery('Posgraduacao.obterDefesas.sql');
         $param = [
@@ -769,7 +769,7 @@ class Posgraduacao
      *
      * @return array
      */
-    public static function listarAlunosAtivosPrograma($codare)
+    protected static function _listarAlunosAtivosPrograma($codare)
     {
         $query = " SELECT DISTINCT l.nompes, l.codpes FROM LOCALIZAPESSOA l
                     JOIN VINCULOPESSOAUSP v ON (l.codpes = v.codpes)
@@ -794,7 +794,7 @@ class Posgraduacao
      * @return Array - lista contendo código e nome do programa
      * @author masakik, em 22/7/2021
      */
-    public static function listarProgramas()
+    protected static function _listarProgramas()
     {
         $query = DB::getQuery('Posgraduacao.listarProgramas.sql');
         $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
@@ -808,7 +808,7 @@ class Posgraduacao
      * @param int $codcur código do curso/programa
      * @return array|null
      */
-    public static function obterPrograma(int $codcur)
+    protected static function _obterPrograma(int $codcur)
     {
         $query = DB::getQuery('Posgraduacao.obterPrograma.sql');
         $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
@@ -826,7 +826,7 @@ class Posgraduacao
      * @return Array lista com com disciplinas
      * @author André Canale Garcia <acgarcia@sc.sp.br> (04/2022)
      */
-    public static function listarDisciplinas()
+    protected static function _listarDisciplinas()
     {
         $codclg = getenv('REPLICADO_CODUNDCLG');
 

@@ -2,7 +2,7 @@
 
 namespace Uspdev\Replicado;
 
-class CEU
+class CEU extends ReplicadoBase
 {
     /**
      * Método para retornar os cursos de cultura e extensão de um período, permite filtrar por departamentos também
@@ -16,7 +16,7 @@ class CEU
      * @return array
      * @author Erickson Zanon <ezanon@gmail.com> alterado em 06/2023 #545
      */
-    public static function listarCursos($ano_inicio = null, $ano_fim = null, $deptos = null)
+    protected static function _listarCursos($ano_inicio = null, $ano_fim = null, $deptos = null)
     {
 
         // se não foi enviado $ano_inicio, atribui o ano atual

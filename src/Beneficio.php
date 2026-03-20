@@ -2,7 +2,7 @@
 
 namespace Uspdev\Replicado;
 
-class Beneficio
+class Beneficio extends ReplicadoBase
 {
     /**
      * Retorna a lista de benefícos concedidos e não encerrados
@@ -10,7 +10,7 @@ class Beneficio
      * @return Array
      * @author Masaki K Neto, em 9/4/2021
      */
-    public static function listarBeneficios()
+    protected static function _listarBeneficios()
     {
         $query = "SELECT B.tipbnfalu, B.nombnfloc, P.nompesttd, P.dtanas, P.sexpes, BC.*  FROM BENEFICIOALUCONCEDIDO BC
                   JOIN BENEFICIOALUNO B ON (BC.codbnfalu = B.codbnfalu)
@@ -27,7 +27,7 @@ class Beneficio
      * @return Array
      * @author Leandro Ramos, em 28/4/2025
      */
-    public static function listarMonitoresProAluno($codigoSalaMonitor)
+    protected static function _listarMonitoresProAluno($codigoSalaMonitor)
     {
         $codigosSalaMonitor = array_map(
             "trim",

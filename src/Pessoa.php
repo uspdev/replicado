@@ -2,7 +2,7 @@
 
 namespace Uspdev\Replicado;
 
-class Pessoa
+class Pessoa extends ReplicadoBase
 {
 
     /**
@@ -14,7 +14,7 @@ class Pessoa
      * @param Array $fields
      * @return Array
      */
-    public static function dump(int $codpes, array $fields = ['*'])
+    protected static function _dump(int $codpes, array $fields = ['*'])
     {
         $columns = implode(",", $fields);
         $query = "SELECT {$columns} FROM PESSOA
@@ -34,7 +34,7 @@ class Pessoa
      * @param Integer $codpes
      * @return Array
      */
-    public static function cracha($codpes)
+    protected static function _cracha($codpes)
     {
         $query = "SELECT * FROM CATR_CRACHA
                     WHERE codpescra = :codpes";
@@ -53,7 +53,7 @@ class Pessoa
      * @return Array
      * @author Alessandro Costa de Oliveira - 21/03/2022
      */
-    public static function listarCrachas(int $codpes)
+    protected static function _listarCrachas(int $codpes)
     {
         $query = "SELECT C.*, T.* FROM CATR_CRACHA C
                     INNER JOIN TIPOVINCULO T ON C.tipvinaux = T.tipvin
@@ -70,7 +70,7 @@ class Pessoa
      * @param Integer $codpes
      * @return Array
      */
-    public static function emails($codpes)
+    protected static function _emails($codpes)
     {
         $query = "SELECT * FROM EMAILPESSOA
                     WHERE codpes = convert(int,:codpes)";
@@ -92,7 +92,7 @@ class Pessoa
      * @param Integer $codpes
      * @return String
      */
-    public static function email($codpes)
+    protected static function _email($codpes)
     {
         $query = "SELECT * FROM EMAILPESSOA
                     WHERE codpes = convert(int,:codpes)";
@@ -114,7 +114,7 @@ class Pessoa
      * @param Integer $codpes
      * @return Array
      */
-    public static function telefones($codpes)
+    protected static function _telefones($codpes)
     {
         $query = "SELECT * FROM TELEFPESSOA
                     WHERE TELEFPESSOA.codpes = convert(int,:codpes)";
@@ -150,7 +150,7 @@ class Pessoa
      * @author Marcelo A K Fontana, atualizado em 01/10/2024
      * @author Marcelo A K Fontana, atualizado em 22/11/2024
      */
-    public static function procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string $tipvin = null, string $codundclgs = null, string $tipvinext = null)
+    protected static function _procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string $tipvin = null, string $codundclgs = null, string $tipvinext = null)
     {
         if ($fonetico) {
             $nome = Uteis::fonetico($nome);
@@ -209,7 +209,7 @@ class Pessoa
      * @author André Canale Garcia <acgarcia@sc.sp.br> // Adaptação do método procurarPorNome
      * @author Masaki K Neto, modificado em 1/2/2022
      */
-    public static function procurarPorCodigoOuNome(string $busca, bool $ativos = true)
+    protected static function _procurarPorCodigoOuNome(string $busca, bool $ativos = true)
     {
         if ($ativos) {
             # se ativos vamos fazer join com LOCALIZAPESSOA
@@ -238,7 +238,7 @@ class Pessoa
      * @return Array
      * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      */
-    public static function vinculos(int $codpes, int $codundclgi = 0)
+    protected static function _vinculos(int $codpes, int $codundclgi = 0)
     {
         $query = "SELECT * FROM LOCALIZAPESSOA
                     WHERE codpes = convert(int,:codpes)";
@@ -285,9 +285,9 @@ class Pessoa
      * @deprecated em favor de listarServidores()
      * @author Masaki K Neto atualizado em 28/1/2022
      */
-    public static function servidores($codundclgi = '')
+    protected static function _servidores($codundclgi = '')
     {
-        return SELF::ListarServidores();
+        return self::_listarServidores();
     }
 
     /**
@@ -302,7 +302,7 @@ class Pessoa
      * @return array
      * @author Masaki K Neto atualizado em 28/1/2022
      */
-    public static function listarServidores($filtros = [])
+    protected static function _listarServidores($filtros = [])
     {
         $filtros['LOCALIZAPESSOA.tipvinext'] = 'Servidor';
         $filtros['LOCALIZAPESSOA.sitatl'] = 'A';
@@ -332,7 +332,7 @@ class Pessoa
      * @author @st-ricardof, em 8/2022
      * @author Masakik, modificado em 8/11/2022
      */
-    public static function listarDesignados(int $categoria = 0)
+    protected static function _listarDesignados(int $categoria = 0)
     {
         switch ($categoria) {
             case 2:
@@ -355,7 +355,7 @@ class Pessoa
      * @return Array
      * @author Kawan Santana, em 22/04/2024
      */
-    public static function listarAfastados()
+    protected static function _listarAfastados()
     {
         $query = DB::getQuery('Pessoa.listarAfastados.sql');
         return DB::fetchAll($query);
@@ -367,7 +367,7 @@ class Pessoa
      * @param Integer $codundclgi
      * @return array
      */
-    public static function estagiarios($codundclgi)
+    protected static function _estagiarios($codundclgi)
     {
         $query = "SELECT LOCALIZAPESSOA.*, PESSOA.* FROM LOCALIZAPESSOA
                     INNER JOIN PESSOA ON (LOCALIZAPESSOA.codpes = PESSOA.codpes)
@@ -388,7 +388,7 @@ class Pessoa
      * @param Integer $codundclg
      * @return Integer
      */
-    public static function totalVinculo($vinculo, $codundclg)
+    protected static function _totalVinculo($vinculo, $codundclg)
     {
         $query = "SELECT COUNT(codpes) FROM LOCALIZAPESSOA
                     WHERE tipvinext = :vinculo
@@ -406,7 +406,7 @@ class Pessoa
      *
      * @return Array
      */
-    public static function todosVinculosExtenso()
+    protected static function _todosVinculosExtenso()
     {
         $query = "SELECT DISTINCT(tipvinext) FROM LOCALIZAPESSOA";
         return DB::fetchAll($query);
@@ -418,9 +418,9 @@ class Pessoa
      * @return boolean
      * @deprecated em favor de obterNome, em 20/12/2021
      */
-    public static function nomeCompleto($codpes)
+    protected static function _nomeCompleto($codpes)
     {
-        return SELF::obterNome($codpes);
+        return self::_obterNome($codpes);
     }
 
     /**
@@ -430,7 +430,7 @@ class Pessoa
      * @param Integer|Array $codpes
      * @return String|Array
      */
-    public static function obterNome($codpes)
+    protected static function _obterNome($codpes)
     {
         if (is_array($codpes)) {
             $codpes = implode(',', $codpes);
@@ -466,7 +466,7 @@ class Pessoa
      * @return String|Array|Null|Bool
      * @author Masakik em 4/4/2022, fix #509
      */
-    public static function retornarNome($codpes)
+    protected static function _retornarNome($codpes)
     {
         if (is_array($codpes)) {
             $codpes = implode(',', $codpes);
@@ -508,7 +508,7 @@ class Pessoa
      * @return Array
      * @author modificado por Masakik em 8/11/2022
      */
-    public static function listarTiposVinculoExtenso()
+    protected static function _listarTiposVinculoExtenso()
     {
         $query = DB::getQuery('Pessoa.listarTiposVinculoExtenso.sql');
         return DB::fetchAll($query);
@@ -527,7 +527,7 @@ class Pessoa
      * @return Array
      * @author modificado por Masakik em 28/10/2022
      */
-    public static function ativosVinculo(string $vinculo, $codundclg = null, int $contar = 0)
+    protected static function _ativosVinculo(string $vinculo, $codundclg = null, int $contar = 0)
     {
         $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
         $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLG');
@@ -563,7 +563,7 @@ class Pessoa
      * @return void
      * @author Alessandro Costa de Oliveira, em 10/03/2021
      */
-    public static function listarServidoresSetor(array $codset, int $aposentados = 1)
+    protected static function _listarServidoresSetor(array $codset, int $aposentados = 1)
     {
         // $filtro = "WHERE (L.codset IN (:setor) AND L.codfncetr = 0)"; # retira os designados
         $filtro = "WHERE (L.codset IN (" . implode(',', $codset) . ") AND L.codfncetr = 0)"; # retira os designados
@@ -593,7 +593,7 @@ class Pessoa
      *
      * @todo seria bom padronizar conforme documentação retorno tipo int
      */
-    public static function contarServidoresSetor($codset, int $aposentados = 1)
+    protected static function _contarServidoresSetor($codset, int $aposentados = 1)
     {
         $replaces['codset'] = is_array($codset) ? implode(',', $codset) : $codset;
 
@@ -620,7 +620,7 @@ class Pessoa
      * @author modificado por Alessandro em 03/11/2022
      * @deprecated método usado diretamente no uspdev/web-ldap-admin a ser retirado do replicado, em 10/11/2022 - @alecostaweb
      */
-    public static function listarVinculosSetores(int $codpes, $codundclg = null) # codundclg não pode ser Integer por conta de mais de uma unidade
+    protected static function _listarVinculosSetores(int $codpes, $codundclg = null) # codundclg não pode ser Integer por conta de mais de uma unidade
 
     {
         $codundclg = $codundclg ?: getenv('REPLICADO_CODUNDCLGS');
@@ -682,7 +682,7 @@ class Pessoa
      * @author Masaki K Neto, em 14/3/2022
      * @author Masaki K Neto, modificado em 5/5/2023
      */
-    public static function listarVinculosAtivos(int $codpes, bool $designados = true)
+    protected static function _listarVinculosAtivos(int $codpes, bool $designados = true)
     {
         $replaces = $designados ? [] : ['--designados--' => ''];
         $query = DB::getQuery('Pessoa.listarVinculosAtivos.sql', $replaces);
@@ -695,9 +695,9 @@ class Pessoa
      * @param Integer $codpes
      * @return void
      */
-    public static function nascimento($codpes)
+    protected static function _nascimento($codpes)
     {
-        $result = self::dump($codpes);
+        $result = self::_dump($codpes);
         if (!empty($result)) {
             return Uteis::data_mes($result['dtanas']);
         }
@@ -713,7 +713,7 @@ class Pessoa
      * @param Integer $codpes
      * @return boolean
      */
-    public static function verificarEstagioUSP($codpes)
+    protected static function _verificarEstagioUSP($codpes)
     {
         $query = " SELECT codpes from LOCALIZAPESSOA
                     WHERE codpes = convert(int,:codpes)
@@ -735,7 +735,7 @@ class Pessoa
      * @param Char $sexpes
      * @return Integer
      */
-    public static function contarDocentesAtivosPorGenero($sexpes)
+    protected static function _contarDocentesAtivosPorGenero($sexpes)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
 
@@ -756,7 +756,7 @@ class Pessoa
      * @param Char $sexpes
      * @return Integer
      */
-    public static function contarEstagiariosAtivosPorGenero($sexpes)
+    protected static function _contarEstagiariosAtivosPorGenero($sexpes)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
 
@@ -778,7 +778,7 @@ class Pessoa
      * @param Integer $codpes
      * @return array
      */
-    public static function obterEndereco($codpes)
+    protected static function _obterEndereco($codpes)
     {
         $query = "SELECT TL.nomtiplgr, EP.epflgr, EP.numlgr, EP.cpllgr, EP.nombro, L.cidloc, L.sglest, EP.codendptl
                     FROM ENDPESSOA AS EP
@@ -805,7 +805,7 @@ class Pessoa
      * @author Refatorado por @gabrielareisg - 30/04/2021 - issue #425
      *
      */
-    public static function listarDocentes(string $codset_list = null, string $sitatl_list = 'A')
+    protected static function _listarDocentes(string $codset_list = null, string $sitatl_list = 'A')
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $where_setores = $codset_list ? "AND L.codset IN ({$codset_list})" : '';
@@ -829,7 +829,7 @@ class Pessoa
      * @param Integer $codpes
      * @return int|bool
      */
-    public static function contarServidoresAtivosPorGenero($sexpes)
+    protected static function _contarServidoresAtivosPorGenero($sexpes)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = " SELECT COUNT (DISTINCT LOCALIZAPESSOA.codpes) FROM LOCALIZAPESSOA
@@ -849,7 +849,7 @@ class Pessoa
      * @param String
      * @return boolean
      */
-    public static function obterCodpesPorEmail($codema)
+    protected static function _obterCodpesPorEmail($codema)
     {
         $query = " SELECT codpes FROM EMAILPESSOA
                     WHERE EMAILPESSOA.codema = :codema";
@@ -871,7 +871,7 @@ class Pessoa
      * @return string
      */
     // TODO: Depreciar este método e criar um novo trocando o verbo para retornarRamalUsp, já que o método retorna um valor e não um registro
-    public static function obterRamalUsp(int $codpes)
+    protected static function _obterRamalUsp(int $codpes)
     {
         $query = DB::getQuery('Pessoa.obterRamalUsp.sql');
         $param = [
@@ -894,7 +894,7 @@ class Pessoa
      * @param List $codset (opt) - Código do setor
      * @return array
      */
-    public static function listarDocentesAposentadosSenior($codset = false)
+    protected static function _listarDocentesAposentadosSenior($codset = false)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $current = date("Y-m-d H:i:s");
@@ -922,7 +922,7 @@ class Pessoa
      * @param integer $codpes
      * @return array
      */
-    public static function retornarCursoPorCodpes($codpes)
+    protected static function _retornarCursoPorCodpes($codpes)
     {
         $query = DB::getQuery('Pessoa.retornarCursoPorCodpes.sql');
 
@@ -943,7 +943,7 @@ class Pessoa
      * @param $dtafim
      * @return array
      */
-    public static function listarFalecidosPorPeriodo($dtaini, $dtafim)
+    protected static function _listarFalecidosPorPeriodo($dtaini, $dtafim)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.listarFalecidosPorPeriodo.sql');
@@ -967,7 +967,7 @@ class Pessoa
      *
      * @todo retorna tipvin - revisar nome do método e documentação
      */
-    public static function obterSiglasVinculosAtivos(int $codpes)
+    protected static function _obterSiglasVinculosAtivos(int $codpes)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.obterSiglasVinculosAtivos.sql');
@@ -992,7 +992,7 @@ class Pessoa
      * @return array
      * @author @thiagogomesverissimo em 25/06/2021
      */
-    public static function obterSiglasSetoresAtivos(int $codpes)
+    protected static function _obterSiglasSetoresAtivos(int $codpes)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.obterSiglasSetoresAtivos.sql');
@@ -1017,7 +1017,7 @@ class Pessoa
      * @return String
      * @author @thiagogomesverissimo em 25/06/2021
      */
-    public static function retornarEmailUsp(int $codpes)
+    protected static function _retornarEmailUsp(int $codpes)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.retornarEmailUsp.sql');
@@ -1043,7 +1043,7 @@ class Pessoa
      * @author @thiagogomesverissimo - 23/11/2021
      *
      */
-    public static function retornarNomeColegiado(int $codclg, string $sglclg)
+    protected static function _retornarNomeColegiado(int $codclg, string $sglclg)
     {
         $query = DB::getQuery('Pessoa.retornarNomeColegiado.sql');
 
@@ -1074,7 +1074,7 @@ class Pessoa
      * @return Array lista de colegiados
      * @author @thiagogomesverissimo - 23/11/2021
      */
-    public static function listarColegiados()
+    protected static function _listarColegiados()
     {
         $query = DB::getQuery('Pessoa.listarColegiados.sql');
 
@@ -1098,7 +1098,7 @@ class Pessoa
      * @return Array lista de membros do colegiado selecioando
      * @author @thiagogomesverissimo - 23/11/2021
      */
-    public static function listarTitularesSuplentesDoColegiado(int $codclg, string $sglclg)
+    protected static function _listarTitularesSuplentesDoColegiado(int $codclg, string $sglclg)
     {
         $query = DB::getQuery('Pessoa.listarTitularesSuplentesDoColegiado.sql');
 
@@ -1143,7 +1143,7 @@ class Pessoa
      * @return array
      * @author @alecostaweb em 12/11/2021 issue #478
      */
-    public static function listarMaisInformacoesServidores(string $tipvinext)
+    protected static function _listarMaisInformacoesServidores(string $tipvinext)
     {
         $codundclg = getenv('REPLICADO_CODUNDCLG');
         // Para o caso da pessoa ter mais de um vínculo ativo como funcionário e também como docente
@@ -1180,7 +1180,7 @@ class Pessoa
      * @return Array
      * @author André Canale Garcia <acgarcia@sc.sp.br>, em 21/3/2022
      */
-    public static function obterComplemento(int $codpes)
+    protected static function _obterComplemento(int $codpes)
     {
         $query = DB::getQuery('Pessoa.obterComplemento.sql');
         $param['codpes'] = $codpes;
@@ -1196,7 +1196,7 @@ class Pessoa
      *
      * @author Alessandro Costa de Oliveira 16/03/2022
      */
-    public static function obterSituacaoVacinaCovid19(int $codpes)
+    protected static function _obterSituacaoVacinaCovid19(int $codpes)
     {
         // Seguindo informações da tabela do replicado
         // TODO talvez, seja interessante sinalizar com cores tipo um semáforo (sugestão)
@@ -1225,7 +1225,7 @@ class Pessoa
      *
      * @author Alessandro Costa de Oliveira, em 11/04/2024
      */
-    public static function listarTitulacoes(int $codpes)
+    protected static function _listarTitulacoes(int $codpes)
     {
         $query = DB::getQuery('Pessoa.listarTitulacoes.sql');
         $param = ['codpes' => $codpes];
@@ -1242,7 +1242,7 @@ class Pessoa
      *
      * @author Alessandro Costa de Oliveira, em 04/06/2024
      */
-    public static function listarHistoricoFuncional(int $codpes)
+    protected static function _listarHistoricoFuncional(int $codpes)
     {
         $query = DB::getQuery('Pessoa.listarHistoricoFuncional.sql');
         $param = ['codpes' => $codpes];
@@ -1258,9 +1258,9 @@ class Pessoa
      * @return array
      * @deprecated em favor de procurarPorNome, em 10/11/2020
      */
-    public static function nome($nome)
+    protected static function _nome($nome)
     {
-        return SELF::procurarPorNome($nome, false, false);
+        return self::_procurarPorNome($nome, false, false);
     }
 
     /**
@@ -1270,9 +1270,9 @@ class Pessoa
      * @return void
      * @deprecated em favor de procurarPorNome, em 10/11/2020
      */
-    public static function nomeFonetico($nome)
+    protected static function _nomeFonetico($nome)
     {
-        return SELF::procurarPorNome($nome, true, false);
+        return self::_procurarPorNome($nome, true, false);
     }
 
     /**
@@ -1284,9 +1284,9 @@ class Pessoa
      * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      * @deprecated em favor de obterSiglasVinculosAtivos, em 25/06/2021 - @thiagogomesverissimo
      */
-    public static function vinculosSiglas(int $codpes, int $codundclgi = 0)
+    protected static function _vinculosSiglas(int $codpes, int $codundclgi = 0)
     {
-        return SELF::obterSiglasVinculosAtivos($codpes);
+        return self::_obterSiglasVinculosAtivos($codpes);
     }
 
     /**
@@ -1298,9 +1298,9 @@ class Pessoa
      * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      * @deprecated em favor de obterSiglasSetoresAtivos, em 25/06/2021 - @thiagogomesverissimo
      */
-    public static function setoresSiglas(int $codpes, int $codundclgi = 0)
+    protected static function _setoresSiglas(int $codpes, int $codundclgi = 0)
     {
-        return SELF::obterSiglasSetoresAtivos($codpes);
+        return self::_obterSiglasSetoresAtivos($codpes);
     }
 
     /**
@@ -1310,9 +1310,9 @@ class Pessoa
      * @return String
      * @deprecated em favor de retornarEmailUsp, em 25/06/2021 - @thiagogomesverissimo
      */
-    public static function emailusp($codpes)
+    protected static function _emailusp($codpes)
     {
-        return SELF::retornarEmailUsp($codpes);
+        return self::_retornarEmailUsp($codpes);
     }
 
     /**
@@ -1322,9 +1322,9 @@ class Pessoa
      * @return Array
      * @deprecated em favor de listarDesignados, em 22/07/2021 - @st-ricardof.
      */
-    public static function designados($codundclgi)
+    protected static function _designados($codundclgi)
     {
-        return self::listarDesignados();
+        return self::_listarDesignados();
     }
 
     /**
@@ -1339,7 +1339,7 @@ class Pessoa
      * @deprecated em favor de listarVinculosSetores, em 19/09/2022 - @alecostaweb
      * @return array
      */
-    public static function vinculosSetores(int $codpes, $codundclgi = 0) # codundclgi não pode ser Integer por conta de mais de uma unidade
+    protected static function _vinculosSetores(int $codpes, $codundclgi = 0) # codundclgi não pode ser Integer por conta de mais de uma unidade
 
     {
         // Array com os códigos de unidades
@@ -1400,7 +1400,7 @@ class Pessoa
      * @param Integer $codundclgi
      * @return Array
      */
-    public static function tiposVinculos($codundclgi)
+    protected static function _tiposVinculos($codundclgi)
     {
         $query = "SELECT DISTINCT tipvinext FROM LOCALIZAPESSOA
                     WHERE sitatl IN ('A', 'P')

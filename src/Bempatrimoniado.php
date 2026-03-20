@@ -2,7 +2,7 @@
 
 namespace Uspdev\Replicado;
 
-class Bempatrimoniado
+class Bempatrimoniado extends ReplicadoBase
 {
 
     private static $BEM_INFORMATICAS = [12513,51110,354384,354341,162213,9300,45624,57100];
@@ -13,7 +13,7 @@ class Bempatrimoniado
      * @param array $fields : colunas usados no select
      * @return array: campos da tabela BEMPATRIMONIADO
      */
-    public static function dump(string $numpat, array $fields = ['*'])
+    protected static function _dump(string $numpat, array $fields = ['*'])
     {
         $numpat = str_replace('.', '', $numpat);
         $columns = implode(",",$fields);
@@ -26,7 +26,7 @@ class Bempatrimoniado
         return DB::fetch($query, $param);
     }
 
-    public static function verifica($numpat)
+    protected static function _verifica($numpat)
     {
         $result = Bempatrimoniado::dump($numpat, ['stabem']);
         if (!empty($result) && $result['stabem'] == 'Ativo') {
@@ -45,13 +45,13 @@ class Bempatrimoniado
      * 
      * @return array Retorna todos os campos da tabela BEMPATRIMONIADO
      */
-    public static function ativos(array $filtros = [], array $buscas = [], array $tipos = [], int $limite = 2000)
+    protected static function _ativos(array $filtros = [], array $buscas = [], array $tipos = [], int $limite = 2000)
     {
         $filtros['stabem'] = 'Ativo';
-        return self::bens($filtros, $buscas, $tipos, $limite);
+        return self::_bens($filtros, $buscas, $tipos, $limite);
     }
 
-    public static function isInformatica($numpat)
+    protected static function _isInformatica($numpat)
     {
         $result = Bempatrimoniado::dump($numpat);
         if (isset($result) && in_array($result['coditmmat'],self::$BEM_INFORMATICAS)) {
@@ -70,7 +70,7 @@ class Bempatrimoniado
      * 
      * @return array Retorna todos os campos da tabela BEMPATRIMONIADO
      */
-    public static function bens(array $filtros = [], array $buscas = [], array $tipos = [], int $limite = 2000)
+    protected static function _bens(array $filtros = [], array $buscas = [], array $tipos = [], int $limite = 2000)
     {
         $query = " SELECT TOP {$limite} * FROM BEMPATRIMONIADO ";
         $filtros_buscas = DB::criaFiltroBusca($filtros, $buscas, $tipos);

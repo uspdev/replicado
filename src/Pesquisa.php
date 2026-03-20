@@ -2,7 +2,7 @@
 
 namespace Uspdev\Replicado;
 
-class Pesquisa
+class Pesquisa extends ReplicadoBase
 {
 
     /**
@@ -14,7 +14,7 @@ class Pesquisa
      * @param bool $somenteAtivos - Se for igual a true retornará as iniciações científicas ativas
      * @return array
      */
-    public static function listarIniciacaoCientifica($departamento = null, $ano_ini = null, $ano_fim = null, $somenteAtivos = false)
+    protected static function _listarIniciacaoCientifica($departamento = null, $ano_ini = null, $ano_fim = null, $somenteAtivos = false)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pesquisa.listarIniciacaoCientifica.sql');
@@ -81,7 +81,7 @@ class Pesquisa
      *
      * @return array
      */
-    public static function listarPesquisadoresColaboradoresAtivos()
+    protected static function _listarPesquisadoresColaboradoresAtivos()
     {
         $query = DB::getQuery('Pesquisa.listarPesquisadoresColaboradoresAtivos.sql');
 
@@ -101,7 +101,7 @@ class Pesquisa
      * @return array
      * @author Masakik, em 4/5/2023, ajustes para versão 1.16 #537
      */
-    public static function listarPesquisaPosDoutorandos()
+    protected static function _listarPesquisaPosDoutorandos()
     {
         $pesquisas_pos_doutorando = [];
         $query = DB::getQuery('Pesquisa.listarPesquisaPosDoutorandos.sql');
@@ -143,7 +143,7 @@ class Pesquisa
      * @return array
      */
 
-    public static function contarPDporAno($statuses = ['Ativo','Aprovado'])
+    protected static function _contarPDporAno($statuses = ['Ativo','Aprovado'])
     {
         if (($statuses === null) or (count($statuses)==0)) {
             $query = "SELECT DISTINCT staatlprj FROM PDPROJETO";
@@ -187,7 +187,7 @@ class Pesquisa
      * @return array
      */
 
-    public static function contarPDporUltimos12Meses($statuses = ['Ativo','Aprovado'])
+    protected static function _contarPDporUltimos12Meses($statuses = ['Ativo','Aprovado'])
     {
         if (($statuses === null) or (count($statuses)==0)) {
             $query = "SELECT DISTINCT staatlprj FROM PDPROJETO";

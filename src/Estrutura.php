@@ -2,9 +2,7 @@
 
 namespace Uspdev\Replicado;
 
-use Uspdev\Replicado\Replicado as Config;
-
-class Estrutura
+class Estrutura extends ReplicadoBase
 {
     /**
      * Método que recebe codset e retorna todos campos da tabela SETOR.
@@ -13,7 +11,7 @@ class Estrutura
      * @return string
      * @author André Canale Garcia <acgarcia@sc.sp.br>
      */
-    public static function dump($codset)
+    protected static function _dump($codset)
     {
         $query = "SELECT s.*
                   FROM SETOR AS s 
@@ -34,10 +32,8 @@ class Estrutura
      * @return array
      * @author Fernando G. Moura <fgm@sc.sp.br>
      */
-    public static function listarSetores($codund = null)
+    protected static function _listarSetores($codund = null)
     {
-        if(Config::getConfig('fake')) return Config::getFake('Estrutura.listarSetores');
-
         $query = "SELECT codset, tipset, nomabvset, nomset, codsetspe  FROM SETOR                   
                   WHERE codund = convert(int,:codund) AND dtadtvset IS NULL AND nomset NOT LIKE 'Inativo'
                   ORDER BY codset ASC";
@@ -64,7 +60,7 @@ class Estrutura
      * @return array
      * @author Fernando G. Moura <fgm@sc.sp.br>
      */
-    public static function getChefiaSetor($codset, $substitutos = true)
+    protected static function _getChefiaSetor($codset, $substitutos = true)
     {
         if ($substitutos) {
             //substituição de uma designação já existente (S); exercício de liderança em substituição (E);
@@ -93,7 +89,7 @@ class Estrutura
      * @return Array
      * @author Kawan Santana, em 19/03/2024
      */
-    public static function listarUnidades()
+    protected static function _listarUnidades()
     {
         $query = DB::getQuery('Estrutura.listarUnidades.sql');
         return Db::fetchAll($query);
@@ -107,9 +103,8 @@ class Estrutura
      * @return Array
      * @author Alessandro Costa de Oliveira, em 11/06/2024
      */
-    public static function obterUnidade($codund)
+    protected static function _obterUnidade($codund)
     {
-        if(Config::getConfig('fake')) return Config::getFake('Estrutura.obterUnidade');
         $query = DB::getQuery('Estrutura.obterUnidade.sql');
         $param = ['codund' => $codund];
         return DB::fetch($query, $param);
@@ -124,7 +119,7 @@ class Estrutura
      * @return Array
      * @author Antonio Augusto de Campos, em 13/08/2025
      */
-    public static function obterLocal($codlocusp)
+    protected static function _obterLocal($codlocusp)
     {
         $query = DB::getQuery('Estrutura.obterLocal.sql');
         $param = ['codlocusp' => $codlocusp];
@@ -141,7 +136,7 @@ class Estrutura
      * @return Array
      * @author Antonio Augusto de Campos, em 13/08/2025
      */
-    public static function listarLocaisUnidade($codund = null)
+    protected static function _listarLocaisUnidade($codund = null)
     {
         $codund = $codund ?: Replicado::getConfig('codundclg');
 
@@ -166,7 +161,7 @@ class Estrutura
      * @return Array
      * @author Antonio Augusto de Campos, em 13/08/2025
      */
-    public static function procurarLocal($partCodlocusp, $codund = 0)
+    protected static function _procurarLocal($partCodlocusp, $codund = 0)
     {
         if ($codund === 0) {
             $replaces['__filtro_codund__'] = 'L.codund = ' . Replicado::getConfig('codundclg');

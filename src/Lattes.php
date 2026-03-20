@@ -4,7 +4,7 @@ namespace Uspdev\Replicado;
 
 use Illuminate\Support\Arr;
 
-class Lattes
+class Lattes extends ReplicadoBase
 {
     /**
      * Recebe o número USP e retorna o ID Lattes da pessoa.
@@ -12,7 +12,7 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function id($codpes)
+    protected static function _id($codpes)
     {
         $query = "SELECT idfpescpq from DIM_PESSOA_XMLUSP WHERE codpes = CONVERT(int,:codpes)";
         $param['codpes'] = $codpes;
@@ -26,7 +26,7 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function retornarCodpesPorIDLattes($id)
+    protected static function _retornarCodpesPorIDLattes($id)
     {
         $query = "SELECT codpes from DIM_PESSOA_XMLUSP WHERE idfpescpq  = CONVERT(varchar,:idfpescpq)";
         $param['idfpescpq'] = $id;
@@ -42,7 +42,7 @@ class Lattes
      *
      * @author Masakik, ajustado para nova config do replicado em 2/2023 aprox
      */
-    public static function obterZip($codpes)
+    protected static function _obterZip($codpes)
     {
         # hotfix -  o utf8_encode estraga o zip
         Replicado::setConfig(['sybase' => false]);
@@ -64,9 +64,9 @@ class Lattes
      * @param $to (opt) Pasta onde o zip será salvo
      * @return Bool
      */
-    public static function saveZip($codpes, $to = '/tmp')
+    protected static function _saveZip($codpes, $to = '/tmp')
     {
-        $content = self::obterZip($codpes);
+        $content = self::_obterZip($codpes);
         if ($content) {
             $zipFile = fopen("{$to}/{$codpes}.zip", "w");
             fwrite($zipFile, $content);
@@ -83,9 +83,9 @@ class Lattes
      * @param $to (opt) Pasta onde o xml será salvo
      * @return String|Bool
      */
-    public static function verificarXml($codpes, $to = '/tmp')
+    protected static function _verificarXml($codpes, $to = '/tmp')
     {
-        $content = self::obterZip($codpes);
+        $content = self::_obterZip($codpes);
         if ($content) {
             $xml = Uteis::unzip($content);
             if ($xml) {
@@ -104,9 +104,9 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function obterXml($codpes)
+    protected static function _obterXml($codpes)
     {
-        $zip = self::obterZip($codpes);
+        $zip = self::_obterZip($codpes);
         return $zip ? Uteis::unzip($zip) : false;
     }
 
@@ -116,9 +116,9 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function obterJson($codpes)
+    protected static function _obterJson($codpes)
     {
-        $xml = self::obterXml($codpes);
+        $xml = self::_obterXml($codpes);
         return $xml ? json_encode(simplexml_load_string($xml)) : false;
     }
 
@@ -128,9 +128,9 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function obterArray($codpes)
+    protected static function _obterArray($codpes)
     {
-        $json = self::obterJson($codpes);
+        $json = self::_obterJson($codpes);
         return $json ? Uteis::utf8_converter(json_decode($json, true)) : false;
     }
 
@@ -140,9 +140,9 @@ class Lattes
      * @param Integer $codpes
      * @return String|Bool
      */
-    public static function listarPremios($codpes, $lattes_array = null)
+    protected static function _listarPremios($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
+        $lattes = $lattes_array ?? self::_obterArray($codpes);
         if (!$lattes && !isset($lattes['DADOS-GERAIS'])) {
             return false;
         }
@@ -177,9 +177,9 @@ class Lattes
      * @author Autor original, quando
      * @author Thiago Gomes Veríssimo, 1/4/2021, refatorado para usar Arr do illuminate
      */
-    public static function retornarResumoCV($codpes, $idioma = 'pt', $lattes_array = null)
+    protected static function _retornarResumoCV($codpes, $idioma = 'pt', $lattes_array = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -201,9 +201,9 @@ class Lattes
      * @return Int|Bool
      * @deprecated por Masakik em 20/4/2023
      */
-    public static function retornarUltimaAtualizacao($codpes, $lattes_array = null)
+    protected static function _retornarUltimaAtualizacao($codpes, $lattes_array = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
         return Arr::get($lattes, '@attributes.DATA-ATUALIZACAO', false);
@@ -218,7 +218,7 @@ class Lattes
      * @return String formatado em dd/mm/yyyy
      * @author Masakik, em 20/4/3023
      */
-    public static function retornarDataUltimaAtualizacao(int $codpes)
+    protected static function _retornarDataUltimaAtualizacao(int $codpes)
     {
         $query = "SELECT  CONVERT(VARCHAR(10), dtaultalt ,103) dtaultalt
             FROM DIM_PESSOA_XMLUSP
@@ -322,9 +322,9 @@ class Lattes
      * @return Array|Bool
      * @author modificado por Masakik, em 3/2023, issue #536
      */
-    public static function listarArtigos($codpes, $lattes_array = [], $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarArtigos($codpes, $lattes_array = [], $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
+        $lattes = $lattes_array ?? self::_obterArray($codpes);
         if (!$lattes || !isset($lattes['PRODUCAO-BIBLIOGRAFICA'])) {
             return false;
         }
@@ -354,7 +354,7 @@ class Lattes
                 $detalhamento = (!isset($artigos['DETALHAMENTO-DO-ARTIGO']) && isset($artigos[2])) ? 2 : 'DETALHAMENTO-DO-ARTIGO';
                 $autores = (!isset($artigos['AUTORES']) && isset($artigos[3])) ? 3 : 'AUTORES';
 
-                $aux_autores = self::listarAutores(Arr::get($artigos, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($artigos, "{$autores}", []));
 
                 $aux_artigo = [
                     'SEQUENCIA-PRODUCAO' => Arr::get($artigos, "@attributes.SEQUENCIA-PRODUCAO", 0),
@@ -368,7 +368,7 @@ class Lattes
                     'AUTORES' => $aux_autores,
                 ];
 
-                if (!self::verificarFiltro($tipo, $aux_artigo['ANO'], $limit_ini, $limit_fim, $i)) {
+                if (!self::_verificarFiltro($tipo, $aux_artigo['ANO'], $limit_ini, $limit_fim, $i)) {
                     return [];
                 }
 
@@ -383,7 +383,7 @@ class Lattes
                     $detalhamento = (!isset($val['DETALHAMENTO-DO-ARTIGO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-ARTIGO';
                     $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
 
-                    $aux_autores = self::listarAutores(Arr::get($val, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($val, "{$autores}", []));
 
                     $aux_artigo = [
                         'SEQUENCIA-PRODUCAO' => Arr::get($val, "@attributes.SEQUENCIA-PRODUCAO", 0),
@@ -397,7 +397,7 @@ class Lattes
                         'AUTORES' => $aux_autores,
                     ];
 
-                    if (!self::verificarFiltro($tipo, $aux_artigo['ANO'], $limit_ini, $limit_fim, $i)) {
+                    if (!self::_verificarFiltro($tipo, $aux_artigo['ANO'], $limit_ini, $limit_fim, $i)) {
                         continue;
                     }
 
@@ -420,9 +420,9 @@ class Lattes
      * @param Array $lattes_array
      * @return String|Bool
      */
-    public static function listarLinhasPesquisa($codpes, $lattes_array = null)
+    protected static function _listarLinhasPesquisa($codpes, $lattes_array = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
         $linhas_de_pesquisa = [];
@@ -463,9 +463,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarLivrosPublicados($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarLivrosPublicados($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -487,7 +487,7 @@ class Lattes
                 $detalhamento = (!isset($livros['DETALHAMENTO-DO-LIVRO']) && isset($livros[2])) ? 2 : 'DETALHAMENTO-DO-LIVRO';
                 $autores = (!isset($livros['AUTORES']) && isset($livros[3])) ? 3 : 'AUTORES';
 
-                $aux_autores = self::listarAutores(Arr::get($livros, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($livros, "{$autores}", []));
 
                 $aux_livro = [
                     'TITULO-DO-LIVRO' => Arr::get($livros, "{$dados_basicos}.@attributes.TITULO-DO-LIVRO", ''),
@@ -499,7 +499,7 @@ class Lattes
                     'AUTORES' => $aux_autores,
                 ];
 
-                if (!self::verificarFiltro($tipo, $aux_livro['ANO'], $limit_ini, $limit_fim, 1)) {
+                if (!self::_verificarFiltro($tipo, $aux_livro['ANO'], $limit_ini, $limit_fim, 1)) {
                     return false;
                 }
 
@@ -519,7 +519,7 @@ class Lattes
                     $detalhamento = (!isset($val['DETALHAMENTO-DO-LIVRO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-LIVRO';
                     $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
 
-                    $aux_autores = self::listarAutores(Arr::get($val, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($val, "{$autores}", []));
 
                     $aux_livro = [
                         'TITULO-DO-LIVRO' => Arr::get($val, "{$dados_basicos}.@attributes.TITULO-DO-LIVRO", ''),
@@ -531,7 +531,7 @@ class Lattes
                         'AUTORES' => $aux_autores,
                     ];
 
-                    if (!self::verificarFiltro($tipo, $aux_livro['ANO'], $limit_ini, $limit_fim, $i)) {
+                    if (!self::_verificarFiltro($tipo, $aux_livro['ANO'], $limit_ini, $limit_fim, $i)) {
                         continue;
                     }
 
@@ -554,9 +554,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarTextosJornaisRevistas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarTextosJornaisRevistas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -573,7 +573,7 @@ class Lattes
                 $i++;
                 $texto = $aux_textos_jornais_revistas;
                 $autores = (!isset($texto['AUTORES']) && isset($texto[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($texto, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($texto, "{$autores}", []));
 
                 $aux_texto = [];
                 $aux_texto['TITULO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.TITULO-DO-TEXTO", "");
@@ -586,7 +586,7 @@ class Lattes
                 $aux_texto['VOLUME'] = Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.VOLUME", "");
                 $aux_texto['AUTORES'] = $aux_autores;
 
-                if (!self::verificarFiltro($tipo, $aux_texto['ANO'], $limit_ini, $limit_fim, $i)) {
+                if (!self::_verificarFiltro($tipo, $aux_texto['ANO'], $limit_ini, $limit_fim, $i)) {
                     return false;
                 }
 
@@ -596,7 +596,7 @@ class Lattes
                     $i++;
 
                     $autores = (!isset($texto['AUTORES']) && isset($texto[3])) ? 3 : 'AUTORES';
-                    $aux_autores = self::listarAutores(Arr::get($texto, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($texto, "{$autores}", []));
 
                     $aux_texto = [];
                     $aux_texto['TITULO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.TITULO-DO-TEXTO", "");
@@ -609,7 +609,7 @@ class Lattes
                     $aux_texto['VOLUME'] = Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.VOLUME", "");
                     $aux_texto['AUTORES'] = $aux_autores;
 
-                    if (!self::verificarFiltro($tipo, $aux_texto['ANO'], $limit_ini, $limit_fim, $i)) {
+                    if (!self::_verificarFiltro($tipo, $aux_texto['ANO'], $limit_ini, $limit_fim, $i)) {
                         continue;
                     }
 
@@ -638,9 +638,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarTrabalhosAnais($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarTrabalhosAnais($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -658,7 +658,7 @@ class Lattes
                 $i++;
                 $anais = $aux_trabalhos_anais;
                 $autores = (!isset($anais['AUTORES']) && isset($anais[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($anais, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($anais, "{$autores}", []));
 
                 $aux_anais = [];
                 $aux_anais['TITULO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.TITULO-DO-TRABALHO", '');
@@ -675,7 +675,7 @@ class Lattes
                 $aux_anais['PAGINA-FINAL'] = Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.PAGINA-FINAL", '');
                 $aux_anais['AUTORES'] = $aux_autores;
 
-                if (!self::verificarFiltro($tipo, $aux_anais['ANO'], $limit_ini, $limit_fim, $i)) {
+                if (!self::_verificarFiltro($tipo, $aux_anais['ANO'], $limit_ini, $limit_fim, $i)) {
                     return false;
                 }
                 array_push($trabalhos_anais, $aux_anais);
@@ -686,7 +686,7 @@ class Lattes
                     $i++;
 
                     $autores = (!isset($anais['AUTORES']) && isset($anais[3])) ? 3 : 'AUTORES';
-                    $aux_autores = self::listarAutores(Arr::get($anais, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($anais, "{$autores}", []));
 
                     $aux_anais = [];
                     $aux_anais['TITULO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.TITULO-DO-TRABALHO", '');
@@ -703,7 +703,7 @@ class Lattes
                     $aux_anais['PAGINA-FINAL'] = Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.PAGINA-FINAL", '');
                     $aux_anais['AUTORES'] = $aux_autores;
 
-                    if (!self::verificarFiltro($tipo, $aux_anais['ANO'], $limit_ini, $limit_fim, $i)) {
+                    if (!self::_verificarFiltro($tipo, $aux_anais['ANO'], $limit_ini, $limit_fim, $i)) {
                         continue;
                     }
                     array_push($trabalhos_anais, $aux_anais);
@@ -732,9 +732,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarTrabalhosTecnicos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarTrabalhosTecnicos($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -748,7 +748,7 @@ class Lattes
         $trabalho = $lattes['PRODUCAO-TECNICA']['TRABALHO-TECNICO'];
         if (isset($trabalho['AUTORES'])) {
             $autores = (!isset($trabalho['AUTORES']) && isset($trabalho[3])) ? 3 : 'AUTORES';
-            $aux_autores = self::listarAutores(Arr::get($trabalho, "{$autores}", []));
+            $aux_autores = self::_listarAutores(Arr::get($trabalho, "{$autores}", []));
 
             $aux_trabalho_tec = [];
             $aux_trabalho_tec['TITULO'] = Arr::get($trabalho, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.TITULO-DO-TRABALHO-TECNICO", "");
@@ -758,7 +758,7 @@ class Lattes
             $aux_trabalho_tec['INSTITUICAO-FINANCIADORA'] = Arr::get($trabalho, "DETALHAMENTO-DO-TRABALHO-TECNICO.@attributes.INSTITUICAO-FINANCIADORA", "");
             $aux_trabalho_tec['AUTORES'] = $aux_autores;
 
-            if (!self::verificarFiltro($tipo, $aux_trabalho_tec['ANO'], $limit_ini, $limit_fim, 1)) {
+            if (!self::_verificarFiltro($tipo, $aux_trabalho_tec['ANO'], $limit_ini, $limit_fim, 1)) {
                 return;
             }
             array_push($trabalhos_tecnicos, $aux_trabalho_tec);
@@ -767,7 +767,7 @@ class Lattes
                 $i++;
 
                 $autores = (!isset($trabalho_tec['AUTORES']) && isset($trabalho_tec[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($trabalho_tec, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($trabalho_tec, "{$autores}", []));
 
                 $aux_trabalho_tec = [];
                 $aux_trabalho_tec['TITULO'] = Arr::get($trabalho_tec, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.TITULO-DO-TRABALHO-TECNICO", "");
@@ -777,7 +777,7 @@ class Lattes
                 $aux_trabalho_tec['INSTITUICAO-FINANCIADORA'] = Arr::get($trabalho_tec, "DETALHAMENTO-DO-TRABALHO-TECNICO.@attributes.INSTITUICAO-FINANCIADORA", "");
                 $aux_trabalho_tec['AUTORES'] = $aux_autores;
 
-                if (!self::verificarFiltro($tipo, $aux_trabalho_tec['ANO'], $limit_ini, $limit_fim, $i)) {
+                if (!self::_verificarFiltro($tipo, $aux_trabalho_tec['ANO'], $limit_ini, $limit_fim, $i)) {
                     continue;
                 }
 
@@ -803,9 +803,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarApresentacaoTrabalho($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarApresentacaoTrabalho($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -821,7 +821,7 @@ class Lattes
             $i = 0;
             if (isset($aux_apresentacao['@attributes'])) { //para só uma apresentação
                 $autores = (!isset($aux_apresentacao['AUTORES']) && isset($aux_apresentacao[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($aux_apresentacao, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($aux_apresentacao, "{$autores}", []));
 
                 $aux_apresentacao_trabalho = [];
                 $aux_apresentacao_trabalho['TITULO'] = Arr::get($aux_apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.TITULO", "");
@@ -835,7 +835,7 @@ class Lattes
 
                     $i++;
                     $autores = (!isset($apresentacao['AUTORES']) && isset($apresentacao[3])) ? 3 : 'AUTORES';
-                    $aux_autores = self::listarAutores(Arr::get($apresentacao, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($apresentacao, "{$autores}", []));
 
                     $aux_apresentacao_trabalho = [];
                     $aux_apresentacao_trabalho['TITULO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.TITULO", "");
@@ -844,7 +844,7 @@ class Lattes
                     $aux_apresentacao_trabalho['ANO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.ANO", "");
                     $aux_apresentacao_trabalho['AUTORES'] = $aux_autores;
 
-                    if (!self::verificarFiltro($tipo, $aux_apresentacao_trabalho['ANO'], $limit_ini, $limit_fim, $i)) {
+                    if (!self::_verificarFiltro($tipo, $aux_apresentacao_trabalho['ANO'], $limit_ini, $limit_fim, $i)) {
                         continue;
                     }
 
@@ -873,9 +873,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarOrganizacaoEvento($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOrganizacaoEvento($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -888,7 +888,7 @@ class Lattes
                 $i++;
                 $evento = $aux_eventos;
                 $autores = (!isset($evento['AUTORES']) && isset($evento[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($evento, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($evento, "{$autores}", []));
 
                 $aux_evento = [];
                 $aux_evento['TITULO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.TITULO", "");
@@ -898,7 +898,7 @@ class Lattes
                 $aux_evento['SEQUENCIA-PRODUCAO'] = Arr::get($evento, "@attributes.SEQUENCIA-PRODUCAO", "");
                 $aux_evento['AUTORES'] = $aux_autores;
 
-                if (!self::verificarFiltro($tipo, $aux_evento['ANO'], $limit_ini, $limit_fim, $i)) {
+                if (!self::_verificarFiltro($tipo, $aux_evento['ANO'], $limit_ini, $limit_fim, $i)) {
                     return;
                 }
 
@@ -907,7 +907,7 @@ class Lattes
                 foreach ($aux_eventos as $evento) {
                     $i++;
                     $autores = (!isset($evento['AUTORES']) && isset($evento[3])) ? 3 : 'AUTORES';
-                    $aux_autores = self::listarAutores(Arr::get($evento, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($evento, "{$autores}", []));
 
                     $aux_evento = [];
                     $aux_evento['TITULO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.TITULO", "");
@@ -917,7 +917,7 @@ class Lattes
                     $aux_evento['SEQUENCIA-PRODUCAO'] = Arr::get($evento, "@attributes.SEQUENCIA-PRODUCAO", "");
                     $aux_evento['AUTORES'] = $aux_autores;
 
-                    if (!self::verificarFiltro($tipo, $aux_evento['ANO'], $limit_ini, $limit_fim, $i)) {
+                    if (!self::_verificarFiltro($tipo, $aux_evento['ANO'], $limit_ini, $limit_fim, $i)) {
                         continue;
                     }
 
@@ -942,9 +942,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarOutrasProducoesTecnicas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOutrasProducoesTecnicas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -960,7 +960,7 @@ class Lattes
             $outro = $aux_outras;
 
             $autores = (!isset($outro['AUTORES']) && isset($outro[3])) ? 3 : 'AUTORES';
-            $aux_autores = self::listarAutores(Arr::get($outro, "{$autores}", []));
+            $aux_autores = self::_listarAutores(Arr::get($outro, "{$autores}", []));
 
             $aux_outros = [];
             $aux_outros['TITULO'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA.@attributes.TITULO", "");
@@ -969,7 +969,7 @@ class Lattes
             $aux_outros['ANO'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA.@attributes.ANO", "");
             $aux_outros['AUTORES'] = $aux_autores;
 
-            if (!self::verificarFiltro($tipo, $aux_outros['ANO'], $limit_ini, $limit_fim, 1)) {
+            if (!self::_verificarFiltro($tipo, $aux_outros['ANO'], $limit_ini, $limit_fim, 1)) {
                 return false;
             }
 
@@ -981,7 +981,7 @@ class Lattes
                 $i++;
                 $autores = (!isset($outro['AUTORES']) && isset($outro[3])) ? 3 : 'AUTORES';
 
-                $aux_autores = self::listarAutores(Arr::get($outro, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($outro, "{$autores}", []));
 
                 $aux_outros = [];
                 $aux_outros['TITULO'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA.@attributes.TITULO", "");
@@ -990,7 +990,7 @@ class Lattes
                 $aux_outros['ANO'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA.@attributes.ANO", "");
                 $aux_outros['AUTORES'] = $aux_autores;
 
-                if (!self::verificarFiltro($tipo, $aux_outros['ANO'], $limit_ini, $limit_fim, $i)) {
+                if (!self::_verificarFiltro($tipo, $aux_outros['ANO'], $limit_ini, $limit_fim, $i)) {
                     continue;
                 }
 
@@ -1010,9 +1010,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarCursosCurtaDuracao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarCursosCurtaDuracao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -1028,7 +1028,7 @@ class Lattes
 
             if (isset($aux_cursos['@attributes'])) { //para quando só tiver um curso
                 $autores = (!isset($aux_cursos['AUTORES']) && isset($aux_cursos[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($aux_cursos, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($aux_cursos, "{$autores}", []));
 
                 $aux_curso = [];
                 $aux_curso['SEQUENCIA-PRODUCAO'] = Arr::get($aux_cursos, "@attributes.SEQUENCIA-PRODUCAO", "");
@@ -1043,7 +1043,7 @@ class Lattes
 
                     $i++;
                     $autores = (!isset($curso_curta_duracao['AUTORES']) && isset($curso_curta_duracao[3])) ? 3 : 'AUTORES';
-                    $aux_autores = self::listarAutores(Arr::get($curso_curta_duracao, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($curso_curta_duracao, "{$autores}", []));
 
                     $aux_curso = [];
                     $aux_curso['SEQUENCIA-PRODUCAO'] = Arr::get($curso_curta_duracao, "@attributes.SEQUENCIA-PRODUCAO", "");
@@ -1053,7 +1053,7 @@ class Lattes
                     $aux_curso['INSTITUICAO-PROMOTORA-DO-CURSO'] = Arr::get($curso_curta_duracao, "DETALHAMENTO-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.INSTITUICAO-PROMOTORA-DO-CURSO", "");
                     $aux_curso['AUTORES'] = $aux_autores;
 
-                    if (!self::verificarFiltro($tipo, $aux_curso['ANO'], $limit_ini, $limit_fim, $i)) {
+                    if (!self::_verificarFiltro($tipo, $aux_curso['ANO'], $limit_ini, $limit_fim, $i)) {
                         continue;
                     }
 
@@ -1073,9 +1073,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarRelatorioPesquisa($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarRelatorioPesquisa($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -1089,7 +1089,7 @@ class Lattes
         if ($aux_relatorios) {
             if (isset($aux_relatorios['@attributes']['SEQUENCIA-PRODUCAO'])) {
                 $autores = (!isset($aux_relatorios['AUTORES']) && isset($aux_relatorios[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($aux_relatorios, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($aux_relatorios, "{$autores}", []));
 
                 $aux_relatorio = [];
                 $aux_relatorio['SEQUENCIA-PRODUCAO'] = Arr::get($aux_relatorios, "@attributes.SEQUENCIA-PRODUCAO", "");
@@ -1097,7 +1097,7 @@ class Lattes
                 $aux_relatorio['ANO'] = Arr::get($aux_relatorios, "DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA.@attributes.ANO", "");
                 $aux_relatorio['AUTORES'] = $aux_autores;
 
-                if (!self::verificarFiltro($tipo, $aux_relatorio['ANO'], $limit_ini, $limit_fim, 1)) {
+                if (!self::_verificarFiltro($tipo, $aux_relatorio['ANO'], $limit_ini, $limit_fim, 1)) {
                     return false;
                 }
 
@@ -1109,7 +1109,7 @@ class Lattes
 
                     $i++;
                     $autores = (!isset($relatorio['AUTORES']) && isset($relatorio[3])) ? 3 : 'AUTORES';
-                    $aux_autores = self::listarAutores(Arr::get($relatorio, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($relatorio, "{$autores}", []));
 
                     $aux_relatorio = [];
                     $aux_relatorio['SEQUENCIA-PRODUCAO'] = Arr::get($relatorio, "@attributes.SEQUENCIA-PRODUCAO", "");
@@ -1117,7 +1117,7 @@ class Lattes
                     $aux_relatorio['ANO'] = Arr::get($relatorio, "DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA.@attributes.ANO", "");
                     $aux_relatorio['AUTORES'] = $aux_autores;
 
-                    if (!self::verificarFiltro($tipo, $aux_relatorio['ANO'], $limit_ini, $limit_fim, $i)) {
+                    if (!self::_verificarFiltro($tipo, $aux_relatorio['ANO'], $limit_ini, $limit_fim, $i)) {
                         continue;
                     }
 
@@ -1138,9 +1138,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarMaterialDidaticoInstrucional($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarMaterialDidaticoInstrucional($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -1153,7 +1153,7 @@ class Lattes
         if (isset($lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['DESENVOLVIMENTO-DE-MATERIAL-DIDATICO-OU-INSTRUCIONAL']['@attributes']["SEQUENCIA-PRODUCAO"])) { //se houver apenas um registro (sem foreach)
             $material = $lattes['PRODUCAO-TECNICA']['DEMAIS-TIPOS-DE-PRODUCAO-TECNICA']['DESENVOLVIMENTO-DE-MATERIAL-DIDATICO-OU-INSTRUCIONAL'];
             $autores = (!isset($material['AUTORES']) && isset($material[3])) ? 3 : 'AUTORES';
-            $aux_autores = self::listarAutores(Arr::get($material, "{$autores}", []));
+            $aux_autores = self::_listarAutores(Arr::get($material, "{$autores}", []));
 
             $aux_material = [];
             $aux_material['SEQUENCIA-PRODUCAO'] = Arr::get($material, "@attributes.SEQUENCIA-PRODUCAO", "");
@@ -1162,7 +1162,7 @@ class Lattes
             $aux_material['NATUREZA'] = Arr::get($material, "DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL.@attributes.NATUREZA", "");
             $aux_material['AUTORES'] = $aux_autores;
 
-            if (!self::verificarFiltro($tipo, $aux_material['ANO'], $limit_ini, $limit_fim, 1)) {
+            if (!self::_verificarFiltro($tipo, $aux_material['ANO'], $limit_ini, $limit_fim, 1)) {
                 return false;
             }
 
@@ -1175,7 +1175,7 @@ class Lattes
 
                 $i++;
                 $autores = (!isset($material['AUTORES']) && isset($material[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($material, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($material, "{$autores}", []));
 
                 $aux_material = [];
                 $aux_material['SEQUENCIA-PRODUCAO'] = Arr::get($material, "@attributes.SEQUENCIA-PRODUCAO", "");
@@ -1184,7 +1184,7 @@ class Lattes
                 $aux_material['NATUREZA'] = Arr::get($material, "DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL.@attributes.NATUREZA", "");
                 $aux_material['AUTORES'] = $aux_autores;
 
-                if (!self::verificarFiltro($tipo, $aux_material['ANO'], $limit_ini, $limit_fim, $i)) {
+                if (!self::_verificarFiltro($tipo, $aux_material['ANO'], $limit_ini, $limit_fim, $i)) {
                     continue;
                 }
 
@@ -1204,9 +1204,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarOutrasProducoesBibliograficas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOutrasProducoesBibliograficas($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -1220,7 +1220,7 @@ class Lattes
         if ($aux_outras_prod) {
             if (isset($aux_outras_prod['@attributes']['SEQUENCIA-PRODUCAO'])) {
                 $autores = (!isset($aux_outras_prod['AUTORES']) && isset($aux_outras_prod[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($aux_outras_prod, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($aux_outras_prod, "{$autores}", []));
 
                 $aux_outros = [];
                 $aux_outros['TITULO'] = Arr::get($aux_outras_prod, "DADOS-BASICOS-DE-OUTRA-PRODUCAO.@attributes.TITULO", "");
@@ -1231,7 +1231,7 @@ class Lattes
                 $aux_outros['CIDADE-DA-EDITORA'] = Arr::get($aux_outras_prod, "DETALHAMENTO-DE-OUTRA-PRODUCAO.@attributes.CIDADE-DA-EDITORA", "");
                 $aux_outros['AUTORES'] = $aux_autores;
 
-                if (self::verificarFiltro($tipo, $aux_outros['ANO'], $limit_ini, $limit_fim, 1)) {
+                if (self::_verificarFiltro($tipo, $aux_outros['ANO'], $limit_ini, $limit_fim, 1)) {
                     array_push($outras, $aux_outros);
                 }
 
@@ -1241,7 +1241,7 @@ class Lattes
 
                     $i++;
                     $autores = (!isset($outro['AUTORES']) && isset($outro[3])) ? 3 : 'AUTORES';
-                    $aux_autores = self::listarAutores(Arr::get($outro, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($outro, "{$autores}", []));
 
                     $aux_outros = [];
                     $aux_outros['TITULO'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO.@attributes.TITULO", "");
@@ -1252,7 +1252,7 @@ class Lattes
                     $aux_outros['CIDADE-DA-EDITORA'] = Arr::get($outro, "DETALHAMENTO-DE-OUTRA-PRODUCAO.@attributes.CIDADE-DA-EDITORA", "");
                     $aux_outros['AUTORES'] = $aux_autores;
 
-                    if (!self::verificarFiltro($tipo, $aux_outros['ANO'], $limit_ini, $limit_fim, $i)) {
+                    if (!self::_verificarFiltro($tipo, $aux_outros['ANO'], $limit_ini, $limit_fim, $i)) {
                         continue;
                     }
 
@@ -1278,7 +1278,7 @@ class Lattes
 
                 if (isset($tipo_prod['@attributes']['SEQUENCIA-PRODUCAO'])) { //quando só um tipo de produção
                     $autores = (!isset($tipo_prod['AUTORES']) && isset($tipo_prod[3])) ? 3 : 'AUTORES';
-                    $aux_autores = self::listarAutores(Arr::get($tipo_prod, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($tipo_prod, "{$autores}", []));
 
                     $aux_tipo = [];
                     $aux_tipo['TITULO'] = Arr::get($tipo_prod, "DADOS-BASICOS-" . $tipo['nome do caminho'] . ".@attributes.TITULO", "");
@@ -1289,7 +1289,7 @@ class Lattes
                     $aux_tipo['EDITORA'] = Arr::get($tipo_prod, "DETALHAMENTO-" . $tipo['nome do caminho'] . ".@attributes.EDITORA-" . $tipo['nome do caminho'] . "", "");
                     $aux_tipo['AUTORES'] = $aux_autores;
 
-                    if (self::verificarFiltro($tipo, $aux_tipo['ANO'], $limit_ini, $limit_fim, 1)) {
+                    if (self::_verificarFiltro($tipo, $aux_tipo['ANO'], $limit_ini, $limit_fim, 1)) {
                         array_push($outras, $aux_tipo);
                     }
 
@@ -1298,7 +1298,7 @@ class Lattes
                         $i++;
 
                         $autores = (!isset($tp['AUTORES']) && isset($tp[3])) ? 3 : 'AUTORES';
-                        $aux_autores = self::listarAutores(Arr::get($tp, "{$autores}", []));
+                        $aux_autores = self::_listarAutores(Arr::get($tp, "{$autores}", []));
 
                         $aux_tipo = [];
                         $aux_tipo['TITULO'] = Arr::get($tp, "DADOS-BASICOS-" . $tipo['nome do caminho'] . ".@attributes.TITULO", "");
@@ -1309,7 +1309,7 @@ class Lattes
                         $aux_tipo['EDITORA'] = Arr::get($tp, "DETALHAMENTO-" . $tipo['nome do caminho'] . ".@attributes.EDITORA-" . $tipo['nome do caminho'] . "", "");
                         $aux_tipo['AUTORES'] = $aux_autores;
 
-                        if (!self::verificarFiltro($tipo, $aux_tipo['ANO'], $limit_ini, $limit_fim, $i)) {
+                        if (!self::_verificarFiltro($tipo, $aux_tipo['ANO'], $limit_ini, $limit_fim, $i)) {
                             continue;
                         }
 
@@ -1339,9 +1339,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarCapitulosLivros($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarCapitulosLivros($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -1369,7 +1369,7 @@ class Lattes
             if (isset($capitulos[1]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'])) { //quando tem apenas uma produção
 
                 $autores = (!isset($capitulos['AUTORES']) && isset($capitulos[3])) ? 3 : 'AUTORES';
-                $aux_autores = self::listarAutores(Arr::get($capitulos, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($capitulos, "{$autores}", []));
 
                 $aux_capitulo = [
                     'TITULO-DO-CAPITULO-DO-LIVRO' => $capitulos[1]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'] ?? '',
@@ -1384,7 +1384,7 @@ class Lattes
                     'AUTORES' => $aux_autores,
                 ];
 
-                if (!self::verificarFiltro($tipo, $aux_capitulo['ANO'], $limit_ini, $limit_fim, 1)) {
+                if (!self::_verificarFiltro($tipo, $aux_capitulo['ANO'], $limit_ini, $limit_fim, 1)) {
                     return false;
                 }
 
@@ -1396,7 +1396,7 @@ class Lattes
                     $dados_basicos = (!isset($val['DADOS-BASICOS-DO-CAPITULO']) && isset($val[1])) ? 1 : 'DADOS-BASICOS-DO-CAPITULO';
                     $detalhamento = (!isset($val['DETALHAMENTO-DO-CAPITULO']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-CAPITULO';
                     $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
-                    $aux_autores = self::listarAutores(Arr::get($val, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($val, "{$autores}", []));
 
                     if (isset($val[$dados_basicos]['@attributes']['TITULO-DO-CAPITULO-DO-LIVRO'])) {
                         $aux_capitulo = [
@@ -1412,7 +1412,7 @@ class Lattes
                             'AUTORES' => $aux_autores,
                         ];
 
-                        if (!self::verificarFiltro($tipo, $aux_capitulo['ANO'], $limit_ini, $limit_fim, $i)) {
+                        if (!self::_verificarFiltro($tipo, $aux_capitulo['ANO'], $limit_ini, $limit_fim, $i)) {
                             continue;
                         }
 
@@ -1436,9 +1436,9 @@ class Lattes
      * @param String $tipo Tipo da tese: DOUTORADO ou MESTRADO, o valor default é DOUTORADO
      * @return Array|Bool
      */
-    public static function listarTeses($codpes, $tipo = 'DOUTORADO', $lattes_array = null)
+    protected static function _listarTeses($codpes, $tipo = 'DOUTORADO', $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
+        $lattes = $lattes_array ?? self::_obterArray($codpes);
 
         if (!$lattes && !isset($lattes['DADOS-GERAIS'])) {
             return false;
@@ -1499,9 +1499,9 @@ class Lattes
      * @param Array $lattes_array
      * @return Array|Bool
      */
-    public static function obterLivreDocencia($codpes, $lattes_array = null)
+    protected static function _obterLivreDocencia($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
+        $lattes = $lattes_array ?? self::_obterArray($codpes);
 
         if (!$lattes && !isset($lattes['DADOS-GERAIS'])) {
             return false;
@@ -1546,9 +1546,9 @@ class Lattes
      * @param Array $lattes_array
      * @return Array|Bool
      */
-    public static function retornarBancaMestrado($codpes, $lattes_array = null)
+    protected static function _retornarBancaMestrado($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
+        $lattes = $lattes_array ?? self::_obterArray($codpes);
 
         if (!$lattes && !isset($lattes['DADOS-COMPLEMENTARES'])) {
             return false;
@@ -1586,9 +1586,9 @@ class Lattes
      * @param Array $lattes_array
      * @return Array|Bool
      */
-    public static function retornarBancaDoutorado($codpes, $lattes_array = null)
+    protected static function _retornarBancaDoutorado($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
+        $lattes = $lattes_array ?? self::_obterArray($codpes);
 
         if (!$lattes && !isset($lattes['DADOS-COMPLEMENTARES'])) {
             return false;
@@ -1634,9 +1634,9 @@ class Lattes
      * @param Array $lattes_array
      * @return Array|Bool
      */
-    public static function retornarFormacaoAcademica($codpes, $lattes_array = null)
+    protected static function _retornarFormacaoAcademica($codpes, $lattes_array = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
+        $lattes = $lattes_array ?? self::_obterArray($codpes);
 
         if (!$lattes && !isset($lattes['DADOS-GERAIS'])) {
             return false;
@@ -1821,9 +1821,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarFormacaoProfissional($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020)
+    protected static function _listarFormacaoProfissional($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
+        $lattes = $lattes_array ?? self::_obterArray($codpes);
 
         if (!$lattes && !isset($lattes['DADOS-GERAIS'])) {
             return false;
@@ -1863,7 +1863,7 @@ class Lattes
                             $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = Arr::get($vinculo, "OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO", "");
                         }
 
-                        if (!self::verificarFiltro($tipo, $aux_vinculos['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
+                        if (!self::_verificarFiltro($tipo, $aux_vinculos['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
                             continue;
                         }
 
@@ -1895,7 +1895,7 @@ class Lattes
                                 $aux_vinculos['OUTRAS-INFORMACOES'] = Arr::get($vinculo, "@attributes.OUTRAS-INFORMACOES", "");
                                 $aux_vinculos['OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO'] = Arr::get($vinculo, "@attributes.OUTRO-ENQUADRAMENTO-FUNCIONAL-INFORMADO", "");
 
-                                if (!self::verificarFiltro($tipo, $aux_vinculos['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
+                                if (!self::_verificarFiltro($tipo, $aux_vinculos['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
                                     continue;
                                 }
 
@@ -1931,9 +1931,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarRadioTV($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020)
+    protected static function _listarRadioTV($codpes, $lattes_array = null, $tipo = 'periodo', $limit_ini = 2017, $limit_fim = 2020)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
 
@@ -1958,7 +1958,7 @@ class Lattes
                 $detalhamento = (!isset($producoes['DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV']) && isset($producoes[2])) ? 2 : 'DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV';
                 $autores = (!isset($producoes['AUTORES']) && isset($producoes[3])) ? 3 : 'AUTORES';
 
-                $aux_autores = self::listarAutores(Arr::get($producoes, "{$autores}", []));
+                $aux_autores = self::_listarAutores(Arr::get($producoes, "{$autores}", []));
 
                 $aux_producao = [
                     'TITULO' => Arr::get($producoes, "{$dados_basicos}.@attributes.TITULO", ""),
@@ -1967,7 +1967,7 @@ class Lattes
                     'AUTORES' => $aux_autores,
                 ];
 
-                if (!self::verificarFiltro($tipo, $aux_producao['ANO'], $limit_ini, $limit_fim, 1)) {
+                if (!self::_verificarFiltro($tipo, $aux_producao['ANO'], $limit_ini, $limit_fim, 1)) {
                     return false;
                 }
 
@@ -1981,7 +1981,7 @@ class Lattes
                     $detalhamento = (!isset($val['DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV']) && isset($val[2])) ? 2 : 'DETALHAMENTO-DO-PROGRAMA-DE-RADIO-OU-TV';
                     $autores = (!isset($val['AUTORES']) && isset($val[3])) ? 3 : 'AUTORES';
 
-                    $aux_autores = self::listarAutores(Arr::get($val, "{$autores}", []));
+                    $aux_autores = self::_listarAutores(Arr::get($val, "{$autores}", []));
 
                     if (isset($val[$dados_basicos]['@attributes'])) {
                         $aux_producao = [
@@ -1990,7 +1990,7 @@ class Lattes
                             'EMISSORA' => Arr::get($val, "{$detalhamento}.@attributes.EMISSORA", ""),
                             'AUTORES' => $aux_autores,
                         ];
-                        if (!self::verificarFiltro($tipo, $aux_producao['ANO'], $limit_ini, $limit_fim, 1)) {
+                        if (!self::_verificarFiltro($tipo, $aux_producao['ANO'], $limit_ini, $limit_fim, 1)) {
                             continue;
                         }
 
@@ -2003,7 +2003,7 @@ class Lattes
                             'EMISSORA' => Arr::get($val, "{$detalhamento}.EMISSORA", ""),
                             'AUTORES' => $aux_autores,
                         ];
-                        if (!self::verificarFiltro($tipo, $aux_producao['ANO'], $limit_ini, $limit_fim, 1)) {
+                        if (!self::_verificarFiltro($tipo, $aux_producao['ANO'], $limit_ini, $limit_fim, 1)) {
                             continue;
                         }
                         array_push($nome_producoes, $aux_producao);
@@ -2024,9 +2024,9 @@ class Lattes
      * @param Array $lattes_array (opt) Currículo lattes, convertido para array
      * @return String|Bool
      */
-    public static function retornarOrcidID($codpes, $lattes_array = null)
+    protected static function _retornarOrcidID($codpes, $lattes_array = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
         return Arr::get($lattes, 'DADOS-GERAIS.@attributes.ORCID-ID', false);
@@ -2043,9 +2043,9 @@ class Lattes
      * @param Integer $limit_fim (ver método listarArtigos)
      * @return Array|Bool
      */
-    public static function listarProjetosPesquisa($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarProjetosPesquisa($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        $lattes = $lattes_array ?? self::obterArray($codpes);
+        $lattes = $lattes_array ?? self::_obterArray($codpes);
         if (!$lattes && !isset($lattes['DADOS-GERAIS'])) {
             return false;
         }
@@ -2061,9 +2061,9 @@ class Lattes
                     if (!isset($projeto['EQUIPE-DO-PROJETO'])) {
                         foreach ($projeto as $pesquisa) {
                             $integrantes = Arr::get($pesquisa, "EQUIPE-DO-PROJETO.INTEGRANTES-DO-PROJETO", []);
-                            $aux_integrantes = self::listarAutores($integrantes);
+                            $aux_integrantes = self::_listarAutores($integrantes);
                             $financiadores = Arr::get($pesquisa, "FINANCIADORES-DO-PROJETO.FINANCIADOR-DO-PROJETO", []);
-                            $aux_financiadores = self::listarFinanciadores($financiadores);
+                            $aux_financiadores = self::_listarFinanciadores($financiadores);
                             $aux_projeto = [
                                 'NOME-DO-PROJETO' => Arr::get($pesquisa, "@attributes.NOME-DO-PROJETO", ""),
                                 'ANO-INICIO' => Arr::get($pesquisa, "@attributes.ANO-INICIO", ""),
@@ -2075,7 +2075,7 @@ class Lattes
                                 'FINANCIADORES' => $aux_financiadores,
                             ];
 
-                            if (!self::verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
+                            if (!self::_verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
                                 continue;
                             }
 
@@ -2083,9 +2083,9 @@ class Lattes
                         }
                     } else {
                         $integrantes = Arr::get($projeto, "EQUIPE-DO-PROJETO.INTEGRANTES-DO-PROJETO", []);
-                        $aux_integrantes = self::listarAutores($integrantes);
+                        $aux_integrantes = self::_listarAutores($integrantes);
                         $financiadores = Arr::get($projeto, "FINANCIADORES-DO-PROJETO.FINANCIADOR-DO-PROJETO", []);
-                        $aux_financiadores = self::listarFinanciadores($financiadores);
+                        $aux_financiadores = self::_listarFinanciadores($financiadores);
                         $aux_projeto = [
                             'NOME-DO-PROJETO' => Arr::get($projeto, "@attributes.NOME-DO-PROJETO", ""),
                             'ANO-INICIO' => Arr::get($projeto, "@attributes.ANO-INICIO", ""),
@@ -2097,7 +2097,7 @@ class Lattes
                             'FINANCIADORES' => $aux_financiadores,
                         ];
 
-                        if (!self::verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
+                        if (!self::_verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
                             continue;
                         }
 
@@ -2116,9 +2116,9 @@ class Lattes
                         if (!isset($c['PROJETO-DE-PESQUISA']['EQUIPE-DO-PROJETO'])) {
                             foreach ($c['PROJETO-DE-PESQUISA'] as $pesquisa) {
                                 $integrantes = Arr::get($pesquisa, "EQUIPE-DO-PROJETO.INTEGRANTES-DO-PROJETO", []);
-                                $aux_integrantes = self::listarAutores($integrantes);
+                                $aux_integrantes = self::_listarAutores($integrantes);
                                 $financiadores = Arr::get($pesquisa, "FINANCIADORES-DO-PROJETO.FINANCIADOR-DO-PROJETO", []);
-                                $aux_financiadores = self::listarFinanciadores($financiadores);
+                                $aux_financiadores = self::_listarFinanciadores($financiadores);
                                 $aux_projeto = [
                                     'NOME-DO-PROJETO' => Arr::get($pesquisa, "@attributes.NOME-DO-PROJETO", ""),
                                     'ANO-INICIO' => Arr::get($pesquisa, "@attributes.ANO-INICIO", ""),
@@ -2132,7 +2132,7 @@ class Lattes
 
                                 $i++;
 
-                                if (!self::verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, $i)) {
+                                if (!self::_verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, $i)) {
                                     continue;
                                 }
 
@@ -2141,9 +2141,9 @@ class Lattes
                         } else {
                             if (isset($c['PROJETO-DE-PESQUISA']['EQUIPE-DO-PROJETO']['INTEGRANTES-DO-PROJETO'])) {
                                 $integrantes = Arr::get($c, "PROJETO-DE-PESQUISA.EQUIPE-DO-PROJETO.INTEGRANTES-DO-PROJETO", []);
-                                $aux_integrantes = self::listarAutores($integrantes);
+                                $aux_integrantes = self::_listarAutores($integrantes);
                                 $financiadores = Arr::get($c, "FINANCIADORES-DO-PROJETO.FINANCIADOR-DO-PROJETO", []);
-                                $aux_financiadores = self::listarFinanciadores($financiadores);
+                                $aux_financiadores = self::_listarFinanciadores($financiadores);
                                 $aux_projeto = [
                                     'NOME-DO-PROJETO' => Arr::get($c, "{$dados_basicos}.@attributes.NOME-DO-PROJETO", ""),
                                     'ANO-INICIO' => Arr::get($c, "{$dados_basicos}.@attributes.ANO-INICIO", ""),
@@ -2165,7 +2165,7 @@ class Lattes
                                 ];
                             }
 
-                            if (!self::verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, $i)) {
+                            if (!self::_verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, $i)) {
                                 continue;
                             }
 
@@ -2202,7 +2202,7 @@ class Lattes
         $registros = isset($registros['@attributes']) ? [$registros] : $registros;
 
         // ordena pelo ano, ordem inversa, se especificado chave
-        return $chaveOrdenacao ? self::ordenarRegistros($registros, $chaveOrdenacao, $ordem) : $registros;
+        return $chaveOrdenacao ? self::_ordenarRegistros($registros, $chaveOrdenacao, $ordem) : $registros;
 
     }
 
@@ -2244,12 +2244,12 @@ class Lattes
      * @return Array|Bool
      * @author Masakik, em 20/4/2023
      */
-    public static function listarOrientacoesConcluidasMestrado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOrientacoesConcluidasMestrado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
-        $registros = self::listarRegistrosPorChaveOrdenado(
+        $registros = self::_listarRegistrosPorChaveOrdenado(
             $lattes,
             'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.ORIENTACOES-CONCLUIDAS-PARA-MESTRADO', //chave
             'DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO.@attributes.ANO' //chaveOrdenacao
@@ -2258,7 +2258,7 @@ class Lattes
         $ret = [];
         foreach ($registros as $ent) {
             $i++;
-            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+            if (!self::_verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
             $ret[] = array_merge(
@@ -2287,12 +2287,12 @@ class Lattes
      * @return Array|Bool
      * @author Masakik, em 20/4/2023
      */
-    public static function listarOrientacoesConcluidasDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOrientacoesConcluidasDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
-        $registros = self::listarRegistrosPorChaveOrdenado(
+        $registros = self::_listarRegistrosPorChaveOrdenado(
             $lattes,
             'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO',
             'DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO.@attributes.ANO',
@@ -2301,7 +2301,7 @@ class Lattes
         $ret = [];
         foreach ($registros as $ent) {
             $i++;
-            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+            if (!self::_verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
             $ret[] = array_merge(
@@ -2330,12 +2330,12 @@ class Lattes
      * @return Array|Bool
      * @author Masakik, em 20/4/2023
      */
-    public static function listarOrientacoesConcluidasPosDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOrientacoesConcluidasPosDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
-        $registros = self::listarRegistrosPorChaveOrdenado(
+        $registros = self::_listarRegistrosPorChaveOrdenado(
             $lattes,
             'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.ORIENTACOES-CONCLUIDAS-PARA-POS-DOUTORADO',
             'DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-POS-DOUTORADO.@attributes.ANO'
@@ -2345,7 +2345,7 @@ class Lattes
         foreach ($registros as $ent) {
             $i++;
             $sai = [];
-            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-POS-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+            if (!self::_verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-POS-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
             $ret[] = array_merge(
@@ -2373,13 +2373,13 @@ class Lattes
      * @return Array|Bool
      * @author Masakik, em 20/4/2023
      */
-    public static function listarOrientacoesConcluidasTccGraduacao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOrientacoesConcluidasTccGraduacao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
         $chave = 'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.OUTRAS-ORIENTACOES-CONCLUIDAS';
-        $registros = self::listarRegistrosPorChaveOrdenado($lattes, $chave);
+        $registros = self::_listarRegistrosPorChaveOrdenado($lattes, $chave);
 
         // temos de filtrar diferente das outras produções
         $registros = Arr::where($registros, function ($value, $key) {
@@ -2387,13 +2387,13 @@ class Lattes
         });
 
         $chaveOrdenacao = 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.ANO';
-        $registros = self::ordenarRegistros($registros, $chaveOrdenacao);
+        $registros = self::_ordenarRegistros($registros, $chaveOrdenacao);
 
         $i = 0;
         $ret = [];
         foreach ($registros as $ent) {
             $i++;
-            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+            if (!self::_verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
 
@@ -2417,13 +2417,13 @@ class Lattes
      * @return Array|Bool
      * @author Masakik, em 20/4/2023
      */
-    public static function listarOrientacoesConcluidasIC($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOrientacoesConcluidasIC($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
         $chave = 'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.OUTRAS-ORIENTACOES-CONCLUIDAS';
-        $registros = self::listarRegistrosPorChaveOrdenado($lattes, $chave);
+        $registros = self::_listarRegistrosPorChaveOrdenado($lattes, $chave);
 
         // temos de filtrar diferente das outras produções
         $registros = Arr::where($registros, function ($value, $key) {
@@ -2431,13 +2431,13 @@ class Lattes
         });
 
         $chaveOrdenacao = 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.ANO';
-        $registros = self::ordenarRegistros($registros, $chaveOrdenacao);
+        $registros = self::_ordenarRegistros($registros, $chaveOrdenacao);
 
         $i = 0;
         $ret = [];
         foreach ($registros as $ent) {
             $i++;
-            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+            if (!self::_verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
             $ret[] = array_merge(
@@ -2460,13 +2460,13 @@ class Lattes
      * @return Array|Bool
      * @author Masakik, em 20/4/2023
      */
-    public static function listarMonografiasConcluidasAperfeicoamentoEspecializacao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarMonografiasConcluidasAperfeicoamentoEspecializacao($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
         $chave = 'OUTRA-PRODUCAO.ORIENTACOES-CONCLUIDAS.OUTRAS-ORIENTACOES-CONCLUIDAS';
-        $registros = self::listarRegistrosPorChaveOrdenado($lattes, $chave);
+        $registros = self::_listarRegistrosPorChaveOrdenado($lattes, $chave);
 
         // temos de filtrar diferente das outras produções
         $registros = Arr::where($registros, function ($value, $key) {
@@ -2474,13 +2474,13 @@ class Lattes
         });
 
         $chaveOrdenacao = 'DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS.@attributes.ANO';
-        $registros = self::ordenarRegistros($registros, $chaveOrdenacao);
+        $registros = self::_ordenarRegistros($registros, $chaveOrdenacao);
 
         $i = 0;
         $ret = [];
         foreach ($registros as $ent) {
             $i++;
-            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+            if (!self::_verificarFiltro($tipo, $ent['DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
 
@@ -2506,12 +2506,12 @@ class Lattes
      * @return Array|Bool
      * @author Masakik, em 20/4/2023
      */
-    public static function listarOrientacoesEmAndamentoMestrado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOrientacoesEmAndamentoMestrado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
-        $registros = self::listarRegistrosPorChaveOrdenado(
+        $registros = self::_listarRegistrosPorChaveOrdenado(
             $lattes,
             'DADOS-COMPLEMENTARES.ORIENTACOES-EM-ANDAMENTO.ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO', //chave
             'DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO.@attributes.ANO' //chaveOrdenacao
@@ -2521,7 +2521,7 @@ class Lattes
         foreach ($registros as $ent) {
             $i++;
             $sai = [];
-            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+            if (!self::_verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
             $ret[] = array_merge(
@@ -2550,12 +2550,12 @@ class Lattes
      * @return Array|Bool
      * @author Masakik, em 20/4/2023
      */
-    public static function listarOrientacoesEmAndamentoDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOrientacoesEmAndamentoDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
-        $registros = self::listarRegistrosPorChaveOrdenado(
+        $registros = self::_listarRegistrosPorChaveOrdenado(
             $lattes,
             'DADOS-COMPLEMENTARES.ORIENTACOES-EM-ANDAMENTO.ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO',
             'DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO.@attributes.ANO'
@@ -2564,7 +2564,7 @@ class Lattes
         $ret = [];
         foreach ($registros as $ent) {
             $i++;
-            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+            if (!self::_verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
             $ret[] = array_merge(
@@ -2593,9 +2593,9 @@ class Lattes
      * @return Array|Bool
      * @author Masakik, em 20/4/2023
      */
-    public static function listarOrientacoesEmAndamentoPosDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOrientacoesEmAndamentoPosDoutorado($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
         $chave = 'DADOS-COMPLEMENTARES.ORIENTACOES-EM-ANDAMENTO.ORIENTACAO-EM-ANDAMENTO-DE-POS-DOUTORADO';
@@ -2603,9 +2603,9 @@ class Lattes
 
         $i = 0;
         $ret = [];
-        foreach (self::listarRegistrosPorChaveOrdenado($lattes, $chave, $chaveOrdenacao) as $ent) {
+        foreach (self::_listarRegistrosPorChaveOrdenado($lattes, $chave, $chaveOrdenacao) as $ent) {
             $i++;
-            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-POS-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+            if (!self::_verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-POS-DOUTORADO']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
             $ret[] = array_merge(
@@ -2633,9 +2633,9 @@ class Lattes
      * @return Array|Bool
      * @author Masakik, em 20/4/2023
      */
-    public static function listarOrientacoesEmAndamentoIC($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
+    protected static function _listarOrientacoesEmAndamentoIC($codpes, $lattes_array = null, $tipo = 'registros', $limit_ini = 5, $limit_fim = null)
     {
-        if (!$lattes = $lattes_array ?? self::obterArray($codpes)) {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
             return false;
         }
         $chave = 'DADOS-COMPLEMENTARES.ORIENTACOES-EM-ANDAMENTO.ORIENTACAO-EM-ANDAMENTO-DE-INICIACAO-CIENTIFICA';
@@ -2643,10 +2643,10 @@ class Lattes
 
         $i = 0;
         $ret = [];
-        foreach (self::listarRegistrosPorChaveOrdenado($lattes, $chave, $chaveOrdenacao) as $ent) {
+        foreach (self::_listarRegistrosPorChaveOrdenado($lattes, $chave, $chaveOrdenacao) as $ent) {
             $i++;
             $sai = [];
-            if (!self::verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-INICIACAO-CIENTIFICA']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
+            if (!self::_verificarFiltro($tipo, $ent['DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-INICIACAO-CIENTIFICA']['@attributes']['ANO'], $limit_ini, $limit_fim, $i)) {
                 continue;
             }
             $ret[] = array_merge(

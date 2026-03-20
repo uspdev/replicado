@@ -2,7 +2,8 @@
 
 namespace Uspdev\Replicado;
 
-class Convenio {
+class Convenio extends ReplicadoBase
+{
 
     /**
      * Método para listar convênios acadêmicos internacionais.
@@ -24,7 +25,7 @@ class Convenio {
      * @return array - Retorna um array associativo contendo os convênios, seus coordenadores e organizações.
      * @author Erickson Zanon <ezanon@gmail.com>
      */
-    public static function listarConveniosAcademicosInternacionais($ativos = true)
+    protected static function _listarConveniosAcademicosInternacionais($ativos = true)
     {
         // Define qual consulta usar
         if ($ativos) {
@@ -47,7 +48,7 @@ class Convenio {
             $convenios[$key]['dataFim'] = $fim;
 
             // 🔹 Obtém responsáveis
-            $resps = self::listarCoordenadoresConvenio($codcvn);
+            $resps = self::_listarCoordenadoresConvenio($codcvn);
             $convenios[$key]['coordenadores'] = '';
             foreach ($resps as $resp) {
                 $nome = $resp['nompesttd'];
@@ -55,7 +56,7 @@ class Convenio {
             }
 
             // 🔹 Obtém organizações
-            $orgs = self::listarOrganizacoesConvenio($codcvn);
+            $orgs = self::_listarOrganizacoesConvenio($codcvn);
             $convenios[$key]['organizacoes'] = '';
             foreach ($orgs as $org) {
                 $nomeOrg = $org['nomeOrganizacao'];
@@ -82,7 +83,7 @@ class Convenio {
      * @return array - Retorna um array associativo contendo os coordenadores do convênio.
      * @author Erickson Zanon <ezanon@gmail.com>
      */
-    public static function listarCoordenadoresConvenio($codcvn) {
+    protected static function _listarCoordenadoresConvenio($codcvn) {
         $query = DB::getQuery('Convenio.listarCoordenadoresConvenio.sql');
         $params = [
             'codcvn' => $codcvn
@@ -107,7 +108,7 @@ class Convenio {
      * @return array - Retorna um array associativo contendo as organizações do convênio.
      * @author Erickson Zanon <ezanon@gmail.com>
      */
-    public static function listarOrganizacoesConvenio($codcvn) {
+    protected static function _listarOrganizacoesConvenio($codcvn) {
         $query = DB::getQuery('Convenio.listarOrganizacoesConvenio.sql');
         $params = [
             'codcvn' => $codcvn
