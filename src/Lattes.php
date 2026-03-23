@@ -239,7 +239,7 @@ class Lattes extends ReplicadoBase
      * @param Array $array
      * @return Array
      */
-    protected static function listarAutores($array)
+    protected static function _listarAutores($array)
     {
         $aux_autores = [];
         if ($array) {
@@ -277,7 +277,7 @@ class Lattes extends ReplicadoBase
      * @param Integer $i
      * @return Bool
      */
-    protected static function verificarFiltro($tipo, $ano, $limit_ini, $limit_fim, $i)
+    protected static function _verificarFiltro($tipo, $ano, $limit_ini, $limit_fim, $i)
     {
         if ($limit_ini == -1) {
             return true;
@@ -2194,7 +2194,7 @@ class Lattes extends ReplicadoBase
      * @return Array
      * @author Masakik, em 20/4/2023
      */
-    protected static function listarRegistrosPorChaveOrdenado($lattes_array, $chave, $chaveOrdenacao = null, $ordem = -1)
+    protected static function _listarRegistrosPorChaveOrdenado($lattes_array, $chave, $chaveOrdenacao = null, $ordem = -1)
     {
         $registros = Arr::get($lattes_array, $chave, []);
 
@@ -2216,7 +2216,7 @@ class Lattes extends ReplicadoBase
      * @param Int $ordem Se -1 é decrescente, se 1, é crescente
      * @author Masakik, em 20/4/2023
      */
-    protected static function ordenarRegistros($registros, $chaveOrdenacao, $ordem = -1)
+    protected static function _ordenarRegistros($registros, $chaveOrdenacao, $ordem = -1)
     {
         usort($registros, function ($a, $b) use ($chaveOrdenacao) {
             if (Arr::get($b, $chaveOrdenacao, false) == false) {
@@ -2666,7 +2666,7 @@ class Lattes extends ReplicadoBase
      * @param Array $array
      * @return Array
      */
-    protected static function listarFinanciadores($array) {
+    protected static function _listarFinanciadores($array) {
         $aux_financiadores = [];
         if ($array) {
             foreach ($array as $financiador) {

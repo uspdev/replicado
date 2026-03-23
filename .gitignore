@@ -33,3 +33,6 @@ php.ini
 # DDEV
 /.ddev
 core.*
+
+#netbeans
+/nbproject
