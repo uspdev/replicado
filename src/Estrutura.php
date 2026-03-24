@@ -2,177 +2,101 @@
 
 namespace Uspdev\Replicado;
 
-class Estrutura extends ReplicadoBase
+use Uspdev\Replicado\Interceptor;
+
+/**
+ * ATENÇÃO: Classe gerada automaticamente. 
+ * Não edite este arquivo manualmente.
+ */
+class Estrutura extends \Uspdev\Replicado\Base\Estrutura
 {
-    /**
-     * Método que recebe codset e retorna todos campos da tabela SETOR.
-     *
-     * @param Integer $codset - Código do setor
-     * @return string
-     * @author André Canale Garcia <acgarcia@sc.sp.br>
-     */
-    protected static function _dump($codset)
+
+    public static function dump(...$args)
     {
-        $query = "SELECT s.*
-                  FROM SETOR AS s 
-                  WHERE s.codset = convert(int,:codset)";
-
-        $param = [
-            'codset' => $codset,
-        ];
-
-        return DB::fetch($query, $param);
+        // 1. Lógica de Interceptação (Fake/Cache)
+        // O método 'handle' centraliza a decisão
+        return Interceptor::handle(
+            parent::class, 
+            'dump', 
+            $args, 
+            fn(...$params) => parent::dump(...$params)
+        );
     }
-
-    /**
-     * Método que recebe o Código da Unidade e retorna todos os setores ativos da mesma.
-     * Caso não seja passado a unidade, pega o REPLICADO_CODUNDCLG do .env
-     * 
-     * @param Integer $codund - código da Unidade
-     * @return array
-     * @author Fernando G. Moura <fgm@sc.sp.br>
-     */
-    protected static function _listarSetores($codund = null)
+    public static function listarSetores(...$args)
     {
-        $query = "SELECT codset, tipset, nomabvset, nomset, codsetspe  FROM SETOR                   
-                  WHERE codund = convert(int,:codund) AND dtadtvset IS NULL AND nomset NOT LIKE 'Inativo'
-                  ORDER BY codset ASC";
-
-        if ($codund) {
-            $param = [
-                'codund' => $codund,
-            ];
-        } else {
-            $unidades = getenv('REPLICADO_CODUNDCLG');
-            $param = [
-                'codund' => $unidades,
-            ];
-        }
-
-        return DB::fetchAll($query, $param);
+        // 1. Lógica de Interceptação (Fake/Cache)
+        // O método 'handle' centraliza a decisão
+        return Interceptor::handle(
+            parent::class, 
+            'listarSetores', 
+            $args, 
+            fn(...$params) => parent::listarSetores(...$params)
+        );
     }
-
-    /**
-     * Método que recebe o cógido do setor para retornar a(s) chefia(s) do mesmo
-     *
-     * @param Integer $codset - Código do setor
-     * @param boolean $substitutos - true (inclui todas as designações), false (exclui as temporárias)
-     * @return array
-     * @author Fernando G. Moura <fgm@sc.sp.br>
-     */
-    protected static function _getChefiaSetor($codset, $substitutos = true)
+    public static function getChefiaSetor(...$args)
     {
-        if ($substitutos) {
-            //substituição de uma designação já existente (S); exercício de liderança em substituição (E);
-            $s = '';
-        } else {
-            //designação uma função (D); pró-labore (P); exercício de liderança (L); Exercendo Coordenação (C).
-            $s = "AND c.tipdsg LIKE 'D' OR c.tipdsg LIKE 'P' OR c.tipdsg LIKE 'L' OR c.tipdsg LIKE 'C'";
-        }
-
-        $query = "SELECT c.codpes, c.nompes, c.nomfnc, s.codsetspe, s.nomabvset, s.nomset  FROM SETOR AS s 
-            INNER JOIN LOCALIZAPESSOA AS c
-            ON c.codset = s.codset
-            WHERE s.codset = convert(int,:codset) AND s.dtadtvset IS NULL AND c.tipvinext LIKE 'Servidor Designado' " . $s . "
-            ORDER BY s.tipset ASC, s.nomset ASC";
-
-        $param = [
-            'codset' => $codset,
-        ];
-
-        return DB::fetchAll($query, $param);
+        // 1. Lógica de Interceptação (Fake/Cache)
+        // O método 'handle' centraliza a decisão
+        return Interceptor::handle(
+            parent::class, 
+            'getChefiaSetor', 
+            $args, 
+            fn(...$params) => parent::getChefiaSetor(...$params)
+        );
     }
-
-    /**
-     * Retorna lista com todas as unidades ativas da universidade.
-     * 
-     * @return Array
-     * @author Kawan Santana, em 19/03/2024
-     */
-    protected static function _listarUnidades()
+    public static function listarUnidades(...$args)
     {
-        $query = DB::getQuery('Estrutura.listarUnidades.sql');
-        return Db::fetchAll($query);
+        // 1. Lógica de Interceptação (Fake/Cache)
+        // O método 'handle' centraliza a decisão
+        return Interceptor::handle(
+            parent::class, 
+            'listarUnidades', 
+            $args, 
+            fn(...$params) => parent::listarUnidades(...$params)
+        );
     }
-
-    /**
-     * Método que retorna todos campos da tabela UNIDADE.
-     * Fetch retornando apenas um registro, logo somente um código de unidade
-     *  
-     * @param Integer $codund - Código da unidade 
-     * @return Array
-     * @author Alessandro Costa de Oliveira, em 11/06/2024
-     */
-    protected static function _obterUnidade($codund)
+    public static function obterUnidade(...$args)
     {
-        $query = DB::getQuery('Estrutura.obterUnidade.sql');
-        $param = ['codund' => $codund];
-        return DB::fetch($query, $param);
+        // 1. Lógica de Interceptação (Fake/Cache)
+        // O método 'handle' centraliza a decisão
+        return Interceptor::handle(
+            parent::class, 
+            'obterUnidade', 
+            $args, 
+            fn(...$params) => parent::obterUnidade(...$params)
+        );
     }
-
-    /**
-     * Obtém todas as informações de um único local da tabela LOCALUSP.
-     * 
-     * Retorna um array contendo todos os campos do registro correspondente ao código de local informado.
-     *  
-     * @param Integer $codlocusp - Código do local
-     * @return Array
-     * @author Antonio Augusto de Campos, em 13/08/2025
-     */
-    protected static function _obterLocal($codlocusp)
+    public static function obterLocal(...$args)
     {
-        $query = DB::getQuery('Estrutura.obterLocal.sql');
-        $param = ['codlocusp' => $codlocusp];
-        return DB::fetch($query, $param);
+        // 1. Lógica de Interceptação (Fake/Cache)
+        // O método 'handle' centraliza a decisão
+        return Interceptor::handle(
+            parent::class, 
+            'obterLocal', 
+            $args, 
+            fn(...$params) => parent::obterLocal(...$params)
+        );
     }
-
-    /**
-     * Lista todos os registros de local de uma unidade específica.
-     *
-     * Se o código da unidade não for informado, será utilizado o valor definido
-     * na variável de ambiente `REPLICADO_CODUNDCLG` (default).
-     * 
-     * @param int|null $codund - Código da unidade
-     * @return Array
-     * @author Antonio Augusto de Campos, em 13/08/2025
-     */
-    protected static function _listarLocaisUnidade($codund = null)
+    public static function listarLocaisUnidade(...$args)
     {
-        $codund = $codund ?: Replicado::getConfig('codundclg');
-
-        $query = DB::getQuery('Estrutura.listarLocaisUnidade.sql');
-        $param['codund'] = $codund;
-        return DB::fetchAll($query, $param);
+        // 1. Lógica de Interceptação (Fake/Cache)
+        // O método 'handle' centraliza a decisão
+        return Interceptor::handle(
+            parent::class, 
+            'listarLocaisUnidade', 
+            $args, 
+            fn(...$params) => parent::listarLocaisUnidade(...$params)
+        );
     }
-
-    /**
-     * Procura locais da Unidade (default) por código parcial e retorna informações adicionais.
-     *
-     * Faz a busca na tabela LOCALUSP trazendo todos os campos do local,
-     * adicionando também:
-     *  - `epflgr` e `numlgr` da tabela ENDUSP
-     *  - `sglund` da tabela UNIDADE
-     * 
-     * @param Integer $partCodlocusp - Código parcial de Local
-     * @param Integer $codund - Código da unidade (opcional)
-     *      se 0: pega do env REPLICADO_CODUNDCLG (default),
-     *      se -1: pega de todas as unidades,
-     *      se > 0: pega da unidade especificada
-     * @return Array
-     * @author Antonio Augusto de Campos, em 13/08/2025
-     */
-    protected static function _procurarLocal($partCodlocusp, $codund = 0)
+    public static function procurarLocal(...$args)
     {
-        if ($codund === 0) {
-            $replaces['__filtro_codund__'] = 'L.codund = ' . Replicado::getConfig('codundclg');
-        } elseif ($codund < 0) {
-            $replaces['__filtro_codund__'] = '1 = 1';
-        } else {
-            $replaces['__filtro_codund__'] = 'L.codund = ' . $codund;
-        }
-
-        $query = DB::getQuery('Estrutura.procurarLocal.sql', $replaces);
-        $param['partCodlocusp'] = $partCodlocusp . '%';
-        return DB::fetchAll($query, $param);
+        // 1. Lógica de Interceptação (Fake/Cache)
+        // O método 'handle' centraliza a decisão
+        return Interceptor::handle(
+            parent::class, 
+            'procurarLocal', 
+            $args, 
+            fn(...$params) => parent::procurarLocal(...$params)
+        );
     }
 }
