@@ -4,7 +4,7 @@ namespace Uspdev\Replicado;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use Uspdev\Cache\Cache;
+use Uspdev\Replicado\Cache;
 use SplFileInfo;
 
 class Replicado
@@ -15,9 +15,6 @@ class Replicado
 
     /** Instância do logger */
     private static $logger;
-
-    /**Instância do cache */
-    private $cache;
 
     # Variáveis de config
     public $host; //obrigatório
@@ -32,6 +29,7 @@ class Replicado
     public $usarCache = false;
     public $cacheExpiry = 4 * 60 * 60;
     public $cacheSmall = 32;
+    public $cachePrefix = 'replicado:';
 
     public $pathlog = '/tmp/replicado.log';
     public $debug = false;
@@ -40,85 +38,45 @@ class Replicado
 
     /** Variaveis que podem ser atualizadas pelo setConfig() */
     protected $vars = [
-        'host', 'port', 'database', 'username', 'password',
-        'codundclg', 'codundclgs', 'sybase', 'usarCache', 'cacheExpiry', 'cacheSmall',
-        'pathlog', 'debug', 'debugLevel', 'fake'];
+        'host',
+        'port',
+        'database',
+        'username',
+        'password',
+        'codundclg',
+        'codundclgs',
+        'sybase',
+        'usarCache',
+        'cacheExpiry',
+        'cacheSmall',
+        'cachePrefix',
+        'pathlog',
+        'debug',
+        'debugLevel',
+        'fake'
+    ];
 
-    private function __construct()
-    {}
+    private function __construct() {}
 
-    private function __clone()
-    {}
+    private function __clone() {}
+
+    public function __wakeup()
+    {
+        throw new \Exception("Cannot unserialize singleton");
+    }
+
 
     /**
      * Retorna uma instância do config existente ou cria uma nova
      *
      * @return \Uspdev\Replicado\Replicado
      */
-    public static function getInstance($newConfig = [])
+    public static function getInstance()
     {
-        if (!SELF::$instance) {
-            SELF::$instance = new Self;
-            SELF::$instance->setConfig($newConfig);
+        if (!self::$instance) {
+            self::$instance = new self;
         }
-        return SELF::$instance;
-    }
-
-    /**
-     * Retorna uma instância do cache
-     *
-     * Deve ser chamado depois de configurado o replicado
-     */
-    public function getCacheInstance($classToBeCached = null)
-    {
-        if (!$this->cache) {
-            $this->cache = new Cache($classToBeCached);
-            $this->setCacheConfig();
-        }
-        return $this->cache;
-    }
-
-    /**
-     * Atualiza as configurações do cache
-     *
-     * Se $cacheExpiry ou $cacheSmall forem negativos deixam valor padrão
-     *
-     * @return void;
-     */
-    public function setCacheConfig()
-    {
-        if ($this->cache) {
-            if ($this->cacheExpiry >= 0) {
-                $this->cache->expiry = $this->cacheExpiry;
-            }
-            if ($this->cacheSmall >= 0) {
-                $this->cache->small = $this->cacheSmall;
-            }
-            $this->cache->disable = false;
-        }
-    }
-
-    /**
-     * Retorna as configurações em uso
-     *
-     * Se não especificado $var retorna um array com todas as variáveis
-     * Se retornar array, 'password vem mascarado'. Para obtê-lo use $var='password'
-     *
-     * @param $var Variável a ser retornada
-     * @return Array|String
-     */
-    public static function getConfig($var = null)
-    {
-        $config = SELF::getInstance();
-        if ($var) {
-            return $config->$var;
-        }
-        foreach ($config->vars as $var) {
-            $ret[$var] = $config->$var;
-        }
-        $ret['password'] = '**********'; //mascarando password
-
-        return $ret;
+        return self::$instance;
     }
 
     /**
@@ -139,7 +97,7 @@ class Replicado
         if (isset($newConfig['reset']) && $newConfig['reset'] == true) {
             $newConfig = [];
         }
-        $config = SELF::getInstance($newConfig);
+        $config = self::getInstance();
 
         foreach ($config->vars as $var) {
             if (isset($newConfig[$var])) {
@@ -151,9 +109,12 @@ class Replicado
             }
         }
 
-        // atualiza config do cache
         if ($config->usarCache) {
-            $config->setCacheConfig();
+            Cache::config(
+                $config->cacheExpiry,
+                $config->cacheSmall,
+                $config->cachePrefix
+            );
         }
 
         if (empty($config->host) || empty($config->port) || empty($config->username) || empty($config->password)) {
@@ -165,6 +126,30 @@ class Replicado
     }
 
     /**
+     * Retorna as configurações em uso
+     *
+     * Se não especificado $var retorna um array com todas as variáveis
+     * Se retornar array, 'password vem mascarado'. Para obtê-lo use $var='password'
+     *
+     * @param $var Variável a ser retornada
+     * @return Array|String
+     */
+    public static function getConfig($var = null)
+    {
+        $config = self::getInstance();
+        if ($var) {
+            return $config->$var;
+        }
+        $ret = [];
+        foreach ($config->vars as $var) {
+            $ret[$var] = $config->$var;
+        }
+        $ret['password'] = '**********'; //mascarando password
+
+        return $ret;
+    }
+
+    /**
      * Grava em log uma mensagem
      *
      * @param String $channelName
@@ -173,11 +158,11 @@ class Replicado
      */
     public function log(string $channelName, string $message, string $level = 'error')
     {
-        if (!isset(SELF::$logger)) {
-            SELF::$logger = new Logger($channelName);
-            SELF::$logger->pushHandler(new StreamHandler($this->pathlog, Logger::DEBUG));
+        if (!isset(self::$logger)) {
+            self::$logger = new Logger('Replicado');
+            self::$logger->pushHandler(new StreamHandler($this->pathlog, Logger::DEBUG));
         }
-        SELF::$logger->$level($message);
+        self::$logger->$level("[$channelName] $message");
     }
 
     /**
@@ -186,7 +171,7 @@ class Replicado
      */
     public static function getFake($name)
     {
-        $name = str_replace('Uspdev\\Replicado\\', '', $name);
+        $name = str_replace('Uspdev\\Replicado\\Base', '', $name);
         $path = new SplFileInfo(__DIR__);
         $path = $path->getRealPath();
         $path .= DIRECTORY_SEPARATOR;
@@ -201,7 +186,7 @@ class Replicado
         if (is_readable($file)) {
             $json = file_get_contents($file);
             return json_decode($json, true);
-        } 
+        }
         return 'Não há dados fake criado para esse método ainda.';
     }
 }
