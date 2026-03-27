@@ -2058,6 +2058,7 @@ class Lattes extends ReplicadoBase
             foreach ($atuacoes as $pp) {
                 if (isset($pp['ATIVIDADES-DE-PARTICIPACAO-EM-PROJETO']['PARTICIPACAO-EM-PROJETO']['PROJETO-DE-PESQUISA'])) {
                     $projeto = $pp['ATIVIDADES-DE-PARTICIPACAO-EM-PROJETO']['PARTICIPACAO-EM-PROJETO']['PROJETO-DE-PESQUISA'];
+                    $participacao = $pp['ATIVIDADES-DE-PARTICIPACAO-EM-PROJETO']['PARTICIPACAO-EM-PROJETO'];
                     if (!isset($projeto['EQUIPE-DO-PROJETO'])) {
                         foreach ($projeto as $pesquisa) {
                             $integrantes = Arr::get($pesquisa, "EQUIPE-DO-PROJETO.INTEGRANTES-DO-PROJETO", []);
@@ -2073,6 +2074,8 @@ class Lattes extends ReplicadoBase
                                 'DESCRICAO-DO-PROJETO' => Arr::get($pesquisa, "@attributes.DESCRICAO-DO-PROJETO", ""),
                                 'EQUIPE-DO-PROJETO' => $aux_integrantes,
                                 'FINANCIADORES' => $aux_financiadores,
+                                'ORGAO-CODIGO' => Arr::get($participacao, "@attributes.CODIGO-ORGAO", ""),
+                                'ORGAO-NOME' => Arr::get($participacao, "@attributes.NOME-ORGAO", ""),
                             ];
 
                             if (!self::_verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
@@ -2095,6 +2098,8 @@ class Lattes extends ReplicadoBase
                             'DESCRICAO-DO-PROJETO' => Arr::get($projeto, "@attributes.DESCRICAO-DO-PROJETO", ""),
                             'EQUIPE-DO-PROJETO' => $aux_integrantes,
                             'FINANCIADORES' => $aux_financiadores,
+                            'ORGAO-CODIGO' => Arr::get($participacao, "@attributes.CODIGO-ORGAO", ""),
+                            'ORGAO-NOME' => Arr::get($participacao, "@attributes.NOME-ORGAO", ""),
                         ];
 
                         if (!self::_verificarFiltro($tipo, $aux_projeto['ANO-INICIO'], $limit_ini, $limit_fim, 1)) {
@@ -2111,7 +2116,6 @@ class Lattes extends ReplicadoBase
                         if (!isset($c['PROJETO-DE-PESQUISA'])) {
                             continue;
                         }
-
                         $dados_basicos = (!isset($c['PROJETO-DE-PESQUISA']) && isset($c[1])) ? 1 : 'PROJETO-DE-PESQUISA';
                         if (!isset($c['PROJETO-DE-PESQUISA']['EQUIPE-DO-PROJETO'])) {
                             foreach ($c['PROJETO-DE-PESQUISA'] as $pesquisa) {
@@ -2128,6 +2132,8 @@ class Lattes extends ReplicadoBase
                                     'DESCRICAO-DO-PROJETO' => Arr::get($pesquisa, "@attributes.DESCRICAO-DO-PROJETO", ""),
                                     'EQUIPE-DO-PROJETO' => $aux_integrantes,
                                     'FINANCIADORES' => $aux_financiadores,
+                                    'ORGAO-CODIGO' => Arr::get($c, "@attributes.CODIGO-ORGAO", ""),
+                                    'ORGAO-NOME' => Arr::get($c, "@attributes.NOME-ORGAO", ""),
                                 ];
 
                                 $i++;
@@ -2142,7 +2148,7 @@ class Lattes extends ReplicadoBase
                             if (isset($c['PROJETO-DE-PESQUISA']['EQUIPE-DO-PROJETO']['INTEGRANTES-DO-PROJETO'])) {
                                 $integrantes = Arr::get($c, "PROJETO-DE-PESQUISA.EQUIPE-DO-PROJETO.INTEGRANTES-DO-PROJETO", []);
                                 $aux_integrantes = self::_listarAutores($integrantes);
-                                $financiadores = Arr::get($c, "FINANCIADORES-DO-PROJETO.FINANCIADOR-DO-PROJETO", []);
+                                $financiadores = Arr::get($c, "{$dados_basicos}.FINANCIADORES-DO-PROJETO.FINANCIADOR-DO-PROJETO", []);
                                 $aux_financiadores = self::_listarFinanciadores($financiadores);
                                 $aux_projeto = [
                                     'NOME-DO-PROJETO' => Arr::get($c, "{$dados_basicos}.@attributes.NOME-DO-PROJETO", ""),
@@ -2153,6 +2159,8 @@ class Lattes extends ReplicadoBase
                                     'DESCRICAO-DO-PROJETO' => Arr::get($c, "{$dados_basicos}.@attributes.DESCRICAO-DO-PROJETO", ""),
                                     'EQUIPE-DO-PROJETO' => $aux_integrantes,
                                     'FINANCIADORES' => $aux_financiadores,
+                                    'ORGAO-CODIGO' => Arr::get($c, "@attributes.CODIGO-ORGAO", ""),
+                                    'ORGAO-NOME' => Arr::get($c, "@attributes.NOME-ORGAO", ""),
                                 ];
                             } else {
                                 $aux_projeto = [
@@ -2668,14 +2676,13 @@ class Lattes extends ReplicadoBase
      */
     protected static function _listarFinanciadores($array) {
         $aux_financiadores = [];
-        if ($array) {
-            foreach ($array as $financiador) {
-                // REMOVIDO o '@attributes.' pois $financiador já são os atributos
+        if ($array) { 
+            foreach ($array as $financiador) {                
                 array_push($aux_financiadores, [
-                    "NOME-INSTITUICAO" => Arr::get($financiador, 'NOME-INSTITUICAO', false),
-                    "NATUREZA" => Arr::get($financiador, 'NATUREZA', false),
-                ]);
-            }
+                    "NOME-INSTITUICAO" => Arr::get($financiador, '@attributes', false) ? Arr::get($financiador, '@attributes.NOME-INSTITUICAO', false) : Arr::get($financiador, 'NOME-INSTITUICAO', false),
+                    "NATUREZA" => Arr::get($financiador, '@attributes', false) ? Arr::get($financiador, '@attributes.NATUREZA', false) : Arr::get($financiador, 'NATUREZA', false),
+                    ]);
+            };
             return $aux_financiadores;
         }
         return false;
