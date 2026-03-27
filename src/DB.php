@@ -5,6 +5,7 @@ namespace Uspdev\Replicado;
 use PDO;
 use SplFileInfo;
 use Throwable;
+use Uspdev\Cache\Cache;
 use Uspdev\Replicado\Replicado as Config;
 
 class DB
@@ -15,8 +16,10 @@ class DB
      */
     private static $instance;
 
-    private function __construct() {}
-    private function __clone() {}
+    private function __construct()
+    {}
+    private function __clone()
+    {}
 
     /**
      * Retorna uma instância do pdo - cria ou reaproveita se for o caso
@@ -26,12 +29,12 @@ class DB
     protected static function getInstance()
     {
         $config = Config::getInstance();
-        if (!self::$instance) {
+        if (!SELF::$instance) {
             try {
                 $dsn = "dblib:host={$config->host}:{$config->port};dbname={$config->database}";
-                // self::$instance = new PDO($dsn, $config->username, $config->password, [PDO::ATTR_TIMEOUT => 10]);
-                self::$instance = new PDO($dsn, $config->username, $config->password);
-                self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                // SELF::$instance = new PDO($dsn, $config->username, $config->password, [PDO::ATTR_TIMEOUT => 10]);
+                SELF::$instance = new PDO($dsn, $config->username, $config->password);
+                SELF::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (Throwable $t) {
                 $config->log('Erro na conexão ', $t->getMessage());
                 if ($config->debug) {
@@ -41,7 +44,7 @@ class DB
                 }
             }
         }
-        return self::$instance;
+        return SELF::$instance;
     }
 
     /**
@@ -53,7 +56,13 @@ class DB
      */
     public static function fetch(string $query, array $param = [])
     {
-        return self::overrideFetch('fetch', $query, $param);
+        $config = Config::getInstance();
+        if ($config->usarCache) {
+            $cache = $config->getCacheInstance();
+            return $cache->getCached('Uspdev\Replicado\DB::overrideFetch', ['fetch', $query, $param]);
+        } else {
+            return SELF::overrideFetch('fetch', $query, $param);
+        }
     }
 
     /**
@@ -65,7 +74,13 @@ class DB
      */
     public static function fetchAll(string $query, array $param = [])
     {
-        return self::overrideFetch('fetchAll', $query, $param);
+        $config = Config::getInstance();
+        if ($config->usarCache) {
+            $cache = $config->getCacheInstance();
+            return $cache->getCached('Uspdev\Replicado\DB::overrideFetch', ['fetchAll', $query, $param]);
+        } else {
+            return SELF::overrideFetch('fetchAll', $query, $param);
+        }
     }
 
     /**
@@ -82,12 +97,10 @@ class DB
     public static function overrideFetch(string $fetchType, string $query, array $param = [])
     {
         $config = Config::getInstance();
-        $query = self::automaticReplaces($query);
-        $stmt = self::getInstance()->prepare($query);
+        $query = SELF::automaticReplaces($query);
+        $stmt = SELF::getInstance()->prepare($query);
         foreach ($param as $campo => $valor) {
-            $valor = $config->sybase
-                ? mb_convert_encoding($valor, 'ISO-8859-1', 'UTF-8')
-                : $valor;
+            $valor = $config->sybase ? utf8_decode($valor) : $valor;
             $stmt->bindValue(":$campo", $valor);
             if ($config->debugLevel >= 2) {
                 $queryLog = str_replace(":$campo", $valor, $queryLog ?? $query);
@@ -136,9 +149,10 @@ class DB
      *
      * @return bool
      */
-    public static function test()
+    public static function test($config = [])
     {
-        return self::getInstance() instanceof PDO;
+        $config = Config::getInstance($config);
+        return SELF::getInstance() ? true : false;
     }
 
     /**

@@ -33,6 +33,4 @@ php.ini
 # DDEV
 /.ddev
 core.*
-
-#netbeans
-/nbproject
+composer.lock
