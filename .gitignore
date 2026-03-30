@@ -12,6 +12,7 @@ npm-debug.log
 yarn-error.log
 .env
 /public/vendor/
+/nbproject
 
 # pasta onde guardo coisas que ando testando
 /teste/
