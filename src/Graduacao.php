@@ -797,6 +797,18 @@ class Graduacao extends ReplicadoBase
         return DB::fetchAll($query, $param);
     }
 
+    /**
+     * Retorna lista com os cursos de graduação da unidade.
+     *
+     * @return Array
+     * @author Alessandro Costa de Oliveira, em 01/04/2026 
+     */
+    protected static function _listarCursos()
+    {
+        $query = DB::getQuery('Graduacao.listarCursos.sql');
+
+        return DB::fetchAll($query);
+    }
 
     /**
      * Retorna lista com os departamentos de ensino da unidade.
