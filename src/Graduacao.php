@@ -665,7 +665,7 @@ class Graduacao extends ReplicadoBase
      * @return Array
      * @author Masaki K Neto em 17/02/2022
      **/
-    protected static function _listarDisciplinasAluno(int $codpes, int|null $codpgm, array $rstfim = ['A', 'RN', 'RA', 'RF'])
+    protected static function _listarDisciplinasAluno(int $codpes, int|null $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
     {
         $query = DB::getQuery('Graduacao.listarDisciplinasAluno.sql');
         $param['codpes'] = $codpes;
@@ -711,7 +711,7 @@ class Graduacao extends ReplicadoBase
      * @author modificado por Masakik em 18/2/2022
      * @see self::_listarDisciplinasAluno()
      */
-    protected static function _obterMediaPonderada(int $codpes, int|null $codpgm, array $rstfim = ['A', 'RN', 'RA', 'RF'])
+    protected static function _obterMediaPonderada(int $codpes, int|null $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
     {
         $result = self::_listarDisciplinasAluno($codpes, $codpgm, $rstfim);
 
@@ -740,7 +740,7 @@ class Graduacao extends ReplicadoBase
      * @return string
      * @author thiagogomesverissimo em 21/11/2021
      */
-    protected static function _obterMediaPonderadaLimpa(int $codpes, int|null $codpgm)
+    protected static function _obterMediaPonderadaLimpa(int $codpes, int|null $codpgm = null)
     {
         return self::_obterMediaPonderada($codpes, $codpgm, ['A']);
     }
@@ -760,7 +760,7 @@ class Graduacao extends ReplicadoBase
      * @return string
      * @author thiagogomesverissimo em 21/11/2021
      */
-    protected static function _obterMediaPonderadaSuja(int $codpes, int|null $codpgm)
+    protected static function _obterMediaPonderadaSuja(int $codpes, int|null $codpgm = null)
     {
         return self::_obterMediaPonderada($codpes, $codpgm, ['A', 'RN', 'RA', 'RF']);
     }

@@ -150,7 +150,7 @@ class Pessoa extends ReplicadoBase
      * @author Marcelo A K Fontana, atualizado em 01/10/2024
      * @author Marcelo A K Fontana, atualizado em 22/11/2024
      */
-    protected static function _procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string|null $tipvin, string|null $codundclgs, string|null $tipvinext)
+    protected static function _procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string|null $tipvin = null, string|null $codundclgs = null, string|null $tipvinext = null)
     {
         if ($fonetico) {
             $nome = Uteis::fonetico($nome);
@@ -805,7 +805,7 @@ class Pessoa extends ReplicadoBase
      * @author Refatorado por @gabrielareisg - 30/04/2021 - issue #425
      *
      */
-    protected static function _listarDocentes(string|null $codset_list, string $sitatl_list = 'A')
+    protected static function _listarDocentes(string|null $codset_list = null, string $sitatl_list = 'A')
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $where_setores = $codset_list ? "AND L.codset IN ({$codset_list})" : '';
