@@ -91,7 +91,7 @@ class Uteis
     {
         array_walk_recursive($array, function (&$item) {
             if (is_string($item) && !mb_detect_encoding($item, 'utf-8', true)) {
-                $item = mb_convert_encoding($item, "ISO-8859-1", "UTF-8");
+                $item = mb_convert_encoding($item, "UTF-8", "ISO-8859-1");
             }
         });
         return $array;
