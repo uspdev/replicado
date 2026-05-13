@@ -100,9 +100,7 @@ class Uteis
     public static function trim_recursivo($array)
     {
         array_walk_recursive($array, function (&$item) {
-            if (is_string($item)) {
-                $item = trim($item);
-            }
+            $item = is_string($item) ? trim($item) : $item;
         });
         return $array;
     }
