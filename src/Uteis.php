@@ -90,7 +90,7 @@ class Uteis
     public static function utf8_converter($array)
     {
         array_walk_recursive($array, function (&$item) {
-            if (!mb_detect_encoding($item, 'utf-8', true)) {
+            if (is_string($item) && !mb_detect_encoding($item, 'utf-8', true)) {
                 $item = mb_convert_encoding($item, "UTF-8", "ISO-8859-1");
             }
         });
@@ -100,7 +100,7 @@ class Uteis
     public static function trim_recursivo($array)
     {
         array_walk_recursive($array, function (&$item) {
-            $item = trim($item);
+            $item = is_string($item) ? trim($item) : $item;
         });
         return $array;
     }
