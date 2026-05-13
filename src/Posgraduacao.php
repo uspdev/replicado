@@ -318,7 +318,7 @@ class Posgraduacao extends ReplicadoBase
      *
      * por Erickson Zanon - czanon@usp.br
      */
-    protected static function _areasProgramas(int|null $codundclgi, int|null $codcur)
+    protected static function _areasProgramas(int|null $codundclgi = null, int|null $codcur = null)
     {
         if (!$codundclgi) {
             $codundclgi = getenv('REPLICADO_CODUNDCLG');
@@ -374,7 +374,7 @@ class Posgraduacao extends ReplicadoBase
      * @param int|null $codare - código da área (opcional)
      * @return Array
      */
-    protected static function _alunosPrograma(int $codundclgi, int $codcur, int|null $codare)
+    protected static function _alunosPrograma(int $codundclgi, int $codcur, int|null $codare = null)
     {
         // se $codare é null, seleciona todas
         if (!$codare) {
