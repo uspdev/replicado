@@ -364,6 +364,7 @@ class Lattes extends ReplicadoBase
                     'PAGINA-INICIAL' => Arr::get($artigos, "{$detalhamento}.@attributes.PAGINA-INICIAL", ""),
                     'PAGINA-FINAL' => Arr::get($artigos, "{$detalhamento}.@attributes.PAGINA-FINAL", ""),
                     'ANO' => Arr::get($artigos, "{$dados_basicos}.@attributes.ANO-DO-ARTIGO", ""),
+                    'PAIS-DE-PUBLICACAO' => Arr::get($artigos, "{$dados_basicos}.@attributes.PAIS-DE-PUBLICACAO", ""),
                     'ISSN' => Arr::get($artigos, "{$detalhamento}.@attributes.ISSN", ""),
                     'AUTORES' => $aux_autores,
                 ];
@@ -393,6 +394,7 @@ class Lattes extends ReplicadoBase
                         'PAGINA-INICIAL' => Arr::get($val, "{$detalhamento}.@attributes.PAGINA-INICIAL", ""),
                         'PAGINA-FINAL' => Arr::get($val, "{$detalhamento}.@attributes.PAGINA-FINAL", ""),
                         'ANO' => Arr::get($val, "{$dados_basicos}.@attributes.ANO-DO-ARTIGO", ""),
+                        'PAIS-DE-PUBLICACAO' => Arr::get($val, "{$dados_basicos}.@attributes.PAIS-DE-PUBLICACAO", ""),
                         'ISSN' => Arr::get($val, "{$detalhamento}.@attributes.ISSN", ""),
                         'AUTORES' => $aux_autores,
                     ];
@@ -492,6 +494,7 @@ class Lattes extends ReplicadoBase
                 $aux_livro = [
                     'TITULO-DO-LIVRO' => Arr::get($livros, "{$dados_basicos}.@attributes.TITULO-DO-LIVRO", ''),
                     'ANO' => Arr::get($livros, "{$dados_basicos}.@attributes.ANO", ''),
+                    'PAIS-DE-PUBLICACAO' => Arr::get($livros, "{$dados_basicos}.@attributes.PAIS-DE-PUBLICACAO", ''),
                     'NUMERO-DE-PAGINAS' => Arr::get($livros, "{$detalhamento}.@attributes.NUMERO-DE-PAGINAS", ''),
                     'NOME-DA-EDITORA' => Arr::get($livros, "{$detalhamento}.@attributes.NOME-DA-EDITORA", ''),
                     'CIDADE-DA-EDITORA' => Arr::get($livros, "{$detalhamento}.@attributes.CIDADE-DA-EDITORA", ''),
@@ -524,6 +527,7 @@ class Lattes extends ReplicadoBase
                     $aux_livro = [
                         'TITULO-DO-LIVRO' => Arr::get($val, "{$dados_basicos}.@attributes.TITULO-DO-LIVRO", ''),
                         'ANO' => Arr::get($val, "{$dados_basicos}.@attributes.ANO", ''),
+                        'PAIS-DE-PUBLICACAO' => Arr::get($val, "{$dados_basicos}.@attributes.PAIS-DE-PUBLICACAO", ''),
                         'NUMERO-DE-PAGINAS' => Arr::get($val, "{$detalhamento}.@attributes.NUMERO-DE-PAGINAS", ''),
                         'NOME-DA-EDITORA' => Arr::get($val, "{$detalhamento}.@attributes.NOME-DA-EDITORA", ''),
                         'CIDADE-DA-EDITORA' => Arr::get($val, "{$detalhamento}.@attributes.CIDADE-DA-EDITORA", ''),
@@ -580,6 +584,7 @@ class Lattes extends ReplicadoBase
                 $aux_texto['TIPO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.NATUREZA", ""); //JORNAL OU REVISTA
                 $aux_texto['SEQUENCIA-PRODUCAO'] = Arr::get($texto, "@attributes.SEQUENCIA-PRODUCAO", "");
                 $aux_texto['ANO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.ANO-DO-TEXTO", "");
+                $aux_texto['PAIS-DE-PUBLICACAO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.PAIS-DE-PUBLICACAO", "");
                 $aux_texto['TITULO-DO-JORNAL-OU-REVISTA'] = Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.TITULO-DO-JORNAL-OU-REVISTA", "");
                 $aux_texto['DATA'] = Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.DATA-DE-PUBLICACAO", "");
                 $aux_texto['LOCAL-DE-PUBLICACAO'] = Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.LOCAL-DE-PUBLICACAO", "");
@@ -603,6 +608,7 @@ class Lattes extends ReplicadoBase
                     $aux_texto['TIPO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.NATUREZA", ""); //JORNAL OU REVISTA
                     $aux_texto['SEQUENCIA-PRODUCAO'] = Arr::get($texto, "@attributes.SEQUENCIA-PRODUCAO", "");
                     $aux_texto['ANO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.ANO-DO-TEXTO", "");
+                    $aux_texto['PAIS-DE-PUBLICACAO'] = Arr::get($texto, "DADOS-BASICOS-DO-TEXTO.@attributes.PAIS-DE-PUBLICACAO", "");
                     $aux_texto['TITULO-DO-JORNAL-OU-REVISTA'] = Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.TITULO-DO-JORNAL-OU-REVISTA", "");
                     $aux_texto['DATA'] = Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.DATA-DE-PUBLICACAO", "");
                     $aux_texto['LOCAL-DE-PUBLICACAO'] = Arr::get($texto, "DETALHAMENTO-DO-TEXTO.@attributes.LOCAL-DE-PUBLICACAO", "");
@@ -665,6 +671,7 @@ class Lattes extends ReplicadoBase
                 $aux_anais['TIPO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.NATUREZA", '');
                 $aux_anais['SEQUENCIA-PRODUCAO'] = Arr::get($anais, '@attributes.SEQUENCIA-PRODUCAO', '');
                 $aux_anais['ANO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.ANO-DO-TRABALHO", '');
+                $aux_anais['PAIS-DO-EVENTO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.PAIS-DO-EVENTO", '');
                 $aux_anais['NOME-DO-EVENTO'] = Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.NOME-DO-EVENTO", '');
                 $aux_anais['TITULO-DOS-ANAIS-OU-PROCEEDINGS'] = Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.TITULO-DOS-ANAIS-OU-PROCEEDINGS", '');
                 $aux_anais['CIDADE-DO-EVENTO'] = Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.CIDADE-DO-EVENTO", '');
@@ -693,6 +700,7 @@ class Lattes extends ReplicadoBase
                     $aux_anais['TIPO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.NATUREZA", '');
                     $aux_anais['SEQUENCIA-PRODUCAO'] = Arr::get($anais, '@attributes.SEQUENCIA-PRODUCAO', '');
                     $aux_anais['ANO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.ANO-DO-TRABALHO", '');
+                    $aux_anais['PAIS-DO-EVENTO'] = Arr::get($anais, "DADOS-BASICOS-DO-TRABALHO.@attributes.PAIS-DO-EVENTO", '');
                     $aux_anais['NOME-DO-EVENTO'] = Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.NOME-DO-EVENTO", '');
                     $aux_anais['TITULO-DOS-ANAIS-OU-PROCEEDINGS'] = Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.TITULO-DOS-ANAIS-OU-PROCEEDINGS", '');
                     $aux_anais['CIDADE-DO-EVENTO'] = Arr::get($anais, "DETALHAMENTO-DO-TRABALHO.@attributes.CIDADE-DO-EVENTO", '');
@@ -755,6 +763,7 @@ class Lattes extends ReplicadoBase
             $aux_trabalho_tec['TIPO'] = Arr::get($trabalho, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.NATUREZA", "");
             $aux_trabalho_tec['SEQUENCIA-PRODUCAO'] = Arr::get($trabalho, "@attributes.SEQUENCIA-PRODUCAO", "");
             $aux_trabalho_tec['ANO'] = Arr::get($trabalho, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.ANO", "");
+            $aux_trabalho_tec['PAIS'] = Arr::get($trabalho, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.PAIS", "");
             $aux_trabalho_tec['INSTITUICAO-FINANCIADORA'] = Arr::get($trabalho, "DETALHAMENTO-DO-TRABALHO-TECNICO.@attributes.INSTITUICAO-FINANCIADORA", "");
             $aux_trabalho_tec['AUTORES'] = $aux_autores;
 
@@ -774,6 +783,7 @@ class Lattes extends ReplicadoBase
                 $aux_trabalho_tec['TIPO'] = Arr::get($trabalho_tec, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.NATUREZA", "");
                 $aux_trabalho_tec['SEQUENCIA-PRODUCAO'] = Arr::get($trabalho_tec, "@attributes.SEQUENCIA-PRODUCAO", "");
                 $aux_trabalho_tec['ANO'] = Arr::get($trabalho_tec, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.ANO", "");
+                $aux_trabalho_tec['PAIS'] = Arr::get($trabalho_tec, "DADOS-BASICOS-DO-TRABALHO-TECNICO.@attributes.PAIS", "");
                 $aux_trabalho_tec['INSTITUICAO-FINANCIADORA'] = Arr::get($trabalho_tec, "DETALHAMENTO-DO-TRABALHO-TECNICO.@attributes.INSTITUICAO-FINANCIADORA", "");
                 $aux_trabalho_tec['AUTORES'] = $aux_autores;
 
@@ -828,6 +838,7 @@ class Lattes extends ReplicadoBase
                 $aux_apresentacao_trabalho['TIPO'] = Arr::get($aux_apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.NATUREZA", "");
                 $aux_apresentacao_trabalho['SEQUENCIA-PRODUCAO'] = Arr::get($aux_apresentacao, "@attributes.SEQUENCIA-PRODUCAO", "");
                 $aux_apresentacao_trabalho['ANO'] = Arr::get($aux_apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.ANO", "");
+                $aux_apresentacao_trabalho['PAIS'] = Arr::get($aux_apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.PAIS", "");
                 $aux_apresentacao_trabalho['AUTORES'] = $aux_autores;
                 array_push($apresentacao_trabalhos, $aux_apresentacao_trabalho);
             } else {
@@ -842,6 +853,7 @@ class Lattes extends ReplicadoBase
                     $aux_apresentacao_trabalho['TIPO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.NATUREZA", "");
                     $aux_apresentacao_trabalho['SEQUENCIA-PRODUCAO'] = Arr::get($apresentacao, "@attributes.SEQUENCIA-PRODUCAO", "");
                     $aux_apresentacao_trabalho['ANO'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.ANO", "");
+                    $aux_apresentacao_trabalho['PAIS'] = Arr::get($apresentacao, "DADOS-BASICOS-DA-APRESENTACAO-DE-TRABALHO.@attributes.PAIS", "");
                     $aux_apresentacao_trabalho['AUTORES'] = $aux_autores;
 
                     if (!self::_verificarFiltro($tipo, $aux_apresentacao_trabalho['ANO'], $limit_ini, $limit_fim, $i)) {
@@ -893,6 +905,7 @@ class Lattes extends ReplicadoBase
                 $aux_evento = [];
                 $aux_evento['TITULO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.TITULO", "");
                 $aux_evento['ANO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.ANO", "");
+                $aux_evento['PAIS'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.PAIS", "");
                 $aux_evento['TIPO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.TIPO", "");
                 $aux_evento['INSTITUICAO-PROMOTORA'] = Arr::get($evento, "DETALHAMENTO-DA-ORGANIZACAO-DE-EVENTO.@attributes.INSTITUICAO-PROMOTORA", "");
                 $aux_evento['SEQUENCIA-PRODUCAO'] = Arr::get($evento, "@attributes.SEQUENCIA-PRODUCAO", "");
@@ -912,6 +925,7 @@ class Lattes extends ReplicadoBase
                     $aux_evento = [];
                     $aux_evento['TITULO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.TITULO", "");
                     $aux_evento['ANO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.ANO", "");
+                    $aux_evento['PAIS'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.PAIS", "");
                     $aux_evento['TIPO'] = Arr::get($evento, "DADOS-BASICOS-DA-ORGANIZACAO-DE-EVENTO.@attributes.TIPO", "");
                     $aux_evento['INSTITUICAO-PROMOTORA'] = Arr::get($evento, "DETALHAMENTO-DA-ORGANIZACAO-DE-EVENTO.@attributes.INSTITUICAO-PROMOTORA", "");
                     $aux_evento['SEQUENCIA-PRODUCAO'] = Arr::get($evento, "@attributes.SEQUENCIA-PRODUCAO", "");
@@ -967,6 +981,7 @@ class Lattes extends ReplicadoBase
             $aux_outros['NATUREZA'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA.@attributes.NATUREZA", "");
             $aux_outros['SEQUENCIA-PRODUCAO'] = Arr::get($outro, "@attributes.SEQUENCIA-PRODUCAO", "");
             $aux_outros['ANO'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA.@attributes.ANO", "");
+            $aux_outros['PAIS'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA.@attributes.PAIS", "");
             $aux_outros['AUTORES'] = $aux_autores;
 
             if (!self::_verificarFiltro($tipo, $aux_outros['ANO'], $limit_ini, $limit_fim, 1)) {
@@ -988,6 +1003,7 @@ class Lattes extends ReplicadoBase
                 $aux_outros['NATUREZA'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA.@attributes.NATUREZA", "");
                 $aux_outros['SEQUENCIA-PRODUCAO'] = Arr::get($outro, "@attributes.SEQUENCIA-PRODUCAO", "");
                 $aux_outros['ANO'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA.@attributes.ANO", "");
+                $aux_outros['PAIS'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO-TECNICA.@attributes.PAIS", "");
                 $aux_outros['AUTORES'] = $aux_autores;
 
                 if (!self::_verificarFiltro($tipo, $aux_outros['ANO'], $limit_ini, $limit_fim, $i)) {
@@ -1034,6 +1050,7 @@ class Lattes extends ReplicadoBase
                 $aux_curso['SEQUENCIA-PRODUCAO'] = Arr::get($aux_cursos, "@attributes.SEQUENCIA-PRODUCAO", "");
                 $aux_curso['TITULO'] = Arr::get($aux_cursos, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.TITULO", "");
                 $aux_curso['ANO'] = Arr::get($aux_cursos, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.ANO", "");
+                $aux_curso['PAIS'] = Arr::get($aux_cursos, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.PAIS", "");
                 $aux_curso['NIVEL-DO-CURSO'] = Arr::get($aux_cursos, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.NIVEL-DO-CURSO", "");
                 $aux_curso['INSTITUICAO-PROMOTORA-DO-CURSO'] = Arr::get($aux_cursos, "DETALHAMENTO-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.INSTITUICAO-PROMOTORA-DO-CURSO", "");
                 $aux_curso['AUTORES'] = $aux_autores;
@@ -1049,6 +1066,7 @@ class Lattes extends ReplicadoBase
                     $aux_curso['SEQUENCIA-PRODUCAO'] = Arr::get($curso_curta_duracao, "@attributes.SEQUENCIA-PRODUCAO", "");
                     $aux_curso['TITULO'] = Arr::get($curso_curta_duracao, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.TITULO", "");
                     $aux_curso['ANO'] = Arr::get($curso_curta_duracao, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.ANO", "");
+                    $aux_curso['PAIS'] = Arr::get($curso_curta_duracao, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.PAIS", "");
                     $aux_curso['NIVEL-DO-CURSO'] = Arr::get($curso_curta_duracao, "DADOS-BASICOS-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.NIVEL-DO-CURSO", "");
                     $aux_curso['INSTITUICAO-PROMOTORA-DO-CURSO'] = Arr::get($curso_curta_duracao, "DETALHAMENTO-DE-CURSOS-CURTA-DURACAO-MINISTRADO.@attributes.INSTITUICAO-PROMOTORA-DO-CURSO", "");
                     $aux_curso['AUTORES'] = $aux_autores;
@@ -1095,6 +1113,7 @@ class Lattes extends ReplicadoBase
                 $aux_relatorio['SEQUENCIA-PRODUCAO'] = Arr::get($aux_relatorios, "@attributes.SEQUENCIA-PRODUCAO", "");
                 $aux_relatorio['TITULO'] = Arr::get($aux_relatorios, "DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA.@attributes.TITULO", "");
                 $aux_relatorio['ANO'] = Arr::get($aux_relatorios, "DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA.@attributes.ANO", "");
+                $aux_relatorio['PAIS'] = Arr::get($aux_relatorios, "DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA.@attributes.PAIS", "");
                 $aux_relatorio['AUTORES'] = $aux_autores;
 
                 if (!self::_verificarFiltro($tipo, $aux_relatorio['ANO'], $limit_ini, $limit_fim, 1)) {
@@ -1115,6 +1134,7 @@ class Lattes extends ReplicadoBase
                     $aux_relatorio['SEQUENCIA-PRODUCAO'] = Arr::get($relatorio, "@attributes.SEQUENCIA-PRODUCAO", "");
                     $aux_relatorio['TITULO'] = Arr::get($relatorio, "DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA.@attributes.TITULO", "");
                     $aux_relatorio['ANO'] = Arr::get($relatorio, "DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA.@attributes.ANO", "");
+                    $aux_relatorio['PAIS'] = Arr::get($relatorio, "DADOS-BASICOS-DO-RELATORIO-DE-PESQUISA.@attributes.PAIS", "");
                     $aux_relatorio['AUTORES'] = $aux_autores;
 
                     if (!self::_verificarFiltro($tipo, $aux_relatorio['ANO'], $limit_ini, $limit_fim, $i)) {
@@ -1159,6 +1179,7 @@ class Lattes extends ReplicadoBase
             $aux_material['SEQUENCIA-PRODUCAO'] = Arr::get($material, "@attributes.SEQUENCIA-PRODUCAO", "");
             $aux_material['TITULO'] = Arr::get($material, "DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL.@attributes.TITULO", "");
             $aux_material['ANO'] = Arr::get($material, "DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL.@attributes.ANO", "");
+            $aux_material['PAIS'] = Arr::get($material, "DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL.@attributes.PAIS", "");
             $aux_material['NATUREZA'] = Arr::get($material, "DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL.@attributes.NATUREZA", "");
             $aux_material['AUTORES'] = $aux_autores;
 
@@ -1181,6 +1202,7 @@ class Lattes extends ReplicadoBase
                 $aux_material['SEQUENCIA-PRODUCAO'] = Arr::get($material, "@attributes.SEQUENCIA-PRODUCAO", "");
                 $aux_material['TITULO'] = Arr::get($material, "DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL.@attributes.TITULO", "");
                 $aux_material['ANO'] = Arr::get($material, "DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL.@attributes.ANO", "");
+                $aux_material['PAIS'] = Arr::get($material, "DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL.@attributes.PAIS", "");
                 $aux_material['NATUREZA'] = Arr::get($material, "DADOS-BASICOS-DO-MATERIAL-DIDATICO-OU-INSTRUCIONAL.@attributes.NATUREZA", "");
                 $aux_material['AUTORES'] = $aux_autores;
 
@@ -1227,6 +1249,7 @@ class Lattes extends ReplicadoBase
                 $aux_outros['TIPO'] = Arr::get($aux_outras_prod, "DADOS-BASICOS-DE-OUTRA-PRODUCAO.@attributes.NATUREZA", "");
                 $aux_outros['SEQUENCIA-PRODUCAO'] = Arr::get($aux_outras_prod, "@attributes.SEQUENCIA-PRODUCAO", "");
                 $aux_outros['ANO'] = Arr::get($aux_outras_prod, "DADOS-BASICOS-DE-OUTRA-PRODUCAO.@attributes.ANO", "");
+                $aux_outros['PAIS-DE-PUBLICACAO'] = Arr::get($aux_outras_prod, "DADOS-BASICOS-DE-OUTRA-PRODUCAO.@attributes.PAIS-DE-PUBLICACAO", "");
                 $aux_outros['EDITORA'] = Arr::get($aux_outras_prod, "DETALHAMENTO-DE-OUTRA-PRODUCAO.@attributes.EDITORA", "");
                 $aux_outros['CIDADE-DA-EDITORA'] = Arr::get($aux_outras_prod, "DETALHAMENTO-DE-OUTRA-PRODUCAO.@attributes.CIDADE-DA-EDITORA", "");
                 $aux_outros['AUTORES'] = $aux_autores;
@@ -1248,6 +1271,7 @@ class Lattes extends ReplicadoBase
                     $aux_outros['TIPO'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO.@attributes.NATUREZA", "");
                     $aux_outros['SEQUENCIA-PRODUCAO'] = Arr::get($outro, "@attributes.SEQUENCIA-PRODUCAO", "");
                     $aux_outros['ANO'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO.@attributes.ANO", "");
+                    $aux_outros['PAIS-DE-PUBLICACAO'] = Arr::get($outro, "DADOS-BASICOS-DE-OUTRA-PRODUCAO.@attributes.PAIS-DE-PUBLICACAO", "");
                     $aux_outros['EDITORA'] = Arr::get($outro, "DETALHAMENTO-DE-OUTRA-PRODUCAO.@attributes.EDITORA", "");
                     $aux_outros['CIDADE-DA-EDITORA'] = Arr::get($outro, "DETALHAMENTO-DE-OUTRA-PRODUCAO.@attributes.CIDADE-DA-EDITORA", "");
                     $aux_outros['AUTORES'] = $aux_autores;
@@ -1285,6 +1309,7 @@ class Lattes extends ReplicadoBase
                     $aux_tipo['TIPO'] = isset($tipo_prod["DADOS-BASICOS-" . $tipo['nome do caminho'] . ""]["@attributes"]["TIPO"]) ? $tipo['nome extenso'] . '/' . ucfirst(strtolower($tipo_prod["DADOS-BASICOS-" . $tipo['nome do caminho'] . ""]["@attributes"]["TIPO"])) : $tipo['nome extenso'];
                     $aux_tipo['SEQUENCIA-PRODUCAO'] = Arr::get($tipo_prod, "@attributes.SEQUENCIA-PRODUCAO", "");
                     $aux_tipo['ANO'] = Arr::get($tipo_prod, "DADOS-BASICOS-" . $tipo['nome do caminho'] . ".@attributes.ANO", "");
+                    $aux_tipo['PAIS-DE-PUBLICACAO'] = Arr::get($tipo_prod, "DADOS-BASICOS-" . $tipo['nome do caminho'] . ".@attributes.PAIS-DE-PUBLICACAO", "");
                     $aux_tipo['CIDADE-DA-EDITORA'] = Arr::get($tipo_prod, "DETALHAMENTO-" . $tipo['nome do caminho'] . ".@attributes.CIDADE-DA-EDITORA", "");
                     $aux_tipo['EDITORA'] = Arr::get($tipo_prod, "DETALHAMENTO-" . $tipo['nome do caminho'] . ".@attributes.EDITORA-" . $tipo['nome do caminho'] . "", "");
                     $aux_tipo['AUTORES'] = $aux_autores;
@@ -1305,6 +1330,7 @@ class Lattes extends ReplicadoBase
                         $aux_tipo['TIPO'] = isset($tp["DADOS-BASICOS-" . $tipo['nome do caminho'] . ""]["@attributes"]["TIPO"]) ? $tipo['nome extenso'] . '/' . ucfirst(strtolower($tp["DADOS-BASICOS-" . $tipo['nome do caminho'] . ""]["@attributes"]["TIPO"])) : $tipo['nome extenso'];
                         $aux_tipo['SEQUENCIA-PRODUCAO'] = Arr::get($tp, "@attributes.SEQUENCIA-PRODUCAO", "");
                         $aux_tipo['ANO'] = Arr::get($tp, "DADOS-BASICOS-" . $tipo['nome do caminho'] . ".@attributes.ANO", "");
+                        $aux_tipo['PAIS-DE-PUBLICACAO'] = Arr::get($tp, "DADOS-BASICOS-" . $tipo['nome do caminho'] . ".@attributes.PAIS-DE-PUBLICACAO", "");
                         $aux_tipo['CIDADE-DA-EDITORA'] = Arr::get($tp, "DETALHAMENTO-" . $tipo['nome do caminho'] . ".@attributes.CIDADE-DA-EDITORA", "");
                         $aux_tipo['EDITORA'] = Arr::get($tp, "DETALHAMENTO-" . $tipo['nome do caminho'] . ".@attributes.EDITORA-" . $tipo['nome do caminho'] . "", "");
                         $aux_tipo['AUTORES'] = $aux_autores;
@@ -1379,6 +1405,7 @@ class Lattes extends ReplicadoBase
                     'PAGINA-INICIAL' => $capitulos[2]['@attributes']['PAGINA-INICIAL'] ?? '',
                     'PAGINA-FINAL' => $capitulos[2]['@attributes']['PAGINA-FINAL'] ?? '',
                     'ANO' => $capitulos[1]['@attributes']['ANO'] ?? '',
+                    'PAIS-DE-PUBLICACAO' => $capitulos[1]['@attributes']['PAIS-DE-PUBLICACAO'] ?? '',
                     'NOME-DA-EDITORA' => $capitulos[2]['@attributes']['NOME-DA-EDITORA'] ?? '',
                     'CIDADE-DA-EDITORA' => $capitulos[2]['@attributes']['CIDADE-DA-EDITORA'] ?? '',
                     'AUTORES' => $aux_autores,
@@ -1407,6 +1434,7 @@ class Lattes extends ReplicadoBase
                             'PAGINA-INICIAL' => Arr::get($val, "{$detalhamento}.@attributes.PAGINA-INICIAL", ""),
                             'PAGINA-FINAL' => Arr::get($val, "{$detalhamento}.@attributes.PAGINA-FINAL", ""),
                             'ANO' => Arr::get($val, "{$dados_basicos}.@attributes.ANO", ""),
+                            'PAIS-DE-PUBLICACAO' => Arr::get($val, "{$dados_basicos}.@attributes.PAIS-DE-PUBLICACAO", ""),
                             'NOME-DA-EDITORA' => Arr::get($val, "{$detalhamento}.@attributes.NOME-DA-EDITORA", ""),
                             'CIDADE-DA-EDITORA' => Arr::get($val, "{$detalhamento}.@attributes.CIDADE-DA-EDITORA", ""),
                             'AUTORES' => $aux_autores,
@@ -1963,6 +1991,7 @@ class Lattes extends ReplicadoBase
                 $aux_producao = [
                     'TITULO' => Arr::get($producoes, "{$dados_basicos}.@attributes.TITULO", ""),
                     'ANO' => Arr::get($producoes, "{$dados_basicos}.@attributes.ANO", ""),
+                    'PAIS' => Arr::get($producoes, "{$dados_basicos}.@attributes.PAIS", ""),
                     'EMISSORA' => Arr::get($producoes, "{$detalhamento}.@attributes.EMISSORA", ""),
                     'AUTORES' => $aux_autores,
                 ];
@@ -1987,6 +2016,7 @@ class Lattes extends ReplicadoBase
                         $aux_producao = [
                             'TITULO' => Arr::get($val, "{$dados_basicos}.@attributes.TITULO", ""),
                             'ANO' => Arr::get($val, "{$dados_basicos}.@attributes.ANO", ""),
+                            'PAIS' => Arr::get($val, "{$dados_basicos}.@attributes.PAIS", ""),
                             'EMISSORA' => Arr::get($val, "{$detalhamento}.@attributes.EMISSORA", ""),
                             'AUTORES' => $aux_autores,
                         ];
@@ -2000,6 +2030,7 @@ class Lattes extends ReplicadoBase
                         $aux_producao = [
                             'TITULO' => Arr::get($val, "{$dados_basicos}.TITULO", ""),
                             'ANO' => Arr::get($val, "{$dados_basicos}.ANO", ""),
+                            'PAIS' => Arr::get($val, "{$dados_basicos}.PAIS", ""),
                             'EMISSORA' => Arr::get($val, "{$detalhamento}.EMISSORA", ""),
                             'AUTORES' => $aux_autores,
                         ];
@@ -2680,6 +2711,7 @@ class Lattes extends ReplicadoBase
             foreach ($array as $financiador) {                
                 array_push($aux_financiadores, [
                     "NOME-INSTITUICAO" => Arr::get($financiador, '@attributes', false) ? Arr::get($financiador, '@attributes.NOME-INSTITUICAO', false) : Arr::get($financiador, 'NOME-INSTITUICAO', false),
+                    "CODIGO-INSTITUICAO" => Arr::get($financiador, '@attributes', false) ? Arr::get($financiador, '@attributes.CODIGO-INSTITUICAO', false) : Arr::get($financiador, 'CODIGO-INSTITUICAO', false),
                     "NATUREZA" => Arr::get($financiador, '@attributes', false) ? Arr::get($financiador, '@attributes.NATUREZA', false) : Arr::get($financiador, 'NATUREZA', false),
                     ]);
             };
@@ -2688,4 +2720,3 @@ class Lattes extends ReplicadoBase
         return false;
     }
 }
-

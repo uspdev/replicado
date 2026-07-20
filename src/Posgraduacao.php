@@ -55,6 +55,8 @@ class Posgraduacao extends ReplicadoBase
      *
      * Quando informado o código do curso/programa retorna somente os dados do programa solicitado
      *
+     * Cada item também contém codcpeatl e nomarecpe, código atual do Programa e nome da área registrados na CAPES.
+     *
      * @param int $codundclgi Código da unidade
      * @param int $codcur Código do curso
      *
@@ -66,11 +68,12 @@ class Posgraduacao extends ReplicadoBase
             $codundclgi = getenv('REPLICADO_CODUNDCLG');
         }
 
-        $query = "SELECT C.codcur, NC.nomcur, A.codare, N.nomare
+        $query = "SELECT C.codcur, NC.nomcur, A.codare, N.nomare, AC.codcpeatl, AC.nomarecpe
                   FROM CURSO AS C
                   INNER JOIN NOMECURSO AS NC ON C.codcur = NC.codcur
                   INNER JOIN AREA AS A ON C.codcur = A.codcur
                   INNER JOIN NOMEAREA AS N ON A.codare = N.codare
+                  LEFT JOIN AREACAPES AS AC ON A.codcpe = AC.codcpe
                   WHERE (C.codclg IN ({$codundclgi}))
                   AND (C.tipcur = 'POS')
                   AND (N.dtafimare IS NULL)
@@ -114,6 +117,73 @@ class Posgraduacao extends ReplicadoBase
         $query .= " ORDER BY nompes ASC";
 
         $param = ['codare' => $codare];
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Retorna o histórico de credenciamentos dos orientadores de um programa.
+     *
+     * Diferentemente de orientadores(), este método preserva cada período de
+     * credenciamento e não limita o retorno aos credenciamentos vigentes.
+     * Quando as datas são informadas, retorna os períodos que intersectam o
+     * intervalo consultado.
+     *
+     * @param int $codcur Código do programa de pós-graduação
+     * @param string|null $inicio Data inicial no formato reconhecido pelo banco
+     * @param string|null $fim Data final no formato reconhecido pelo banco
+     * @return array
+     */
+    protected static function _credenciamentosPrograma(int $codcur, $inicio = null, $fim = null)
+    {
+        $query = DB::getQuery('Posgraduacao.credenciamentosPrograma.sql');
+        $param = ['codcur' => $codcur];
+
+        if (!empty($inicio)) {
+            $query .= ' AND (R.dtavalfim IS NULL OR R.dtavalfim >= CONVERT(smalldatetime, :inicio_credenciamento))';
+            $query .= ' AND (NA.dtafimare IS NULL OR NA.dtafimare >= CONVERT(smalldatetime, :inicio_area))';
+            $param['inicio_credenciamento'] = $inicio;
+            $param['inicio_area'] = $inicio;
+        }
+
+        if (!empty($fim)) {
+            $query .= ' AND R.dtavalini <= CONVERT(smalldatetime, :fim_credenciamento)';
+            $query .= ' AND NA.dtainiare <= CONVERT(smalldatetime, :fim_area)';
+            $param['fim_credenciamento'] = $fim;
+            $param['fim_area'] = $fim;
+        }
+
+        $query .= ' ORDER BY nompes ASC, R.dtavalini ASC, R.codare ASC';
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Retorna o coordenador e o vice-coordenador vigentes de um Programa de Pós-Graduação.
+     *
+     * A data de referência é opcional. Quando não informada, a consulta considera a data atual
+     * do banco. As funções retornadas são COO (coordenador) e VCO (vice-coordenador).
+     *
+     * @param int $codcur Código do programa de pós-graduação
+     * @param string|null $referencia Data de referência no formato reconhecido pelo banco
+     * @return array
+     */
+    protected static function _coordenadoresPrograma(int $codcur, $referencia = null)
+    {
+        $query = DB::getQuery('Posgraduacao.coordenadoresPrograma.sql');
+        $param = ['codcur' => $codcur];
+
+        if (!empty($referencia)) {
+            $query .= ' AND R.dtainifnc <= CONVERT(smalldatetime, :referencia_inicio)';
+            $query .= ' AND (R.dtafimfnc IS NULL OR R.dtafimfnc >= CONVERT(smalldatetime, :referencia_fim))';
+            $param['referencia_inicio'] = $referencia;
+            $param['referencia_fim'] = $referencia;
+        } else {
+            $query .= ' AND R.dtainifnc <= GETDATE()';
+            $query .= ' AND (R.dtafimfnc IS NULL OR R.dtafimfnc >= GETDATE())';
+        }
+
+        $query .= ' ORDER BY R.fncpescur ASC, P.nompesttd ASC';
 
         return DB::fetchAll($query, $param);
     }
@@ -411,6 +481,31 @@ class Posgraduacao extends ReplicadoBase
     }
 
     /**
+     * Retorna os alunos ativos vinculados a um programa de pós-graduação.
+     *
+     * A consulta usa o vínculo ALUNOPOS ativo e a ocorrência correspondente
+     * em AGPROGRAMA. O filtro por área de concentração é opcional.
+     *
+     * @param int $codcur Código do programa de pós-graduação
+     * @param int|null $codare Código da área de concentração
+     * @return array
+     */
+    protected static function _alunosAtivosPrograma(int $codcur, int|null $codare = null)
+    {
+        $query = DB::getQuery('Posgraduacao.alunosAtivosPrograma.sql');
+        $param = ['codcur' => $codcur];
+
+        if (!is_null($codare)) {
+            $query .= ' AND V.codare = CONVERT(int, :codare)';
+            $param['codare'] = $codare;
+        }
+
+        $query .= ' ORDER BY nompes ASC, V.codare ASC';
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
      * Retorna nome completo do idioma da disciplina
      *
      * É usado no contexto do oferecimento.
@@ -452,6 +547,37 @@ class Posgraduacao extends ReplicadoBase
         $param = [
             'codare' => $codare,
         ];
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Retorna os egressos de todas as áreas de um programa de pós-graduação.
+     *
+     * Quando as datas são informadas, o filtro considera a data de defesa e,
+     * na ausência dela, a data da ocorrência de conclusão no histórico.
+     *
+     * @param int $codcur Código do programa de pós-graduação
+     * @param string|null $inicio Data inicial no formato reconhecido pelo banco
+     * @param string|null $fim Data final no formato reconhecido pelo banco
+     * @return array
+     */
+    protected static function _egressosPrograma(int $codcur, $inicio = null, $fim = null)
+    {
+        $query = DB::getQuery('Posgraduacao.egressosPrograma.sql');
+        $param = ['codcur' => $codcur];
+
+        if (!empty($inicio)) {
+            $query .= ' AND COALESCE(G.dtadfapgm, H.dtaocopgm) >= CONVERT(smalldatetime, :inicio)';
+            $param['inicio'] = $inicio;
+        }
+
+        if (!empty($fim)) {
+            $query .= ' AND COALESCE(G.dtadfapgm, H.dtaocopgm) <= CONVERT(smalldatetime, :fim)';
+            $param['fim'] = $fim;
+        }
+
+        $query .= ' ORDER BY dtareferencia DESC, nompes ASC';
+
         return DB::fetchAll($query, $param);
     }
 
