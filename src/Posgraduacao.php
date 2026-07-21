@@ -134,9 +134,9 @@ class Posgraduacao extends ReplicadoBase
      * @param string|null $fim Data final no formato reconhecido pelo banco
      * @return array
      */
-    protected static function _credenciamentosPrograma(int $codcur, $inicio = null, $fim = null)
+    protected static function _listarCredenciamentosPrograma(int $codcur, $inicio = null, $fim = null)
     {
-        $query = DB::getQuery('Posgraduacao.credenciamentosPrograma.sql');
+        $query = DB::getQuery('Posgraduacao.listarCredenciamentosPrograma.sql');
         $param = ['codcur' => $codcur];
 
         if (!empty($inicio)) {
@@ -168,9 +168,9 @@ class Posgraduacao extends ReplicadoBase
      * @param string|null $referencia Data de referência no formato reconhecido pelo banco
      * @return array
      */
-    protected static function _coordenadoresPrograma(int $codcur, $referencia = null)
+    protected static function _listarCoordenadoresPrograma(int $codcur, $referencia = null)
     {
-        $query = DB::getQuery('Posgraduacao.coordenadoresPrograma.sql');
+        $query = DB::getQuery('Posgraduacao.listarCoordenadoresPrograma.sql');
         $param = ['codcur' => $codcur];
 
         if (!empty($referencia)) {
@@ -490,9 +490,9 @@ class Posgraduacao extends ReplicadoBase
      * @param int|null $codare Código da área de concentração
      * @return array
      */
-    protected static function _alunosAtivosPrograma(int $codcur, int|null $codare = null)
+    protected static function _listarAlunosAtivosPorPrograma(int $codcur, int|null $codare = null)
     {
-        $query = DB::getQuery('Posgraduacao.alunosAtivosPrograma.sql');
+        $query = DB::getQuery('Posgraduacao.listarAlunosAtivosPorPrograma.sql');
         $param = ['codcur' => $codcur];
 
         if (!is_null($codare)) {
@@ -561,9 +561,9 @@ class Posgraduacao extends ReplicadoBase
      * @param string|null $fim Data final no formato reconhecido pelo banco
      * @return array
      */
-    protected static function _egressosPrograma(int $codcur, $inicio = null, $fim = null)
+    protected static function _listarEgressosPrograma(int $codcur, $inicio = null, $fim = null)
     {
-        $query = DB::getQuery('Posgraduacao.egressosPrograma.sql');
+        $query = DB::getQuery('Posgraduacao.listarEgressosPrograma.sql');
         $param = ['codcur' => $codcur];
 
         if (!empty($inicio)) {
