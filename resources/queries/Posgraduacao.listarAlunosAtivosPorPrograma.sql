@@ -25,3 +25,5 @@ LEFT JOIN NOMECURSO AS NC
 WHERE NA.codcur = CONVERT(int, :codcur)
     AND V.tipvin = 'ALUNOPOS'
     AND V.sitatl = 'A'
+    --filtro_codare--
+ORDER BY nompes ASC, V.codare ASC

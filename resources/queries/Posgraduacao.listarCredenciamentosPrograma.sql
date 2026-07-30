@@ -35,3 +35,6 @@ LEFT JOIN NOMECURSO AS NC
     ON NC.codcur = NA.codcur
     AND NC.dtafimcur IS NULL
 WHERE NA.codcur = CONVERT(int, :codcur)
+    --inicio--
+    --fim--
+ORDER BY nompes ASC, R.dtavalini ASC, R.codare ASC

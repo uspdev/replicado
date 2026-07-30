@@ -30,3 +30,6 @@ LEFT JOIN NOMECURSO AS NC
     AND NC.dtafimcur IS NULL
 WHERE NA.codcur = CONVERT(int, :codcur)
     AND H.tiphstpgm = 'CON'
+    --filtro_inicio--
+    --filtro_fim--
+ORDER BY dtareferencia DESC, nompes ASC

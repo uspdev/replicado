@@ -25,7 +25,6 @@ class Posgraduacao extends ReplicadoBase
                 if (trim($row['tipvin']) == 'ALUNOPOS' && trim($row['sitatl']) == 'A' && trim($row['codundclg']) == $codundclgi) {
                     return true;
                 }
-
             }
         }
         return false;
@@ -133,27 +132,28 @@ class Posgraduacao extends ReplicadoBase
      * @param string|null $inicio Data inicial no formato reconhecido pelo banco
      * @param string|null $fim Data final no formato reconhecido pelo banco
      * @return array
+     * @author Andre Garcia em 30/7/2026
      */
     protected static function _listarCredenciamentosPrograma(int $codcur, $inicio = null, $fim = null)
     {
-        $query = DB::getQuery('Posgraduacao.listarCredenciamentosPrograma.sql');
         $param = ['codcur' => $codcur];
 
         if (!empty($inicio)) {
-            $query .= ' AND (R.dtavalfim IS NULL OR R.dtavalfim >= CONVERT(smalldatetime, :inicio_credenciamento))';
-            $query .= ' AND (NA.dtafimare IS NULL OR NA.dtafimare >= CONVERT(smalldatetime, :inicio_area))';
             $param['inicio_credenciamento'] = $inicio;
             $param['inicio_area'] = $inicio;
+            $replaces['inicio'] = 'AND (R.dtavalfim IS NULL OR R.dtavalfim >= CONVERT(smalldatetime, :inicio_credenciamento))
+                AND (NA.dtafimare IS NULL OR NA.dtafimare >= CONVERT(smalldatetime, :inicio_area))
+            ';
         }
 
         if (!empty($fim)) {
-            $query .= ' AND R.dtavalini <= CONVERT(smalldatetime, :fim_credenciamento)';
-            $query .= ' AND NA.dtainiare <= CONVERT(smalldatetime, :fim_area)';
             $param['fim_credenciamento'] = $fim;
             $param['fim_area'] = $fim;
+            $replaces['fim'] = 'AND R.dtavalini <= CONVERT(smalldatetime, :fim_credenciamento)
+                AND NA.dtainiare <= CONVERT(smalldatetime, :fim_area)
+            ';
         }
-
-        $query .= ' ORDER BY nompes ASC, R.dtavalini ASC, R.codare ASC';
+        $query = DB::getQuery('Posgraduacao.listarCredenciamentosPrograma.sql', $replaces ?? []);
 
         return DB::fetchAll($query, $param);
     }
@@ -167,23 +167,21 @@ class Posgraduacao extends ReplicadoBase
      * @param int $codcur Código do programa de pós-graduação
      * @param string|null $referencia Data de referência no formato reconhecido pelo banco
      * @return array
+     * @author Andre Garcia em 30/7/2026
      */
     protected static function _listarCoordenadoresPrograma(int $codcur, $referencia = null)
     {
-        $query = DB::getQuery('Posgraduacao.listarCoordenadoresPrograma.sql');
         $param = ['codcur' => $codcur];
-
         if (!empty($referencia)) {
-            $query .= ' AND R.dtainifnc <= CONVERT(smalldatetime, :referencia_inicio)';
-            $query .= ' AND (R.dtafimfnc IS NULL OR R.dtafimfnc >= CONVERT(smalldatetime, :referencia_fim))';
+            $replaces['referencia'] = 'AND R.dtainifnc <= CONVERT(smalldatetime, :referencia_inicio)
+               AND (R.dtafimfnc IS NULL OR R.dtafimfnc >= CONVERT(smalldatetime, :referencia_fim))';
             $param['referencia_inicio'] = $referencia;
             $param['referencia_fim'] = $referencia;
         } else {
-            $query .= ' AND R.dtainifnc <= GETDATE()';
-            $query .= ' AND (R.dtafimfnc IS NULL OR R.dtafimfnc >= GETDATE())';
+            $replaces['referencia'] = 'AND R.dtainifnc <= GETDATE()
+               AND (R.dtafimfnc IS NULL OR R.dtafimfnc >= GETDATE())';
         }
-
-        $query .= ' ORDER BY R.fncpescur ASC, P.nompesttd ASC';
+        $query = DB::getQuery('Posgraduacao.listarCoordenadoresPrograma.sql', $replaces);
 
         return DB::fetchAll($query, $param);
     }
@@ -428,7 +426,6 @@ class Posgraduacao extends ReplicadoBase
                 $programasAreas[$codcur][$i]['nomare'] = $nomare;
                 $i++;
             }
-
         }
         return $programasAreas;
     }
@@ -489,18 +486,17 @@ class Posgraduacao extends ReplicadoBase
      * @param int $codcur Código do programa de pós-graduação
      * @param int|null $codare Código da área de concentração
      * @return array
+     * @author Andre Garcia em 30/7/2026
      */
     protected static function _listarAlunosAtivosPorPrograma(int $codcur, int|null $codare = null)
     {
-        $query = DB::getQuery('Posgraduacao.listarAlunosAtivosPorPrograma.sql');
         $param = ['codcur' => $codcur];
 
         if (!is_null($codare)) {
-            $query .= ' AND V.codare = CONVERT(int, :codare)';
+            $replaces['filtro_codare'] = ' AND V.codare = CONVERT(int, :codare)';
             $param['codare'] = $codare;
         }
-
-        $query .= ' ORDER BY nompes ASC, V.codare ASC';
+        $query = DB::getQuery('Posgraduacao.listarAlunosAtivosPorPrograma.sql', $replaces ?? []);
 
         return DB::fetchAll($query, $param);
     }
@@ -560,29 +556,29 @@ class Posgraduacao extends ReplicadoBase
      * @param string|null $inicio Data inicial no formato reconhecido pelo banco
      * @param string|null $fim Data final no formato reconhecido pelo banco
      * @return array
+     * @author Andre Garcia em 30/7/2026
      */
     protected static function _listarEgressosPrograma(int $codcur, $inicio = null, $fim = null)
     {
-        $query = DB::getQuery('Posgraduacao.listarEgressosPrograma.sql');
         $param = ['codcur' => $codcur];
 
         if (!empty($inicio)) {
-            $query .= ' AND COALESCE(G.dtadfapgm, H.dtaocopgm) >= CONVERT(smalldatetime, :inicio)';
+            $replaces['filtro_inicio'] = 'AND COALESCE(G.dtadfapgm, H.dtaocopgm) >= CONVERT(smalldatetime, :inicio)';
             $param['inicio'] = $inicio;
         }
 
         if (!empty($fim)) {
-            $query .= ' AND COALESCE(G.dtadfapgm, H.dtaocopgm) <= CONVERT(smalldatetime, :fim)';
+            $replaces['filtro_fim'] = 'AND COALESCE(G.dtadfapgm, H.dtaocopgm) <= CONVERT(smalldatetime, :fim)';
             $param['fim'] = $fim;
         }
 
-        $query .= ' ORDER BY dtareferencia DESC, nompes ASC';
+        $query = DB::getQuery('Posgraduacao.listarEgressosPrograma.sql', $replaces ?? []);
 
         return DB::fetchAll($query, $param);
     }
 
     /**
-     * Retorna lista de alunos que defenderam pós-graduação em determinada área
+     * Retorna contagem de alunos que defenderam pós-graduação em determinada área
      *
      * @author Thiago Gomes Veríssimo <thiago.verissimo@usp.br>
      * @author Gabriela dos Reis Silva <gabrielareisg@usp.br>
@@ -594,9 +590,7 @@ class Posgraduacao extends ReplicadoBase
     {
         // se não fizer join com TRABALHOPROG retornou um resultado menor que deveria (codare=18134)
         $query = DB::getQuery('Posgraduacao.contarEgressosArea.sql');
-        $param = [
-            'codare' => $codare,
-        ];
+        $param = ['codare' => $codare];
         $result = DB::fetchAll($query, $param);
         if ($result) {
             return array_column($result, 'quantidade', 'ano');
@@ -794,7 +788,6 @@ class Posgraduacao extends ReplicadoBase
             } else {
                 return 1;
             }
-
         });
 
         return $orientandos;
