@@ -25,7 +25,6 @@ class Posgraduacao extends ReplicadoBase
                 if (trim($row['tipvin']) == 'ALUNOPOS' && trim($row['sitatl']) == 'A' && trim($row['codundclg']) == $codundclgi) {
                     return true;
                 }
-
             }
         }
         return false;
@@ -55,6 +54,8 @@ class Posgraduacao extends ReplicadoBase
      *
      * Quando informado o código do curso/programa retorna somente os dados do programa solicitado
      *
+     * Cada item também contém codcpeatl e nomarecpe, código atual do Programa e nome da área registrados na CAPES.
+     *
      * @param int $codundclgi Código da unidade
      * @param int $codcur Código do curso
      *
@@ -66,11 +67,12 @@ class Posgraduacao extends ReplicadoBase
             $codundclgi = getenv('REPLICADO_CODUNDCLG');
         }
 
-        $query = "SELECT C.codcur, NC.nomcur, A.codare, N.nomare
+        $query = "SELECT C.codcur, NC.nomcur, A.codare, N.nomare, AC.codcpeatl, AC.nomarecpe
                   FROM CURSO AS C
                   INNER JOIN NOMECURSO AS NC ON C.codcur = NC.codcur
                   INNER JOIN AREA AS A ON C.codcur = A.codcur
                   INNER JOIN NOMEAREA AS N ON A.codare = N.codare
+                  LEFT JOIN AREACAPES AS AC ON A.codcpe = AC.codcpe
                   WHERE (C.codclg IN ({$codundclgi}))
                   AND (C.tipcur = 'POS')
                   AND (N.dtafimare IS NULL)
@@ -114,6 +116,72 @@ class Posgraduacao extends ReplicadoBase
         $query .= " ORDER BY nompes ASC";
 
         $param = ['codare' => $codare];
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Retorna o histórico de credenciamentos dos orientadores de um programa.
+     *
+     * Diferentemente de orientadores(), este método preserva cada período de
+     * credenciamento e não limita o retorno aos credenciamentos vigentes.
+     * Quando as datas são informadas, retorna os períodos que intersectam o
+     * intervalo consultado.
+     *
+     * @param int $codcur Código do programa de pós-graduação
+     * @param string|null $inicio Data inicial no formato reconhecido pelo banco
+     * @param string|null $fim Data final no formato reconhecido pelo banco
+     * @return array
+     * @author Andre Garcia em 30/7/2026
+     */
+    protected static function _listarCredenciamentosPrograma(int $codcur, $inicio = null, $fim = null)
+    {
+        $param = ['codcur' => $codcur];
+
+        if (!empty($inicio)) {
+            $param['inicio_credenciamento'] = $inicio;
+            $param['inicio_area'] = $inicio;
+            $replaces['inicio'] = 'AND (R.dtavalfim IS NULL OR R.dtavalfim >= CONVERT(smalldatetime, :inicio_credenciamento))
+                AND (NA.dtafimare IS NULL OR NA.dtafimare >= CONVERT(smalldatetime, :inicio_area))
+            ';
+        }
+
+        if (!empty($fim)) {
+            $param['fim_credenciamento'] = $fim;
+            $param['fim_area'] = $fim;
+            $replaces['fim'] = 'AND R.dtavalini <= CONVERT(smalldatetime, :fim_credenciamento)
+                AND NA.dtainiare <= CONVERT(smalldatetime, :fim_area)
+            ';
+        }
+        $query = DB::getQuery('Posgraduacao.listarCredenciamentosPrograma.sql', $replaces ?? []);
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Retorna o coordenador e o vice-coordenador vigentes de um Programa de Pós-Graduação.
+     *
+     * A data de referência é opcional. Quando não informada, a consulta considera a data atual
+     * do banco. As funções retornadas são COO (coordenador) e VCO (vice-coordenador).
+     *
+     * @param int $codcur Código do programa de pós-graduação
+     * @param string|null $referencia Data de referência no formato reconhecido pelo banco
+     * @return array
+     * @author Andre Garcia em 30/7/2026
+     */
+    protected static function _listarCoordenadoresPrograma(int $codcur, $referencia = null)
+    {
+        $param = ['codcur' => $codcur];
+        if (!empty($referencia)) {
+            $replaces['referencia'] = 'AND R.dtainifnc <= CONVERT(smalldatetime, :referencia_inicio)
+               AND (R.dtafimfnc IS NULL OR R.dtafimfnc >= CONVERT(smalldatetime, :referencia_fim))';
+            $param['referencia_inicio'] = $referencia;
+            $param['referencia_fim'] = $referencia;
+        } else {
+            $replaces['referencia'] = 'AND R.dtainifnc <= GETDATE()
+               AND (R.dtafimfnc IS NULL OR R.dtafimfnc >= GETDATE())';
+        }
+        $query = DB::getQuery('Posgraduacao.listarCoordenadoresPrograma.sql', $replaces);
 
         return DB::fetchAll($query, $param);
     }
@@ -358,7 +426,6 @@ class Posgraduacao extends ReplicadoBase
                 $programasAreas[$codcur][$i]['nomare'] = $nomare;
                 $i++;
             }
-
         }
         return $programasAreas;
     }
@@ -411,6 +478,30 @@ class Posgraduacao extends ReplicadoBase
     }
 
     /**
+     * Retorna os alunos ativos vinculados a um programa de pós-graduação.
+     *
+     * A consulta usa o vínculo ALUNOPOS ativo e a ocorrência correspondente
+     * em AGPROGRAMA. O filtro por área de concentração é opcional.
+     *
+     * @param int $codcur Código do programa de pós-graduação
+     * @param int|null $codare Código da área de concentração
+     * @return array
+     * @author Andre Garcia em 30/7/2026
+     */
+    protected static function _listarAlunosAtivosPorPrograma(int $codcur, int|null $codare = null)
+    {
+        $param = ['codcur' => $codcur];
+
+        if (!is_null($codare)) {
+            $replaces['filtro_codare'] = ' AND V.codare = CONVERT(int, :codare)';
+            $param['codare'] = $codare;
+        }
+        $query = DB::getQuery('Posgraduacao.listarAlunosAtivosPorPrograma.sql', $replaces ?? []);
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
      * Retorna nome completo do idioma da disciplina
      *
      * É usado no contexto do oferecimento.
@@ -456,7 +547,38 @@ class Posgraduacao extends ReplicadoBase
     }
 
     /**
-     * Retorna lista de alunos que defenderam pós-graduação em determinada área
+     * Retorna os egressos de todas as áreas de um programa de pós-graduação.
+     *
+     * Quando as datas são informadas, o filtro considera a data de defesa e,
+     * na ausência dela, a data da ocorrência de conclusão no histórico.
+     *
+     * @param int $codcur Código do programa de pós-graduação
+     * @param string|null $inicio Data inicial no formato reconhecido pelo banco
+     * @param string|null $fim Data final no formato reconhecido pelo banco
+     * @return array
+     * @author Andre Garcia em 30/7/2026
+     */
+    protected static function _listarEgressosPrograma(int $codcur, $inicio = null, $fim = null)
+    {
+        $param = ['codcur' => $codcur];
+
+        if (!empty($inicio)) {
+            $replaces['filtro_inicio'] = 'AND COALESCE(G.dtadfapgm, H.dtaocopgm) >= CONVERT(smalldatetime, :inicio)';
+            $param['inicio'] = $inicio;
+        }
+
+        if (!empty($fim)) {
+            $replaces['filtro_fim'] = 'AND COALESCE(G.dtadfapgm, H.dtaocopgm) <= CONVERT(smalldatetime, :fim)';
+            $param['fim'] = $fim;
+        }
+
+        $query = DB::getQuery('Posgraduacao.listarEgressosPrograma.sql', $replaces ?? []);
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Retorna contagem de alunos que defenderam pós-graduação em determinada área
      *
      * @author Thiago Gomes Veríssimo <thiago.verissimo@usp.br>
      * @author Gabriela dos Reis Silva <gabrielareisg@usp.br>
@@ -468,9 +590,7 @@ class Posgraduacao extends ReplicadoBase
     {
         // se não fizer join com TRABALHOPROG retornou um resultado menor que deveria (codare=18134)
         $query = DB::getQuery('Posgraduacao.contarEgressosArea.sql');
-        $param = [
-            'codare' => $codare,
-        ];
+        $param = ['codare' => $codare];
         $result = DB::fetchAll($query, $param);
         if ($result) {
             return array_column($result, 'quantidade', 'ano');
@@ -668,7 +788,6 @@ class Posgraduacao extends ReplicadoBase
             } else {
                 return 1;
             }
-
         });
 
         return $orientandos;

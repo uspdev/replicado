@@ -1,0 +1,15 @@
+[
+    {
+        "codcur": 33001,
+        "nomcur": "Programa de Pós-Graduação",
+        "codare": 33101,
+        "nomare": "Área de Concentração",
+        "codpes": 234567,
+        "nompes": "Discente Exemplo",
+        "nivpgm": "ME",
+        "numseqpgm": 1,
+        "dtainivin": "2025-02-01 00:00:00",
+        "dtaselpgm": "2024-11-01 00:00:00",
+        "dtactaprzpgm": "2025-02-01 00:00:00"
+    }
+]
