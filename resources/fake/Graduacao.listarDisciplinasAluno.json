@@ -1,0 +1,42 @@
+[
+  {
+    "coddis": "FLF0999",
+    "nomdis": "Fundamentos da Filosofia I",
+    "creaul": 4,
+    "cretrb": 0,
+    "notfim": 6.5,
+    "notfim2": "",
+    "rstfim": "A",
+    "codtur": 2026301
+  },
+  {
+    "coddis": "FLH0888",
+    "nomdis": "História Social do Brasil I",
+    "creaul": 4,
+    "cretrb": 0,
+    "notfim": 7.2,
+    "notfim2": "",
+    "rstfim": "A",
+    "codtur": 2026308
+  },
+  {
+    "coddis": "FLL0777",
+    "nomdis": "Estudos de Linguagem e Sociedade",
+    "creaul": 4,
+    "cretrb": 0,
+    "notfim": 8.1,
+    "notfim2": "",
+    "rstfim": "A",
+    "codtur": 2026315
+  },
+  {
+    "coddis": "FLP0666",
+    "nomdis": "Cultura e Sociedade na América Latina",
+    "creaul": 4,
+    "cretrb": 0,
+    "notfim": 5.8,
+    "notfim2": "",
+    "rstfim": "A",
+    "codtur": 2026322
+  }
+]
