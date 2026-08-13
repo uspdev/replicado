@@ -1,0 +1,58 @@
+[
+  {
+    "coddis": "FLF0999",
+    "codtur": "2026301",
+    "diasmnocp": "qua",
+    "horent": "14:00",
+    "horsai": "16:00"
+  },
+  {
+    "coddis": "FLF0999",
+    "codtur": "2026301",
+    "diasmnocp": "seg",
+    "horent": "14:00",
+    "horsai": "16:00"
+  },
+  {
+    "coddis": "FLH0888",
+    "codtur": "2026308",
+    "diasmnocp": "qui",
+    "horent": "16:00",
+    "horsai": "18:00"
+  },
+  {
+    "coddis": "FLH0888",
+    "codtur": "2026308",
+    "diasmnocp": "ter",
+    "horent": "16:00",
+    "horsai": "18:00"
+  },
+  {
+    "coddis": "FLL0777",
+    "codtur": "2026315",
+    "diasmnocp": "qua",
+    "horent": "08:00",
+    "horsai": "10:00"
+  },
+  {
+    "coddis": "FLL0777",
+    "codtur": "2026315",
+    "diasmnocp": "sex",
+    "horent": "08:00",
+    "horsai": "10:00"
+  },
+  {
+    "coddis": "FLP0666",
+    "codtur": "2026322",
+    "diasmnocp": "qui",
+    "horent": "10:00",
+    "horsai": "12:00"
+  },
+  {
+    "coddis": "FLP0666",
+    "codtur": "2026322",
+    "diasmnocp": "ter",
+    "horent": "10:00",
+    "horsai": "12:00"
+  }
+]
