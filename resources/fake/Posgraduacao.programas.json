@@ -1,0 +1,210 @@
+[
+  {
+    "codcur": "8000",
+    "nomcur": "Letras em Rede Nacional",
+    "codare": "8277", 
+    "nomare": "Letras em Rede Nacional",
+    "codcpeatl": "00000000000X0",
+    "nomarecpe": "LETRAS"
+  },
+  {
+    "codcur": "8111",
+    "nomcur": "Ciência Política",
+    "codare": "8266",
+    "nomare": "Ciência Política",
+    "codcpeatl": "11111111111P1",
+    "nomarecpe": "CIÊNCIA POLÍTICA"
+  },
+  {
+    "codcur": "8222",
+    "nomcur": "Ciência Social (Antropologia Social)",
+    "codare": "8255",
+    "nomare": "Antropologia Social",
+    "codcpeatl": "222222222222P2",
+    "nomarecpe": "CIÊNCIA SOCIAL (ANTROPOLOGIA SOCIAL)"
+  },
+  {
+    "codcur": "8333",
+    "nomcur": "Estudos Lingüísticos e Literários em Inglês",
+    "codare": "8147",
+    "nomare": "Estudos Lingüísticos e Literários em Inglês",
+    "codcpeatl": "33333333333P3",
+    "nomarecpe": "ESTUDOS LINGÜÍSTICOS E LITERÁRIOS EM INGLÊS"
+  },
+  {
+    "codcur": "8444",
+    "nomcur": "Filologia e Língua Portuguesa",
+    "codare": "8244",
+    "nomare": "Filologia e Língua Portuguesa",
+    "codcpeatl": "44444444444P4",
+    "nomarecpe": "FILOLOGIA E LÍNGUA PORTUGUESA"
+  },
+  {
+    "codcur": "8555",
+    "nomcur": "Filosofia",
+    "codare": "8233",
+    "nomare": "Filosofia",
+    "codcpeatl": "55555555555P5",
+    "nomarecpe": "FILOSOFIA"
+  },
+  {
+    "codcur": "8666",
+    "nomcur": "Geografia (Geografia Física)",
+    "codare": "8222",
+    "nomare": "Geografia Física",
+    "codcpeatl": "66666666666P6",
+    "nomarecpe": "GEOGRAFIA  (GEOGRAFIA FÍSICA)"
+  },
+  {
+    "codcur": "8777",
+    "nomcur": "Geografia (Geografia Humana)",
+    "codare": "8211",
+    "nomare": "Geografia Humana",
+    "codcpeatl": "77777777777P7",
+    "nomarecpe": "GEOGRAFIA (GEOGRAFIA HUMANA)"
+  },
+  {
+    "codcur": "8888",
+    "nomcur": "História Econômica",
+    "codare": "8199",
+    "nomare": "História Econômica",
+    "codcpeatl": "88888888888P8",
+    "nomarecpe": "HISTÓRIA ECONÔMICA"
+  },
+  {
+    "codcur": "8999",
+    "nomcur": "História Social",
+    "codare": "8188",
+    "nomare": "História Social",
+    "codcpeatl": "99999999999P9",
+    "nomarecpe": "HISTÓRIA SOCIAL"
+  },
+  {
+    "codcur": "8111",
+    "nomcur": "Humanidades, Direitos e Outras Legitimidades",
+    "codare": "8177",
+    "nomare": "Humanidades, Direitos e Outras Legitimidades",
+    "codcpeatl": "11111111112P2",
+    "nomarecpe": "Humanidades, Direitos e Outras Legitimidades"
+  },
+  {
+    "codcur": "8122",
+    "nomcur": "Letras (Estudos Comparados de Literaturas de Língua Portuguesa)",
+    "codare": "8166",
+    "nomare": "Estudos Comparados de Literaturas de Língua Portuguesa",
+    "codcpeatl": "11111111123P3",
+    "nomarecpe": "LETRAS (ESTUDOS COMPARADOS DE LITERATURAS DE LÍNGUA PORTUGUESA)"
+  },
+  {
+    "codcur": "8133",
+    "nomcur": "Letras (Letras Clássicas)",
+    "codare": "8123",
+    "nomare": "Letras Clássicas",
+    "codcpeatl": "11111111234P4",
+    "nomarecpe": "LETRAS (LETRAS CLÁSSICAS)"
+  },
+  {
+    "codcur": "8144",
+    "nomcur": "Letras (Literatura Portuguesa)",
+    "codare": "8321",
+    "nomare": "Literatura Portuguesa",
+    "codcpeatl": "11111112345P5",
+    "nomarecpe": "LETRAS (LITERATURA PORTUGUESA)"
+  },
+  {
+    "codcur": "8155",
+    "nomcur": "Letras (Língua Espanhola e Literaturas Espanhola e Hispano-Americana)",
+    "codare": "8133",
+    "nomare": "Língua Espanhola e Literaturas Espanhola e Hispano-Americana",
+    "codcpeatl": "11111123456P6",
+    "nomarecpe": "LETRAS (LÍNGUA ESPANHOLA E LITERATURAS  ESPANHOLA E HISPANO-AMERICANA)"
+  },
+  {
+    "codcur": "8166",
+    "nomcur": "Letras (Língua e Literatura Alemã)",
+    "codare": "8122",
+    "nomare": "Língua e Literatura Alemã",
+    "codcpeatl": "11111234567P7",
+    "nomarecpe": "LETRAS (LÍNGUA E LITERATURA ALEMÃ)"
+  },
+  {
+    "codcur": "8177",
+    "nomcur": "Letras (Língua, Literatura e Cultura Italianas)",
+    "codare": "8111",
+    "nomare": "Língua, Literatura e Cultura Italianas",
+    "codcpeatl": "111112345678P8",
+    "nomarecpe": "LETRAS (LÍNGUA, LITERATURA E CULTURA ITALIANAS)"
+  },
+  {
+    "codcur": "8188",
+    "nomcur": "Letras (Língua, Literatura e Cultura Japonesa)",
+    "codare": "8999",
+    "nomare": "Língua, Literatura e Cultura Japonesa",
+    "codcpeatl": "11112345678P8",
+    "nomarecpe": "LETRAS (LÍNGUA, LITERATURA E CULTURA JAPONESA)"
+  },
+  {
+    "codcur": "8199",
+    "nomcur": "Letras (Teoria Literária e Literatura Comparada)",
+    "codare": "8888",
+    "nomare": "Teoria Literária e Literatura Comparada",
+    "codcpeatl": "11123456789P9",
+    "nomarecpe": "LETRAS (TEORIA LITERÁRIA E LITERATURA COMPARADA)"
+  },
+  {
+    "codcur": "8211",
+    "nomcur": "Letras Estrangeiras e Tradução",
+    "codare": "8777",
+    "nomare": "Estudos Lingüísticos, Literários e Tradutológicos em Francês",
+    "codcpeatl": "22222222221P1",
+    "nomarecpe": "Letras Estrangeiras e Tradução"
+  },
+  {
+    "codcur": "8222",
+    "nomcur": "Letras Estrangeiras e Tradução",
+    "codare": "8666",
+    "nomare": "Estudos Linguísticos",
+    "codcpeatl": "22222222223P3",
+    "nomarecpe": "Letras Estrangeiras e Tradução"
+  },
+  {
+    "codcur": "8233",
+    "nomcur": "Letras Estrangeiras e Tradução",
+    "codare": "8555",
+    "nomare": "Estudos Literários e Culturais",
+    "codcpeatl": "22222222234P4",
+    "nomarecpe": "Letras Estrangeiras e Tradução"
+  },
+  {
+    "codcur": "8244",
+    "nomcur": "Letras Estrangeiras e Tradução",
+    "codare": "8444",
+    "nomare": "Estudos da Tradução",
+    "codcpeatl": "22222222345P5",
+    "nomarecpe": "Letras Estrangeiras e Tradução"
+  },
+  {
+    "codcur": "8255",
+    "nomcur": "Lingüística",
+    "codare": "8333",
+    "nomare": "Semiótica e Lingüística Geral",
+    "codcpeatl": "22222223456P6",
+    "nomarecpe": "LINGÜÍSTICA"
+  },
+  {
+    "codcur": "8266",
+    "nomcur": "Literatura Brasileira",
+    "codare": "8222",
+    "nomare": "Literatura Brasileira",
+    "codcpeatl": "22222234567P7",
+    "nomarecpe": "LITERATURA BRASILEIRA"
+  },
+  {
+    "codcur": "8277",
+    "nomcur": "Sociologia",
+    "codare": "8112",
+    "nomare": "Sociologia",
+    "codcpeatl": "22222345678P8",
+    "nomarecpe": "SOCIOLOGIA"
+  }
+]
