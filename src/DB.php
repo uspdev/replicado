@@ -226,8 +226,8 @@ class DB
      * Função auxiliar que ajuda carregar o arquivo sql e realizar substituições
      *
      * Opcionalmente pode-se passar uma coleção tipo ['replace' => 'valor']
-     * para se realizar a substituição. Vai substituir '__replace__' por 'valor'.
-     * Se ['--replace--' => 'valor'], vai substituir 'replace' por 'valor'
+     * para se realizar a substituição. Vai substituir '__replace__' ou '--replace--' por 'valor'.
+     * Se ['--replace--' => 'valor'], vai substituir '--replace--' por 'valor'
      *
      * Caso não seja passado ['codundclgs' => 'valor'], o método pegará automaticamente
      * do env se necessário
@@ -238,6 +238,7 @@ class DB
      * @author Masakik, Fernando G. Moura, modificado em 28/10/2022
      * @author Masakik, modificado em 5/5/2023, incluindo replace de comentário
      * @author Masakik, 1/2/2024, revertendo replaces que foi removido indevidamente #566
+     * @author Masakik, em 30/7/2026, adicionando replace automatico de --replace--
      */
     public static function getQuery($filename, array $replaces = [])
     {
@@ -255,7 +256,7 @@ class DB
             if (str_starts_with($key, '--') || str_starts_with($key, '__')) {
                 $query = str_replace($key, $val, $query); // replace de comentário
             } else {
-                $query = str_replace("__{$key}__", $val, $query);
+                $query = str_replace(["__{$key}__", "--{$key}--"], $val, $query);
             }
         }
 

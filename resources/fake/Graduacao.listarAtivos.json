@@ -1,0 +1,52 @@
+[
+  {
+    "codpes": 111111,
+    "nompes": "Maria Aparecida Ferreira Castro",
+    "codema": "cidacastro@usp.br",
+    "codcur": 8090,
+    "nomcur": "Geografia",
+    "codhab": 104,
+    "nomhab": "Bacharelado em Geografia",
+    "dtainivin": "2018-12-14 00:00:00"
+  },
+  {
+    "codpes": 19690903,
+    "nompes": "Marisa Ferreira Moraes",
+    "codema": "mariferaes@usp.br",
+    "codcur": 8090,
+    "nomcur": "Geografia",
+    "codhab": 104,
+    "nomhab": "Bacharelado em Geografia",
+    "dtainivin": "2017-02-07 00:00:00"
+  },
+  {
+    "codpes": 22121963,
+    "nompes": "Loretta Santos Ricci",
+    "codema": "riccilore@usp.br",
+    "codcur": 8080,
+    "nomcur": "Letras",
+    "codhab": 102,
+    "nomhab": "Letras - Italiano",
+    "dtainivin": "2026-01-23 00:00:00"
+  },
+  {
+    "codpes": 60030791,
+    "nompes": "Jõao García de Oliveira",
+    "codema": "joao.garcia98@usp.br",
+    "codcur": 8070,
+    "nomcur": "Ciências Sociais",
+    "codhab": 104,
+    "nomhab": "Bacharelado em Ciências Sociais",
+    "dtainivin": "2023-01-27 00:00:00"
+  },
+  {
+    "codpes": 11271967,
+    "nompes": "Miguel Ursu Silveria",
+    "codema": "miursu@usp.br",
+    "codcur": 8080,
+    "nomcur": "Letras",
+    "codhab": 104,
+    "nomhab": "Letras - Ciclo Básico",
+    "dtainivin": "2026-01-23 00:00:00"
+  }
+]

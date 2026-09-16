@@ -1,0 +1,16 @@
+[
+    {
+        "codcur": 33001,
+        "nomcur": "Programa de Pós-Graduação",
+        "codare": 33101,
+        "nomare": "Área de Concentração",
+        "codpes": 345678,
+        "nompes": "Egresso Exemplo",
+        "numseqpgm": 1,
+        "nivpgm": "DO",
+        "dtaconclusao": "2024-06-15 00:00:00",
+        "dtadfapgm": "2024-06-10 00:00:00",
+        "dtadpopgm": "2024-05-15 00:00:00",
+        "dtareferencia": "2024-06-10 00:00:00"
+    }
+]

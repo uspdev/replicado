@@ -1,0 +1,18 @@
+[
+    {
+        "codcur": 33001,
+        "codpes": 123456,
+        "nompes": "Coordenador Exemplo",
+        "dtainifnc": "2025-01-01 00:00:00",
+        "dtafimfnc": "2027-12-31 00:00:00",
+        "fncpescur": "COO"
+    },
+    {
+        "codcur": 33001,
+        "codpes": 654321,
+        "nompes": "Vice-coordenador Exemplo",
+        "dtainifnc": "2025-01-01 00:00:00",
+        "dtafimfnc": "2027-12-31 00:00:00",
+        "fncpescur": "VCO"
+    }
+]

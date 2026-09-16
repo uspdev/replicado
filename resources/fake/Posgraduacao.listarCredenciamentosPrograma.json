@@ -1,0 +1,22 @@
+[
+    {
+        "codcur": 33001,
+        "nomcur": "Programa de Pós-Graduação",
+        "codare": 33101,
+        "nomare": "Área de Concentração",
+        "codpes": 123456,
+        "nompes": "Docente Exemplo",
+        "nivare": "DO",
+        "tiport": "ORI",
+        "dtavalini": "2024-01-01 00:00:00",
+        "dtavalfim": "2027-12-31 00:00:00",
+        "dtavalinicrd": "2024-01-01 00:00:00",
+        "dtavalfimcrd": "2027-12-31 00:00:00",
+        "dtainiare": "2020-01-01 00:00:00",
+        "dtafimare": null,
+        "dtaaprccp": "2023-11-01 00:00:00",
+        "dtaaprcpg": "2023-12-01 00:00:00",
+        "dtaaprcog": null,
+        "stardmort": null
+    }
+]

@@ -1,16 +1,16 @@
 [
   {
-    "codset": "558",
+    "codset": "002",
     "tipset": "Unidade",
     "nomabvset": "FFLCH",
     "nomset": "Diretoria Faculdade de Filosofia, Letras e Ciências Humanas",
     "codsetspe": "0"
   },
   {
-    "codset": "559",
+    "codset": "003",
     "tipset": "Divisão",
     "nomabvset": "DVACAD-08",
     "nomset": "Divisão Acadêmica",
-    "codsetspe": "558"
+    "codsetspe": "002"
   }
 ]
