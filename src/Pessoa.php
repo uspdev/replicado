@@ -1248,6 +1248,25 @@ class Pessoa extends ReplicadoBase
         return DB::fetchAll($query, $param);
     }
 
+
+     /**
+     * Método para verificar se um número USP é de um Servidor(a) Docente ativo(a).
+     *
+     * @param Integer $codpes
+     * @return Bool
+     *
+     * @author Camila Moraes de Lima, em 17/09/2026
+     */
+    protected static function _verificarServidorDocente(int $codpes)
+    {
+        $codfusclgund = getenv('REPLICADO_CODUNDCLG');
+        
+        $query = DB::getQuery('Pessoa.verificarServidorDocente.sql');
+        $param = ['codpes' => $codpes, 'codfusclgund' => $codfusclgund];
+        return (bool) DB::fetchAll($query, $param);
+    }
+
+
     /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
     /**
