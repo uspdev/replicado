@@ -1,0 +1,54 @@
+{
+  "sgldis": 5830042,
+  "numseqdis": 1,
+  "numofe": 1,
+  "numvagofe": 24,
+  "numvagespofe": 6,
+  "numminins": 8,
+  "dtainiofe": "15/09/2026",
+  "dtafimofe": "08/12/2026",
+  "dtalimcan": "29/09/2026",
+  "stacslofe": "S",
+  "criselofe": "",
+  "stacslcct": "S",
+  "timestamp": 1,
+  "numvagofetot": 30,
+  "codare": "",
+  "codcvn": "",
+  "tipmotcantur": "",
+  "dtacantur": "",
+  "stacslatm": "",
+  "nivcvn": "",
+  "codpesalt": 63920014,
+  "codlinofe": "POR",
+  "fmtofe": "P",
+  "nomdis": "Fundamentos da Pesquisa e da Formação Docente",
+  "numcretotdis": 4,
+  "espacoturma": [
+    {
+      "sgldis": 5837142,
+      "numseqdis": 1,
+      "numofe": 1,
+      "diasmnofe": "terça-feira",
+      "horiniofe": "14:00",
+      "horfimofe": "17:00",
+      "codlocusp": "",
+      "locofe": "Edifício de Letras - Sala 214",
+      "timestamp": 1
+    }
+  ],
+  "ministrante": [
+    {
+      "codpes": 111111,
+      "nompes": "Helena Duarte Valença"
+    },
+    {
+      "codpes": 19674012,
+      "nompes": "Gustavo Henrique Noronha"
+    },
+    {
+      "codpes": 90181970,
+      "nompes": "James Marshall Hendrix"
+    }
+  ]
+}

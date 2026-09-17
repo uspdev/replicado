@@ -1,0 +1,36 @@
+[
+    {
+        "sgldis" : 5640037,
+        "numseqdis" : 1,
+        "numofe" : 1,
+        "diasmnofe" : "segunda-feira",
+        "horiniofe" : "15:30",
+        "horfimofe" : "17:30",
+        "codlocusp" : "",
+        "locofe" : "Bloco 11 - Smeinários 3",
+        "timestamp" : "tµ×"
+
+    },
+    {
+        "sgldis" : 5640037,
+        "numseqdis" : 1,
+        "numofe" : 1,
+        "diasmnofe" : "quarta-feira",
+        "horiniofe" : "15:30",
+        "horfimofe" : "18:30",
+        "codlocusp" : "",
+        "locofe" : "Bloco 11 - Smeinários 3",
+        "timestamp" : "tµY"
+    },
+    {
+        "sgldis" : 5640037,
+        "numseqdis" : 1,
+        "numofe" : 1,
+        "diasmnofe" : "sexta-feira",
+        "horiniofe" : "15:30",
+        "horfimofe" : "17:30",
+        "codlocusp" : "",
+        "locofe" : "Bloco 11 - Smeinários 3",
+        "timestamp" : "tµz"
+    }
+]

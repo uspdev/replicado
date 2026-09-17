@@ -1,0 +1,74 @@
+[
+  {
+    "codpes": 111111,
+    "dtavalini": "2023-08-23 00:00:00",
+    "sexpes": "F",
+    "dtavalfim": "2028-08-23 00:00:00",
+    "nivare": "DO",
+    "nompes": "Marina Eloá Valença Duarte"
+  },
+  {
+    "codpes": "19900823",
+    "dtavalini": "2025-12-17 00:00:00",
+    "sexpes": "F",
+    "dtavalfim": "2030-12-17 00:00:00",
+    "nivare": "DO",
+    "nompes": "Elisa Manuela Tavares"
+  },
+  {
+    "codpes": "11092001",
+    "dtavalini": "2021-12-22 00:00:00",
+    "sexpes": "M",
+    "dtavalfim": "2026-12-22 00:00:00",
+    "nivare": "DO",
+    "nompes": "Augusto Henrique Nogueira"
+  },
+  {
+    "codpes": "70012007",
+    "dtavalini": "2024-01-05 00:00:00",
+    "sexpes": "M",
+    "dtavalfim": "2029-01-05 00:00:00",
+    "nivare": "DO",
+    "nompes": "Rafael Tomás Valverde"
+  },
+  {
+    "codpes": "28071971",
+    "dtavalini": "2025-03-11 00:00:00",
+    "sexpes": "F",
+    "dtavalfim": "2030-03-11 00:00:00",
+    "nivare": "ME",
+    "nompes": "Bianca Lorena Figueiredo"
+  },
+  {
+    "codpes": "62201984",
+    "dtavalini": "2024-12-17 00:00:00",
+    "sexpes": "F",
+    "dtavalfim": "2029-12-17 00:00:00",
+    "nivare": "DO",
+    "nompes": "Helena Sofia Marcondes"
+  },
+  {
+    "codpes": "92200609",
+    "dtavalini": "2025-03-18 00:00:00",
+    "sexpes": "F",
+    "dtavalfim": "2030-03-18 00:00:00",
+    "nivare": "DO",
+    "nompes": "Camila Beatriz Noronha"
+  },
+  {
+    "codpes": "28122019",
+    "dtavalini": "2025-02-11 00:00:00",
+    "sexpes": "F",
+    "dtavalfim": "2030-02-11 00:00:00",
+    "nivare": "DO",
+    "nompes": "Laura Madalena Vasconcelos"
+  },
+  {
+    "codpes": "40232420",
+    "dtavalini": "2024-03-05 00:00:00",
+    "sexpes": "F",
+    "dtavalfim": "2029-03-05 00:00:00",
+    "nivare": "DO",
+    "nompes": "Isadora Celina Montenegro"
+  }
+]
