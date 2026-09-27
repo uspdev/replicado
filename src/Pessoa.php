@@ -1256,6 +1256,24 @@ class Pessoa extends ReplicadoBase
      * @param Integer $codpes
      * @return Bool
      *
+     * @author Camila Moraes de Lima, em 17/09/2026
+     */
+    protected static function _verificarServidorDocente(int $codpes)
+    {
+        $codfusclgund = getenv('REPLICADO_CODUNDCLG');     
+        $query = DB::getQuery('Pessoa.verificarServidorDocente.sql');
+        $param = ['codpes' => $codpes, 'codfusclgund' => $codfusclgund];
+        return (bool) DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Método para verifica se uma pessoa com codpes é ou não servidor(a)
+     *
+     * Somente os já encerrados dentro da unidade
+     *
+     * @param Integer $codpes
+     * @return Bool
+     *
      * @author Thiago Gomes Verissimo, em 16/09/2026
      */
     protected static function _verificarServidor(int $codpes){
@@ -1265,6 +1283,7 @@ class Pessoa extends ReplicadoBase
         $param = ['codpes' => $codpes, 'codfusclgund' => $codfusclgund];
         return (bool) DB::fetchAll($query, $param);
     }
+
 
     /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
