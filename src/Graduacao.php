@@ -178,7 +178,7 @@ class Graduacao extends ReplicadoBase
     protected static function _obterCursosHabilitacoes($codundclg)
     {
         $query = " SELECT CURSOGR.*, HABILITACAOGR.* FROM CURSOGR, HABILITACAOGR";
-        $query .= " WHERE (CURSOGR.codclg IN (:codundclgi)) AND (CURSOGR.codcur = HABILITACAOGR.codcur)";
+        $query .= " WHERE (CURSOGR.codclg IN (convert(int, :codundclg))) AND (CURSOGR.codcur = HABILITACAOGR.codcur)";
         $query .= " AND ( (CURSOGR.dtaatvcur IS NOT NULL) AND (CURSOGR.dtadtvcur IS NULL) )";
         $query .= " AND ( (HABILITACAOGR.dtaatvhab IS NOT NULL) AND (HABILITACAOGR.dtadtvhab IS NULL) )";
         $query .= " ORDER BY CURSOGR.nomcur, HABILITACAOGR.nomhab ASC";

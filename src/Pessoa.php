@@ -1248,9 +1248,10 @@ class Pessoa extends ReplicadoBase
         return DB::fetchAll($query, $param);
     }
 
-
-     /**
-     * Método para verificar se um número USP é de um Servidor(a) Docente ativo(a).
+    /**
+     * Método para verifica se uma pessoa com codpes é ou não servidor(a)
+     *
+     * Somente os já encerrados dentro da unidade
      *
      * @param Integer $codpes
      * @return Bool
@@ -1259,9 +1260,26 @@ class Pessoa extends ReplicadoBase
      */
     protected static function _verificarServidorDocente(int $codpes)
     {
-        $codfusclgund = getenv('REPLICADO_CODUNDCLG');
-        
+        $codfusclgund = getenv('REPLICADO_CODUNDCLG');     
         $query = DB::getQuery('Pessoa.verificarServidorDocente.sql');
+        $param = ['codpes' => $codpes, 'codfusclgund' => $codfusclgund];
+        return (bool) DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Método para verifica se uma pessoa com codpes é ou não servidor(a)
+     *
+     * Somente os já encerrados dentro da unidade
+     *
+     * @param Integer $codpes
+     * @return Bool
+     *
+     * @author Thiago Gomes Verissimo, em 16/09/2026
+     */
+    protected static function _verificarServidor(int $codpes){
+        $codfusclgund = getenv('REPLICADO_CODUNDCLG');
+
+        $query = DB::getQuery('Pessoa.verificarServidor.sql');
         $param = ['codpes' => $codpes, 'codfusclgund' => $codfusclgund];
         return (bool) DB::fetchAll($query, $param);
     }
