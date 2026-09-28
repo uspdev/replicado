@@ -1018,7 +1018,7 @@ class Posgraduacao extends ReplicadoBase
     }
 
      /**
-     * Método para a banca de avaliação de defesa pós-graduação. 
+     * Método para obter a banca de avaliação de defesa pós-graduação. 
      *
      * @param int $codpes, $codare, $numseqpgm
      * @return array|bool
@@ -1035,6 +1035,26 @@ class Posgraduacao extends ReplicadoBase
         ];
 
         return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Método para obter o título do trabalho de pós-graduação. 
+     *
+     * @param int $codpes, $codare, $numseqpgm
+     * @return array|bool
+     *
+     * @author Camila Moraes 28/09/2026
+     */
+    public static function _obterTituloTrabalho(int $codpes, int $codare, int $numseqpgm)
+    {
+        $query = DB::getQuery('Posgraduacao.obterTituloTrabalho.sql');
+        $param = [
+            'codpes'    => $codpes,
+            'codare'    => $codare,
+            'numseqpgm' => $numseqpgm,
+        ];
+
+        return DB::fetch($query, $param);
     }
 
 }
