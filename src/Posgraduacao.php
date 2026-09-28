@@ -1057,4 +1057,22 @@ class Posgraduacao extends ReplicadoBase
         return DB::fetch($query, $param);
     }
 
+    /**
+     * Método para obter complemento do trabalho de pós-graduação. 
+     *
+     * @param int $codpes, $dtacad
+     * @return array|bool
+     *
+     * @author Camila Moraes 28/09/2026
+     */
+    public static function _obterComplementoTrabalho(int $codpes, string $dtacad)
+    {
+        $query = DB::getQuery('Posgraduacao.obterComplementoTrabalho.sql');
+        $param = [
+            'codpes'    => $codpes,
+            'dtacad'    => $dtacad
+        ];
+
+        return DB::fetch($query, $param);
+    }
 }
