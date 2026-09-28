@@ -1016,4 +1016,25 @@ class Posgraduacao extends ReplicadoBase
 
         return DB::fetch($query, $param);
     }
+
+     /**
+     * Método para a banca de avaliação de defesa pós-graduação. 
+     *
+     * @param int $codpes, $codare, $numseqpgm
+     * @return array|bool
+     *
+     * @author Camila Moraes 28/09/2026
+     */
+    public static function _obterBanca(int $codpes, int $codare, int $numseqpgm)
+    {
+        $query = DB::getQuery('Posgraduacao.obterBanca.sql');
+        $param = [
+            'codpes'    => $codpes,
+            'codare'    => $codare,
+            'numseqpgm' => $numseqpgm,
+        ];
+
+        return DB::fetchAll($query, $param);
+    }
+
 }
