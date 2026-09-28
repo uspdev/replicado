@@ -1075,4 +1075,25 @@ class Posgraduacao extends ReplicadoBase
 
         return DB::fetch($query, $param);
     }
+
+     /**
+     * Método para obter a data de depósito do trabalho de pós-graduação. 
+     *
+     * @param int $codpes, $codare, $nivpgm, $numseqpgm
+     * @return array|bool
+     *
+     * @author Camila Moraes 28/09/2026
+     */
+    public static function _obterDataDepositoTrabalho(int $codpes, int $codare, string $nivpgm, int $numseqpgm)
+    {
+        $query = DB::getQuery('Posgraduacao.obterDataDepositoTrabalho.sql');
+        $param = [
+            'codpes'    => $codpes,
+            'codare'    => $codare,
+            'nivpgm'    => $nivpgm,
+            'numseqpgm' => $numseqpgm
+        ];
+
+        return DB::fetch($query, $param);
+    }
 }
