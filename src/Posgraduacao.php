@@ -997,4 +997,23 @@ class Posgraduacao extends ReplicadoBase
         return DB::fetch($query, $param);
     }
 
+     /**
+     * Método para obter orientador. 
+     *
+     * @param int $codpespgm, $codare, $numseqpgm
+     * @return array|bool
+     *
+     * @author Camila Moraes 28/09/2026
+     */
+    public static function _obterOrientador(int $codpespgm, int $codare, int $numseqpgm)
+    {
+        $query = DB::getQuery('Posgraduacao.obterOrientador.sql');
+        $param = [
+            'codpespgm' => $codpespgm,
+            'codare' => $codare,
+            'numseqpgm' => $numseqpgm
+        ];
+
+        return DB::fetch($query, $param);
+    }
 }
