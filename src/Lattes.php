@@ -2743,4 +2743,84 @@ class Lattes extends ReplicadoBase
         }
         return false;
     }
+    
+    /**
+     * Recebe o número USP e devolve array com as patentes registradas
+     *
+     * Se $ano_inicial e $ano_final forem definidos, retorna patentes neste período.
+     * Se apenas $ano_inicial for definido, retorna patentes a partir deste ano.
+     * Se nenhum ano for definido, retorna todas as patentes.
+     *
+     * @param Integer $codpes
+     * @param Integer|null $ano_inicial
+     * @param Integer|null $ano_final
+     * @return Array|Bool
+     * 
+     * @author Erickson Zanon @ezanon 05/10/2026
+     */
+    protected static function _listarPatentes($codpes, $ano_inicial = null, $ano_final = null)
+    {
+        if (!$lattes = self::_obterArray($codpes)) {
+            return false;
+        }
+
+        if (!isset($lattes['PRODUCAO-TECNICA']['PATENTE'])) {
+            return false;
+        }
+
+        $patentes = [];
+        $aux_patentes = Arr::get($lattes, 'PRODUCAO-TECNICA.PATENTE', false);
+
+        if (!$aux_patentes) {
+            return false;
+        }
+
+        // Normaliza para array de patentes (tratando caso de apenas uma patente)
+        $lista_patentes = isset($aux_patentes['@attributes']['SEQUENCIA-PRODUCAO'])
+            ? [$aux_patentes]
+            : $aux_patentes;
+
+        foreach ($lista_patentes as $patente) {
+            $ano = (int) Arr::get($patente, 'DADOS-BASICOS-DA-PATENTE.@attributes.ANO-DESENVOLVIMENTO', 0);
+
+            // Filtro por ano
+            if ($ano_inicial !== null && $ano < $ano_inicial) {
+                continue;
+            }
+            if ($ano_final !== null && $ano > $ano_final) {
+                continue;
+            }
+
+            // Autores
+            $autores = (!isset($patente['AUTORES']) && isset($patente[3])) ? 3 : 'AUTORES';
+            $aux_autores = self::_listarAutores(Arr::get($patente, "{$autores}", []));
+
+            // Monta o array da patente
+            $aux_patente = [];
+            $aux_patente['TITULO'] = Arr::get($patente, 'DADOS-BASICOS-DA-PATENTE.@attributes.TITULO', '');
+            $aux_patente['ANO'] = $ano;
+            $aux_patente['PAIS'] = Arr::get($patente, 'DADOS-BASICOS-DA-PATENTE.@attributes.PAIS', '');
+            $aux_patente['HOMOLOGACAO'] = Arr::get($patente, 'DADOS-BASICOS-DA-PATENTE.@attributes.HOMOLOGACAO', '');
+            $aux_patente['CATEGORIA'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.CATEGORIA', '');
+            $aux_patente['FINALIDADE'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.FINALIDADE', '');
+            $aux_patente['INSTITUICAO_FINANCIADORA'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.INSTITUICAO-FINANCIADORA', '');
+            $aux_patente['NUMERO_REGISTRO'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.NUMERO-REGISTRO-PATENTE', '');
+            $aux_patente['DATA_CONCESSAO'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.DATA-CONCESSAO', '');
+            $aux_patente['DATA_PEDIDO_DEPOSITO'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.DATA-PEDIDO-DE-DEPOSITO', '');
+            $aux_patente['AUTORES'] = $aux_autores;
+
+            $patentes[] = $aux_patente;
+        }
+
+        // Ordena por ano decrescente
+        usort($patentes, function ($a, $b) {
+            if (!isset($a['ANO']) || !isset($b['ANO'])) {
+                return 0;
+            }
+            return (int) $b['ANO'] - (int) $a['ANO'];
+        });
+
+        return $patentes ?: false;
+    } 
+    
 }
