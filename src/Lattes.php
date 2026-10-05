@@ -135,12 +135,21 @@ class Lattes extends ReplicadoBase
     }
 
     /**
-     * Recebe o número USP e devolve array dos prêmios e títulos com o respectivo ano de prêmiação
+     * Recebe o número USP e devolve array dos prêmios e títulos com o respectivo ano de premiação
+     *
+     * Se $ano_inicial e $ano_final forem definidos, retorna prêmios neste período.
+     * Se apenas $ano_inicial for definido, retorna prêmios a partir deste ano.
+     * Se nenhum ano for definido, retorna todos os prêmios.
      *
      * @param Integer $codpes
+     * @param Array $lattes_array (opt)
+     * @param Integer|null $ano_inicial
+     * @param Integer|null $ano_final
      * @return String|Bool
+     * 
+     * Alterada por Erickson Zanon @ezanon 05/10/2026
      */
-    protected static function _listarPremios($codpes, $lattes_array = null)
+    protected static function _listarPremios($codpes, $lattes_array = null, $ano_inicial = null, $ano_final = null)
     {
         $lattes = $lattes_array ?? self::_obterArray($codpes);
         if (!$lattes && !isset($lattes['DADOS-GERAIS'])) {
@@ -155,6 +164,16 @@ class Lattes extends ReplicadoBase
                 if (!isset($p['@attributes']['NOME-DO-PREMIO-OU-TITULO'])) {
                     return false;
                 } else {
+                    $ano = (int) $p['@attributes']['ANO-DA-PREMIACAO'];
+                    
+                    // Filtro por ano
+                    if ($ano_inicial !== null && $ano < $ano_inicial) {
+                        continue;
+                    }
+                    if ($ano_final !== null && $ano > $ano_final) {
+                        continue;
+                    }
+                    
                     array_push($nome_premios, $p['@attributes']['NOME-DO-PREMIO-OU-TITULO'] . ' - Ano: ' . $p['@attributes']['ANO-DA-PREMIACAO']);
                 }
             }
@@ -2822,5 +2841,5 @@ class Lattes extends ReplicadoBase
 
         return $patentes ?: false;
     } 
-    
+
 }
