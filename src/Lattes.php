@@ -3026,4 +3026,139 @@ class Lattes extends ReplicadoBase
         return $participacoes;
     }
     
+    /**
+     * Recebe o número USP e devolve array com as atuações em corpos editoriais
+     *
+     * Se $ano_inicial e $ano_final forem definidos, retorna atuações que tenham
+     * sobreposição com este período. Se apenas $ano_inicial for definido, retorna
+     * atuações a partir deste ano. Se nenhum ano for definido, retorna todas as atuações.
+     *
+     * @param Integer $codpes
+     * @param Integer|null $ano_inicial
+     * @param Integer|null $ano_final
+     * @param Array $lattes_array (opt)
+     * @return Array|Bool
+     */
+    protected static function _listarAtuacaoEmCorposEditoriais($codpes, $ano_inicial = null, $ano_final = null, $lattes_array = null)
+    {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
+            return false;
+        }
+
+        if (!isset($lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'])) {
+            return false;
+        }
+
+        $atuacoes = [];
+        $atuacoes_profissionais = $lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'];
+
+        // Normaliza para array (tratando caso de apenas uma atuação profissional)
+        $lista_atuacoes = isset($atuacoes_profissionais['@attributes']['CODIGO-INSTITUICAO'])
+            ? [$atuacoes_profissionais]
+            : $atuacoes_profissionais;
+
+        // Vínculos válidos que queremos capturar
+        $vinculos_validos = [
+            'Membro de corpo editorial',
+            'Revisor de periódico'
+        ];
+
+        foreach ($lista_atuacoes as $atuacao) {
+            if (!is_array($atuacao)) {
+                continue;
+            }
+
+            // Obtém o nome da instituição (periódico)
+            $nome_periodico = Arr::get($atuacao, '@attributes.NOME-INSTITUICAO', '');
+
+            // Verifica se tem VINCULOS
+            if (!isset($atuacao['VINCULOS'])) {
+                continue;
+            }
+
+            // Normaliza VINCULOS para array (pode haver múltiplos vínculos na mesma atuação)
+            $vinculos = isset($atuacao['VINCULOS']['@attributes']['SEQUENCIA-HISTORICO'])
+                ? [$atuacao['VINCULOS']]
+                : $atuacao['VINCULOS'];
+
+            foreach ($vinculos as $vinculo) {
+                if (!is_array($vinculo)) {
+                    continue;
+                }
+
+                // Verifica se o vínculo é um dos que queremos
+                $outro_vinculo = Arr::get($vinculo, '@attributes.OUTRO-VINCULO-INFORMADO', '');
+                if (!in_array($outro_vinculo, $vinculos_validos)) {
+                    continue;
+                }
+
+                // Extrai datas
+                $mes_inicio = Arr::get($vinculo, '@attributes.MES-INICIO', '');
+                $ano_inicio = (int) Arr::get($vinculo, '@attributes.ANO-INICIO', 0);
+                $mes_fim = Arr::get($vinculo, '@attributes.MES-FIM', '');
+                $ano_fim = Arr::get($vinculo, '@attributes.ANO-FIM', '');
+                $ano_fim_int = $ano_fim ? (int) $ano_fim : null;
+
+                // Filtro por ano (considerando sobreposição de períodos)
+                if ($ano_inicial !== null) {
+                    // Se tem ano_fim, verifica se é >= ano_inicial
+                    // Se não tem ano_fim (atual), sempre inclui
+                    if ($ano_fim_int !== null && $ano_fim_int < $ano_inicial) {
+                        continue;
+                    }
+                }
+                if ($ano_final !== null) {
+                    // Verifica se ano_inicio <= ano_final
+                    if ($ano_inicio > $ano_final) {
+                        continue;
+                    }
+                }
+
+                // Formata mês/ano início
+                $periodo_inicio = '';
+                if ($mes_inicio && $ano_inicio) {
+                    $periodo_inicio = str_pad($mes_inicio, 2, '0', STR_PAD_LEFT) . '/' . $ano_inicio;
+                } elseif ($ano_inicio) {
+                    $periodo_inicio = (string) $ano_inicio;
+                }
+
+                // Formata mês/ano fim
+                $periodo_fim = '';
+                if ($mes_fim && $ano_fim) {
+                    $periodo_fim = str_pad($mes_fim, 2, '0', STR_PAD_LEFT) . '/' . $ano_fim;
+                } elseif ($ano_fim) {
+                    $periodo_fim = (string) $ano_fim;
+                } else {
+                    $periodo_fim = 'atual';
+                }
+
+                // Monta o array da atuação
+                $aux = [];
+                $aux['NOME-PERIODICO'] = $nome_periodico;
+                $aux['PERIODO-INICIO'] = $periodo_inicio;
+                $aux['PERIODO-FIM'] = $periodo_fim;
+                $aux['TIPO-VINCULO'] = $outro_vinculo;
+                $aux['ANO-INICIO'] = $ano_inicio; // Para ordenação
+
+                $atuacoes[] = $aux;
+            }
+        }
+
+        if (empty($atuacoes)) {
+            return false;
+        }
+
+        // Ordena por ano de início decrescente
+        usort($atuacoes, function ($a, $b) {
+            return (int) $b['ANO-INICIO'] - (int) $a['ANO-INICIO'];
+        });
+
+        // Remove o campo auxiliar ANO-INICIO da saída final
+        foreach ($atuacoes as &$atuacao) {
+            unset($atuacao['ANO-INICIO']);
+        }
+
+        return $atuacoes;
+    }    
+    
 }
