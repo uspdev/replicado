@@ -2917,4 +2917,113 @@ class Lattes extends ReplicadoBase
         return $formacoes ?: false;
     }  
 
+    /**
+     * Recebe o número USP e devolve array com as participações em eventos
+     * 
+     * Se $ano_inicial e $ano_final forem definidos, retorna participações neste período.
+     * Se apenas $ano_inicial for definido, retorna participações a partir deste ano.
+     * Se nenhum ano for definido, retorna todas as participações.
+     *
+     * @param Integer $codpes
+     * @param Integer|null $ano_inicial
+     * @param Integer|null $ano_final
+     * @param Array $lattes_array (opt)
+     * @return Array|Bool
+     * 
+     * @author Erickson Zanon @ezanon 06/10/2026
+     */
+    protected static function _listarParticipacaoEventos($codpes, $ano_inicial = null, $ano_final = null, $lattes_array = null)
+    {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
+            return false;
+        }
+
+        if (!isset($lattes['DADOS-COMPLEMENTARES']['PARTICIPACAO-EM-EVENTOS-CONGRESSOS'])) {
+            return false;
+        }
+
+        $participacoes = [];
+        $container = $lattes['DADOS-COMPLEMENTARES']['PARTICIPACAO-EM-EVENTOS-CONGRESSOS'];
+
+        // Percorre todas as tags filhas (PARTICIPACAO-EM-CONGRESSO, PARTICIPACAO-EM-SEMINARIO,
+        // PARTICIPACAO-EM-SIMPOSIO, PARTICIPACAO-EM-OFICINA, PARTICIPACAO-EM-ENCONTRO,
+        // OUTRAS-PARTICIPACOES-EM-EVENTOS-CONGRESSOS, etc.)
+        foreach ($container as $tipo_participacao => $items) {
+            // Ignora atributos da tag pai (se vierem como chave)
+            if ($tipo_participacao === '@attributes') {
+                continue;
+            }
+
+            // Normaliza para array (tratando caso de apenas uma participação do tipo)
+            $lista_items = isset($items['@attributes']['SEQUENCIA-PRODUCAO'])
+                ? [$items]
+                : $items;
+
+            if (!is_array($lista_items)) {
+                continue;
+            }
+
+            foreach ($lista_items as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+
+                // Localiza dinamicamente as chaves DADOS-BASICOS-* e DETALHAMENTO-*
+                // (os nomes variam conforme o tipo de participação)
+                $dados_basicos_key = null;
+                $detalhe_key = null;
+                foreach ($item as $k => $v) {
+                    if (strpos($k, 'DADOS-BASICOS-') === 0) {
+                        $dados_basicos_key = $k;
+                    } elseif (strpos($k, 'DETALHAMENTO-') === 0) {
+                        $detalhe_key = $k;
+                    }
+                }
+
+                if (!$dados_basicos_key) {
+                    continue;
+                }
+
+                $ano = (int) Arr::get($item, "{$dados_basicos_key}.@attributes.ANO", 0);
+
+                // Filtro por ano
+                if ($ano_inicial !== null && $ano < $ano_inicial) {
+                    continue;
+                }
+                if ($ano_final !== null && $ano > $ano_final) {
+                    continue;
+                }
+
+                // Monta o array da participação (na ordem desejada de saída)
+                $aux = [];
+                $aux['NOME-DO-EVENTO'] = $detalhe_key
+                    ? Arr::get($item, "{$detalhe_key}.@attributes.NOME-DO-EVENTO", '')
+                    : '';
+                $aux['NOME-INSTITUICAO'] = $detalhe_key
+                    ? Arr::get($item, "{$detalhe_key}.@attributes.NOME-INSTITUICAO", '')
+                    : '';
+                $aux['CIDADE-DO-EVENTO'] = $detalhe_key
+                    ? Arr::get($item, "{$detalhe_key}.@attributes.CIDADE-DO-EVENTO", '')
+                    : '';
+                $aux['PAIS'] = Arr::get($item, "{$dados_basicos_key}.@attributes.PAIS", '');
+                $aux['ANO'] = $ano;
+                $aux['TIPO-PARTICIPACAO'] = Arr::get($item, "{$dados_basicos_key}.@attributes.TIPO-PARTICIPACAO", '');
+                $aux['TITULO'] = Arr::get($item, "{$dados_basicos_key}.@attributes.TITULO", '');
+
+                $participacoes[] = $aux;
+            }
+        }
+
+        if (empty($participacoes)) {
+            return false;
+        }
+
+        // Ordena por ano decrescente
+        usort($participacoes, function ($a, $b) {
+            return (int) $b['ANO'] - (int) $a['ANO'];
+        });
+
+        return $participacoes;
+    }
+    
 }
