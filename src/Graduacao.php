@@ -832,25 +832,12 @@ class Graduacao extends ReplicadoBase
      *
      * @author Camila Moraes de Lima, em 23/09/2026
      */
-    protected static function _listarHabilitacoesLetras($codundclg)
+    protected static function _listarHabilitacoesLetras($codundclg, $codcur)
     {
-        $query = "SELECT DISTINCT
-                    H.codhab,
-                    LTRIM(RTRIM(H.nomhab)) AS nomhab,
-                    H.perhab AS periodo
-                FROM CURSOGR C
-                INNER JOIN HABILITACAOGR H
-                    ON C.codcur = H.codcur
-                WHERE C.codclg = CONVERT(int, :codundclg)
-                    AND C.dtadtvcur IS NULL
-                    AND H.dtadtvhab IS NULL
-                    AND H.codhab IS NOT NULL
-                    AND H.nomhab IS NOT NULL
-                    AND LTRIM(RTRIM(H.nomhab)) <> ''
-                ORDER BY H.nomhab ASC";
-
+       $query = DB::getQuery('Graduacao.listarHabilitacoesLetras.sql');
         $param = [
             'codundclg' => $codundclg,
+            'codcur' => $codcur
         ];
 
         return DB::fetchAll($query, $param);
