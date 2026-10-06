@@ -2841,5 +2841,80 @@ class Lattes extends ReplicadoBase
 
         return $patentes ?: false;
     } 
+    
+    /**
+     * Recebe o número USP e devolve array com a formação complementar do pesquisador
+     *
+     * Se $ano_inicial e $ano_final forem definidos, retorna formações neste período.
+     * Se apenas $ano_inicial for definido, retorna formações a partir deste ano.
+     * Se nenhum ano for definido, retorna todas as formações.
+     *
+     * @param Integer $codpes
+     * @param Integer|null $ano_inicial
+     * @param Integer|null $ano_final
+     * @param Array $lattes_array (opt)
+     * @return Array|Bool
+     * 
+     * @author Erickson Zanon @ezanon 06/10/2026
+     */
+    protected static function _listarFormacaoComplementar($codpes, $ano_inicial = null, $ano_final = null, $lattes_array = null)
+    {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
+            return false;
+        }
+
+        if (!isset($lattes['DADOS-COMPLEMENTARES']['FORMACAO-COMPLEMENTAR'])) {
+            return false;
+        }
+
+        $formacoes = [];
+        $formacao_complementar = $lattes['DADOS-COMPLEMENTARES']['FORMACAO-COMPLEMENTAR'];
+
+        // Percorre todas as tags filhas de FORMACAO-COMPLEMENTAR
+        // (ex: FORMACAO-COMPLEMENTAR-DE-EXTENSAO-UNIVERSITARIA, OUTROS, etc.)
+        foreach ($formacao_complementar as $tipo_formacao => $formacoes_do_tipo) {
+            // Ignora atributos da tag pai (se vierem como chave)
+            if ($tipo_formacao === '@attributes') {
+                continue;
+            }
+
+            // Normaliza para array (tratando caso de apenas uma formação do tipo)
+            $lista_formacoes = isset($formacoes_do_tipo['@attributes']['SEQUENCIA-FORMACAO'])
+                ? [$formacoes_do_tipo]
+                : $formacoes_do_tipo;
+
+            foreach ($lista_formacoes as $formacao) {
+                $ano = (int) Arr::get($formacao, '@attributes.ANO-DE-CONCLUSAO', 0);
+
+                // Filtro por ano
+                if ($ano_inicial !== null && $ano < $ano_inicial) {
+                    continue;
+                }
+                if ($ano_final !== null && $ano > $ano_final) {
+                    continue;
+                }
+
+                // Monta o array da formação
+                $aux_formacao = [];
+                $aux_formacao['TIPO'] = $tipo_formacao;
+                $aux_formacao['NOME-CURSO'] = Arr::get($formacao, '@attributes.NOME-CURSO', '');
+                $aux_formacao['NOME-INSTITUICAO'] = Arr::get($formacao, '@attributes.NOME-INSTITUICAO', '');
+                $aux_formacao['ANO-DE-CONCLUSAO'] = $ano;
+                $aux_formacao['STATUS-DO-CURSO'] = Arr::get($formacao, '@attributes.STATUS-DO-CURSO', '');
+
+                $formacoes[] = $aux_formacao;
+            }
+        }
+
+        // Ordena por ano decrescente
+        usort($formacoes, function ($a, $b) {
+            if (!isset($a['ANO-DE-CONCLUSAO']) || !isset($b['ANO-DE-CONCLUSAO'])) {
+                return 0;
+            }
+            return (int) $b['ANO-DE-CONCLUSAO'] - (int) $a['ANO-DE-CONCLUSAO'];
+        });
+
+        return $formacoes ?: false;
+    }  
 
 }
