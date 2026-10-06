@@ -997,4 +997,103 @@ class Posgraduacao extends ReplicadoBase
         return DB::fetch($query, $param);
     }
 
+     /**
+     * Método para obter orientador. 
+     *
+     * @param int $codpespgm, $codare, $numseqpgm
+     * @return array|bool
+     *
+     * @author Camila Moraes 28/09/2026
+     */
+    public static function _obterOrientador(int $codpespgm, int $codare, int $numseqpgm)
+    {
+        $query = DB::getQuery('Posgraduacao.obterOrientador.sql');
+        $param = [
+            'codpespgm' => $codpespgm,
+            'codare' => $codare,
+            'numseqpgm' => $numseqpgm
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
+     /**
+     * Método para obter a banca de avaliação de defesa pós-graduação. 
+     *
+     * @param int $codpes, $codare, $numseqpgm
+     * @return array|bool
+     *
+     * @author Camila Moraes 28/09/2026
+     */
+    public static function _obterBanca(int $codpes, int $codare, int $numseqpgm)
+    {
+        $query = DB::getQuery('Posgraduacao.obterBanca.sql');
+        $param = [
+            'codpes'    => $codpes,
+            'codare'    => $codare,
+            'numseqpgm' => $numseqpgm,
+        ];
+
+        return DB::fetchAll($query, $param);
+    }
+
+    /**
+     * Método para obter o título do trabalho de pós-graduação. 
+     *
+     * @param int $codpes, $codare, $numseqpgm
+     * @return array|bool
+     *
+     * @author Camila Moraes 28/09/2026
+     */
+    public static function _obterTituloTrabalho(int $codpes, int $codare, int $numseqpgm)
+    {
+        $query = DB::getQuery('Posgraduacao.obterTituloTrabalho.sql');
+        $param = [
+            'codpes'    => $codpes,
+            'codare'    => $codare,
+            'numseqpgm' => $numseqpgm,
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
+    /**
+     * Método para obter complemento do trabalho de pós-graduação. 
+     *
+     * @param int $codpes, $dtacad
+     * @return array|bool
+     *
+     * @author Camila Moraes 28/09/2026
+     */
+    public static function _obterComplementoTrabalho(int $codpes, string $dtacad)
+    {
+        $query = DB::getQuery('Posgraduacao.obterComplementoTrabalho.sql');
+        $param = [
+            'codpes'    => $codpes,
+            'dtacad'    => $dtacad
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
+     /**
+     * Método para obter a data de depósito do trabalho de pós-graduação. 
+     *
+     * @param int $codpes, $codare, $nivpgm, $numseqpgm
+     * @return array|bool
+     *
+     * @author Camila Moraes 28/09/2026
+     */
+    public static function _obterDataDepositoTrabalho(int $codpes, int $codare, string $nivpgm, int $numseqpgm)
+    {
+        $query = DB::getQuery('Posgraduacao.obterDataDepositoTrabalho.sql');
+        $param = [
+            'codpes'    => $codpes,
+            'codare'    => $codare,
+            'nivpgm'    => $nivpgm,
+            'numseqpgm' => $numseqpgm
+        ];
+
+        return DB::fetch($query, $param);
+    }
 }
