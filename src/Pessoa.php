@@ -1283,7 +1283,31 @@ class Pessoa extends ReplicadoBase
         $param = ['codpes' => $codpes, 'codfusclgund' => $codfusclgund];
         return (bool) DB::fetchAll($query, $param);
     }
+    
+    /**
+     * Método para listar docentes ativos (não aposentados) em um determinado ano
+     *
+     * @param int $ano Ano a ser consultado (ex: 2023)
+     * @return array Lista de docentes ativos no ano
+     * 
+     * @author Erickson Zanon @ezanon 05/10/2026
+     */
+    protected static function _listarDocentesAtivosNoAno(int $ano)
+    {
+        $unidades = getenv('REPLICADO_CODUNDCLG');
+        $dtaini = $ano . '0101';
+        $dtafim = $ano . '1231';
 
+        $query = DB::getQuery('Pessoa.listarDocentesAtivosNoAno.sql');
+        $query = str_replace('__unidades__', $unidades, $query);
+
+        $param = [
+            'dtaini' => $dtaini,
+            'dtafim' => $dtafim,
+        ];
+
+        return DB::fetchAll($query, $param);
+    }   
 
     /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
