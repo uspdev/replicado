@@ -135,12 +135,21 @@ class Lattes extends ReplicadoBase
     }
 
     /**
-     * Recebe o número USP e devolve array dos prêmios e títulos com o respectivo ano de prêmiação
+     * Recebe o número USP e devolve array dos prêmios e títulos com o respectivo ano de premiação
+     *
+     * Se $ano_inicial e $ano_final forem definidos, retorna prêmios neste período.
+     * Se apenas $ano_inicial for definido, retorna prêmios a partir deste ano.
+     * Se nenhum ano for definido, retorna todos os prêmios.
      *
      * @param Integer $codpes
+     * @param Array $lattes_array (opt)
+     * @param Integer|null $ano_inicial
+     * @param Integer|null $ano_final
      * @return String|Bool
+     * 
+     * Alterada por Erickson Zanon @ezanon 05/10/2026
      */
-    protected static function _listarPremios($codpes, $lattes_array = null)
+    protected static function _listarPremios($codpes, $lattes_array = null, $ano_inicial = null, $ano_final = null)
     {
         $lattes = $lattes_array ?? self::_obterArray($codpes);
         if (!$lattes && !isset($lattes['DADOS-GERAIS'])) {
@@ -155,6 +164,16 @@ class Lattes extends ReplicadoBase
                 if (!isset($p['@attributes']['NOME-DO-PREMIO-OU-TITULO'])) {
                     return false;
                 } else {
+                    $ano = (int) $p['@attributes']['ANO-DA-PREMIACAO'];
+                    
+                    // Filtro por ano
+                    if ($ano_inicial !== null && $ano < $ano_inicial) {
+                        continue;
+                    }
+                    if ($ano_final !== null && $ano > $ano_final) {
+                        continue;
+                    }
+                    
                     array_push($nome_premios, $p['@attributes']['NOME-DO-PREMIO-OU-TITULO'] . ' - Ano: ' . $p['@attributes']['ANO-DA-PREMIACAO']);
                 }
             }
@@ -2743,4 +2762,403 @@ class Lattes extends ReplicadoBase
         }
         return false;
     }
+    
+    /**
+     * Recebe o número USP e devolve array com as patentes registradas
+     *
+     * Se $ano_inicial e $ano_final forem definidos, retorna patentes neste período.
+     * Se apenas $ano_inicial for definido, retorna patentes a partir deste ano.
+     * Se nenhum ano for definido, retorna todas as patentes.
+     *
+     * @param Integer $codpes
+     * @param Integer|null $ano_inicial
+     * @param Integer|null $ano_final
+     * @return Array|Bool
+     * 
+     * @author Erickson Zanon @ezanon 05/10/2026
+     */
+    protected static function _listarPatentes($codpes, $ano_inicial = null, $ano_final = null)
+    {
+        if (!$lattes = self::_obterArray($codpes)) {
+            return false;
+        }
+
+        if (!isset($lattes['PRODUCAO-TECNICA']['PATENTE'])) {
+            return false;
+        }
+
+        $patentes = [];
+        $aux_patentes = Arr::get($lattes, 'PRODUCAO-TECNICA.PATENTE', false);
+
+        if (!$aux_patentes) {
+            return false;
+        }
+
+        // Normaliza para array de patentes (tratando caso de apenas uma patente)
+        $lista_patentes = isset($aux_patentes['@attributes']['SEQUENCIA-PRODUCAO'])
+            ? [$aux_patentes]
+            : $aux_patentes;
+
+        foreach ($lista_patentes as $patente) {
+            $ano = (int) Arr::get($patente, 'DADOS-BASICOS-DA-PATENTE.@attributes.ANO-DESENVOLVIMENTO', 0);
+
+            // Filtro por ano
+            if ($ano_inicial !== null && $ano < $ano_inicial) {
+                continue;
+            }
+            if ($ano_final !== null && $ano > $ano_final) {
+                continue;
+            }
+
+            // Autores
+            $autores = (!isset($patente['AUTORES']) && isset($patente[3])) ? 3 : 'AUTORES';
+            $aux_autores = self::_listarAutores(Arr::get($patente, "{$autores}", []));
+
+            // Monta o array da patente
+            $aux_patente = [];
+            $aux_patente['TITULO'] = Arr::get($patente, 'DADOS-BASICOS-DA-PATENTE.@attributes.TITULO', '');
+            $aux_patente['ANO'] = $ano;
+            $aux_patente['PAIS'] = Arr::get($patente, 'DADOS-BASICOS-DA-PATENTE.@attributes.PAIS', '');
+            $aux_patente['HOMOLOGACAO'] = Arr::get($patente, 'DADOS-BASICOS-DA-PATENTE.@attributes.HOMOLOGACAO', '');
+            $aux_patente['CATEGORIA'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.CATEGORIA', '');
+            $aux_patente['FINALIDADE'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.FINALIDADE', '');
+            $aux_patente['INSTITUICAO_FINANCIADORA'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.INSTITUICAO-FINANCIADORA', '');
+            $aux_patente['NUMERO_REGISTRO'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.NUMERO-REGISTRO-PATENTE', '');
+            $aux_patente['DATA_CONCESSAO'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.DATA-CONCESSAO', '');
+            $aux_patente['DATA_PEDIDO_DEPOSITO'] = Arr::get($patente, 'DETALHAMENTO-DA-PATENTE.@attributes.DATA-PEDIDO-DE-DEPOSITO', '');
+            $aux_patente['AUTORES'] = $aux_autores;
+
+            $patentes[] = $aux_patente;
+        }
+
+        // Ordena por ano decrescente
+        usort($patentes, function ($a, $b) {
+            if (!isset($a['ANO']) || !isset($b['ANO'])) {
+                return 0;
+            }
+            return (int) $b['ANO'] - (int) $a['ANO'];
+        });
+
+        return $patentes ?: false;
+    } 
+    
+    /**
+     * Recebe o número USP e devolve array com a formação complementar do pesquisador
+     *
+     * Se $ano_inicial e $ano_final forem definidos, retorna formações neste período.
+     * Se apenas $ano_inicial for definido, retorna formações a partir deste ano.
+     * Se nenhum ano for definido, retorna todas as formações.
+     *
+     * @param Integer $codpes
+     * @param Integer|null $ano_inicial
+     * @param Integer|null $ano_final
+     * @param Array $lattes_array (opt)
+     * @return Array|Bool
+     * 
+     * @author Erickson Zanon @ezanon 06/10/2026
+     */
+    protected static function _listarFormacaoComplementar($codpes, $ano_inicial = null, $ano_final = null, $lattes_array = null)
+    {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
+            return false;
+        }
+
+        if (!isset($lattes['DADOS-COMPLEMENTARES']['FORMACAO-COMPLEMENTAR'])) {
+            return false;
+        }
+
+        $formacoes = [];
+        $formacao_complementar = $lattes['DADOS-COMPLEMENTARES']['FORMACAO-COMPLEMENTAR'];
+
+        // Percorre todas as tags filhas de FORMACAO-COMPLEMENTAR
+        // (ex: FORMACAO-COMPLEMENTAR-DE-EXTENSAO-UNIVERSITARIA, OUTROS, etc.)
+        foreach ($formacao_complementar as $tipo_formacao => $formacoes_do_tipo) {
+            // Ignora atributos da tag pai (se vierem como chave)
+            if ($tipo_formacao === '@attributes') {
+                continue;
+            }
+
+            // Normaliza para array (tratando caso de apenas uma formação do tipo)
+            $lista_formacoes = isset($formacoes_do_tipo['@attributes']['SEQUENCIA-FORMACAO'])
+                ? [$formacoes_do_tipo]
+                : $formacoes_do_tipo;
+
+            foreach ($lista_formacoes as $formacao) {
+                $ano = (int) Arr::get($formacao, '@attributes.ANO-DE-CONCLUSAO', 0);
+
+                // Filtro por ano
+                if ($ano_inicial !== null && $ano < $ano_inicial) {
+                    continue;
+                }
+                if ($ano_final !== null && $ano > $ano_final) {
+                    continue;
+                }
+
+                // Monta o array da formação
+                $aux_formacao = [];
+                $aux_formacao['TIPO'] = $tipo_formacao;
+                $aux_formacao['NOME-CURSO'] = Arr::get($formacao, '@attributes.NOME-CURSO', '');
+                $aux_formacao['NOME-INSTITUICAO'] = Arr::get($formacao, '@attributes.NOME-INSTITUICAO', '');
+                $aux_formacao['ANO-DE-CONCLUSAO'] = $ano;
+                $aux_formacao['STATUS-DO-CURSO'] = Arr::get($formacao, '@attributes.STATUS-DO-CURSO', '');
+
+                $formacoes[] = $aux_formacao;
+            }
+        }
+
+        // Ordena por ano decrescente
+        usort($formacoes, function ($a, $b) {
+            if (!isset($a['ANO-DE-CONCLUSAO']) || !isset($b['ANO-DE-CONCLUSAO'])) {
+                return 0;
+            }
+            return (int) $b['ANO-DE-CONCLUSAO'] - (int) $a['ANO-DE-CONCLUSAO'];
+        });
+
+        return $formacoes ?: false;
+    }  
+
+    /**
+     * Recebe o número USP e devolve array com as participações em eventos
+     * 
+     * Se $ano_inicial e $ano_final forem definidos, retorna participações neste período.
+     * Se apenas $ano_inicial for definido, retorna participações a partir deste ano.
+     * Se nenhum ano for definido, retorna todas as participações.
+     *
+     * @param Integer $codpes
+     * @param Integer|null $ano_inicial
+     * @param Integer|null $ano_final
+     * @param Array $lattes_array (opt)
+     * @return Array|Bool
+     * 
+     * @author Erickson Zanon @ezanon 06/10/2026
+     */
+    protected static function _listarParticipacaoEventos($codpes, $ano_inicial = null, $ano_final = null, $lattes_array = null)
+    {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
+            return false;
+        }
+
+        if (!isset($lattes['DADOS-COMPLEMENTARES']['PARTICIPACAO-EM-EVENTOS-CONGRESSOS'])) {
+            return false;
+        }
+
+        $participacoes = [];
+        $container = $lattes['DADOS-COMPLEMENTARES']['PARTICIPACAO-EM-EVENTOS-CONGRESSOS'];
+
+        // Percorre todas as tags filhas (PARTICIPACAO-EM-CONGRESSO, PARTICIPACAO-EM-SEMINARIO,
+        // PARTICIPACAO-EM-SIMPOSIO, PARTICIPACAO-EM-OFICINA, PARTICIPACAO-EM-ENCONTRO,
+        // OUTRAS-PARTICIPACOES-EM-EVENTOS-CONGRESSOS, etc.)
+        foreach ($container as $tipo_participacao => $items) {
+            // Ignora atributos da tag pai (se vierem como chave)
+            if ($tipo_participacao === '@attributes') {
+                continue;
+            }
+
+            // Normaliza para array (tratando caso de apenas uma participação do tipo)
+            $lista_items = isset($items['@attributes']['SEQUENCIA-PRODUCAO'])
+                ? [$items]
+                : $items;
+
+            if (!is_array($lista_items)) {
+                continue;
+            }
+
+            foreach ($lista_items as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+
+                // Localiza dinamicamente as chaves DADOS-BASICOS-* e DETALHAMENTO-*
+                // (os nomes variam conforme o tipo de participação)
+                $dados_basicos_key = null;
+                $detalhe_key = null;
+                foreach ($item as $k => $v) {
+                    if (strpos($k, 'DADOS-BASICOS-') === 0) {
+                        $dados_basicos_key = $k;
+                    } elseif (strpos($k, 'DETALHAMENTO-') === 0) {
+                        $detalhe_key = $k;
+                    }
+                }
+
+                if (!$dados_basicos_key) {
+                    continue;
+                }
+
+                $ano = (int) Arr::get($item, "{$dados_basicos_key}.@attributes.ANO", 0);
+
+                // Filtro por ano
+                if ($ano_inicial !== null && $ano < $ano_inicial) {
+                    continue;
+                }
+                if ($ano_final !== null && $ano > $ano_final) {
+                    continue;
+                }
+
+                // Monta o array da participação (na ordem desejada de saída)
+                $aux = [];
+                $aux['NOME-DO-EVENTO'] = $detalhe_key
+                    ? Arr::get($item, "{$detalhe_key}.@attributes.NOME-DO-EVENTO", '')
+                    : '';
+                $aux['NOME-INSTITUICAO'] = $detalhe_key
+                    ? Arr::get($item, "{$detalhe_key}.@attributes.NOME-INSTITUICAO", '')
+                    : '';
+                $aux['CIDADE-DO-EVENTO'] = $detalhe_key
+                    ? Arr::get($item, "{$detalhe_key}.@attributes.CIDADE-DO-EVENTO", '')
+                    : '';
+                $aux['PAIS'] = Arr::get($item, "{$dados_basicos_key}.@attributes.PAIS", '');
+                $aux['ANO'] = $ano;
+                $aux['TIPO-PARTICIPACAO'] = Arr::get($item, "{$dados_basicos_key}.@attributes.TIPO-PARTICIPACAO", '');
+                $aux['TITULO'] = Arr::get($item, "{$dados_basicos_key}.@attributes.TITULO", '');
+
+                $participacoes[] = $aux;
+            }
+        }
+
+        if (empty($participacoes)) {
+            return false;
+        }
+
+        // Ordena por ano decrescente
+        usort($participacoes, function ($a, $b) {
+            return (int) $b['ANO'] - (int) $a['ANO'];
+        });
+
+        return $participacoes;
+    }
+    
+    /**
+     * Recebe o número USP e devolve array com as atuações em corpos editoriais
+     *
+     * Se $ano_inicial e $ano_final forem definidos, retorna atuações que tenham
+     * sobreposição com este período. Se apenas $ano_inicial for definido, retorna
+     * atuações a partir deste ano. Se nenhum ano for definido, retorna todas as atuações.
+     *
+     * @param Integer $codpes
+     * @param Integer|null $ano_inicial
+     * @param Integer|null $ano_final
+     * @param Array $lattes_array (opt)
+     * @return Array|Bool
+     */
+    protected static function _listarAtuacaoEmCorposEditoriais($codpes, $ano_inicial = null, $ano_final = null, $lattes_array = null)
+    {
+        if (!$lattes = $lattes_array ?? self::_obterArray($codpes)) {
+            return false;
+        }
+
+        if (!isset($lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'])) {
+            return false;
+        }
+
+        $atuacoes = [];
+        $atuacoes_profissionais = $lattes['DADOS-GERAIS']['ATUACOES-PROFISSIONAIS']['ATUACAO-PROFISSIONAL'];
+
+        // Normaliza para array (tratando caso de apenas uma atuação profissional)
+        $lista_atuacoes = isset($atuacoes_profissionais['@attributes']['CODIGO-INSTITUICAO'])
+            ? [$atuacoes_profissionais]
+            : $atuacoes_profissionais;
+
+        // Vínculos válidos que queremos capturar
+        $vinculos_validos = [
+            'Membro de corpo editorial',
+            'Revisor de periódico'
+        ];
+
+        foreach ($lista_atuacoes as $atuacao) {
+            if (!is_array($atuacao)) {
+                continue;
+            }
+
+            // Obtém o nome da instituição (periódico)
+            $nome_periodico = Arr::get($atuacao, '@attributes.NOME-INSTITUICAO', '');
+
+            // Verifica se tem VINCULOS
+            if (!isset($atuacao['VINCULOS'])) {
+                continue;
+            }
+
+            // Normaliza VINCULOS para array (pode haver múltiplos vínculos na mesma atuação)
+            $vinculos = isset($atuacao['VINCULOS']['@attributes']['SEQUENCIA-HISTORICO'])
+                ? [$atuacao['VINCULOS']]
+                : $atuacao['VINCULOS'];
+
+            foreach ($vinculos as $vinculo) {
+                if (!is_array($vinculo)) {
+                    continue;
+                }
+
+                // Verifica se o vínculo é um dos que queremos
+                $outro_vinculo = Arr::get($vinculo, '@attributes.OUTRO-VINCULO-INFORMADO', '');
+                if (!in_array($outro_vinculo, $vinculos_validos)) {
+                    continue;
+                }
+
+                // Extrai datas
+                $mes_inicio = Arr::get($vinculo, '@attributes.MES-INICIO', '');
+                $ano_inicio = (int) Arr::get($vinculo, '@attributes.ANO-INICIO', 0);
+                $mes_fim = Arr::get($vinculo, '@attributes.MES-FIM', '');
+                $ano_fim = Arr::get($vinculo, '@attributes.ANO-FIM', '');
+                $ano_fim_int = $ano_fim ? (int) $ano_fim : null;
+
+                // Filtro por ano (considerando sobreposição de períodos)
+                if ($ano_inicial !== null) {
+                    // Se tem ano_fim, verifica se é >= ano_inicial
+                    // Se não tem ano_fim (atual), sempre inclui
+                    if ($ano_fim_int !== null && $ano_fim_int < $ano_inicial) {
+                        continue;
+                    }
+                }
+                if ($ano_final !== null) {
+                    // Verifica se ano_inicio <= ano_final
+                    if ($ano_inicio > $ano_final) {
+                        continue;
+                    }
+                }
+
+                // Formata mês/ano início
+                $periodo_inicio = '';
+                if ($mes_inicio && $ano_inicio) {
+                    $periodo_inicio = str_pad($mes_inicio, 2, '0', STR_PAD_LEFT) . '/' . $ano_inicio;
+                } elseif ($ano_inicio) {
+                    $periodo_inicio = (string) $ano_inicio;
+                }
+
+                // Formata mês/ano fim
+                $periodo_fim = '';
+                if ($mes_fim && $ano_fim) {
+                    $periodo_fim = str_pad($mes_fim, 2, '0', STR_PAD_LEFT) . '/' . $ano_fim;
+                } elseif ($ano_fim) {
+                    $periodo_fim = (string) $ano_fim;
+                } else {
+                    $periodo_fim = 'atual';
+                }
+
+                // Monta o array da atuação
+                $aux = [];
+                $aux['NOME-PERIODICO'] = $nome_periodico;
+                $aux['PERIODO-INICIO'] = $periodo_inicio;
+                $aux['PERIODO-FIM'] = $periodo_fim;
+                $aux['TIPO-VINCULO'] = $outro_vinculo;
+                $aux['ANO-INICIO'] = $ano_inicio; // Para ordenação
+
+                $atuacoes[] = $aux;
+            }
+        }
+
+        if (empty($atuacoes)) {
+            return false;
+        }
+
+        // Ordena por ano de início decrescente
+        usort($atuacoes, function ($a, $b) {
+            return (int) $b['ANO-INICIO'] - (int) $a['ANO-INICIO'];
+        });
+
+        // Remove o campo auxiliar ANO-INICIO da saída final
+        foreach ($atuacoes as &$atuacao) {
+            unset($atuacao['ANO-INICIO']);
+        }
+
+        return $atuacoes;
+    }    
+    
 }
