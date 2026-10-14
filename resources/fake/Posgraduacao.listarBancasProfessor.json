@@ -1,0 +1,27 @@
+[
+    {
+        "codpesdct": "111222",
+        "codpes": "2221212",
+        "codare": "1.111",
+        "numseqpgm": "1"
+    },
+    {
+        "codpesdct": "111222",
+        "codpes": "332212",
+        "codare": "1.222",
+        "numseqpgm": "1"
+    },
+    {
+        "codpesdct": "111222",
+        "codpes": "4441212",
+        "codare": "1.111",
+        "numseqpgm": "2"
+    },
+    {
+        "codpesdct": "111222",
+        "codpes": "5551212",
+        "codare": "1.222",
+        "numseqpgm": "3"
+    }
+
+]
