@@ -1,0 +1,42 @@
+[
+  {
+    "codeqv": 111111,
+    "coddis": "LAB6764",
+    "verdis": 1,
+    "tipobg": "O",
+    "coddis_eq": "LAB0110",
+    "verdis_eq": 9
+  },
+  {
+    "codeqv": 111987,
+    "coddis": "LAB7780",
+    "verdis": 2,
+    "tipobg": "O",
+    "coddis_eq": "LAB0110",
+    "verdis_eq": 8
+  },
+  {
+    "codeqv": 111876,
+    "coddis": "LAB6777",
+    "verdis": 3,
+    "tipobg": "O",
+    "coddis_eq": "LAC0100",
+    "verdis_eq": 7
+  },
+  {
+    "codeqv": 111765,
+    "coddis": "LAB2324",
+    "verdis": 4,
+    "tipobg": "O",
+    "coddis_eq": "LAC0150",
+    "verdis_eq": 6
+  },
+  {
+    "codeqv": 111654,
+    "coddis": "LAB2671",
+    "verdis": 5,
+    "tipobg": "O",
+    "coddis_eq": "LAC0153",
+    "verdis_eq": 5
+  }
+]

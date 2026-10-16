@@ -1,0 +1,38 @@
+[
+    {
+        "nompes":"Luciane Riccci de Malta",
+        "codtur":"1998771",
+        "tiptur":"Teórica",
+        "coddis":"MAT0881",
+        "nomdis":"Medicina de Animais Tropicais II",
+        "verdis":"6",
+        "rstfim":"A"
+    },
+    {
+        "nompes":"Leandro Acosta",
+        "codtur":"1998761",
+        "tiptur":"Teórica",
+        "coddis":"MAV0114",
+        "nomdis":"Medicina de Animais Venenosos I",
+        "verdis":"6",
+        "rstfim":"A"
+    },
+    {
+        "nompes":"Flávia Mendes Cattaneo",
+        "codtur":"1998712",
+        "tiptur":"Teórica",
+        "coddis":"MAA877",
+        "nomdis":"Medicina de Animais Aquáticos II",
+        "verdis":"6",
+        "rstfim":"A"
+    },
+    {
+        "nompes":"Giorgia Moura da Conceição",
+        "codtur":"1998733",
+        "tiptur":"Prática",
+        "coddis":"MAC0233",
+        "nomdis":"Medicina de Animais com Casco I",
+        "verdis":"9",
+        "rstfim":"A"
+    }
+]
