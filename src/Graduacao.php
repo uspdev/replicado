@@ -361,14 +361,20 @@ class Graduacao extends ReplicadoBase
         $query = "SELECT G.codeqv, G.coddis, G.verdis, GC.tipobg, E.coddis as coddis_eq, E.verdis as verdis_eq ";
         $query .= " FROM GRUPOEQUIVGR G INNER JOIN EQUIVALENCIAGR E ON (G.codeqv = E.codeqv) ";
         $query .= " INNER JOIN GRADECURRICULAR GC ON (GC.coddis = G.coddis AND GC.verdis = G.verdis AND G.codcrl = GC.codcrl)";
-        $query .= " WHERE G.codcrl IN (SELECT TOP 1 codcrl";
-        $query .= " FROM CURRICULOGR";
-        $query .= " WHERE codcur = :codcur AND codhab = convert(int, :codhab)";
-        $query .= " ORDER BY dtainicrl DESC)";
+        $query .= " WHERE G.codcrl IN (";
+        $query .= " SELECT C.codcrl FROM CURRICULOGR C";
+        $query .= " WHERE C.codcur = CONVERT(int, :codcur)";
+        $query .= " AND C.codhab = CONVERT(smallint, :codhab)";
+        $query .= " AND C.dtainicrl = (";
+        $query .= " SELECT MAX(C2.dtainicrl) FROM CURRICULOGR C2";
+        $query .= " WHERE C2.codcur = C.codcur AND C2.codhab = C.codhab";
+        $query .= " ))";
+
         $param = [
             'codcur' => $codcur,
             'codhab' => $codhab,
         ];
+
         return DB::fetchAll($query, $param);
     }
 
