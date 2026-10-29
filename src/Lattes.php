@@ -2899,6 +2899,7 @@ class Lattes extends ReplicadoBase
                 $aux_formacao['TIPO'] = $tipo_formacao;
                 $aux_formacao['NOME-CURSO'] = Arr::get($formacao, '@attributes.NOME-CURSO', '');
                 $aux_formacao['NOME-INSTITUICAO'] = Arr::get($formacao, '@attributes.NOME-INSTITUICAO', '');
+                $aux_formacao['CARGA-HORARIA'] = Arr::get($formacao, '@attributes.CARGA-HORARIA', ''); 
                 $aux_formacao['ANO-DE-CONCLUSAO'] = $ano;
                 $aux_formacao['STATUS-DO-CURSO'] = Arr::get($formacao, '@attributes.STATUS-DO-CURSO', '');
 
