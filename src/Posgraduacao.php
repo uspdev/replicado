@@ -964,7 +964,7 @@ class Posgraduacao extends ReplicadoBase
 
         return DB::fetchAll($query);
     }
-    
+
     /**
      * Método para obter os dados do programa de Pós-Graduação de um aluno ativo.
      *
@@ -972,11 +972,15 @@ class Posgraduacao extends ReplicadoBase
      * @return array|bool
      *
      * @author Camila Moraes 25/09/2026
+     * @author Ricardo Fontoura, modificado em 06/10/2026
      */
-    public static function _getAlunoPos(int $codpes)
+    public static function _obterAlunoPos(int $codpes, int $codundclg)
     {
-        $query = DB::getQuery('Posgraduacao.getAlunoPos.sql');
-        $param = ['codpes' => $codpes];
+        $query = DB::getQuery('Posgraduacao.obterAlunoPos.sql');
+        $param = [
+            'codpes' => $codpes,
+            'codundclg' => $codundclg
+        ];
 
         return DB::fetch($query, $param);
     }
@@ -998,7 +1002,7 @@ class Posgraduacao extends ReplicadoBase
     }
 
      /**
-     * Método para obter orientador. 
+     * Método para obter orientador.
      *
      * @param int $codpespgm, $codare, $numseqpgm
      * @return array|bool
@@ -1018,16 +1022,16 @@ class Posgraduacao extends ReplicadoBase
     }
 
      /**
-     * Método para obter a banca de avaliação de defesa pós-graduação. 
+     * Método para obter a banca de avaliação de defesa pós-graduação.
      *
      * @param int $codpes, $codare, $numseqpgm
      * @return array|bool
      *
      * @author Camila Moraes 28/09/2026
      */
-    public static function _obterBanca(int $codpes, int $codare, int $numseqpgm)
+    public static function _listarBanca(int $codpes, int $codare, int $numseqpgm)
     {
-        $query = DB::getQuery('Posgraduacao.obterBanca.sql');
+        $query = DB::getQuery('Posgraduacao.listarBanca.sql');
         $param = [
             'codpes'    => $codpes,
             'codare'    => $codare,
@@ -1038,7 +1042,7 @@ class Posgraduacao extends ReplicadoBase
     }
 
     /**
-     * Método para obter o título do trabalho de pós-graduação. 
+     * Método para obter o título do trabalho de pós-graduação.
      *
      * @param int $codpes, $codare, $numseqpgm
      * @return array|bool
@@ -1058,7 +1062,7 @@ class Posgraduacao extends ReplicadoBase
     }
 
     /**
-     * Método para obter complemento do trabalho de pós-graduação. 
+     * Método para obter complemento do trabalho de pós-graduação.
      *
      * @param int $codpes, $dtacad
      * @return array|bool
@@ -1077,7 +1081,7 @@ class Posgraduacao extends ReplicadoBase
     }
 
      /**
-     * Método para obter a data de depósito do trabalho de pós-graduação. 
+     * Método para obter a data de depósito do trabalho de pós-graduação.
      *
      * @param int $codpes, $codare, $nivpgm, $numseqpgm
      * @return array|bool
@@ -1096,4 +1100,117 @@ class Posgraduacao extends ReplicadoBase
 
         return DB::fetch($query, $param);
     }
+
+     /**
+     * Método para obter o vinculo docente de pós-graduação.
+     *
+     * @param int $codpes
+     * @return array|bool
+     *
+     * @author Ricardo Fontoura 06/10/2026
+     */
+    public static function _obterVinculoDocente(int $codpes)
+    {
+        $query = DB::getQuery('Posgraduacao.obterVinculoDocente.sql');
+        $param = [
+            'codpes' => $codpes
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
+     /**
+     * Método para obter o setor da pessoa pelo vínculo.
+     *
+     * @param int $codpes
+     * @param string $tipvin
+     * @return array|bool
+     *
+     * @author Ricardo Fontoura 07/10/2026
+     */
+    public static function _obterNomeSetor(int $codpes, string $tipvin)
+    {
+        $query = DB::getQuery('Posgraduacao.obterNomeSetor.sql');
+        $param = [
+            'codpes' => $codpes,
+            'tipvin' => $tipvin
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
+     /**
+     * Método para obter a organização do Docente
+     *
+     * @param int $codpes
+     * @return array|bool
+     *
+     * @author Ricardo Fontoura 07/10/2026
+     */
+    public static function _obterOrganizacaoDocente(int $codpes)
+    {
+        $query = DB::getQuery('Posgraduacao.obterOrganizacaoDocente.sql');
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
+     /**
+     * Método para obter o nome do Coordenador(a) da área de Pós
+     *
+     * @param int $codare
+     * @param int $codundclg
+     * @return array|bool
+     *
+     * @author Ricardo Fontoura 07/10/2026
+     */
+    public static function _obterCoordenadorArea(int $codare, int $codundclg)
+    {
+        $query = DB::getQuery('Posgraduacao.obterCoordenadorArea.sql');
+        $param = [
+            'codare' => $codare,
+            'codundclg' => $codundclg
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
+     /**
+     * Método para listar as áreas da Pós
+     *
+     * @param int $codundclg
+     * @return array|bool
+     *
+     * @author Ricardo Fontoura 09/10/2026
+     */
+    public static function _listarAreas(int $codundclgi)
+    {
+        $query = DB::getQuery('Posgraduacao.listarAreas.sql');
+        $param = [
+            'codundclgi' => $codundclgi
+        ];
+
+        return DB::fetchAll($query, $param);
+    }
+
+     /**
+     * Método para listar bancas que o docente participou.
+     *
+     * @param int $codpesdct
+     * @return array|bool
+     *
+     * @author Ricardo Fontoura 13/10/2026
+     */
+    public static function _listarBancasProfessor(int $codpesdct)
+    {
+        $query = DB::getQuery('Posgraduacao.listarBancasProfessor.sql');
+        $param = [
+            'codpesdct' => $codpesdct
+        ];
+
+        return DB::fetchAll($query, $param);
+    }
+
 }

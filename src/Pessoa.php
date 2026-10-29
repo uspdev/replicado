@@ -1270,7 +1270,7 @@ class Pessoa extends ReplicadoBase
      */
     protected static function _verificarServidorDocente(int $codpes)
     {
-        $codfusclgund = getenv('REPLICADO_CODUNDCLG');     
+        $codfusclgund = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.verificarServidorDocente.sql');
         $param = ['codpes' => $codpes, 'codfusclgund' => $codfusclgund];
         return (bool) DB::fetchAll($query, $param);
@@ -1318,6 +1318,58 @@ class Pessoa extends ReplicadoBase
 
         return DB::fetchAll($query, $param);
     }   
+
+    /**
+     * Método que recebe codpes e retorna número do Pis.
+     *
+     * @param int $codpes
+     * @return Array
+     * @author Ricardo Fontoura, em 08/10/2026
+     */
+    protected static function _obterNumeroPis(int $codpes)
+    {
+        $query = DB::getQuery('Pessoa.obterNumeroPis.sql');
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
+    /**
+     * Método que recebe codpes e retorna número do Pis.
+     *
+     * @param array $codpes
+     * @return Array
+     * @author Ricardo Fontoura, em 08/10/2026
+     */
+    protected static function _listarEmails(array $codpes)
+    {
+        $query = DB::getQuery('Pessoa.listarEmails.sql');
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
+    /**
+     * Método que recebe parte do codpes ou nome retorna a pessoa.
+     *
+     * @param string $busca
+     * @return Array
+     * @author Ricardo Fontoura, em 09/10/2026
+     */
+    protected static function _listarPorCodigoOuNome(string $busca)
+    {
+        $query = DB::getQuery('Pessoa.listarPorCodigoOuNome.sql');
+        $param = [
+            'codpes' => '%' . $busca . '%',
+            'nome' => '%' . $busca . '%',
+        ];
+
+        return DB::fetchAll($query, $param);
+    }
 
     /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 

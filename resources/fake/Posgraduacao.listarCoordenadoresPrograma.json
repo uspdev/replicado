@@ -2,17 +2,17 @@
     {
         "codcur": 111111,
         "codpes": 718392,
-        "nompes": "Helena Sofia Montenegro Yamada",
+        "nompes": "helena sofia montenegro yamada",
         "dtainifnc": "2025-01-01 00:00:00",
         "dtafimfnc": "2027-12-31 00:00:00",
-        "fncpescur": "COO"
+        "fncpescur": "coo"
     },
     {
         "codcur": 36245,
         "codpes": 846157,
-        "nompes": "Dmitri Caetano Benítez Azevedo",
+        "nompes": "dmitri caetano benítez azevedo",
         "dtainifnc": "2025-01-01 00:00:00",
         "dtafimfnc": "2027-12-31 00:00:00",
-        "fncpescur": "VCO"
+        "fncpescur": "vco"
     }
 ]
