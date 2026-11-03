@@ -198,7 +198,8 @@ class Pessoa extends ReplicadoBase
     /**
      * Método para buscar pessoas por parte do código ou do nome
      *
-     * A busca é fonética, somente ativos ou todos
+     * A busca pode ser por código USP, por nome fonético ou por parte do nome completo,
+     * somente entre pessoas ativas ou em toda a tabela
      * O método foi ajustado para compatibilizar com procuraPorNome() e dump()
      *
      * 9/3/2022 Revertido em parte para o método original, mas mantendo fonético
@@ -208,24 +209,33 @@ class Pessoa extends ReplicadoBase
      * @return Array
      * @author André Canale Garcia <acgarcia@sc.sp.br> // Adaptação do método procurarPorNome
      * @author Masaki K Neto, modificado em 1/2/2022
+     * @author Lucas D Lopes, modificado em 28/10/2026
      */
     protected static function _procurarPorCodigoOuNome(string $busca, bool $ativos = true)
     {
         if ($ativos) {
             # se ativos vamos fazer join com LOCALIZAPESSOA
             $query = "SELECT DISTINCT P.* FROM PESSOA P, LOCALIZAPESSOA L
-                WHERE (CAST(P.codpes AS NVARCHAR) LIKE :codpes OR P.nompesfon LIKE :nome)
+                WHERE (CAST(P.codpes AS NVARCHAR) LIKE :codpes OR P.nompesfon LIKE :nome
+                    OR UPPER(P.nompesttd) LIKE UPPER(:nomeCompleto))
                 AND L.codpes = P.codpes
                 ORDER BY P.nompes ASC";
         } else {
             $query = "SELECT DISTINCT P.* FROM PESSOA P
-                WHERE (CAST(P.codpes AS NVARCHAR) LIKE :codpes OR P.nompesfon LIKE :nome)
+                WHERE (CAST(P.codpes AS NVARCHAR) LIKE :codpes OR P.nompesfon LIKE :nome
+                    OR UPPER(P.nompesttd) LIKE UPPER(:nomeCompleto))
                 ORDER BY P.nompes ASC";
         }
+
+        // Repete a normalização textual de _procurarPorNome(..., false): curinga para acentos e espaços entre palavras.
+        $nomeCompleto = trim($busca);
+        $nomeCompleto = Uteis::substituiAcentosParaSql($nomeCompleto);
+        $nomeCompleto = str_replace(' ', '%', $nomeCompleto);
 
         $param = [
             'codpes' => '%' . $busca . '%',
             'nome' => '%' . Uteis::fonetico($busca) . '%',
+            'nomeCompleto' => '%' . $nomeCompleto . '%',
         ];
         return DB::fetchAll($query, $param);
     }
