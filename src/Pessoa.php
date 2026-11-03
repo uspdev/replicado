@@ -1293,13 +1293,13 @@ class Pessoa extends ReplicadoBase
         $param = ['codpes' => $codpes, 'codfusclgund' => $codfusclgund];
         return (bool) DB::fetchAll($query, $param);
     }
-    
+
     /**
      * Método para listar docentes ativos (não aposentados) em um determinado ano
      *
      * @param int $ano Ano a ser consultado (ex: 2023)
      * @return array Lista de docentes ativos no ano
-     * 
+     *
      * @author Erickson Zanon @ezanon 05/10/2026
      */
     protected static function _listarDocentesAtivosNoAno(int $ano)
@@ -1317,7 +1317,7 @@ class Pessoa extends ReplicadoBase
         ];
 
         return DB::fetchAll($query, $param);
-    }   
+    }
 
     /**
      * Método que recebe codpes e retorna número do Pis.
@@ -1339,18 +1339,16 @@ class Pessoa extends ReplicadoBase
     /**
      * Método que recebe codpes e retorna número do Pis.
      *
-     * @param array $codpes
+     * @param array|int $codpes
      * @return Array
      * @author Ricardo Fontoura, em 08/10/2026
      */
-    protected static function _listarEmails(array $codpes)
+    protected static function _listarEmails(array|int $codpes)
     {
-        $query = DB::getQuery('Pessoa.listarEmails.sql');
-        $param = [
-            'codpes' => $codpes,
-        ];
+        $replaces['codpes'] = is_array($codpes) ? implode(',', $codpes) : $codpes;
+        $query = DB::getQuery('Pessoa.listarEmails.sql', $replaces);
 
-        return DB::fetch($query, $param);
+        return DB::fetchAll($query);
     }
 
     /**
