@@ -198,7 +198,8 @@ class Pessoa extends ReplicadoBase
     /**
      * Método para buscar pessoas por parte do código ou do nome
      *
-     * A busca é fonética, somente ativos ou todos
+     * A busca pode ser por código USP, por nome fonético ou por parte do nome completo,
+     * somente entre pessoas ativas ou em toda a tabela
      * O método foi ajustado para compatibilizar com procuraPorNome() e dump()
      *
      * 9/3/2022 Revertido em parte para o método original, mas mantendo fonético
@@ -208,24 +209,33 @@ class Pessoa extends ReplicadoBase
      * @return Array
      * @author André Canale Garcia <acgarcia@sc.sp.br> // Adaptação do método procurarPorNome
      * @author Masaki K Neto, modificado em 1/2/2022
+     * @author Lucas D Lopes, modificado em 28/10/2026
      */
     protected static function _procurarPorCodigoOuNome(string $busca, bool $ativos = true)
     {
         if ($ativos) {
             # se ativos vamos fazer join com LOCALIZAPESSOA
             $query = "SELECT DISTINCT P.* FROM PESSOA P, LOCALIZAPESSOA L
-                WHERE (CAST(P.codpes AS NVARCHAR) LIKE :codpes OR P.nompesfon LIKE :nome)
+                WHERE (CAST(P.codpes AS NVARCHAR) LIKE :codpes OR P.nompesfon LIKE :nome
+                    OR UPPER(P.nompesttd) LIKE UPPER(:nomeCompleto))
                 AND L.codpes = P.codpes
                 ORDER BY P.nompes ASC";
         } else {
             $query = "SELECT DISTINCT P.* FROM PESSOA P
-                WHERE (CAST(P.codpes AS NVARCHAR) LIKE :codpes OR P.nompesfon LIKE :nome)
+                WHERE (CAST(P.codpes AS NVARCHAR) LIKE :codpes OR P.nompesfon LIKE :nome
+                    OR UPPER(P.nompesttd) LIKE UPPER(:nomeCompleto))
                 ORDER BY P.nompes ASC";
         }
+
+        // Repete a normalização textual de _procurarPorNome(..., false): curinga para acentos e espaços entre palavras.
+        $nomeCompleto = trim($busca);
+        $nomeCompleto = Uteis::substituiAcentosParaSql($nomeCompleto);
+        $nomeCompleto = str_replace(' ', '%', $nomeCompleto);
 
         $param = [
             'codpes' => '%' . $busca . '%',
             'nome' => '%' . Uteis::fonetico($busca) . '%',
+            'nomeCompleto' => '%' . $nomeCompleto . '%',
         ];
         return DB::fetchAll($query, $param);
     }
@@ -1321,9 +1331,59 @@ class Pessoa extends ReplicadoBase
     public static function _listarVinculosEncerrados(int $codpes)
     {
         $query = DB::getQuery('Pessoa.listarVinculosEncerrados.sql');
-
         $param = [
             'codpes' => $codpes
+        ];
+
+        return DB::fetchAll($query, $param);
+
+    }
+
+    /**
+     * Método que recebe codpes e retorna número do Pis.
+     *
+     * @param int $codpes
+     * @return Array
+     * @author Ricardo Fontoura, em 08/10/2026
+     */
+    protected static function _obterNumeroPis(int $codpes)
+    {
+        $query = DB::getQuery('Pessoa.obterNumeroPis.sql');
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
+    /**
+     * Método que recebe codpes e retorna email.
+     *
+     * @param array|int $codpes
+     * @return Array
+     * @author Ricardo Fontoura, em 08/10/2026
+     */
+    protected static function _listarEmails(array|int $codpes)
+    {
+        $replaces['codpes'] = is_array($codpes) ? implode(',', $codpes) : $codpes;
+        $query = DB::getQuery('Pessoa.listarEmails.sql', $replaces);
+
+        return DB::fetchAll($query);
+    }
+
+    /**
+     * Método que recebe parte do codpes ou nome retorna a pessoa.
+     *
+     * @param string $busca
+     * @return Array
+     * @author Ricardo Fontoura, em 09/10/2026
+     */
+    protected static function _listarPorCodigoOuNome(string $busca)
+    {
+        $query = DB::getQuery('Pessoa.listarPorCodigoOuNome.sql');
+        $param = [
+            'codpes' => '%' . $busca . '%',
+            'nome' => '%' . $busca . '%',
         ];
 
         return DB::fetchAll($query, $param);
