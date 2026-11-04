@@ -1260,7 +1260,7 @@ class Pessoa extends ReplicadoBase
      */
     protected static function _verificarServidorDocente(int $codpes)
     {
-        $codfusclgund = getenv('REPLICADO_CODUNDCLG');     
+        $codfusclgund = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.verificarServidorDocente.sql');
         $param = ['codpes' => $codpes, 'codfusclgund' => $codfusclgund];
         return (bool) DB::fetchAll($query, $param);
@@ -1283,13 +1283,13 @@ class Pessoa extends ReplicadoBase
         $param = ['codpes' => $codpes, 'codfusclgund' => $codfusclgund];
         return (bool) DB::fetchAll($query, $param);
     }
-    
+
     /**
      * Método para listar docentes ativos (não aposentados) em um determinado ano
      *
      * @param int $ano Ano a ser consultado (ex: 2023)
      * @return array Lista de docentes ativos no ano
-     * 
+     *
      * @author Erickson Zanon @ezanon 05/10/2026
      */
     protected static function _listarDocentesAtivosNoAno(int $ano)
@@ -1307,7 +1307,27 @@ class Pessoa extends ReplicadoBase
         ];
 
         return DB::fetchAll($query, $param);
-    }   
+    }
+
+    /**
+     * Retorna os vinculos encerrados de VINCULOPESSOAUSP e respectivo setor
+     *
+     * Talvez precise limitar por unidade
+     *
+     * @param Int $codpes
+     * @return Array
+     * @author Masaki K Neto, em 21/3/2023
+     */
+    public static function _listarVinculosEncerrados(int $codpes)
+    {
+        $query = DB::getQuery('Pessoa.listarVinculosEncerrados.sql');
+
+        $param = [
+            'codpes' => $codpes
+        ];
+
+        return DB::fetchAll($query, $param);
+    }
 
     /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 

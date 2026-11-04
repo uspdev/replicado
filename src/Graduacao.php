@@ -822,6 +822,43 @@ class Graduacao extends ReplicadoBase
         return DB::fetchAll($query);
     }
 
+    /**
+     * Obtém o curso ativo de um aluno de graduação, procurando em todas as unidades disponíveis na replicação
+     *
+     * Modificado de obterCursoAtivo para incluir a sigla da unidade e procurar em qualquer unidade
+     *
+     * @param int $codpes
+     * @return Array Dados do curso ativo ou vazio se não encontrado
+     * @author Masaki K Neto, em 14/4/2025, acrescentado F.sta_cg: bug - pode pegar curso de PG
+     * @author Ricardo Fontoura, 03/11/2026, removida do sistema Pessoas
+     */
+    protected static function _obterCursoAtivoUnidades(int $codpes)
+    {
+        $query = DB::getQuery('Graduacao.obterCursoAtivoUnidades.sql');
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        return DB::fetch($query, $param);
+
+    }
+
+    /**
+     * @param int $codpes
+     * @return Array Dados do curso finalizado
+     * @author Masaki K Neto, em 14/4/2025
+     * @author Ricardo Fontoura, 03/11/2026, removida do sistema Pessoas
+     * */
+    protected static function _obterCursoFinalizadoUnidades(int $codpes)
+    {
+        $query = DB::getQuery('Graduacao.obterCursoFinalizadoUnidades.sql');
+        $param = [
+            'codpes' => $codpes,
+        ];
+
+        return DB::fetch($query, $param);
+    }
+
     /********** INÍCIO - Métodos deprecados que devem ser eliminados numa futura major release ***********/
 
     /**
