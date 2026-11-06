@@ -1320,6 +1320,26 @@ class Pessoa extends ReplicadoBase
     }
 
     /**
+     * Retorna os vinculos encerrados de VINCULOPESSOAUSP e respectivo setor
+     *
+     * Talvez precise limitar por unidade
+     *
+     * @param Int $codpes
+     * @return Array
+     * @author Masaki K Neto, em 21/3/2023
+     */
+    public static function _listarVinculosEncerrados(int $codpes)
+    {
+        $query = DB::getQuery('Pessoa.listarVinculosEncerrados.sql');
+        $param = [
+            'codpes' => $codpes
+        ];
+
+        return DB::fetchAll($query, $param);
+
+    }
+
+    /**
      * Método que recebe codpes e retorna número do Pis.
      *
      * @param int $codpes
@@ -1337,7 +1357,7 @@ class Pessoa extends ReplicadoBase
     }
 
     /**
-     * Método que recebe codpes e retorna número do Pis.
+     * Método que recebe codpes e retorna email.
      *
      * @param array|int $codpes
      * @return Array
